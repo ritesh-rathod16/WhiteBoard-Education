@@ -1,0 +1,196 @@
+<!-- Add to HTML (after toolbar, before whiteboard) -->
+<div class="slide-controls">
+    <button id="prevSlide" class="slide-btn">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+    <div class="slide-status">
+        <span id="currentSlide">1</span>/<span id="totalSlides">1</span>
+    </div>
+    <button id="nextSlide" class="slide-btn">
+        <i class="fas fa-chevron-right"></i>
+    </button>
+    <button id="newSlide" class="slide-btn new-slide">
+        <i class="fas fa-plus"></i>
+    </button>
+</div>
+
+<style>
+    /* Add to CSS */
+    .slide-controls {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 8px 15px;
+        border-radius: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+    }
+
+    .slide-btn {
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .slide-btn:hover {
+        background: #2980b9;
+        transform: scale(1.1);
+    }
+
+    .slide-btn:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+    }
+
+    .slide-status {
+        font-weight: 600;
+        color: var(--secondary-color);
+        min-width: 60px;
+        text-align: center;
+    }
+
+    .new-slide {
+        background: #27ae60;
+    }
+
+    .new-slide:hover {
+        background: #219a52;
+    }
+</style>
+
+<script>
+    // Add to JavaScript
+    let slides = [{
+        id: generateSlideId(),
+        drawings: [],
+        historyPointer: -1
+    }];
+    let currentSlideIndex = 0;
+
+    function generateSlideId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    // Initialize slide controls
+    function initSlideControls() {
+        updateSlideDisplay();
+        
+        document.getElementById('newSlide').addEventListener('click', createNewSlide);
+        document.getElementById('prevSlide').addEventListener('click', () => changeSlide(-1));
+        document.getElementById('nextSlide').addEventListener('click', () => changeSlide(1));
+    }
+
+    function createNewSlide() {
+        const newSlide = {
+            id: generateSlideId(),
+            drawings: [],
+            historyPointer: -1
+        };
+        
+        slides.push(newSlide);
+        currentSlideIndex = slides.length - 1;
+        updateSlideDisplay();
+        redrawWhiteboard();
+        
+        // Emit to server
+        socket.emit('newSlide', {
+            boardId,
+            slide: newSlide,
+            userId
+        });
+    }
+
+    function changeSlide(direction) {
+        const newIndex = currentSlideIndex + direction;
+        if (newIndex >= 0 && newIndex < slides.length) {
+            currentSlideIndex = newIndex;
+            updateSlideDisplay();
+            redrawWhiteboard();
+            
+            // Emit to server
+            socket.emit('changeSlide', {
+                boardId,
+                slideIndex: currentSlideIndex,
+                userId
+            });
+        }
+    }
+
+    function updateSlideDisplay() {
+        document.getElementById('currentSlide').textContent = currentSlideIndex + 1;
+        document.getElementById('totalSlides').textContent = slides.length;
+        document.getElementById('prevSlide').disabled = currentSlideIndex === 0;
+        document.getElementById('nextSlide').disabled = currentSlideIndex === slides.length - 1;
+    }
+
+    // Modified drawing functions to use current slide
+    function addToHistory(action) {
+        const slide = slides[currentSlideIndex];
+        if (slide.historyPointer < slide.drawings.length - 1) {
+            slide.drawings = slide.drawings.slice(0, slide.historyPointer + 1);
+        }
+        slide.drawings.push(action);
+        slide.historyPointer = slide.drawings.length - 1;
+    }
+
+    function redrawWhiteboard() {
+        ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+        const currentSlide = slides[currentSlideIndex];
+        
+        for (let i = 0; i <= currentSlide.historyPointer; i++) {
+            drawAction(currentSlide.drawings[i], false);
+        }
+    }
+
+    // Socket handlers for slide synchronization
+    socket.on('newSlide', (data) => {
+        if (data.userId === userId) return;
+        slides.push(data.slide);
+        currentSlideIndex = slides.length - 1;
+        updateSlideDisplay();
+        redrawWhiteboard();
+    });
+
+    socket.on('changeSlide', (data) => {
+        if (data.userId === userId) return;
+        currentSlideIndex = data.slideIndex;
+        updateSlideDisplay();
+        redrawWhiteboard();
+    });
+
+    // Update existing socket emit('draw') calls to include slide index
+    function emitDraw(action) {
+        socket.emit('draw', {
+            ...action,
+            slideIndex: currentSlideIndex,
+            boardId,
+            userId
+        });
+    }
+
+    // Modify existing draw handler
+    socket.on('drawing', (data) => {
+        if (data.userId === userId) return;
+        if (data.slideIndex !== currentSlideIndex) return;
+        
+        drawAction(data);
+        slides[data.slideIndex].drawings.push(data);
+        slides[data.slideIndex].historyPointer++;
+    });
+
+    // Initialize after DOM load
+    initSlideControls();
+</script>
