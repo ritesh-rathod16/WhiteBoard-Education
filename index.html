@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhiteBoard App</title>
+    <title>WhiteBoard Pro</title>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -31,135 +31,342 @@
             overflow: hidden;
         }
         
-        /* Login Page - Minimal */
-        .login-container {
+        /* Splash Screen */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            z-index: 1000;
+            transition: opacity 0.5s;
         }
         
-        .login-box {
+        .splash-logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Auth Container */
+        .auth-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 900;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .auth-box {
             background: var(--white);
-            padding: 2rem;
-            border-radius: 8px;
             width: 400px;
             max-width: 90%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
             text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
         }
         
-        .login-logo {
-            width: 80px;
-            margin-bottom: 1rem;
+        .auth-tab.active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
         }
         
-        .login-title {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
+        .auth-content {
+            padding: 25px;
+        }
+        
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .form-group label {
+            font-size: 14px;
             color: var(--dark);
         }
         
-        .login-form input {
-            width: 100%;
+        .form-group input {
             padding: 12px;
-            margin-bottom: 1rem;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 1rem;
+            font-size: 16px;
         }
         
-        .login-btn {
-            width: 100%;
+        .auth-btn {
             padding: 12px;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: 4px;
-            font-size: 1rem;
+            font-size: 16px;
             cursor: pointer;
-            margin-bottom: 1rem;
+            margin-top: 10px;
         }
         
-        .social-login {
+        .social-auth {
             display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 1rem 0;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
         }
         
         .social-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            flex: 1;
+            min-width: 120px;
+            padding: 10px;
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            gap: 8px;
             cursor: pointer;
+            border: 1px solid #ddd;
+            background: white;
         }
+        
+        .google-btn { color: #DB4437; }
+        .github-btn { color: #333; }
+        .linkedin-btn { color: #0077B5; }
+        .email-btn { color: var(--primary); }
+        .phone-btn { color: var(--secondary); }
         
         /* Dashboard */
         .dashboard {
             display: none;
             height: 100vh;
+            flex-direction: column;
         }
         
         .dashboard-header {
             background: var(--dark);
             color: white;
-            padding: 1rem;
+            padding: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .profile-pic {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
         .dashboard-content {
             display: flex;
-            height: calc(100vh - 60px);
+            flex: 1;
+            overflow: hidden;
         }
         
         .sidebar {
-            width: 250px;
+            width: 280px;
             background: white;
-            padding: 1rem;
             border-right: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
         }
         
         .new-board-btn {
             width: 100%;
-            padding: 0.75rem;
+            padding: 12px;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: 4px;
-            margin-bottom: 1rem;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
         .board-list {
+            flex: 1;
             overflow-y: auto;
-            height: calc(100% - 60px);
+            padding: 10px;
         }
         
         .board-item {
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
+            padding: 12px;
+            margin-bottom: 8px;
             background: #f9f9f9;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: all 0.2s;
         }
         
         .board-item:hover {
             background: #eee;
         }
         
+        .board-item.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .board-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .board-date {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .board-item.active .board-date {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .welcome-message {
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .welcome-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .welcome-text {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .primary-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .secondary-btn {
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
         /* Whiteboard App */
         .whiteboard-app {
             display: none;
-            flex-direction: column;
             height: 100vh;
+            flex-direction: column;
+        }
+        
+        .whiteboard-header {
+            background: var(--dark);
+            color: white;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .board-title {
+            font-weight: 600;
+        }
+        
+        .whiteboard-toolbar {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .tool-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
         }
         
         .whiteboard-container {
@@ -170,6 +377,7 @@
                 linear-gradient(#e0e0e0 1px, transparent 1px),
                 linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
             background-size: 20px 20px;
+            overflow: hidden;
         }
         
         #whiteboard {
@@ -187,7 +395,7 @@
             right: 0;
             bottom: 0;
             background: rgba(0,0,0,0.5);
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -201,60 +409,124 @@
             border: 4px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
+            animation: spin 1s linear infinite;
         }
         
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 220px;
+            }
+            
+            .social-btn {
+                min-width: calc(50% - 10px);
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Login Page -->
-    <div class="login-container" id="loginContainer">
-        <div class="login-box">
-            <img src="https://via.placeholder.com/80" alt="Logo" class="login-logo">
-            <h2 class="login-title">WhiteBoard App</h2>
-            <form class="login-form" id="loginForm">
-                <input type="text" placeholder="Username" required>
-                <input type="password" placeholder="Password" required>
-                <button type="submit" class="login-btn">Login</button>
-            </form>
-            <div class="social-login">
-                <div class="social-btn" style="background:#DB4437"><i class="fab fa-google"></i></div>
-                <div class="social-btn" style="background:#333"><i class="fab fa-github"></i></div>
-                <div class="social-btn" style="background:#0077B5"><i class="fab fa-linkedin-in"></i></div>
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Pro" class="splash-logo">
+    </div>
+    
+    <!-- Auth Container -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-box">
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="loginTab">Login</div>
+                <div class="auth-tab" id="registerTab">Register</div>
             </div>
-            <p>Don't have an account? <a href="#" style="color:var(--primary)">Register</a></p>
+            <div class="auth-content">
+                <form class="auth-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Login</button>
+                </form>
+                
+                <div class="social-auth">
+                    <button class="social-btn google-btn" id="googleAuth">
+                        <i class="fab fa-google"></i> Google
+                    </button>
+                    <button class="social-btn github-btn" id="githubAuth">
+                        <i class="fab fa-github"></i> GitHub
+                    </button>
+                    <button class="social-btn linkedin-btn" id="linkedinAuth">
+                        <i class="fab fa-linkedin-in"></i> LinkedIn
+                    </button>
+                    <button class="social-btn email-btn" id="emailAuth">
+                        <i class="fas fa-envelope"></i> Email
+                    </button>
+                    <button class="social-btn phone-btn" id="phoneAuth">
+                        <i class="fas fa-phone"></i> Phone
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     
     <!-- Dashboard -->
     <div class="dashboard" id="dashboard">
         <div class="dashboard-header">
-            <h2>My Whiteboards</h2>
-            <button id="logoutBtn">Logout</button>
+            <h2>WhiteBoard Pro</h2>
+            <div class="user-profile">
+                <div class="profile-pic" id="profilePic">U</div>
+                <span id="usernameDisplay">User</span>
+            </div>
         </div>
         <div class="dashboard-content">
             <div class="sidebar">
-                <button class="new-board-btn" id="newBoardBtn">
-                    <i class="fas fa-plus"></i> New Whiteboard
-                </button>
+                <div class="sidebar-header">
+                    <button class="new-board-btn" id="newBoardBtn">
+                        <i class="fas fa-plus"></i> New Board
+                    </button>
+                </div>
                 <div class="board-list" id="boardList">
                     <!-- Boards will be loaded here -->
                 </div>
             </div>
             <div class="main-content" id="mainContent">
-                <!-- Content will be shown here -->
+                <div class="welcome-message">
+                    <h1 class="welcome-title">Welcome to WhiteBoard Pro</h1>
+                    <p class="welcome-text">
+                        Create, collaborate, and share your ideas in real-time with our interactive whiteboard.
+                        Select an existing board or create a new one to get started.
+                    </p>
+                    <div class="action-btns">
+                        <button class="action-btn primary-btn" id="quickStartBtn">
+                            <i class="fas fa-plus"></i> Quick Start
+                        </button>
+                        <button class="action-btn secondary-btn" id="learnMoreBtn">
+                            <i class="fas fa-info-circle"></i> Learn More
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- Whiteboard App -->
     <div class="whiteboard-app" id="whiteboardApp">
-        <div class="dashboard-header">
-            <h2>Whiteboard</h2>
-            <button id="backToDashboard"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+        <div class="whiteboard-header">
+            <div class="board-title" id="boardTitle">Untitled Board</div>
+            <div class="whiteboard-toolbar">
+                <button class="tool-btn" id="backToDashboard">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <button class="tool-btn" id="saveBoardBtn">
+                    <i class="fas fa-save"></i>
+                </button>
+            </div>
         </div>
         <div class="whiteboard-container">
             <canvas id="whiteboard"></canvas>
@@ -262,156 +534,162 @@
     </div>
     
     <!-- Loading Screen -->
-    <div class="loading" id="loading" style="display:none">
+    <div class="loading" id="loading">
         <div class="spinner"></div>
-        <p>Loading...</p>
+        <p id="loadingText">Loading...</p>
     </div>
     
     <script>
         // DOM Elements
-        const loginContainer = document.getElementById('loginContainer');
+        const splashScreen = document.getElementById('splashScreen');
+        const authContainer = document.getElementById('authContainer');
         const dashboard = document.getElementById('dashboard');
         const whiteboardApp = document.getElementById('whiteboardApp');
         const loginForm = document.getElementById('loginForm');
-        const boardList = document.getElementById('boardList');
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
+        const profilePic = document.getElementById('profilePic');
+        const usernameDisplay = document.getElementById('usernameDisplay');
         const newBoardBtn = document.getElementById('newBoardBtn');
+        const quickStartBtn = document.getElementById('quickStartBtn');
+        const boardList = document.getElementById('boardList');
         const backToDashboard = document.getElementById('backToDashboard');
-        const logoutBtn = document.getElementById('logoutBtn');
+        const saveBoardBtn = document.getElementById('saveBoardBtn');
+        const boardTitle = document.getElementById('boardTitle');
         const loadingScreen = document.getElementById('loading');
+        const loadingText = document.getElementById('loadingText');
         
         // Whiteboard Elements
         const whiteboard = document.getElementById('whiteboard');
         const ctx = whiteboard.getContext('2d');
         
         // App State
-        let userId = 'user-' + Math.random().toString(36).substr(2, 9);
-        let userName = 'User';
+        let currentUser = null;
         let boards = [];
-        let currentBoardId = '';
+        let currentBoard = null;
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
         
-        // Initialize
-        function init() {
-            // Check if user is logged in
-            const user = localStorage.getItem('whiteboard_user');
-            if (user) {
-                loadDashboard();
-            } else {
-                loginContainer.style.display = 'flex';
-            }
+        // Initialize App
+        function initApp() {
+            // Hide splash screen after 1.5 seconds
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                    checkAuth();
+                }, 500);
+            }, 1500);
             
             // Set up event listeners
             setupEventListeners();
         }
         
-        function setupEventListeners() {
-            // Login Form
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                showLoading();
-                setTimeout(() => {
-                    // Simulate login
-                    localStorage.setItem('whiteboard_user', JSON.stringify({
-                        id: userId,
-                        name: userName
-                    }));
-                    hideLoading();
-                    loadDashboard();
-                }, 1000);
-            });
-            
-            // Social Login Buttons
-            document.querySelectorAll('.social-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    showLoading();
-                    setTimeout(() => {
-                        localStorage.setItem('whiteboard_user', JSON.stringify({
-                            id: userId,
-                            name: e.target.classList.contains('fa-google') ? 'Google User' : 
-                                 e.target.classList.contains('fa-github') ? 'GitHub User' : 'LinkedIn User'
-                        }));
-                        hideLoading();
-                        loadDashboard();
-                    }, 1000);
-                });
-            });
-            
-            // New Board Button
-            newBoardBtn.addEventListener('click', createNewBoard);
-            
-            // Back to Dashboard
-            backToDashboard.addEventListener('click', () => {
-                whiteboardApp.style.display = 'none';
-                dashboard.style.display = 'block';
-            });
-            
-            // Logout
-            logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('whiteboard_user');
-                dashboard.style.display = 'none';
-                loginContainer.style.display = 'flex';
-            });
+        function checkAuth() {
+            // Check if user is logged in (in a real app, this would check localStorage or cookies)
+            const user = localStorage.getItem('whiteboard_user');
+            if (user) {
+                currentUser = JSON.parse(user);
+                loadDashboard();
+            } else {
+                showAuth();
+            }
+        }
+        
+        function showAuth() {
+            authContainer.style.display = 'flex';
+        }
+        
+        function hideAuth() {
+            authContainer.style.display = 'none';
         }
         
         function loadDashboard() {
-            loginContainer.style.display = 'none';
-            dashboard.style.display = 'block';
+            // Update user info
+            profilePic.textContent = currentUser.name.charAt(0).toUpperCase();
+            usernameDisplay.textContent = currentUser.name;
             
-            // Load sample boards (in a real app, these would come from a database)
-            boards = [
-                { id: 'board1', name: 'Project Brainstorm', lastModified: '2023-05-15' },
-                { id: 'board2', name: 'Team Meeting Notes', lastModified: '2023-05-10' },
-                { id: 'board3', name: 'UI Design Ideas', lastModified: '2023-05-05' }
-            ];
+            // Load boards (in a real app, this would fetch from a database)
+            loadBoards();
             
-            renderBoardList();
+            // Show dashboard
+            dashboard.style.display = 'flex';
+        }
+        
+        function loadBoards() {
+            // Simulate loading boards
+            showLoading('Loading your boards...');
+            
+            setTimeout(() => {
+                // Sample boards data
+                boards = [
+                    { id: 'board1', name: 'Project Brainstorm', lastModified: '2023-06-15', thumbnail: '' },
+                    { id: 'board2', name: 'Team Meeting Notes', lastModified: '2023-06-10', thumbnail: '' },
+                    { id: 'board3', name: 'UI Design Ideas', lastModified: '2023-06-05', thumbnail: '' },
+                    { id: 'board4', name: 'Marketing Strategy', lastModified: '2023-05-28', thumbnail: '' },
+                    { id: 'board5', name: 'Product Roadmap', lastModified: '2023-05-20', thumbnail: '' }
+                ];
+                
+                renderBoardList();
+                hideLoading();
+            }, 800);
         }
         
         function renderBoardList() {
             boardList.innerHTML = '';
             
+            // Sort boards by last modified (newest first)
+            boards.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
+            
             boards.forEach(board => {
                 const boardItem = document.createElement('div');
                 boardItem.className = 'board-item';
                 boardItem.innerHTML = `
-                    <h3>${board.name}</h3>
-                    <small>Last modified: ${board.lastModified}</small>
+                    <div class="board-name">${board.name}</div>
+                    <div class="board-date">Last edited: ${board.lastModified}</div>
                 `;
                 
                 boardItem.addEventListener('click', () => {
-                    openWhiteboard(board.id);
+                    openBoard(board);
                 });
                 
                 boardList.appendChild(boardItem);
             });
         }
         
-        function createNewBoard() {
-            showLoading('Creating new whiteboard...');
+        function openBoard(board) {
+            currentBoard = board;
+            boardTitle.textContent = board.name;
             
-            // Generate a new board ID
-            const newBoardId = 'board-' + Date.now();
-            const newBoard = {
-                id: newBoardId,
-                name: 'New Whiteboard',
-                lastModified: new Date().toISOString().split('T')[0]
-            };
-            
-            boards.unshift(newBoard);
-            
-            setTimeout(() => {
-                renderBoardList();
-                openWhiteboard(newBoardId);
-                hideLoading();
-            }, 500);
-        }
-        
-        function openWhiteboard(boardId) {
-            currentBoardId = boardId;
+            // Hide dashboard and show whiteboard
             dashboard.style.display = 'none';
             whiteboardApp.style.display = 'flex';
             
             // Initialize whiteboard
             initWhiteboard();
+        }
+        
+        function createNewBoard() {
+            showLoading('Creating new board...');
+            
+            // Generate a new board ID
+            const newBoardId = 'board-' + Date.now();
+            const newBoard = {
+                id: newBoardId,
+                name: 'Untitled Board',
+                lastModified: new Date().toISOString().split('T')[0],
+                thumbnail: ''
+            };
+            
+            // Add to boards array
+            boards.unshift(newBoard);
+            
+            setTimeout(() => {
+                renderBoardList();
+                openBoard(newBoard);
+                hideLoading();
+            }, 500);
         }
         
         function initWhiteboard() {
@@ -434,31 +712,50 @@
         }
         
         function setupDrawingEvents() {
-            let isDrawing = false;
-            let lastX = 0;
-            let lastY = 0;
+            whiteboard.addEventListener('mousedown', startDrawing);
+            whiteboard.addEventListener('mousemove', draw);
+            whiteboard.addEventListener('mouseup', stopDrawing);
+            whiteboard.addEventListener('mouseout', stopDrawing);
+        }
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
             
-            whiteboard.addEventListener('mousedown', (e) => {
-                isDrawing = true;
-                [lastX, lastY] = [e.offsetX, e.offsetY];
-            });
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        function saveBoard() {
+            showLoading('Saving board...');
             
-            whiteboard.addEventListener('mousemove', (e) => {
-                if (!isDrawing) return;
+            // In a real app, this would save to a database
+            setTimeout(() => {
+                // Update last modified date
+                currentBoard.lastModified = new Date().toISOString().split('T')[0];
                 
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(e.offsetX, e.offsetY);
-                ctx.stroke();
-                [lastX, lastY] = [e.offsetX, e.offsetY];
-            });
-            
-            whiteboard.addEventListener('mouseup', () => isDrawing = false);
-            whiteboard.addEventListener('mouseout', () => isDrawing = false);
+                // Update board list
+                renderBoardList();
+                hideLoading();
+                
+                // Show confirmation
+                alert('Board saved successfully!');
+            }, 800);
         }
         
         function showLoading(message = 'Loading...') {
-            loadingScreen.querySelector('p').textContent = message;
+            loadingText.textContent = message;
             loadingScreen.style.display = 'flex';
         }
         
@@ -466,8 +763,101 @@
             loadingScreen.style.display = 'none';
         }
         
+        function setupEventListeners() {
+            // Auth tabs
+            loginTab.addEventListener('click', () => {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+            });
+            
+            registerTab.addEventListener('click', () => {
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
+            });
+            
+            // Login form
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Get form values
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                // Simple validation
+                if (!email || !password) {
+                    alert('Please enter both email and password');
+                    return;
+                }
+                
+                // Simulate login
+                showLoading('Signing in...');
+                
+                setTimeout(() => {
+                    currentUser = {
+                        id: 'user-' + Math.random().toString(36).substr(2, 9),
+                        name: email.split('@')[0],
+                        email: email
+                    };
+                    
+                    // Save to localStorage
+                    localStorage.setItem('whiteboard_user', JSON.stringify(currentUser));
+                    
+                    hideLoading();
+                    hideAuth();
+                    loadDashboard();
+                }, 1000);
+            });
+            
+            // Social auth buttons
+            document.querySelectorAll('.social-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const provider = e.currentTarget.id.replace('Auth', '');
+                    socialLogin(provider);
+                });
+            });
+            
+            // New board buttons
+            newBoardBtn.addEventListener('click', createNewBoard);
+            quickStartBtn.addEventListener('click', createNewBoard);
+            
+            // Whiteboard buttons
+            backToDashboard.addEventListener('click', () => {
+                whiteboardApp.style.display = 'none';
+                dashboard.style.display = 'flex';
+            });
+            
+            saveBoardBtn.addEventListener('click', saveBoard);
+            
+            // Window resize
+            window.addEventListener('resize', () => {
+                if (whiteboardApp.style.display === 'flex') {
+                    resizeCanvas();
+                }
+            });
+        }
+        
+        function socialLogin(provider) {
+            showLoading(`Signing in with ${provider}...`);
+            
+            // Simulate social login
+            setTimeout(() => {
+                currentUser = {
+                    id: 'user-' + Math.random().toString(36).substr(2, 9),
+                    name: provider.charAt(0).toUpperCase() + provider.slice(1) + ' User',
+                    email: `${provider.toLowerCase()}@example.com`
+                };
+                
+                // Save to localStorage
+                localStorage.setItem('whiteboard_user', JSON.stringify(currentUser));
+                
+                hideLoading();
+                hideAuth();
+                loadDashboard();
+            }, 1200);
+        }
+        
         // Initialize the app
-        window.addEventListener('load', init);
+        window.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
