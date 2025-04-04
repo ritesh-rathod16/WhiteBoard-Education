@@ -3,1544 +3,471 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhiteBoard Education - Collaborative Whiteboard</title>
+    <title>WhiteBoard App</title>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #34495e;
-            --text-color: #333;
+            --primary: #4285F4;
+            --secondary: #34A853;
+            --accent: #EA4335;
+            --light: #F5F5F5;
+            --dark: #202124;
+            --text: #333;
             --white: #fff;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
         }
         
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Segoe UI', sans-serif;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--light-color);
-            color: var(--text-color);
+            background: var(--light);
+            color: var(--text);
             height: 100vh;
             overflow: hidden;
         }
         
-        /* Splash Screen */
-        .splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            transition: opacity 0.5s ease;
-        }
-        
-        .splash-logo {
-            width: 200px;
-            height: 200px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        .splash-text {
-            font-size: 2rem;
-            color: white;
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
-        
-        /* Modern Login Page */
+        /* Login Page - Minimal */
         .login-container {
-            display: none;
+            display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f5f7fa;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
         }
         
-        .login-wrapper {
-            display: flex;
-            width: 900px;
+        .login-box {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            width: 400px;
             max-width: 90%;
-            height: 550px;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-        
-        .login-left {
-            flex: 1;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
         }
         
         .login-logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 20px;
-        }
-        
-        .login-welcome {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        
-        .login-description {
-            font-size: 1rem;
-            text-align: center;
-            opacity: 0.9;
-            margin-bottom: 30px;
-        }
-        
-        .login-right {
-            flex: 1;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            width: 80px;
+            margin-bottom: 1rem;
         }
         
         .login-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             margin-bottom: 1.5rem;
-            color: var(--secondary-color);
-            text-align: center;
+            color: var(--dark);
         }
         
-        .login-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .login-tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #666;
-            transition: var(--transition);
-        }
-        
-        .login-tab.active {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-        }
-        
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .form-group {
-            text-align: left;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--secondary-color);
-        }
-        
-        .form-group input {
+        .login-form input {
             width: 100%;
             padding: 12px;
+            margin-bottom: 1rem;
             border: 1px solid #ddd;
-            border-radius: 6px;
+            border-radius: 4px;
             font-size: 1rem;
-            transition: var(--transition);
-        }
-        
-        .form-group input:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-        }
-        
-        .remember-forgot {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .remember-me {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .forgot-password {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-size: 0.9rem;
         }
         
         .login-btn {
-            background-color: var(--primary-color);
-            color: var(--white);
-            border: none;
+            width: 100%;
             padding: 12px;
-            border-radius: 6px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
             font-size: 1rem;
-            font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .login-btn:hover {
-            background-color: #2980b9;
-        }
-        
-        .login-divider {
-            display: flex;
-            align-items: center;
-            margin: 20px 0;
-            color: #666;
-        }
-        
-        .login-divider::before,
-        .login-divider::after {
-            content: "";
-            flex: 1;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .login-divider::before {
-            margin-right: 10px;
-        }
-        
-        .login-divider::after {
-            margin-left: 10px;
+            margin-bottom: 1rem;
         }
         
         .social-login {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
         }
         
         .social-btn {
-            flex: 1;
-            min-width: 100px;
-            padding: 10px;
-            border-radius: 6px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            color: white;
             cursor: pointer;
-            transition: var(--transition);
-            border: 1px solid #ddd;
-            background-color: white;
-            color: var(--text-color);
         }
         
-        .social-btn:hover {
-            background-color: #f5f5f5;
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            height: 100vh;
         }
         
-        .google-btn { color: #DB4437; }
-        .github-btn { color: #333; }
-        .linkedin-btn { color: #0077B5; }
-        .email-btn { color: var(--secondary-color); }
-        .phone-btn { color: var(--primary-color); }
-        
-        .register-link {
-            text-align: center;
-            font-size: 0.9rem;
-            margin-top: 15px;
+        .dashboard-header {
+            background: var(--dark);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .register-link a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
+        .dashboard-content {
+            display: flex;
+            height: calc(100vh - 60px);
         }
         
-        /* Main App Styles */
-        .container {
+        .sidebar {
+            width: 250px;
+            background: white;
+            padding: 1rem;
+            border-right: 1px solid #eee;
+        }
+        
+        .new-board-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+        
+        .board-list {
+            overflow-y: auto;
+            height: calc(100% - 60px);
+        }
+        
+        .board-item {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: #f9f9f9;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .board-item:hover {
+            background: #eee;
+        }
+        
+        /* Whiteboard App */
+        .whiteboard-app {
             display: none;
             flex-direction: column;
             height: 100vh;
         }
         
-        /* ... (rest of your existing styles remain the same) ... */
-
-        /* Animations */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        .whiteboard-container {
+            flex: 1;
+            position: relative;
+            background: white;
+            background-image: 
+                linear-gradient(#e0e0e0 1px, transparent 1px),
+                linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        #whiteboard {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: crosshair;
         }
         
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .login-wrapper {
-                flex-direction: column;
-                height: auto;
-            }
-            
-            .login-left {
-                padding: 30px 20px;
-            }
-            
-            .login-right {
-                padding: 30px 20px;
-            }
-            
-            .social-btn {
-                min-width: calc(50% - 10px);
-            }
+        /* Loading */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            z-index: 1000;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Splash Screen -->
-    <div class="splash-screen" id="splashScreen">
-        <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Education Logo" class="splash-logo">
-        <div class="splash-text">WhiteBoard Education</div>
-    </div>
-    
     <!-- Login Page -->
     <div class="login-container" id="loginContainer">
-        <div class="login-wrapper">
-            <div class="login-left">
-                <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Education Logo" class="login-logo">
-                <h1 class="login-welcome">Welcome Back!</h1>
-                <p class="login-description">
-                    Collaborate in real-time with our interactive whiteboard.
-                    Sign in to access your boards and start creating.
-                </p>
+        <div class="login-box">
+            <img src="https://via.placeholder.com/80" alt="Logo" class="login-logo">
+            <h2 class="login-title">WhiteBoard App</h2>
+            <form class="login-form" id="loginForm">
+                <input type="text" placeholder="Username" required>
+                <input type="password" placeholder="Password" required>
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+            <div class="social-login">
+                <div class="social-btn" style="background:#DB4437"><i class="fab fa-google"></i></div>
+                <div class="social-btn" style="background:#333"><i class="fab fa-github"></i></div>
+                <div class="social-btn" style="background:#0077B5"><i class="fab fa-linkedin-in"></i></div>
             </div>
-            
-            <div class="login-right">
-                <h2 class="login-title">Sign In</h2>
-                
-                <div class="login-tabs">
-                    <div class="login-tab active" id="loginTab">Login</div>
-                    <div class="login-tab" id="registerTab">Register</div>
+            <p>Don't have an account? <a href="#" style="color:var(--primary)">Register</a></p>
+        </div>
+    </div>
+    
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="dashboard-header">
+            <h2>My Whiteboards</h2>
+            <button id="logoutBtn">Logout</button>
+        </div>
+        <div class="dashboard-content">
+            <div class="sidebar">
+                <button class="new-board-btn" id="newBoardBtn">
+                    <i class="fas fa-plus"></i> New Whiteboard
+                </button>
+                <div class="board-list" id="boardList">
+                    <!-- Boards will be loaded here -->
                 </div>
-                
-                <form class="login-form" id="loginForm">
-                    <div class="form-group">
-                        <label for="username">Username or Email</label>
-                        <input type="text" id="username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" required>
-                    </div>
-                    
-                    <div class="remember-forgot">
-                        <div class="remember-me">
-                            <input type="checkbox" id="rememberMe">
-                            <label for="rememberMe">Remember me</label>
-                        </div>
-                        <a href="#" class="forgot-password">Forgot password?</a>
-                    </div>
-                    
-                    <button type="submit" class="login-btn">Sign In</button>
-                </form>
-                
-                <div class="login-divider">or continue with</div>
-                
-                <div class="social-login">
-                    <button class="social-btn google-btn" id="googleLogin">
-                        <i class="fab fa-google"></i> Google
-                    </button>
-                    <button class="social-btn github-btn" id="githubLogin">
-                        <i class="fab fa-github"></i> GitHub
-                    </button>
-                    <button class="social-btn linkedin-btn" id="linkedinLogin">
-                        <i class="fab fa-linkedin-in"></i> LinkedIn
-                    </button>
-                    <button class="social-btn email-btn" id="emailRegister">
-                        <i class="fas fa-envelope"></i> Email
-                    </button>
-                    <button class="social-btn phone-btn" id="phoneRegister">
-                        <i class="fas fa-phone"></i> Phone
-                    </button>
-                </div>
-                
-                <div class="register-link">
-                    Don't have an account? <a href="#" id="showRegister">Register now</a>
-                </div>
+            </div>
+            <div class="main-content" id="mainContent">
+                <!-- Content will be shown here -->
             </div>
         </div>
     </div>
     
-    <!-- Main App (initially hidden) -->
-    <div class="container" id="appContainer">
-        <div class="header">
-            <div class="logo-container">
-                <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Education Logo" class="logo-img">
-                <div class="logo-text">WhiteBoard Education</div>
-            </div>
-            <div class="user-count">
-                <i class="fas fa-users"></i>
-                <span id="userCount">0</span>
-            </div>
+    <!-- Whiteboard App -->
+    <div class="whiteboard-app" id="whiteboardApp">
+        <div class="dashboard-header">
+            <h2>Whiteboard</h2>
+            <button id="backToDashboard"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
         </div>
-        
-        <div class="main">
-            <div class="toolbar">
-                <div class="tool active" data-tool="pencil">
-                    <i class="fas fa-pencil-alt"></i>
-                    <span class="tool-tip">Pencil (P)</span>
-                </div>
-                <div class="tool" data-tool="line">
-                    <i class="fas fa-slash"></i>
-                    <span class="tool-tip">Line (L)</span>
-                </div>
-                <div class="tool" data-tool="rectangle">
-                    <i class="far fa-square"></i>
-                    <span class="tool-tip">Rectangle (R)</span>
-                </div>
-                <div class="tool" data-tool="circle">
-                    <i class="far fa-circle"></i>
-                    <span class="tool-tip">Circle (C)</span>
-                </div>
-                <div class="tool" data-tool="eraser">
-                    <i class="fas fa-eraser"></i>
-                    <span class="tool-tip">Eraser (E)</span>
-                </div>
-                <div class="tool" data-tool="text">
-                    <i class="fas fa-font"></i>
-                    <span class="tool-tip">Text (T)</span>
-                </div>
-                <div class="tool" data-tool="highlighter">
-                    <i class="fas fa-highlighter"></i>
-                    <span class="tool-tip">Highlighter (H)</span>
-                </div>
-                <div class="tool" data-tool="image">
-                    <i class="far fa-image"></i>
-                    <span class="tool-tip">Image (I)</span>
-                </div>
-                <div class="tool" data-tool="undo">
-                    <i class="fas fa-undo"></i>
-                    <span class="tool-tip">Undo (Ctrl+Z)</span>
-                </div>
-                <div class="tool" data-tool="redo">
-                    <i class="fas fa-redo"></i>
-                    <span class="tool-tip">Redo (Ctrl+Y)</span>
-                </div>
-                
-                <div class="color-picker-container">
-                    <div class="color-picker-label">Color</div>
-                    <input type="color" class="color-picker" id="colorPicker" value="#000000">
-                </div>
-                
-                <div class="line-width-control">
-                    <div class="line-width-label">Size</div>
-                    <input type="range" class="line-width-slider" id="lineWidth" min="1" max="20" value="3">
-                </div>
-                
-                <div class="tool" data-tool="clear">
-                    <i class="fas fa-trash-alt"></i>
-                    <span class="tool-tip">Clear Board</span>
-                </div>
-            </div>
-            
-            <div class="whiteboard-container">
-                <canvas id="whiteboard"></canvas>
-            </div>
-            
-            <div class="toggle-panel" id="togglePanel">
-                <i class="fas fa-chevron-left"></i>
-            </div>
-            
-            <div class="right-panel">
-                <div class="user-list-container">
-                    <div class="user-list-title">
-                        <i class="fas fa-users"></i>
-                        <h3>Online Users</h3>
-                    </div>
-                    <div id="userList">
-                        <!-- Users will be added here dynamically -->
-                    </div>
-                </div>
-                
-                <div class="media-container">
-                    <div class="media-controls">
-                        <button id="micBtn" class="media-btn">
-                            <i class="fas fa-microphone"></i>
-                            <span>Mic</span>
-                        </button>
-                        <button id="videoBtn" class="media-btn">
-                            <i class="fas fa-video"></i>
-                            <span>Video</span>
-                        </button>
-                    </div>
-                    
-                    <div class="video-container">
-                        <video id="localVideo" autoplay muted playsinline></video>
-                        <div class="video-placeholder">
-                            <i class="fas fa-user"></i>
-                            <div class="video-placeholder-text">Your video will appear here</div>
-                        </div>
-                    </div>
-                    
-                    <div class="video-container">
-                        <video id="remoteVideo" autoplay playsinline></video>
-                        <div class="video-placeholder">
-                            <i class="fas fa-users"></i>
-                            <div class="video-placeholder-text">Other participant's video will appear here</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer">
-            <div class="footer-info">
-                <span>Real-time collaboration with WebRTC & Socket.io</span>
-            </div>
-            <div class="board-actions">
-                <button class="board-btn" id="copyBoardId">
-                    <i class="fas fa-copy"></i> Copy Board ID
-                </button>
-                <span id="boardId">Loading...</span>
-            </div>
+        <div class="whiteboard-container">
+            <canvas id="whiteboard"></canvas>
         </div>
     </div>
     
     <!-- Loading Screen -->
-    <div class="loading" id="loading">
+    <div class="loading" id="loading" style="display:none">
         <div class="spinner"></div>
-        <div class="loading-text">Connecting to whiteboard...</div>
+        <p>Loading...</p>
     </div>
     
     <script>
         // DOM Elements
-        const splashScreen = document.getElementById('splashScreen');
         const loginContainer = document.getElementById('loginContainer');
-        const appContainer = document.getElementById('appContainer');
+        const dashboard = document.getElementById('dashboard');
+        const whiteboardApp = document.getElementById('whiteboardApp');
         const loginForm = document.getElementById('loginForm');
-        const loginTab = document.getElementById('loginTab');
-        const registerTab = document.getElementById('registerTab');
-        const showRegister = document.getElementById('showRegister');
-        const googleLogin = document.getElementById('googleLogin');
-        const githubLogin = document.getElementById('githubLogin');
-        const linkedinLogin = document.getElementById('linkedinLogin');
-        const emailRegister = document.getElementById('emailRegister');
-        const phoneRegister = document.getElementById('phoneRegister');
+        const boardList = document.getElementById('boardList');
+        const newBoardBtn = document.getElementById('newBoardBtn');
+        const backToDashboard = document.getElementById('backToDashboard');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loadingScreen = document.getElementById('loading');
         
+        // Whiteboard Elements
         const whiteboard = document.getElementById('whiteboard');
         const ctx = whiteboard.getContext('2d');
-        const tools = document.querySelectorAll('.tool');
-        const colorPicker = document.getElementById('colorPicker');
-        const lineWidthSlider = document.getElementById('lineWidth');
-        const userList = document.getElementById('userList');
-        const userCount = document.getElementById('userCount');
-        const boardIdElement = document.getElementById('boardId');
-        const copyBoardIdBtn = document.getElementById('copyBoardId');
-        const loadingScreen = document.getElementById('loading');
-        const loadingText = loadingScreen.querySelector('.loading-text');
         
-        // Whiteboard state
-        let currentTool = 'pencil';
-        let currentColor = '#000000';
-        let currentLineWidth = 3;
-        let isDrawing = false;
-        let startX = 0;
-        let startY = 0;
-        let lastX = 0;
-        let lastY = 0;
-        let drawingHistory = [];
-        let historyPointer = -1;
-        let users = {};
-        let textInputActive = false;
+        // App State
+        let userId = 'user-' + Math.random().toString(36).substr(2, 9);
+        let userName = 'User';
+        let boards = [];
+        let currentBoardId = '';
         
-        // User state
-        let userId = generateUserId();
-        let userName = `User-${userId.substring(0, 4)}`;
-        let userColor = generateRandomColor();
-        
-        // Board state
-        let boardId = '';
-        
-        // Socket.io connection
-        const socket = io({
-            reconnection: true,
-            reconnectionAttempts: 5,
-            reconnectionDelay: 1000,
-            reconnectionDelayMax: 5000,
-            timeout: 20000
-        });
-        
-        // Initialize application
-        function initApp() {
-            // Show splash screen first
-            setTimeout(() => {
-                splashScreen.style.opacity = '0';
-                setTimeout(() => {
-                    splashScreen.style.display = 'none';
-                    
-                    // Check if user is already logged in (from localStorage)
-                    const savedUser = localStorage.getItem('whiteboardUser');
-                    if (savedUser) {
-                        const user = JSON.parse(savedUser);
-                        userId = user.id || userId;
-                        userName = user.name || userName;
-                        userColor = user.color || userColor;
-                        
-                        // Show loading screen while connecting
-                        showLoading('Connecting to whiteboard...');
-                        
-                        // Create a new board (in a real app, you would load existing boards)
-                        createNewBoard();
-                    } else {
-                        // Show login if not logged in
-                        loginContainer.style.display = 'flex';
-                    }
-                }, 500);
-            }, 2000);
-            
-            // Set up login form
-            loginForm.addEventListener('submit', handleLogin);
-            
-            // Set up tab switching
-            loginTab.addEventListener('click', () => {
-                loginTab.classList.add('active');
-                registerTab.classList.remove('active');
-                document.querySelector('.register-link').innerHTML = 
-                    'Don\'t have an account? <a href="#" id="showRegister">Register now</a>';
-            });
-            
-            registerTab.addEventListener('click', () => {
-                registerTab.classList.add('active');
-                loginTab.classList.remove('active');
-                document.querySelector('.register-link').innerHTML = 
-                    'Already have an account? <a href="#" id="showLogin">Login</a>';
-            });
-            
-            showRegister.addEventListener('click', (e) => {
-                e.preventDefault();
-                registerTab.click();
-            });
-            
-            // Set up social login buttons
-            googleLogin.addEventListener('click', () => socialLogin('google'));
-            githubLogin.addEventListener('click', () => socialLogin('github'));
-            linkedinLogin.addEventListener('click', () => socialLogin('linkedin'));
-            emailRegister.addEventListener('click', () => socialLogin('email'));
-            phoneRegister.addEventListener('click', () => socialLogin('phone'));
-        }
-        
-        // Handle login
-        function handleLogin(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Simple validation
-            if (!username || !password) {
-                alert('Please enter both username and password');
-                return;
+        // Initialize
+        function init() {
+            // Check if user is logged in
+            const user = localStorage.getItem('whiteboard_user');
+            if (user) {
+                loadDashboard();
+            } else {
+                loginContainer.style.display = 'flex';
             }
-            
-            // In a real app, you would validate credentials with a server
-            userName = username;
-            
-            // Save user to localStorage
-            localStorage.setItem('whiteboardUser', JSON.stringify({
-                id: userId,
-                name: userName,
-                color: userColor
-            }));
-            
-            // Show loading screen while connecting
-            showLoading('Connecting to whiteboard...');
-            
-            // Create a new board
-            createNewBoard();
-        }
-        
-        // Social login (placeholder)
-        function socialLogin(provider) {
-            // For demo purposes, we'll just simulate a successful login
-            userName = `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`;
-            userColor = generateRandomColor();
-            
-            localStorage.setItem('whiteboardUser', JSON.stringify({
-                id: userId,
-                name: userName,
-                color: userColor
-            }));
-            
-            // Show loading screen while connecting
-            showLoading('Connecting to whiteboard...');
-            
-            // Create a new board
-            createNewBoard();
-        }
-        
-        // Create new board
-        function createNewBoard() {
-            // Generate a random board ID
-            boardId = 'board-' + Math.random().toString(36).substring(2, 9);
-            
-            // Hide login and show loading
-            loginContainer.style.display = 'none';
-            
-            // Initialize whiteboard
-            initWhiteboard();
-            
-            // Connect to socket.io
-            socket.emit('createBoard', { 
-                boardId, 
-                userId, 
-                userName, 
-                userColor 
-            });
-        }
-        
-        // Initialize whiteboard
-        function initWhiteboard() {
-            // Set canvas size
-            resizeCanvas();
-            
-            // Set initial styles
-            ctx.strokeStyle = currentColor;
-            ctx.lineWidth = currentLineWidth;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.font = `${currentLineWidth * 5}px Arial`;
-            ctx.fillStyle = currentColor;
-            
-            // Set board ID in UI
-            boardIdElement.textContent = boardId;
-            
-            // Update URL with board ID
-            const url = new URL(window.location.href);
-            url.searchParams.set('board', boardId);
-            window.history.pushState({}, '', url);
             
             // Set up event listeners
             setupEventListeners();
         }
         
-        // Set up event listeners
         function setupEventListeners() {
-            // Window resize
-            window.addEventListener('resize', resizeCanvas);
+            // Login Form
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                showLoading();
+                setTimeout(() => {
+                    // Simulate login
+                    localStorage.setItem('whiteboard_user', JSON.stringify({
+                        id: userId,
+                        name: userName
+                    }));
+                    hideLoading();
+                    loadDashboard();
+                }, 1000);
+            });
             
-            // Tool selection
-            tools.forEach(tool => {
-                tool.addEventListener('click', () => {
-                    if (textInputActive) return;
-                    
-                    const toolName = tool.dataset.tool;
-                    selectTool(toolName);
+            // Social Login Buttons
+            document.querySelectorAll('.social-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    showLoading();
+                    setTimeout(() => {
+                        localStorage.setItem('whiteboard_user', JSON.stringify({
+                            id: userId,
+                            name: e.target.classList.contains('fa-google') ? 'Google User' : 
+                                 e.target.classList.contains('fa-github') ? 'GitHub User' : 'LinkedIn User'
+                        }));
+                        hideLoading();
+                        loadDashboard();
+                    }, 1000);
                 });
             });
             
-            // Color picker
-            colorPicker.addEventListener('input', (e) => {
-                currentColor = e.target.value;
-                ctx.strokeStyle = currentColor;
-                ctx.fillStyle = currentColor;
+            // New Board Button
+            newBoardBtn.addEventListener('click', createNewBoard);
+            
+            // Back to Dashboard
+            backToDashboard.addEventListener('click', () => {
+                whiteboardApp.style.display = 'none';
+                dashboard.style.display = 'block';
             });
             
-            // Line width
-            lineWidthSlider.addEventListener('input', (e) => {
-                currentLineWidth = parseInt(e.target.value);
-                ctx.lineWidth = currentLineWidth;
-                ctx.font = `${currentLineWidth * 5}px Arial`;
+            // Logout
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('whiteboard_user');
+                dashboard.style.display = 'none';
+                loginContainer.style.display = 'flex';
             });
-            
-            // Copy board ID
-            copyBoardIdBtn.addEventListener('click', () => {
-                navigator.clipboard.writeText(boardId).then(() => {
-                    showNotification('Board ID copied to clipboard!');
-                }).catch(err => {
-                    console.error('Failed to copy board ID:', err);
-                    showNotification('Failed to copy Board ID');
-                });
-            });
-            
-            // Toggle panel
-            togglePanelBtn.addEventListener('click', () => {
-                document.querySelector('.container').classList.toggle('panel-collapsed');
-                const icon = togglePanelBtn.querySelector('i');
-                if (document.querySelector('.container').classList.contains('panel-collapsed')) {
-                    icon.classList.remove('fa-chevron-left');
-                    icon.classList.add('fa-chevron-right');
-                } else {
-                    icon.classList.remove('fa-chevron-right');
-                    icon.classList.add('fa-chevron-left');
-                }
-            });
-            
-            // Media buttons
-            micBtn.addEventListener('click', toggleMic);
-            videoBtn.addEventListener('click', toggleVideo);
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', handleKeyDown);
-            
-            // Whiteboard events
-            whiteboard.addEventListener('mousedown', startDrawing);
-            whiteboard.addEventListener('mousemove', draw);
-            whiteboard.addEventListener('mouseup', stopDrawing);
-            whiteboard.addEventListener('mouseout', stopDrawing);
-            whiteboard.addEventListener('click', handleClick);
         }
         
-        // Handle keyboard shortcuts
-        function handleKeyDown(e) {
-            if (textInputActive) return;
+        function loadDashboard() {
+            loginContainer.style.display = 'none';
+            dashboard.style.display = 'block';
             
-            // Tool shortcuts
-            const toolShortcuts = {
-                'p': 'pencil',
-                'l': 'line',
-                'r': 'rectangle',
-                'c': 'circle',
-                'e': 'eraser',
-                't': 'text',
-                'h': 'highlighter',
-                'i': 'image'
+            // Load sample boards (in a real app, these would come from a database)
+            boards = [
+                { id: 'board1', name: 'Project Brainstorm', lastModified: '2023-05-15' },
+                { id: 'board2', name: 'Team Meeting Notes', lastModified: '2023-05-10' },
+                { id: 'board3', name: 'UI Design Ideas', lastModified: '2023-05-05' }
+            ];
+            
+            renderBoardList();
+        }
+        
+        function renderBoardList() {
+            boardList.innerHTML = '';
+            
+            boards.forEach(board => {
+                const boardItem = document.createElement('div');
+                boardItem.className = 'board-item';
+                boardItem.innerHTML = `
+                    <h3>${board.name}</h3>
+                    <small>Last modified: ${board.lastModified}</small>
+                `;
+                
+                boardItem.addEventListener('click', () => {
+                    openWhiteboard(board.id);
+                });
+                
+                boardList.appendChild(boardItem);
+            });
+        }
+        
+        function createNewBoard() {
+            showLoading('Creating new whiteboard...');
+            
+            // Generate a new board ID
+            const newBoardId = 'board-' + Date.now();
+            const newBoard = {
+                id: newBoardId,
+                name: 'New Whiteboard',
+                lastModified: new Date().toISOString().split('T')[0]
             };
             
-            if (toolShortcuts[e.key.toLowerCase()]) {
-                const toolName = toolShortcuts[e.key.toLowerCase()];
-                selectTool(toolName);
-                e.preventDefault();
-            }
+            boards.unshift(newBoard);
             
-            // Undo/Redo shortcuts
-            if (e.ctrlKey || e.metaKey) {
-                if (e.key === 'z') {
-                    undo();
-                    e.preventDefault();
-                } else if (e.key === 'y') {
-                    redo();
-                    e.preventDefault();
-                }
-            }
+            setTimeout(() => {
+                renderBoardList();
+                openWhiteboard(newBoardId);
+                hideLoading();
+            }, 500);
         }
         
-        // Generate a unique user ID
-        function generateUserId() {
-            return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+        function openWhiteboard(boardId) {
+            currentBoardId = boardId;
+            dashboard.style.display = 'none';
+            whiteboardApp.style.display = 'flex';
+            
+            // Initialize whiteboard
+            initWhiteboard();
         }
         
-        // Generate a random color
-        function generateRandomColor() {
-            return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
+        function initWhiteboard() {
+            // Set canvas size
+            resizeCanvas();
+            
+            // Set initial drawing styles
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            
+            // Set up drawing events
+            setupDrawingEvents();
         }
         
-        // Resize canvas to fit container
         function resizeCanvas() {
             const container = whiteboard.parentElement;
             whiteboard.width = container.offsetWidth;
             whiteboard.height = container.offsetHeight;
-            
-            // Redraw everything after resize
-            redrawWhiteboard();
         }
         
-        // Select a tool
-        function selectTool(toolName) {
-            // If already selected, don't do anything
-            if (currentTool === toolName && toolName !== 'text') return;
+        function setupDrawingEvents() {
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
             
-            // Deselect all tools
-            tools.forEach(t => t.classList.remove('active'));
-            
-            // Find and select the new tool
-            const newTool = Array.from(tools).find(t => t.dataset.tool === toolName);
-            if (newTool) {
-                newTool.classList.add('active');
-                currentTool = toolName;
-                
-                // Handle special tools
-                if (toolName === 'undo') {
-                    undo();
-                    selectTool('pencil');
-                } else if (toolName === 'redo') {
-                    redo();
-                    selectTool('pencil');
-                } else if (toolName === 'clear') {
-                    clearBoard();
-                    selectTool('pencil');
-                } else if (toolName === 'text') {
-                    startTextInput();
-                } else if (toolName === 'highlighter') {
-                    ctx.globalAlpha = 0.5;
-                } else {
-                    ctx.globalAlpha = 1.0;
-                }
-            }
-        }
-        
-        // Start text input
-        function startTextInput() {
-            textInputActive = true;
-            const text = prompt('Enter your text:');
-            
-            if (text) {
-                const action = {
-                    tool: 'text',
-                    color: currentColor,
-                    x: lastX,
-                    y: lastY,
-                    text: text,
-                    size: currentLineWidth,
-                    userId
-                };
-                
-                // Add to history
-                addToHistory(action);
-                
-                // Send to server
-                socket.emit('draw', action);
-                
-                // Draw the text
-                drawAction(action);
-            }
-            
-            textInputActive = false;
-            selectTool('pencil');
-        }
-        
-        // Drawing functions
-        function startDrawing(e) {
-            if (currentTool === 'undo' || currentTool === 'redo' || currentTool === 'clear' || textInputActive) return;
-            
-            isDrawing = true;
-            startX = e.offsetX;
-            startY = e.offsetY;
-            lastX = e.offsetX;
-            lastY = e.offsetY;
-            
-            // Start a new path for freehand drawing
-            if (currentTool === 'pencil' || currentTool === 'eraser' || currentTool === 'highlighter') {
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-            }
-            
-            // Send cursor position to other users
-            socket.emit('cursorMove', { x: e.offsetX, y: e.offsetY, userId });
-        }
-        
-        function draw(e) {
-            const x = e.offsetX;
-            const y = e.offsetY;
-            
-            // Always send cursor position
-            socket.emit('cursorMove', { x, y, userId });
-            
-            if (!isDrawing) return;
-            
-            lastX = x;
-            lastY = y;
-            
-            switch (currentTool) {
-                case 'pencil':
-                case 'eraser':
-                case 'highlighter':
-                    ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
-                    ctx.lineTo(x, y);
-                    ctx.stroke();
-                    
-                    // Send drawing data to server
-                    socket.emit('draw', {
-                        tool: currentTool,
-                        color: currentTool === 'eraser' ? '#ffffff' : currentColor,
-                        x1: lastX,
-                        y1: lastY,
-                        x2: x,
-                        y2: y,
-                        lineWidth: currentLineWidth,
-                        userId
-                    });
-                    break;
-                    
-                case 'line':
-                case 'rectangle':
-                case 'circle':
-                    // For shapes, we'll just show a preview and handle the final drawing in stopDrawing
-                    drawShapePreview(startX, startY, x, y, currentTool);
-                    break;
-            }
-        }
-        
-        function drawShapePreview(x1, y1, x2, y2, shapeType) {
-            // Clear the preview
-            const preview = document.getElementById('shapePreview');
-            if (preview) preview.innerHTML = '';
-            
-            // Create a div for the preview
-            const previewDiv = document.createElement('div');
-            previewDiv.style.position = 'absolute';
-            previewDiv.style.border = `${currentLineWidth}px solid ${currentColor}`;
-            previewDiv.style.backgroundColor = shapeType === 'rectangle' ? `${currentColor}20` : 'transparent';
-            
-            switch (shapeType) {
-                case 'line':
-                    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    const angle = Math.atan2(y2 - y1, x2 - x1);
-                    
-                    previewDiv.style.width = `${length}px`;
-                    previewDiv.style.height = '0';
-                    previewDiv.style.borderBottom = `${currentLineWidth}px solid ${currentColor}`;
-                    previewDiv.style.transformOrigin = '0 0';
-                    previewDiv.style.transform = `rotate(${angle}rad)`;
-                    previewDiv.style.left = `${x1}px`;
-                    previewDiv.style.top = `${y1}px`;
-                    break;
-                    
-                case 'rectangle':
-                    previewDiv.style.left = `${Math.min(x1, x2)}px`;
-                    previewDiv.style.top = `${Math.min(y1, y2)}px`;
-                    previewDiv.style.width = `${Math.abs(x2 - x1)}px`;
-                    previewDiv.style.height = `${Math.abs(y2 - y1)}px`;
-                    break;
-                    
-                case 'circle':
-                    const radius = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    previewDiv.style.width = `${radius * 2}px`;
-                    previewDiv.style.height = `${radius * 2}px`;
-                    previewDiv.style.borderRadius = '50%';
-                    previewDiv.style.left = `${x1 - radius}px`;
-                    previewDiv.style.top = `${y1 - radius}px`;
-                    break;
-            }
-            
-            if (preview) {
-                preview.appendChild(previewDiv);
-            }
-        }
-        
-        function handleClick(e) {
-            if (currentTool === 'text') {
-                lastX = e.offsetX;
-                lastY = e.offsetY;
-                startTextInput();
-            }
-        }
-        
-        function stopDrawing(e) {
-            if (!isDrawing || currentTool === 'text') return;
-            
-            const x = e.offsetX;
-            const y = e.offsetY;
-            
-            // Clear the preview
-            const preview = document.getElementById('shapePreview');
-            if (preview) preview.innerHTML = '';
-            
-            // For shapes, complete the drawing and add to history
-            if (currentTool === 'line' || currentTool === 'rectangle' || currentTool === 'circle') {
-                const shape = {
-                    tool: currentTool,
-                    color: currentColor,
-                    x1: startX,
-                    y1: startY,
-                    x2: x,
-                    y2: y,
-                    lineWidth: currentLineWidth,
-                    userId
-                };
-                
-                // Add to history
-                addToHistory(shape);
-                
-                // Send to server
-                socket.emit('draw', shape);
-                
-                // Draw the shape
-                drawAction(shape);
-            } else if (currentTool === 'pencil' || currentTool === 'eraser' || currentTool === 'highlighter') {
-                // For pencil/eraser, the path is already drawn
-                ctx.closePath();
-            }
-            
-            isDrawing = false;
-        }
-        
-        // History functions
-        function addToHistory(action) {
-            // If we're not at the end of history, discard future actions
-            if (historyPointer < drawingHistory.length - 1) {
-                drawingHistory = drawingHistory.slice(0, historyPointer + 1);
-            }
-            
-            drawingHistory.push(action);
-            historyPointer = drawingHistory.length - 1;
-        }
-        
-        function undo() {
-            if (historyPointer >= 0) {
-                historyPointer--;
-                redrawWhiteboard();
-                socket.emit('undo', { userId });
-            }
-        }
-        
-        function redo() {
-            if (historyPointer < drawingHistory.length - 1) {
-                historyPointer++;
-                redrawWhiteboard();
-                socket.emit('redo', { userId });
-            }
-        }
-        
-        function clearBoard() {
-            if (confirm('Are you sure you want to clear the board? This cannot be undone.')) {
-                drawingHistory = [];
-                historyPointer = -1;
-                redrawWhiteboard();
-                socket.emit('clear', { userId });
-            }
-        }
-        
-        function redrawWhiteboard() {
-            // Clear canvas
-            ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
-            
-            // Redraw all actions up to history pointer
-            for (let i = 0; i <= historyPointer; i++) {
-                const action = drawingHistory[i];
-                drawAction(action, false);
-            }
-        }
-        
-        function drawAction(action, addToHistoryFlag = true) {
-            ctx.strokeStyle = action.color;
-            ctx.fillStyle = action.color;
-            ctx.lineWidth = action.lineWidth || 3;
-            
-            switch (action.tool) {
-                case 'pencil':
-                case 'eraser':
-                case 'highlighter':
-                    ctx.beginPath();
-                    ctx.moveTo(action.x1, action.y1);
-                    ctx.lineTo(action.x2, action.y2);
-                    ctx.stroke();
-                    break;
-                    
-                case 'line':
-                    ctx.beginPath();
-                    ctx.moveTo(action.x1, action.y1);
-                    ctx.lineTo(action.x2, action.y2);
-                    ctx.stroke();
-                    break;
-                    
-                case 'rectangle':
-                    ctx.beginPath();
-                    const rectWidth = action.x2 - action.x1;
-                    const rectHeight = action.y2 - action.y1;
-                    ctx.rect(action.x1, action.y1, rectWidth, rectHeight);
-                    ctx.stroke();
-                    break;
-                    
-                case 'circle':
-                    ctx.beginPath();
-                    const radius = Math.sqrt(Math.pow(action.x2 - action.x1, 2) + Math.pow(action.y2 - action.y1, 2));
-                    ctx.arc(action.x1, action.y1, radius, 0, Math.PI * 2);
-                    ctx.stroke();
-                    break;
-                    
-                case 'text':
-                    ctx.font = `${action.size * 5}px Arial`;
-                    ctx.fillText(action.text, action.x, action.y);
-                    break;
-            }
-            
-            if (addToHistoryFlag) {
-                addToHistory(action);
-            }
-        }
-        
-        // Media functions
-        async function toggleMic() {
-            try {
-                if (!localStream) {
-                    localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: isVideoOn });
-                    if (isVideoOn) {
-                        localVideo.srcObject = localStream;
-                        localVideoPlaceholder.style.display = 'none';
-                        localVideo.style.display = 'block';
-                    }
-                }
-                
-                const audioTracks = localStream.getAudioTracks();
-                audioTracks.forEach(track => {
-                    track.enabled = !track.enabled;
-                });
-                
-                isMicOn = !isMicOn;
-                micBtn.classList.toggle('off', !isMicOn);
-                micBtn.querySelector('i').className = isMicOn ? 'fas fa-microphone' : 'fas fa-microphone-slash';
-                showNotification(isMicOn ? 'Microphone enabled' : 'Microphone muted');
-                
-                // Update WebRTC connection if it exists
-                if (peerConnection) {
-                    setupPeerConnection();
-                }
-            } catch (err) {
-                console.error('Error accessing microphone:', err);
-                showNotification('Could not access microphone');
-                isMicOn = false;
-                micBtn.classList.add('off');
-                micBtn.querySelector('i').className = 'fas fa-microphone-slash';
-            }
-        }
-        
-        async function toggleVideo() {
-            try {
-                if (!localStream) {
-                    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: isMicOn });
-                    localVideo.srcObject = localStream;
-                    localVideoPlaceholder.style.display = 'none';
-                    localVideo.style.display = 'block';
-                    isVideoOn = true;
-                    videoBtn.classList.remove('off');
-                    videoBtn.querySelector('i').className = 'fas fa-video';
-                    showNotification('Video enabled');
-                    
-                    // Start WebRTC connection
-                    setupPeerConnection();
-                } else {
-                    const videoTracks = localStream.getVideoTracks();
-                    videoTracks.forEach(track => {
-                        track.enabled = !track.enabled;
-                    });
-                    
-                    isVideoOn = !isVideoOn;
-                    videoBtn.classList.toggle('off', !isVideoOn);
-                    videoBtn.querySelector('i').className = isVideoOn ? 'fas fa-video' : 'fas fa-video-slash';
-                    localVideoPlaceholder.style.display = isVideoOn ? 'none' : 'flex';
-                    localVideo.style.display = isVideoOn ? 'block' : 'none';
-                    showNotification(isVideoOn ? 'Video enabled' : 'Video disabled');
-                    
-                    // Update WebRTC connection if it exists
-                    if (peerConnection) {
-                        setupPeerConnection();
-                    }
-                }
-            } catch (err) {
-                console.error('Error accessing camera:', err);
-                showNotification('Could not access camera');
-                isVideoOn = false;
-                videoBtn.classList.add('off');
-                videoBtn.querySelector('i').className = 'fas fa-video-slash';
-                localVideoPlaceholder.style.display = 'flex';
-                localVideo.style.display = 'none';
-            }
-        }
-        
-        function setupPeerConnection() {
-            if (peerConnection) {
-                peerConnection.close();
-            }
-            
-            peerConnection = new RTCPeerConnection({
-                iceServers: [
-                    { urls: 'stun:stun.l.google.com:19302' },
-                    { urls: 'stun:stun1.l.google.com:19302' },
-                    { urls: 'stun:stun2.l.google.com:19302' }
-                ]
+            whiteboard.addEventListener('mousedown', (e) => {
+                isDrawing = true;
+                [lastX, lastY] = [e.offsetX, e.offsetY];
             });
             
-            // Add local stream to connection
-            if (localStream) {
-                localStream.getTracks().forEach(track => {
-                    peerConnection.addTrack(track, localStream);
-                });
-            }
+            whiteboard.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+                [lastX, lastY] = [e.offsetX, e.offsetY];
+            });
             
-            // Listen for ICE candidates
-            peerConnection.onicecandidate = (event) => {
-                if (event.candidate) {
-                    socket.emit('iceCandidate', { 
-                        candidate: event.candidate,
-                        boardId,
-                        userId
-                    });
-                }
-            };
-            
-            // Listen for remote stream
-            peerConnection.ontrack = (event) => {
-                remoteVideo.srcObject = event.streams[0];
-                remoteVideoPlaceholder.style.display = 'none';
-                remoteVideo.style.display = 'block';
-            };
-            
-            // Create and send offer
-            peerConnection.createOffer()
-                .then(offer => peerConnection.setLocalDescription(offer))
-                .then(() => {
-                    socket.emit('offer', {
-                        offer: peerConnection.localDescription,
-                        boardId,
-                        userId
-                    });
-                })
-                .catch(err => {
-                    console.error('Error creating offer:', err);
-                });
+            whiteboard.addEventListener('mouseup', () => isDrawing = false);
+            whiteboard.addEventListener('mouseout', () => isDrawing = false);
         }
         
-        // Loading screen functions
-        function showLoading(message) {
+        function showLoading(message = 'Loading...') {
+            loadingScreen.querySelector('p').textContent = message;
             loadingScreen.style.display = 'flex';
-            loadingText.textContent = message;
         }
         
         function hideLoading() {
             loadingScreen.style.display = 'none';
         }
         
-        // Notification function
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.opacity = '0';
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 3000);
-        }
-        
-        // Socket.io event handlers
-        socket.on('connect', () => {
-            console.log('Connected to server');
-        });
-        
-        socket.on('disconnect', () => {
-            console.log('Disconnected from server');
-        });
-        
-        socket.on('connect_error', (err) => {
-            console.error('Connection error:', err);
-            hideLoading();
-            showNotification('Connection error. Please try again.');
-        });
-        
-        socket.on('boardCreated', (data) => {
-            boardId = data.boardId;
-            boardIdElement.textContent = data.boardId;
-            
-            // Hide loading and show app
-            hideLoading();
-            appContainer.style.display = 'flex';
-            
-            showNotification('New board created! Share the URL to collaborate.');
-        });
-        
-        socket.on('boardJoined', (data) => {
-            boardId = data.boardId;
-            boardIdElement.textContent = data.boardId;
-            
-            // Load existing users
-            users = data.users || {};
-            updateUserList();
-            
-            // Hide loading and show app
-            hideLoading();
-            appContainer.style.display = 'flex';
-            
-            showNotification(`Joined board ${data.boardId}`);
-        });
-        
-        socket.on('userJoined', (user) => {
-            users[user.userId] = user;
-            updateUserList();
-            showNotification(`${user.userName} joined the board`);
-            
-            // If we have media and a new user joins, set up connection
-            if (localStream && Object.keys(users).length === 2) {
-                setupPeerConnection();
-            }
-        });
-        
-        socket.on('userLeft', (userId) => {
-            const userName = users[userId]?.userName || 'A user';
-            delete users[userId];
-            
-            // Remove cursor
-            const cursor = document.getElementById(`cursor-${userId}`);
-            if (cursor) cursor.remove();
-            
-            updateUserList();
-            showNotification(`${userName} left the board`);
-            
-            // Reset peer connection if no users left
-            if (Object.keys(users).length <= 1 && peerConnection) {
-                peerConnection.close();
-                peerConnection = null;
-                remoteVideo.srcObject = null;
-                remoteVideo.style.display = 'none';
-                remoteVideoPlaceholder.style.display = 'flex';
-            }
-        });
-        
-        socket.on('userCursor', (data) => {
-            const userId = data.userId;
-            const x = data.x;
-            const y = data.y;
-            const color = users[userId]?.userColor || '#000000';
-            
-            let cursor = document.getElementById(`cursor-${userId}`);
-            
-            if (!cursor) {
-                cursor = document.createElement('div');
-                cursor.id = `cursor-${userId}`;
-                cursor.className = 'cursor';
-                cursor.style.backgroundColor = color;
-                
-                // Add user name to cursor
-                const userName = document.createElement('div');
-                userName.className = 'cursor-name';
-                userName.textContent = users[userId]?.userName || 'User';
-                userName.style.color = color;
-                cursor.appendChild(userName);
-                
-                whiteboard.parentElement.appendChild(cursor);
-            }
-            
-            cursor.style.left = `${x}px`;
-            cursor.style.top = `${y}px`;
-        });
-        
-        socket.on('drawing', (action) => {
-            drawAction(action);
-        });
-        
-        socket.on('undo', () => {
-            if (historyPointer >= 0) {
-                historyPointer--;
-                redrawWhiteboard();
-            }
-        });
-        
-        socket.on('redo', () => {
-            if (historyPointer < drawingHistory.length - 1) {
-                historyPointer++;
-                redrawWhiteboard();
-            }
-        });
-        
-        socket.on('clear', () => {
-            drawingHistory = [];
-            historyPointer = -1;
-            redrawWhiteboard();
-        });
-        
-        socket.on('userCount', (count) => {
-            userCount.textContent = count;
-        });
-        
-        // WebRTC events
-        socket.on('offer', async (data) => {
-            if (data.userId === userId) return;
-            
-            if (!peerConnection) {
-                setupPeerConnection();
-            }
-            
-            try {
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-                const answer = await peerConnection.createAnswer();
-                await peerConnection.setLocalDescription(answer);
-                
-                socket.emit('answer', {
-                    answer,
-                    boardId,
-                    userId,
-                    toUserId: data.userId
-                });
-            } catch (err) {
-                console.error('Error handling offer:', err);
-            }
-        });
-        
-        socket.on('answer', async (data) => {
-            if (data.userId === userId) return;
-            try {
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-            } catch (err) {
-                console.error('Error handling answer:', err);
-            }
-        });
-        
-        socket.on('iceCandidate', async (data) => {
-            if (data.userId === userId) return;
-            try {
-                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-            } catch (err) {
-                console.error('Error adding ICE candidate:', err);
-            }
-        });
-        
-        // Helper functions
-        function updateUserList() {
-            userList.innerHTML = '';
-            
-            Object.values(users).forEach(user => {
-                if (user.userId === userId) return;
-                
-                const userItem = document.createElement('div');
-                userItem.className = 'user-item';
-                
-                const userColor = document.createElement('div');
-                userColor.className = 'user-color';
-                userColor.style.backgroundColor = user.userColor;
-                
-                const userName = document.createElement('div');
-                userName.className = 'user-name';
-                userName.textContent = user.userName;
-                
-                userItem.appendChild(userColor);
-                userItem.appendChild(userName);
-                userList.appendChild(userItem);
-            });
-        }
-        
         // Initialize the app
-        initApp();
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
