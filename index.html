@@ -41,63 +41,72 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
         .login-box {
             background-color: var(--white);
-            padding: 2rem;
             border-radius: 10px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
             width: 400px;
-            max-width: 90%;
+            padding: 40px;
             text-align: center;
         }
         
         .login-logo {
-            margin-bottom: 1.5rem;
+            margin-bottom: 30px;
+        }
+        
+        .login-logo img {
+            height: 60px;
         }
         
         .login-title {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
             color: var(--secondary-color);
         }
         
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .form-group {
+        .login-form .form-group {
+            margin-bottom: 20px;
             text-align: left;
         }
         
-        .form-group label {
+        .login-form label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
         }
         
-        .form-group input {
+        .login-form input {
             width: 100%;
-            padding: 0.8rem;
+            padding: 12px 15px;
             border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        .login-form input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
         
         .login-btn {
+            width: 100%;
+            padding: 12px;
             background-color: var(--primary-color);
             color: var(--white);
             border: none;
-            padding: 0.8rem;
-            border-radius: 5px;
-            font-size: 1rem;
+            border-radius: 6px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
+            margin-top: 10px;
         }
         
         .login-btn:hover {
@@ -105,13 +114,40 @@
         }
         
         .social-login {
-            margin-top: 1.5rem;
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
+            margin-top: 30px;
         }
         
-        .social-btn {
+        .social-login p {
+            color: #777;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .social-login p::before,
+        .social-login p::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background-color: #ddd;
+        }
+        
+        .social-login p::before {
+            left: 0;
+        }
+        
+        .social-login p::after {
+            right: 0;
+        }
+        
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .social-icon {
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -119,23 +155,37 @@
             align-items: center;
             justify-content: center;
             color: var(--white);
+            font-size: 18px;
             cursor: pointer;
             transition: var(--transition);
         }
         
-        .google-btn { background-color: #DB4437; }
-        .github-btn { background-color: #333; }
-        .linkedin-btn { background-color: #0077B5; }
-        
-        .signup-link {
-            margin-top: 1rem;
-            font-size: 0.9rem;
+        .social-icon.google {
+            background-color: #db4437;
         }
         
-        .signup-link a {
+        .social-icon.github {
+            background-color: #333;
+        }
+        
+        .social-icon.linkedin {
+            background-color: #0077b5;
+        }
+        
+        .social-icon:hover {
+            transform: translateY(-3px);
+        }
+        
+        .login-footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+        
+        .login-footer a {
             color: var(--primary-color);
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 500;
         }
         
         /* Main App Styles */
@@ -143,7 +193,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            display: none; /* Initially hidden until login */
+            display: none;
         }
         
         .header {
@@ -663,62 +713,57 @@
             border-radius: 4px;
         }
         
-        /* Slide navigation */
-        .slide-navigation {
+        /* Slides navigation */
+        .slides-nav {
             position: absolute;
             bottom: 60px;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
             background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
             padding: 8px 15px;
-            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             z-index: 50;
         }
         
         .slide-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
             width: 30px;
             height: 30px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
         }
         
         .slide-btn:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.2);
         }
         
-        .slide-btn.active {
-            background-color: var(--primary-color);
-        }
-        
-        .add-slide-btn {
-            background-color: var(--primary-color);
+        .slide-indicator {
+            color: white;
+            font-size: 14px;
+            min-width: 60px;
+            text-align: center;
         }
         
         /* More options menu */
-        .more-options {
-            position: relative;
-        }
-        
         .more-menu {
             position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--white);
+            bottom: 60px;
+            right: 20px;
+            background-color: white;
             border-radius: 8px;
-            box-shadow: var(--shadow);
-            padding: 10px 0;
-            min-width: 200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             z-index: 100;
+            overflow: hidden;
             display: none;
         }
         
@@ -727,11 +772,11 @@
         }
         
         .menu-item {
-            padding: 8px 15px;
-            cursor: pointer;
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             gap: 10px;
+            cursor: pointer;
             transition: background-color 0.2s;
         }
         
@@ -739,57 +784,66 @@
             background-color: #f5f5f5;
         }
         
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
         /* Reactions */
-        .reactions-container {
+        .reactions {
             position: absolute;
             bottom: 60px;
-            right: 20px;
+            left: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 8px;
             display: flex;
-            gap: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 8px 15px;
-            border-radius: 30px;
-            z-index: 50;
+            gap: 8px;
+            z-index: 100;
+            display: none;
+        }
+        
+        .reactions.show {
+            display: flex;
         }
         
         .reaction-btn {
-            width: 30px;
-            height: 30px;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
             border-radius: 50%;
-            background-color: transparent;
-            color: white;
-            border: none;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 1.2rem;
+            transition: transform 0.2s;
         }
         
         .reaction-btn:hover {
             transform: scale(1.2);
         }
         
-        /* Draggable elements */
-        .draggable {
+        /* Draggable text */
+        .draggable-text {
             position: absolute;
             cursor: move;
+            user-select: none;
+            padding: 5px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 4px;
             z-index: 80;
         }
         
-        .draggable img {
-            max-width: 100%;
-            max-height: 100%;
-        }
-        
-        .draggable-text {
-            min-width: 100px;
-            min-height: 30px;
-            padding: 5px;
-            outline: none;
-            border: 1px dashed #ccc;
-            background-color: rgba(255, 255, 255, 0.8);
+        /* Draggable image */
+        .draggable-image {
+            position: absolute;
+            cursor: move;
+            user-select: none;
+            max-width: 300px;
+            max-height: 300px;
+            z-index: 80;
         }
         
         /* Recording indicator */
@@ -805,7 +859,8 @@
             align-items: center;
             gap: 8px;
             z-index: 1000;
-            box-shadow: var(--shadow);
+            font-size: 14px;
+            display: none;
         }
         
         .recording-dot {
@@ -823,7 +878,7 @@
         }
         
         /* Settings modal */
-        .modal-overlay {
+        .settings-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -831,141 +886,141 @@
             bottom: 0;
             background-color: rgba(0, 0, 0, 0.5);
             display: flex;
-            justify-content: center;
             align-items: center;
-            z-index: 2000;
+            justify-content: center;
+            z-index: 10000;
             display: none;
         }
         
-        .modal {
-            background-color: var(--white);
+        .settings-content {
+            background-color: white;
             border-radius: 10px;
             width: 80%;
             max-width: 600px;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: var(--shadow);
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
-        .modal-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #eee;
+        .settings-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
         
-        .modal-title {
-            font-size: 1.2rem;
+        .settings-title {
+            font-size: 20px;
             font-weight: 600;
         }
         
-        .modal-close {
+        .close-settings {
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 24px;
             cursor: pointer;
-            color: #999;
+            color: #777;
         }
         
-        .modal-body {
-            padding: 20px;
-        }
-        
-        .settings-option {
+        .settings-section {
             margin-bottom: 20px;
         }
         
-        .settings-label {
-            display: block;
-            margin-bottom: 8px;
+        .settings-section-title {
             font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
         }
         
-        .settings-input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        
-        .settings-checkbox {
-            margin-right: 8px;
-        }
-        
-        .modal-footer {
-            padding: 15px 20px;
-            border-top: 1px solid #eee;
+        .settings-option {
             display: flex;
-            justify-content: flex-end;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
         }
         
-        .modal-btn {
-            padding: 8px 15px;
-            border-radius: 4px;
+        .settings-option:last-child {
+            border-bottom: none;
+        }
+        
+        .settings-option label {
             cursor: pointer;
-            font-weight: 500;
         }
         
-        .modal-btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
+        .settings-option select,
+        .settings-option input[type="range"] {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        /* Highlight tool */
+        .highlight-color {
+            opacity: 0.5;
         }
         
         /* Save confirmation */
-        .save-confirm {
+        .save-modal {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
-            justify-content: center;
             align-items: center;
-            z-index: 3000;
+            justify-content: center;
+            z-index: 10000;
             display: none;
         }
         
-        .save-box {
-            background-color: var(--white);
-            padding: 20px;
-            border-radius: 8px;
+        .save-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 80%;
             max-width: 400px;
+            padding: 20px;
             text-align: center;
         }
         
         .save-title {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
         }
         
         .save-buttons {
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin-top: 20px;
         }
         
         .save-btn {
             padding: 8px 20px;
-            border-radius: 4px;
+            border-radius: 6px;
+            border: none;
             cursor: pointer;
             font-weight: 500;
-            min-width: 80px;
+            transition: var(--transition);
         }
         
-        .save-primary {
+        .save-confirm {
             background-color: var(--primary-color);
             color: white;
-            border: none;
         }
         
-        .save-secondary {
-            background-color: #eee;
-            border: 1px solid #ccc;
+        .save-discard {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        
+        .save-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -974,39 +1029,64 @@
     <div class="login-container" id="loginContainer">
         <div class="login-box">
             <div class="login-logo">
-                <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Education Logo" height="60">
-                <h1 class="logo-text">WhiteBoard Education</h1>
+                <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Education Logo">
             </div>
-            <h2 class="login-title">Sign In</h2>
+            <h1 class="login-title">Welcome to WhiteBoard Education</h1>
+            
             <form class="login-form" id="loginForm">
                 <div class="form-group">
-                    <label for="username">Username or Email</label>
-                    <input type="text" id="username" required>
+                    <label for="username">Username (Optional)</label>
+                    <input type="text" id="username" placeholder="Enter your name">
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" required>
+                    <label for="loginMethod">Login Method</label>
+                    <select id="loginMethod" class="login-form input">
+                        <option value="guest">Continue as Guest</option>
+                        <option value="email">Email</option>
+                        <option value="phone">Phone</option>
+                        <option value="google">Google</option>
+                        <option value="github">GitHub</option>
+                        <option value="linkedin">LinkedIn</option>
+                    </select>
                 </div>
-                <button type="submit" class="login-btn">Sign In</button>
+                
+                <div id="emailField" class="form-group" style="display: none;">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Enter your email">
+                </div>
+                
+                <div id="phoneField" class="form-group" style="display: none;">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="Enter your phone number">
+                </div>
+                
+                <button type="button" class="login-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Continue
+                </button>
             </form>
+            
             <div class="social-login">
-                <div class="social-btn google-btn" title="Sign in with Google">
-                    <i class="fab fa-google"></i>
-                </div>
-                <div class="social-btn github-btn" title="Sign in with GitHub">
-                    <i class="fab fa-github"></i>
-                </div>
-                <div class="social-btn linkedin-btn" title="Sign in with LinkedIn">
-                    <i class="fab fa-linkedin-in"></i>
+                <p>or continue with</p>
+                <div class="social-icons">
+                    <div class="social-icon google" onclick="loginWithGoogle()">
+                        <i class="fab fa-google"></i>
+                    </div>
+                    <div class="social-icon github" onclick="loginWithGithub()">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <div class="social-icon linkedin" onclick="loginWithLinkedIn()">
+                        <i class="fab fa-linkedin-in"></i>
+                    </div>
                 </div>
             </div>
-            <div class="signup-link">
-                Don't have an account? <a href="#" id="signupLink">Sign up</a>
+            
+            <div class="login-footer">
+                By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
             </div>
         </div>
     </div>
     
-    <!-- Main App (initially hidden) -->
+    <!-- Main App -->
     <div class="container" id="appContainer">
         <div class="header">
             <div class="logo-container">
@@ -1076,55 +1156,48 @@
                     <i class="fas fa-trash-alt"></i>
                     <span class="tool-tip">Clear Board</span>
                 </div>
-                
-                <div class="tool more-options" id="moreOptions">
-                    <i class="fas fa-ellipsis-h"></i>
-                    <span class="tool-tip">More Options</span>
-                    <div class="more-menu" id="moreMenu">
-                        <div class="menu-item" id="screenShareBtn">
-                            <i class="fas fa-desktop"></i>
-                            <span>Share Screen</span>
-                        </div>
-                        <div class="menu-item" id="recordSessionBtn">
-                            <i class="fas fa-record-vinyl"></i>
-                            <span>Record Session</span>
-                        </div>
-                        <div class="menu-item" id="chatBtn">
-                            <i class="fas fa-comment"></i>
-                            <span>Chat</span>
-                        </div>
-                        <div class="menu-item" id="settingsBtn">
-                            <i class="fas fa-cog"></i>
-                            <span>Settings</span>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <div class="whiteboard-container">
                 <canvas id="whiteboard"></canvas>
                 <div id="shapePreview" class="shape-preview"></div>
                 
-                <!-- Slide navigation -->
-                <div class="slide-navigation" id="slideNavigation">
-                    <button class="slide-btn" id="prevSlideBtn">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <span id="slideCounter">1/1</span>
-                    <button class="slide-btn" id="nextSlideBtn">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                    <button class="slide-btn add-slide-btn" id="addSlideBtn">
-                        <i class="fas fa-plus"></i>
-                    </button>
+                <!-- Slides navigation -->
+                <div class="slides-nav">
+                    <button class="slide-btn" id="prevSlide"><i class="fas fa-chevron-left"></i></button>
+                    <div class="slide-indicator" id="slideIndicator">Slide 1 of 1</div>
+                    <button class="slide-btn" id="nextSlide"><i class="fas fa-chevron-right"></i></button>
+                    <button class="slide-btn" id="addSlide"><i class="fas fa-plus"></i></button>
+                </div>
+                
+                <!-- More options menu -->
+                <div class="more-menu" id="moreMenu">
+                    <div class="menu-item" id="messageBtn">
+                        <i class="far fa-comment-dots"></i>
+                        <span>Messages</span>
+                    </div>
+                    <div class="menu-item" id="screenShareBtn">
+                        <i class="fas fa-desktop"></i>
+                        <span>Share Screen</span>
+                    </div>
+                    <div class="menu-item" id="recordBtn">
+                        <i class="fas fa-circle"></i>
+                        <span>Record Session</span>
+                    </div>
+                    <div class="menu-item" id="settingsBtn">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </div>
                 </div>
                 
                 <!-- Reactions -->
-                <div class="reactions-container" id="reactionsContainer">
-                    <button class="reaction-btn" data-reaction="👍">👍</button>
-                    <button class="reaction-btn" data-reaction="👎">👎</button>
-                    <button class="reaction-btn" data-reaction="👏">👏</button>
-                    <button class="reaction-btn" data-reaction="🙋">🙋</button>
+                <div class="reactions" id="reactions">
+                    <div class="reaction-btn" data-reaction="👍">👍</div>
+                    <div class="reaction-btn" data-reaction="👎">👎</div>
+                    <div class="reaction-btn" data-reaction="👏">👏</div>
+                    <div class="reaction-btn" data-reaction="🙌">🙌</div>
+                    <div class="reaction-btn" data-reaction="🤔">🤔</div>
+                    <div class="reaction-btn" data-reaction="🙋‍♂️">🙋‍♂️</div>
                 </div>
             </div>
             
@@ -1152,6 +1225,14 @@
                         <button id="videoBtn" class="media-btn">
                             <i class="fas fa-video"></i>
                             <span>Video</span>
+                        </button>
+                        <button id="reactionBtn" class="media-btn">
+                            <i class="far fa-smile"></i>
+                            <span>React</span>
+                        </button>
+                        <button id="moreBtn" class="media-btn">
+                            <i class="fas fa-ellipsis-h"></i>
+                            <span>More</span>
                         </button>
                     </div>
                     
@@ -1188,7 +1269,7 @@
     </div>
     
     <!-- Recording Indicator -->
-    <div class="recording-indicator" id="recordingIndicator" style="display: none;">
+    <div class="recording-indicator" id="recordingIndicator">
         <div class="recording-dot"></div>
         <span>Recording</span>
     </div>
@@ -1203,69 +1284,86 @@
     </div>
     
     <!-- Settings Modal -->
-    <div class="modal-overlay" id="settingsModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">Settings</div>
-                <button class="modal-close" id="closeSettings">&times;</button>
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <div class="settings-title">Settings</div>
+                <button class="close-settings" id="closeSettings">&times;</button>
             </div>
-            <div class="modal-body">
+            
+            <div class="settings-section">
+                <div class="settings-section-title">Video Settings</div>
                 <div class="settings-option">
-                    <label class="settings-label">Username</label>
-                    <input type="text" class="settings-input" id="settingsUsername">
+                    <label for="videoDevice">Camera</label>
+                    <select id="videoDevice">
+                        <option value="default">Default</option>
+                    </select>
                 </div>
                 <div class="settings-option">
-                    <label class="settings-label">User Color</label>
-                    <input type="color" class="settings-input" id="settingsUserColor">
+                    <label for="videoResolution">Resolution</label>
+                    <select id="videoResolution">
+                        <option value="hd">HD (720p)</option>
+                        <option value="fullhd">Full HD (1080p)</option>
+                        <option value="auto">Auto</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <div class="settings-section-title">Audio Settings</div>
+                <div class="settings-option">
+                    <label for="audioDevice">Microphone</label>
+                    <select id="audioDevice">
+                        <option value="default">Default</option>
+                    </select>
                 </div>
                 <div class="settings-option">
-                    <label class="settings-label">Video Quality</label>
-                    <select class="settings-input" id="videoQuality">
-                        <option value="low">Low</option>
+                    <label for="audioVolume">Volume</label>
+                    <input type="range" id="audioVolume" min="0" max="100" value="80">
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <div class="settings-section-title">Whiteboard Settings</div>
+                <div class="settings-option">
+                    <label for="gridSize">Grid Size</label>
+                    <select id="gridSize">
+                        <option value="small">Small</option>
                         <option value="medium" selected>Medium</option>
-                        <option value="high">High</option>
+                        <option value="large">Large</option>
+                        <option value="none">None</option>
                     </select>
                 </div>
                 <div class="settings-option">
-                    <label class="settings-label">Audio Input</label>
-                    <select class="settings-input" id="audioInput">
-                        <option value="default">Default</option>
-                    </select>
-                </div>
-                <div class="settings-option">
-                    <label class="settings-label">Video Input</label>
-                    <select class="settings-input" id="videoInput">
-                        <option value="default">Default</option>
-                    </select>
-                </div>
-                <div class="settings-option">
-                    <label class="settings-label">
-                        <input type="checkbox" class="settings-checkbox" id="autoSave">
-                        Auto-save changes
-                    </label>
-                </div>
-                <div class="settings-option">
-                    <label class="settings-label">
-                        <input type="checkbox" class="settings-checkbox" id="showCursors">
-                        Show other users' cursors
-                    </label>
+                    <label for="autoSave">Auto-save</label>
+                    <input type="checkbox" id="autoSave" checked>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="modal-btn" id="cancelSettings">Cancel</button>
-                <button class="modal-btn modal-btn-primary" id="saveSettings">Save</button>
+            
+            <div class="settings-section">
+                <div class="settings-section-title">Appearance</div>
+                <div class="settings-option">
+                    <label for="theme">Theme</label>
+                    <select id="theme">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="system">System</option>
+                    </select>
+                </div>
             </div>
+            
+            <button class="save-btn save-confirm" id="saveSettings">Save Settings</button>
         </div>
     </div>
     
-    <!-- Save Confirmation -->
-    <div class="save-confirm" id="saveConfirm">
-        <div class="save-box">
-            <div class="save-title">Save changes before leaving?</div>
-            <p>Your changes will be lost if you don't save them.</p>
+    <!-- Save Confirmation Modal -->
+    <div class="save-modal" id="saveModal">
+        <div class="save-content">
+            <div class="save-title">Save before leaving?</div>
+            <p>Do you want to save your whiteboard before refreshing or leaving?</p>
             <div class="save-buttons">
-                <button class="save-btn save-secondary" id="dontSaveBtn">Don't Save</button>
-                <button class="save-btn save-primary" id="saveBtn">Save</button>
+                <button class="save-btn save-confirm" id="confirmSave">Save</button>
+                <button class="save-btn save-discard" id="discardChanges">Discard</button>
             </div>
         </div>
     </div>
@@ -1275,7 +1373,10 @@
         const loginContainer = document.getElementById('loginContainer');
         const appContainer = document.getElementById('appContainer');
         const loginForm = document.getElementById('loginForm');
-        const signupLink = document.getElementById('signupLink');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginMethod = document.getElementById('loginMethod');
+        const emailField = document.getElementById('emailField');
+        const phoneField = document.getElementById('phoneField');
         
         const whiteboard = document.getElementById('whiteboard');
         const ctx = whiteboard.getContext('2d');
@@ -1289,6 +1390,8 @@
         const notification = document.getElementById('notification');
         const micBtn = document.getElementById('micBtn');
         const videoBtn = document.getElementById('videoBtn');
+        const reactionBtn = document.getElementById('reactionBtn');
+        const moreBtn = document.getElementById('moreBtn');
         const localVideo = document.getElementById('localVideo');
         const remoteVideo = document.getElementById('remoteVideo');
         const localVideoPlaceholder = localVideo.nextElementSibling;
@@ -1297,26 +1400,31 @@
         const loadingScreen = document.getElementById('loading');
         const loadingText = loadingScreen.querySelector('.loading-text');
         const shapePreview = document.getElementById('shapePreview');
-        const moreOptions = document.getElementById('moreOptions');
-        const moreMenu = document.getElementById('moreMenu');
-        const screenShareBtn = document.getElementById('screenShareBtn');
-        const recordSessionBtn = document.getElementById('recordSessionBtn');
-        const chatBtn = document.getElementById('chatBtn');
-        const settingsBtn = document.getElementById('settingsBtn');
         const recordingIndicator = document.getElementById('recordingIndicator');
+        
+        // Slides elements
+        const prevSlideBtn = document.getElementById('prevSlide');
+        const nextSlideBtn = document.getElementById('nextSlide');
+        const addSlideBtn = document.getElementById('addSlide');
+        const slideIndicator = document.getElementById('slideIndicator');
+        
+        // More menu elements
+        const moreMenu = document.getElementById('moreMenu');
+        const messageBtn = document.getElementById('messageBtn');
+        const screenShareBtn = document.getElementById('screenShareBtn');
+        const recordBtn = document.getElementById('recordBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const reactions = document.getElementById('reactions');
+        
+        // Settings modal elements
         const settingsModal = document.getElementById('settingsModal');
         const closeSettings = document.getElementById('closeSettings');
-        const cancelSettings = document.getElementById('cancelSettings');
         const saveSettings = document.getElementById('saveSettings');
-        const prevSlideBtn = document.getElementById('prevSlideBtn');
-        const nextSlideBtn = document.getElementById('nextSlideBtn');
-        const addSlideBtn = document.getElementById('addSlideBtn');
-        const slideCounter = document.getElementById('slideCounter');
-        const reactionsContainer = document.getElementById('reactionsContainer');
-        const reactionBtns = document.querySelectorAll('.reaction-btn');
-        const saveConfirm = document.getElementById('saveConfirm');
-        const saveBtn = document.getElementById('saveBtn');
-        const dontSaveBtn = document.getElementById('dontSaveBtn');
+        
+        // Save modal elements
+        const saveModal = document.getElementById('saveModal');
+        const confirmSave = document.getElementById('confirmSave');
+        const discardChanges = document.getElementById('discardChanges');
         
         // Whiteboard state
         let currentTool = 'pencil';
@@ -1333,13 +1441,12 @@
         let textInputActive = false;
         let tempCanvas = document.createElement('canvas');
         let tempCtx = tempCanvas.getContext('2d');
-        let slides = []; // Array to store multiple slides
-        let currentSlideIndex = 0;
+        let isHighlighter = false;
         let isRecording = false;
         let mediaRecorder;
         let recordedChunks = [];
-        let autoSaveEnabled = true;
-        let showCursorsEnabled = true;
+        let currentSlide = 0;
+        let slides = [];
         
         // Media state
         let localStream = null;
@@ -1372,76 +1479,66 @@
         let userId = generateUserId();
         let userName = `User-${userId.substring(0, 4)}`;
         let userColor = generateRandomColor();
+        let unsavedChanges = false;
         
-        // Initialize application
-        function initApp() {
-            // Check if user is already logged in (from localStorage)
-            const savedUser = localStorage.getItem('whiteboardUser');
-            if (savedUser) {
-                const user = JSON.parse(savedUser);
-                userId = user.id || userId;
-                userName = user.name || userName;
-                userColor = user.color || userColor;
-                
-                // Show main app
-                loginContainer.style.display = 'none';
-                appContainer.style.display = 'flex';
-                
-                // Initialize whiteboard
-                initWhiteboard();
-            } else {
-                // Set up login form
-                loginForm.addEventListener('submit', handleLogin);
-                signupLink.addEventListener('click', showSignup);
-                
-                // Set up social login buttons
-                document.querySelector('.google-btn').addEventListener('click', () => socialLogin('google'));
-                document.querySelector('.github-btn').addEventListener('click', () => socialLogin('github'));
-                document.querySelector('.linkedin-btn').addEventListener('click', () => socialLogin('linkedin'));
+        // Initialize login form
+        loginMethod.addEventListener('change', (e) => {
+            emailField.style.display = 'none';
+            phoneField.style.display = 'none';
+            
+            if (e.target.value === 'email') {
+                emailField.style.display = 'block';
+            } else if (e.target.value === 'phone') {
+                phoneField.style.display = 'block';
             }
-        }
+        });
         
-        // Handle login
-        function handleLogin(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+        loginBtn.addEventListener('click', () => {
+            const method = loginMethod.value;
             
-            // In a real app, you would validate credentials with a server
-            // For this demo, we'll just simulate a successful login
-            userName = username || userName;
+            if (method === 'email' && document.getElementById('email').value.trim() === '') {
+                alert('Please enter your email');
+                return;
+            }
             
-            // Save user to localStorage
-            localStorage.setItem('whiteboardUser', JSON.stringify({
-                id: userId,
-                name: userName,
-                color: userColor
-            }));
+            if (method === 'phone' && document.getElementById('phone').value.trim() === '') {
+                alert('Please enter your phone number');
+                return;
+            }
             
-            // Show main app
+            // Set username if provided
+            const usernameInput = document.getElementById('username').value.trim();
+            if (usernameInput) {
+                userName = usernameInput;
+            }
+            
+            // Hide login, show app
             loginContainer.style.display = 'none';
             appContainer.style.display = 'flex';
             
-            // Initialize whiteboard
+            // Initialize the whiteboard
+            initWhiteboard();
+        });
+        
+        function loginWithGoogle() {
+            // In a real app, this would use Google OAuth
+            userName = 'Google User';
+            loginContainer.style.display = 'none';
+            appContainer.style.display = 'flex';
             initWhiteboard();
         }
         
-        // Show signup (placeholder)
-        function showSignup(e) {
-            e.preventDefault();
-            alert('Sign up functionality would be implemented here');
+        function loginWithGithub() {
+            // In a real app, this would use GitHub OAuth
+            userName = 'GitHub User';
+            loginContainer.style.display = 'none';
+            appContainer.style.display = 'flex';
+            initWhiteboard();
         }
         
-        // Social login (placeholder)
-        function socialLogin(provider) {
-            alert(`Would authenticate with ${provider} in a real app`);
-            // For demo purposes, we'll just proceed with login
-            localStorage.setItem('whiteboardUser', JSON.stringify({
-                id: userId,
-                name: `User-${Math.floor(Math.random() * 1000)}`,
-                color: generateRandomColor()
-            }));
-            
+        function loginWithLinkedIn() {
+            // In a real app, this would use LinkedIn OAuth
+            userName = 'LinkedIn User';
             loginContainer.style.display = 'none';
             appContainer.style.display = 'flex';
             initWhiteboard();
@@ -1451,6 +1548,14 @@
         function initWhiteboard() {
             // Set canvas size
             resizeCanvas();
+            
+            // Initialize slides
+            slides = [{
+                drawingHistory: [],
+                historyPointer: -1
+            }];
+            currentSlide = 0;
+            updateSlideIndicator();
             
             // Set initial styles
             ctx.strokeStyle = currentColor;
@@ -1464,179 +1569,216 @@
             tempCanvas.width = whiteboard.width;
             tempCanvas.height = whiteboard.height;
             
-            // Initialize slides
-            slides = [{
-                id: generateSlideId(),
-                name: 'Slide 1',
-                drawingHistory: [],
-                historyPointer: -1
-            }];
-            currentSlideIndex = 0;
-            updateSlideCounter();
-            
             // Load board if ID exists in URL
             const urlParams = new URLSearchParams(window.location.search);
             const urlBoardId = urlParams.get('board');
             
             if (urlBoardId) {
                 showLoading('Joining board...');
-                socket.emit('joinBoard', { 
-                    boardId: urlBoardId, 
-                    userId, 
-                    userName, 
-                    userColor 
-                });
+                socket.emit('joinBoard', { boardId: urlBoardId, userId, userName, userColor });
             } else {
                 showLoading('Creating new board...');
-                socket.emit('createBoard', { 
-                    userId, 
-                    userName, 
-                    userColor 
-                });
+                socket.emit('createBoard', { userId, userName, userColor });
             }
             
-            // Set up beforeunload handler to prevent accidental loss
-            window.addEventListener('beforeunload', handleBeforeUnload);
+            // Hide loading screen after connection is established
+            setTimeout(() => {
+                hideLoading();
+            }, 2000);
             
-            // Set up more options menu
-            moreOptions.addEventListener('click', toggleMoreMenu);
-            
-            // Set up other event listeners
-            setupEventListeners();
-        }
-        
-        // Handle beforeunload event
-        function handleBeforeUnload(e) {
-            if (!autoSaveEnabled && drawingHistory.length > 0) {
-                e.preventDefault();
-                e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-                return e.returnValue;
-            }
-        }
-        
-        // Toggle more options menu
-        function toggleMoreMenu(e) {
-            e.stopPropagation();
-            moreMenu.classList.toggle('show');
-            
-            // Close menu when clicking elsewhere
-            if (moreMenu.classList.contains('show')) {
-                document.addEventListener('click', closeMoreMenu);
-            } else {
-                document.removeEventListener('click', closeMoreMenu);
-            }
-        }
-        
-        // Close more options menu
-        function closeMoreMenu(e) {
-            if (!moreOptions.contains(e.target)) {
-                moreMenu.classList.remove('show');
-                document.removeEventListener('click', closeMoreMenu);
-            }
-        }
-        
-        // Set up event listeners
-        function setupEventListeners() {
-            // Window resize
-            window.addEventListener('resize', resizeCanvas);
-            
-            // Tool selection
-            tools.forEach(tool => {
-                tool.addEventListener('click', () => {
-                    if (textInputActive) return;
-                    
-                    const toolName = tool.dataset.tool;
-                    selectTool(toolName);
-                    
-                    // Add selection animation
-                    tool.classList.add('selected');
-                    setTimeout(() => {
-                        tool.classList.remove('selected');
-                    }, 500);
-                });
-            });
-            
-            // Color picker
-            colorPicker.addEventListener('input', (e) => {
-                currentColor = e.target.value;
-                ctx.strokeStyle = currentColor;
-                ctx.fillStyle = currentColor;
-            });
-            
-            // Line width
-            lineWidthSlider.addEventListener('input', (e) => {
-                currentLineWidth = parseInt(e.target.value);
-                ctx.lineWidth = currentLineWidth;
-                ctx.font = `${currentLineWidth * 5}px Arial`;
-            });
-            
-            // Copy board ID
-            copyBoardIdBtn.addEventListener('click', () => {
-                navigator.clipboard.writeText(boardId).then(() => {
-                    showNotification('Board ID copied to clipboard!');
-                }).catch(err => {
-                    console.error('Failed to copy board ID:', err);
-                    showNotification('Failed to copy Board ID');
-                });
-            });
-            
-            // Toggle panel
-            togglePanelBtn.addEventListener('click', () => {
-                document.querySelector('.container').classList.toggle('panel-collapsed');
-                const icon = togglePanelBtn.querySelector('i');
-                if (document.querySelector('.container').classList.contains('panel-collapsed')) {
-                    icon.classList.remove('fa-chevron-left');
-                    icon.classList.add('fa-chevron-right');
-                } else {
-                    icon.classList.remove('fa-chevron-right');
-                    icon.classList.add('fa-chevron-left');
+            // Setup beforeunload handler
+            window.addEventListener('beforeunload', (e) => {
+                if (unsavedChanges) {
+                    e.preventDefault();
+                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+                    showSaveModal();
                 }
             });
-            
-            // Media buttons
-            micBtn.addEventListener('click', toggleMic);
-            videoBtn.addEventListener('click', toggleVideo);
-            
-            // More options
-            screenShareBtn.addEventListener('click', toggleScreenShare);
-            recordSessionBtn.addEventListener('click', toggleRecording);
-            chatBtn.addEventListener('click', showChat);
-            settingsBtn.addEventListener('click', showSettings);
-            
-            // Slide navigation
-            prevSlideBtn.addEventListener('click', goToPreviousSlide);
-            nextSlideBtn.addEventListener('click', goToNextSlide);
-            addSlideBtn.addEventListener('click', addNewSlide);
-            
-            // Reactions
-            reactionBtns.forEach(btn => {
-                btn.addEventListener('click', sendReaction);
-            });
-            
-            // Settings modal
-            closeSettings.addEventListener('click', hideSettings);
-            cancelSettings.addEventListener('click', hideSettings);
-            saveSettings.addEventListener('click', saveSettingsChanges);
-            
-            // Save confirmation
-            saveBtn.addEventListener('click', saveBeforeLeave);
-            dontSaveBtn.addEventListener('click', leaveWithoutSaving);
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', handleKeyDown);
-            
-            // Whiteboard events
-            whiteboard.addEventListener('mousedown', startDrawing);
-            whiteboard.addEventListener('mousemove', draw);
-            whiteboard.addEventListener('mouseup', stopDrawing);
-            whiteboard.addEventListener('mouseout', stopDrawing);
-            whiteboard.addEventListener('click', handleClick);
-            whiteboard.addEventListener('dragover', handleDragOver);
-            whiteboard.addEventListener('drop', handleDrop);
         }
         
-        // Handle keyboard shortcuts
-        function handleKeyDown(e) {
+        // Generate a unique user ID
+        function generateUserId() {
+            return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+        }
+        
+        // Generate a random color
+        function generateRandomColor() {
+            return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
+        }
+        
+        // Resize canvas to fit container
+        function resizeCanvas() {
+            const container = whiteboard.parentElement;
+            whiteboard.width = container.offsetWidth;
+            whiteboard.height = container.offsetHeight;
+            tempCanvas.width = container.offsetWidth;
+            tempCanvas.height = container.offsetHeight;
+            
+            // Redraw everything after resize
+            redrawWhiteboard();
+        }
+        
+        // Event Listeners
+        window.addEventListener('resize', resizeCanvas);
+        
+        tools.forEach(tool => {
+            tool.addEventListener('click', () => {
+                if (textInputActive) return;
+                
+                const toolName = tool.dataset.tool;
+                selectTool(toolName);
+                
+                // Add selection animation
+                tool.classList.add('selected');
+                setTimeout(() => {
+                    tool.classList.remove('selected');
+                }, 500);
+            });
+        });
+        
+        colorPicker.addEventListener('input', (e) => {
+            currentColor = e.target.value;
+            ctx.strokeStyle = currentColor;
+            ctx.fillStyle = currentColor;
+        });
+        
+        lineWidthSlider.addEventListener('input', (e) => {
+            currentLineWidth = parseInt(e.target.value);
+            ctx.lineWidth = currentLineWidth;
+            ctx.font = `${currentLineWidth * 5}px Arial`;
+        });
+        
+        copyBoardIdBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(boardId).then(() => {
+                showNotification('Board ID copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy board ID:', err);
+                showNotification('Failed to copy Board ID');
+            });
+        });
+        
+        togglePanelBtn.addEventListener('click', () => {
+            document.querySelector('.container').classList.toggle('panel-collapsed');
+            const icon = togglePanelBtn.querySelector('i');
+            if (document.querySelector('.container').classList.contains('panel-collapsed')) {
+                icon.classList.remove('fa-chevron-left');
+                icon.classList.add('fa-chevron-right');
+            } else {
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-left');
+            }
+        });
+        
+        // More menu event listeners
+        moreBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            moreMenu.classList.toggle('show');
+            reactions.classList.remove('show');
+        });
+        
+        messageBtn.addEventListener('click', () => {
+            showNotification('Messages feature coming soon!');
+            moreMenu.classList.remove('show');
+        });
+        
+        screenShareBtn.addEventListener('click', () => {
+            startScreenShare();
+            moreMenu.classList.remove('show');
+        });
+        
+        recordBtn.addEventListener('click', () => {
+            toggleRecording();
+            moreMenu.classList.remove('show');
+        });
+        
+        settingsBtn.addEventListener('click', () => {
+            showSettings();
+            moreMenu.classList.remove('show');
+        });
+        
+        // Reactions event listeners
+        reactionBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            reactions.classList.toggle('show');
+            moreMenu.classList.remove('show');
+        });
+        
+        document.querySelectorAll('.reaction-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const reaction = e.target.getAttribute('data-reaction');
+                sendReaction(reaction);
+                reactions.classList.remove('show');
+            });
+        });
+        
+        // Close menus when clicking outside
+        document.addEventListener('click', () => {
+            moreMenu.classList.remove('show');
+            reactions.classList.remove('show');
+        });
+        
+        // Slides navigation
+        prevSlideBtn.addEventListener('click', () => {
+            if (currentSlide > 0) {
+                saveCurrentSlide();
+                currentSlide--;
+                loadSlide(currentSlide);
+                updateSlideIndicator();
+            }
+        });
+        
+        nextSlideBtn.addEventListener('click', () => {
+            if (currentSlide < slides.length - 1) {
+                saveCurrentSlide();
+                currentSlide++;
+                loadSlide(currentSlide);
+                updateSlideIndicator();
+            }
+        });
+        
+        addSlideBtn.addEventListener('click', () => {
+            saveCurrentSlide();
+            slides.push({
+                drawingHistory: [],
+                historyPointer: -1
+            });
+            currentSlide = slides.length - 1;
+            loadSlide(currentSlide);
+            updateSlideIndicator();
+            showNotification('New slide added');
+        });
+        
+        // Settings modal
+        closeSettings.addEventListener('click', () => {
+            settingsModal.style.display = 'none';
+        });
+        
+        saveSettings.addEventListener('click', () => {
+            // In a real app, save settings here
+            settingsModal.style.display = 'none';
+            showNotification('Settings saved');
+        });
+        
+        // Save modal
+        confirmSave.addEventListener('click', () => {
+            saveWhiteboard();
+            saveModal.style.display = 'none';
+            unsavedChanges = false;
+            window.location.reload();
+        });
+        
+        discardChanges.addEventListener('click', () => {
+            saveModal.style.display = 'none';
+            unsavedChanges = false;
+            window.location.reload();
+        });
+        
+        function showSaveModal() {
+            saveModal.style.display = 'flex';
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
             if (textInputActive) return;
             
             // Tool shortcuts
@@ -1665,47 +1807,26 @@
                     redo();
                     e.preventDefault();
                 } else if (e.key === 's') {
+                    saveWhiteboard();
                     e.preventDefault();
-                    saveCurrentSlide();
                 }
             }
             
             // Slide navigation shortcuts
-            if (e.key === 'ArrowLeft') {
-                goToPreviousSlide();
+            if (e.key === 'ArrowLeft' && currentSlide > 0) {
+                saveCurrentSlide();
+                currentSlide--;
+                loadSlide(currentSlide);
+                updateSlideIndicator();
                 e.preventDefault();
-            } else if (e.key === 'ArrowRight') {
-                goToNextSlide();
+            } else if (e.key === 'ArrowRight' && currentSlide < slides.length - 1) {
+                saveCurrentSlide();
+                currentSlide++;
+                loadSlide(currentSlide);
+                updateSlideIndicator();
                 e.preventDefault();
             }
-        }
-        
-        // Generate a unique user ID
-        function generateUserId() {
-            return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
-        }
-        
-        // Generate a slide ID
-        function generateSlideId() {
-            return 'slide-' + Math.random().toString(36).substring(2, 9);
-        }
-        
-        // Generate a random color
-        function generateRandomColor() {
-            return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
-        }
-        
-        // Resize canvas to fit container
-        function resizeCanvas() {
-            const container = whiteboard.parentElement;
-            whiteboard.width = container.offsetWidth;
-            whiteboard.height = container.offsetHeight;
-            tempCanvas.width = container.offsetWidth;
-            tempCanvas.height = container.offsetHeight;
-            
-            // Redraw everything after resize
-            redrawWhiteboard();
-        }
+        });
         
         // Select a tool
         function selectTool(toolName) {
@@ -1734,167 +1855,13 @@
                 } else if (toolName === 'text') {
                     startTextInput();
                 } else if (toolName === 'highlighter') {
+                    isHighlighter = true;
                     ctx.globalAlpha = 0.5;
                 } else if (toolName === 'image') {
-                    triggerImageUpload();
+                    uploadImage();
                 } else {
+                    isHighlighter = false;
                     ctx.globalAlpha = 1.0;
-                }
-            }
-        }
-        
-        // Trigger image upload
-        function triggerImageUpload() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = handleImageUpload;
-            input.click();
-        }
-        
-        // Handle image upload
-        function handleImageUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = new Image();
-                img.onload = () => {
-                    // Create a draggable image element
-                    const imgElement = document.createElement('div');
-                    imgElement.className = 'draggable';
-                    imgElement.style.left = '100px';
-                    imgElement.style.top = '100px';
-                    
-                    const imgContent = document.createElement('img');
-                    imgContent.src = event.target.result;
-                    imgContent.draggable = false;
-                    
-                    imgElement.appendChild(imgContent);
-                    whiteboard.parentElement.appendChild(imgElement);
-                    
-                    // Make the image draggable
-                    makeDraggable(imgElement);
-                    
-                    // Send to other users
-                    socket.emit('addImage', {
-                        imageData: event.target.result,
-                        x: 100,
-                        y: 100,
-                        userId
-                    });
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        // Make an element draggable
-        function makeDraggable(element) {
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            
-            element.onmousedown = dragMouseDown;
-            
-            function dragMouseDown(e) {
-                e = e || window.event;
-                e.preventDefault();
-                
-                // Get the mouse cursor position at startup
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-            }
-            
-            function elementDrag(e) {
-                e = e || window.event;
-                e.preventDefault();
-                
-                // Calculate the new cursor position
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                
-                // Set the element's new position
-                element.style.top = (element.offsetTop - pos2) + "px";
-                element.style.left = (element.offsetLeft - pos1) + "px";
-            }
-            
-            function closeDragElement() {
-                // Stop moving when mouse button is released
-                document.onmouseup = null;
-                document.onmousemove = null;
-                
-                // Send new position to other users
-                if (element.dataset.id) {
-                    socket.emit('moveImage', {
-                        id: element.dataset.id,
-                        x: parseInt(element.style.left),
-                        y: parseInt(element.style.top),
-                        userId
-                    });
-                }
-            }
-        }
-        
-        // Handle drag over event for file drops
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.dataTransfer.dropEffect = 'copy';
-        }
-        
-        // Handle file drop
-        function handleDrop(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            if (currentTool !== 'image') return;
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                const file = files[0];
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const img = new Image();
-                        img.onload = () => {
-                            // Create a draggable image element at drop position
-                            const rect = whiteboard.getBoundingClientRect();
-                            const x = e.clientX - rect.left;
-                            const y = e.clientY - rect.top;
-                            
-                            const imgElement = document.createElement('div');
-                            imgElement.className = 'draggable';
-                            imgElement.style.left = `${x}px`;
-                            imgElement.style.top = `${y}px`;
-                            imgElement.dataset.id = `img-${Date.now()}`;
-                            
-                            const imgContent = document.createElement('img');
-                            imgContent.src = event.target.result;
-                            imgContent.draggable = false;
-                            
-                            imgElement.appendChild(imgContent);
-                            whiteboard.parentElement.appendChild(imgElement);
-                            
-                            // Make the image draggable
-                            makeDraggable(imgElement);
-                            
-                            // Send to other users
-                            socket.emit('addImage', {
-                                id: imgElement.dataset.id,
-                                imageData: event.target.result,
-                                x: x,
-                                y: y,
-                                userId
-                            });
-                        };
-                        img.src = event.target.result;
-                    };
-                    reader.readAsDataURL(file);
                 }
             }
         }
@@ -1923,13 +1890,201 @@
                 
                 // Draw the text
                 drawAction(action);
+                
+                // Make text draggable
+                makeTextDraggable(text, lastX, lastY, currentColor, currentLineWidth);
             }
             
             textInputActive = false;
             selectTool('pencil');
         }
         
+        // Upload image
+        function uploadImage() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        // Draw image on canvas
+                        const action = {
+                            tool: 'image',
+                            x: whiteboard.width / 2 - img.width / 2,
+                            y: whiteboard.height / 2 - img.height / 2,
+                            width: img.width,
+                            height: img.height,
+                            imageData: event.target.result,
+                            userId
+                        };
+                        
+                        // Add to history
+                        addToHistory(action);
+                        
+                        // Send to server
+                        socket.emit('draw', action);
+                        
+                        // Draw the image
+                        drawAction(action);
+                        
+                        // Make image draggable
+                        makeImageDraggable(img, action.x, action.y);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            };
+            
+            input.click();
+        }
+        
+        // Make text draggable
+        function makeTextDraggable(text, x, y, color, size) {
+            const textElement = document.createElement('div');
+            textElement.className = 'draggable-text';
+            textElement.textContent = text;
+            textElement.style.color = color;
+            textElement.style.fontSize = `${size * 5}px`;
+            textElement.style.left = `${x}px`;
+            textElement.style.top = `${y}px`;
+            
+            whiteboard.parentElement.appendChild(textElement);
+            
+            // Make draggable
+            let isDragging = false;
+            let offsetX, offsetY;
+            
+            textElement.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                offsetX = e.clientX - textElement.getBoundingClientRect().left;
+                offsetY = e.clientY - textElement.getBoundingClientRect().top;
+                e.stopPropagation();
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                
+                const containerRect = whiteboard.parentElement.getBoundingClientRect();
+                const x = e.clientX - containerRect.left - offsetX;
+                const y = e.clientY - containerRect.top - offsetY;
+                
+                textElement.style.left = `${x}px`;
+                textElement.style.top = `${y}px`;
+            });
+            
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    
+                    // Update the position in the drawing history
+                    const rect = textElement.getBoundingClientRect();
+                    const containerRect = whiteboard.parentElement.getBoundingClientRect();
+                    const newX = rect.left - containerRect.left;
+                    const newY = rect.top - containerRect.top;
+                    
+                    // Find the text action in history and update its position
+                    for (let i = 0; i <= slides[currentSlide].historyPointer; i++) {
+                        const action = slides[currentSlide].drawingHistory[i];
+                        if (action.tool === 'text' && action.x === x && action.y === y) {
+                            action.x = newX;
+                            action.y = newY;
+                            break;
+                        }
+                    }
+                    
+                    // Notify other users
+                    socket.emit('updateTextPosition', {
+                        oldX: x,
+                        oldY: y,
+                        newX,
+                        newY,
+                        boardId,
+                        userId
+                    });
+                }
+            });
+        }
+        
+        // Make image draggable
+        function makeImageDraggable(img, x, y) {
+            const imgElement = document.createElement('img');
+            imgElement.className = 'draggable-image';
+            imgElement.src = img.src;
+            imgElement.style.width = `${img.width}px`;
+            imgElement.style.height = `${img.height}px`;
+            imgElement.style.left = `${x}px`;
+            imgElement.style.top = `${y}px`;
+            
+            whiteboard.parentElement.appendChild(imgElement);
+            
+            // Make draggable
+            let isDragging = false;
+            let offsetX, offsetY;
+            
+            imgElement.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                offsetX = e.clientX - imgElement.getBoundingClientRect().left;
+                offsetY = e.clientY - imgElement.getBoundingClientRect().top;
+                e.stopPropagation();
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                
+                const containerRect = whiteboard.parentElement.getBoundingClientRect();
+                const x = e.clientX - containerRect.left - offsetX;
+                const y = e.clientY - containerRect.top - offsetY;
+                
+                imgElement.style.left = `${x}px`;
+                imgElement.style.top = `${y}px`;
+            });
+            
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    
+                    // Update the position in the drawing history
+                    const rect = imgElement.getBoundingClientRect();
+                    const containerRect = whiteboard.parentElement.getBoundingClientRect();
+                    const newX = rect.left - containerRect.left;
+                    const newY = rect.top - containerRect.top;
+                    
+                    // Find the image action in history and update its position
+                    for (let i = 0; i <= slides[currentSlide].historyPointer; i++) {
+                        const action = slides[currentSlide].drawingHistory[i];
+                        if (action.tool === 'image' && action.x === x && action.y === y) {
+                            action.x = newX;
+                            action.y = newY;
+                            break;
+                        }
+                    }
+                    
+                    // Notify other users
+                    socket.emit('updateImagePosition', {
+                        oldX: x,
+                        oldY: y,
+                        newX,
+                        newY,
+                        boardId,
+                        userId
+                    });
+                }
+            });
+        }
+        
         // Drawing functions
+        whiteboard.addEventListener('mousedown', startDrawing);
+        whiteboard.addEventListener('mousemove', draw);
+        whiteboard.addEventListener('mouseup', stopDrawing);
+        whiteboard.addEventListener('mouseout', stopDrawing);
+        whiteboard.addEventListener('click', handleClick);
+        
         function startDrawing(e) {
             if (currentTool === 'undo' || currentTool === 'redo' || currentTool === 'clear' || textInputActive) return;
             
@@ -1963,16 +2118,33 @@
             
             switch (currentTool) {
                 case 'pencil':
-                case 'eraser':
                 case 'highlighter':
-                    ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+                    ctx.strokeStyle = currentColor;
                     ctx.lineTo(x, y);
                     ctx.stroke();
                     
                     // Send drawing data to server
                     socket.emit('draw', {
                         tool: currentTool,
-                        color: currentTool === 'eraser' ? '#ffffff' : currentColor,
+                        color: currentColor,
+                        x1: lastX,
+                        y1: lastY,
+                        x2: x,
+                        y2: y,
+                        lineWidth: currentLineWidth,
+                        userId
+                    });
+                    break;
+                    
+                case 'eraser':
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    
+                    // Send drawing data to server
+                    socket.emit('draw', {
+                        tool: currentTool,
+                        color: '#ffffff',
                         x1: lastX,
                         y1: lastY,
                         x2: x,
@@ -2074,51 +2246,50 @@
                 // Draw the shape
                 drawAction(shape);
             } else if (currentTool === 'pencil' || currentTool === 'eraser' || currentTool === 'highlighter') {
-                // For pencil/eraser, the path is already drawn
+                // For pencil/eraser/highlighter, the path is already drawn
                 ctx.closePath();
             }
             
             isDrawing = false;
+            unsavedChanges = true;
         }
         
         // History functions
         function addToHistory(action) {
             // If we're not at the end of history, discard future actions
-            if (historyPointer < slides[currentSlideIndex].drawingHistory.length - 1) {
-                slides[currentSlideIndex].drawingHistory = slides[currentSlideIndex].drawingHistory.slice(0, historyPointer + 1);
+            if (slides[currentSlide].historyPointer < slides[currentSlide].drawingHistory.length - 1) {
+                slides[currentSlide].drawingHistory = slides[currentSlide].drawingHistory.slice(0, slides[currentSlide].historyPointer + 1);
             }
             
-            slides[currentSlideIndex].drawingHistory.push(action);
-            slides[currentSlideIndex].historyPointer = slides[currentSlideIndex].drawingHistory.length - 1;
-            
-            // Auto-save if enabled
-            if (autoSaveEnabled) {
-                saveCurrentSlide();
-            }
+            slides[currentSlide].drawingHistory.push(action);
+            slides[currentSlide].historyPointer = slides[currentSlide].drawingHistory.length - 1;
         }
         
         function undo() {
-            if (slides[currentSlideIndex].historyPointer >= 0) {
-                slides[currentSlideIndex].historyPointer--;
+            if (slides[currentSlide].historyPointer >= 0) {
+                slides[currentSlide].historyPointer--;
                 redrawWhiteboard();
-                socket.emit('undo', { userId });
+                socket.emit('undo', { userId, slideIndex: currentSlide });
+                unsavedChanges = true;
             }
         }
         
         function redo() {
-            if (slides[currentSlideIndex].historyPointer < slides[currentSlideIndex].drawingHistory.length - 1) {
-                slides[currentSlideIndex].historyPointer++;
+            if (slides[currentSlide].historyPointer < slides[currentSlide].drawingHistory.length - 1) {
+                slides[currentSlide].historyPointer++;
                 redrawWhiteboard();
-                socket.emit('redo', { userId });
+                socket.emit('redo', { userId, slideIndex: currentSlide });
+                unsavedChanges = true;
             }
         }
         
         function clearBoard() {
             if (confirm('Are you sure you want to clear the board? This cannot be undone.')) {
-                slides[currentSlideIndex].drawingHistory = [];
-                slides[currentSlideIndex].historyPointer = -1;
+                slides[currentSlide].drawingHistory = [];
+                slides[currentSlide].historyPointer = -1;
                 redrawWhiteboard();
-                socket.emit('clear', { userId });
+                socket.emit('clear', { userId, slideIndex: currentSlide });
+                unsavedChanges = true;
             }
         }
         
@@ -2127,21 +2298,29 @@
             ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
             
             // Redraw all actions up to history pointer
-            for (let i = 0; i <= slides[currentSlideIndex].historyPointer; i++) {
-                const action = slides[currentSlideIndex].drawingHistory[i];
+            for (let i = 0; i <= slides[currentSlide].historyPointer; i++) {
+                const action = slides[currentSlide].drawingHistory[i];
                 drawAction(action, false);
             }
         }
         
         function drawAction(action, addToHistoryFlag = true) {
+            if (!action) return;
+            
             ctx.strokeStyle = action.color;
             ctx.fillStyle = action.color;
             ctx.lineWidth = action.lineWidth || 3;
             
+            if (action.tool === 'highlighter') {
+                ctx.globalAlpha = 0.5;
+            } else {
+                ctx.globalAlpha = 1.0;
+            }
+            
             switch (action.tool) {
                 case 'pencil':
-                case 'eraser':
                 case 'highlighter':
+                case 'eraser':
                     ctx.beginPath();
                     ctx.moveTo(action.x1, action.y1);
                     ctx.lineTo(action.x2, action.y2);
@@ -2174,6 +2353,14 @@
                     ctx.font = `${action.size * 5}px Arial`;
                     ctx.fillText(action.text, action.x, action.y);
                     break;
+                    
+                case 'image':
+                    const img = new Image();
+                    img.onload = () => {
+                        ctx.drawImage(img, action.x, action.y, action.width, action.height);
+                    };
+                    img.src = action.imageData;
+                    break;
             }
             
             if (addToHistoryFlag) {
@@ -2181,62 +2368,29 @@
             }
         }
         
-        // Slide functions
-        function goToPreviousSlide() {
-            if (currentSlideIndex > 0) {
-                currentSlideIndex--;
-                updateSlideCounter();
-                redrawWhiteboard();
-                socket.emit('changeSlide', { 
-                    slideIndex: currentSlideIndex,
-                    userId 
-                });
-            }
-        }
-        
-        function goToNextSlide() {
-            if (currentSlideIndex < slides.length - 1) {
-                currentSlideIndex++;
-                updateSlideCounter();
-                redrawWhiteboard();
-                socket.emit('changeSlide', { 
-                    slideIndex: currentSlideIndex,
-                    userId 
-                });
-            }
-        }
-        
-        function addNewSlide() {
-            const newSlide = {
-                id: generateSlideId(),
-                name: `Slide ${slides.length + 1}`,
-                drawingHistory: [],
-                historyPointer: -1
+        // Slides functions
+        function saveCurrentSlide() {
+            slides[currentSlide] = {
+                drawingHistory: [...slides[currentSlide].drawingHistory],
+                historyPointer: slides[currentSlide].historyPointer
             };
+        }
+        
+        function loadSlide(index) {
+            if (index < 0 || index >= slides.length) return;
             
-            slides.push(newSlide);
-            currentSlideIndex = slides.length - 1;
-            updateSlideCounter();
+            currentSlide = index;
             redrawWhiteboard();
             
-            socket.emit('addSlide', {
-                slide: newSlide,
+            // Notify other users
+            socket.emit('changeSlide', {
+                slideIndex: currentSlide,
                 userId
             });
         }
         
-        function updateSlideCounter() {
-            slideCounter.textContent = `${currentSlideIndex + 1}/${slides.length}`;
-            
-            // Update button states
-            prevSlideBtn.disabled = currentSlideIndex === 0;
-            nextSlideBtn.disabled = currentSlideIndex === slides.length - 1;
-        }
-        
-        function saveCurrentSlide() {
-            // In a real app, you would save to a database
-            // For this demo, we'll just show a notification
-            showNotification('Slide saved');
+        function updateSlideIndicator() {
+            slideIndicator.textContent = `Slide ${currentSlide + 1} of ${slides.length}`;
         }
         
         // Media functions
@@ -2317,92 +2471,146 @@
             }
         }
         
-        async function toggleScreenShare() {
+        async function startScreenShare() {
             try {
-                if (!localStream) {
-                    localStream = await navigator.mediaDevices.getDisplayMedia({
-                        video: true,
-                        audio: true
+                const stream = await navigator.mediaDevices.getDisplayMedia({ 
+                    video: true,
+                    audio: true
+                });
+                
+                // Replace the local video with screen share
+                localVideo.srcObject = stream;
+                localVideoPlaceholder.style.display = 'none';
+                localVideo.style.display = 'block';
+                
+                // Update WebRTC connection
+                if (peerConnection) {
+                    // Remove old video tracks
+                    const senders = peerConnection.getSenders();
+                    senders.forEach(sender => {
+                        if (sender.track.kind === 'video') {
+                            peerConnection.removeTrack(sender);
+                        }
                     });
                     
-                    localVideo.srcObject = localStream;
-                    localVideoPlaceholder.style.display = 'none';
-                    localVideo.style.display = 'block';
-                    
-                    // Handle when user stops sharing
-                    localStream.getVideoTracks()[0].onended = () => {
-                        showNotification('Screen sharing stopped');
+                    // Add screen share track
+                    stream.getTracks().forEach(track => {
+                        peerConnection.addTrack(track, stream);
+                    });
+                }
+                
+                showNotification('Screen sharing started');
+                
+                // Handle when user stops screen sharing
+                stream.getVideoTracks()[0].onended = () => {
+                    showNotification('Screen sharing stopped');
+                    if (isVideoOn) {
+                        toggleVideo(); // Restore camera
+                    } else {
                         localVideo.srcObject = null;
                         localVideo.style.display = 'none';
                         localVideoPlaceholder.style.display = 'flex';
-                    };
-                    
-                    showNotification('Screen sharing started');
-                    
-                    // Start WebRTC connection
-                    setupPeerConnection();
-                } else {
-                    // Stop sharing
-                    localStream.getTracks().forEach(track => track.stop());
-                    localStream = null;
-                    localVideo.srcObject = null;
-                    localVideo.style.display = 'none';
-                    localVideoPlaceholder.style.display = 'flex';
-                    showNotification('Screen sharing stopped');
-                }
+                    }
+                };
             } catch (err) {
                 console.error('Error sharing screen:', err);
                 showNotification('Could not share screen');
             }
         }
         
-        async function toggleRecording() {
+        function toggleRecording() {
             if (isRecording) {
-                // Stop recording
-                mediaRecorder.stop();
-                isRecording = false;
-                recordingIndicator.style.display = 'none';
-                showNotification('Recording stopped');
+                stopRecording();
             } else {
-                try {
-                    // Start recording
-                    const stream = await navigator.mediaDevices.getDisplayMedia({
-                        video: true,
-                        audio: true
-                    });
-                    
-                    mediaRecorder = new MediaRecorder(stream);
-                    recordedChunks = [];
-                    
-                    mediaRecorder.ondataavailable = (e) => {
-                        if (e.data.size > 0) {
-                            recordedChunks.push(e.data);
-                        }
-                    };
-                    
-                    mediaRecorder.onstop = () => {
-                        const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                        const url = URL.createObjectURL(blob);
-                        
-                        // Create download link
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `whiteboard-session-${new Date().toISOString()}.webm`;
-                        a.click();
-                        
-                        // Clean up
-                        URL.revokeObjectURL(url);
-                        stream.getTracks().forEach(track => track.stop());
-                    };
-                    
-                    mediaRecorder.start();
-                    isRecording = true;
-                    recordingIndicator.style.display = 'flex';
-                    showNotification('Recording started');
-                } catch (err) {
-                    console.error('Error starting recording:', err);
-                    showNotification('Could not start recording');
+                startRecording();
+            }
+        }
+        
+        function startRecording() {
+            if (!localStream) {
+                showNotification('Please enable video or audio first');
+                return;
+            }
+            
+            recordedChunks = [];
+            const options = { mimeType: 'video/webm' };
+            mediaRecorder = new MediaRecorder(localStream, options);
+            
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) {
+                    recordedChunks.push(e.data);
                 }
+            };
+            
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                
+                // Create download link
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `whiteboard-session-${new Date().toISOString()}.webm`;
+                a.click();
+                
+                showNotification('Recording saved');
+            };
+            
+            mediaRecorder.start();
+            isRecording = true;
+            recordingIndicator.style.display = 'flex';
+            showNotification('Recording started');
+        }
+        
+        function stopRecording() {
+            if (!isRecording) return;
+            
+            mediaRecorder.stop();
+            isRecording = false;
+            recordingIndicator.style.display = 'none';
+            showNotification('Recording stopped');
+        }
+        
+        function sendReaction(reaction) {
+            socket.emit('reaction', { 
+                reaction,
+                userId,
+                userName
+            });
+            
+            showNotification(`You reacted with ${reaction}`);
+        }
+        
+        function showSettings() {
+            settingsModal.style.display = 'flex';
+        }
+        
+        function saveWhiteboard() {
+            // In a real app, this would save to a database or file
+            const data = {
+                slides,
+                createdAt: new Date().toISOString(),
+                createdBy: userName
+            };
+            
+            // For demo purposes, we'll just save to localStorage
+            localStorage.setItem(`whiteboard-${boardId}`, JSON.stringify(data));
+            
+            showNotification('Whiteboard saved');
+            unsavedChanges = false;
+        }
+        
+        function loadWhiteboard() {
+            const savedData = localStorage.getItem(`whiteboard-${boardId}`);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                slides = data.slides || [{
+                    drawingHistory: [],
+                    historyPointer: -1
+                }];
+                currentSlide = 0;
+                loadSlide(currentSlide);
+                updateSlideIndicator();
+                showNotification('Whiteboard loaded');
             }
         }
         
@@ -2453,73 +2661,6 @@
                 });
         }
         
-        // Chat functions
-        function showChat() {
-            alert('Chat functionality would be implemented here');
-        }
-        
-        // Settings functions
-        function showSettings() {
-            // Populate settings
-            document.getElementById('settingsUsername').value = userName;
-            document.getElementById('settingsUserColor').value = userColor;
-            document.getElementById('autoSave').checked = autoSaveEnabled;
-            document.getElementById('showCursors').checked = showCursorsEnabled;
-            
-            // Show modal
-            settingsModal.style.display = 'flex';
-        }
-        
-        function hideSettings() {
-            settingsModal.style.display = 'none';
-        }
-        
-        function saveSettingsChanges() {
-            userName = document.getElementById('settingsUsername').value;
-            userColor = document.getElementById('settingsUserColor').value;
-            autoSaveEnabled = document.getElementById('autoSave').checked;
-            showCursorsEnabled = document.getElementById('showCursors').checked;
-            
-            // Update user info
-            localStorage.setItem('whiteboardUser', JSON.stringify({
-                id: userId,
-                name: userName,
-                color: userColor
-            }));
-            
-            // Send update to server
-            socket.emit('updateUser', {
-                userId,
-                userName,
-                userColor
-            });
-            
-            hideSettings();
-            showNotification('Settings saved');
-        }
-        
-        // Reaction functions
-        function sendReaction(e) {
-            const reaction = e.target.dataset.reaction;
-            socket.emit('sendReaction', {
-                reaction,
-                userId
-            });
-            showNotification(`Sent ${reaction} reaction`);
-        }
-        
-        // Save confirmation functions
-        function saveBeforeLeave() {
-            saveCurrentSlide();
-            saveConfirm.style.display = 'none';
-            window.location.href = 'about:blank'; // Replace with actual destination
-        }
-        
-        function leaveWithoutSaving() {
-            saveConfirm.style.display = 'none';
-            window.location.href = 'about:blank'; // Replace with actual destination
-        }
-        
         // Loading screen functions
         function showLoading(message) {
             loadingScreen.style.display = 'flex';
@@ -2528,16 +2669,6 @@
         
         function hideLoading() {
             loadingScreen.style.display = 'none';
-        }
-        
-        // Notification function
-        function showNotification(message) {
-            notification.textContent = message;
-            notification.style.display = 'block';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
         }
         
         // Socket.io event handlers
@@ -2552,31 +2683,29 @@
             
             showNotification('New board created! Share the URL to collaborate.');
             hideLoading();
+            
+            // Load any saved data
+            loadWhiteboard();
         });
         
         socket.on('boardJoined', (data) => {
             boardId = data.boardId;
             boardIdElement.textContent = data.boardId;
             
-            // Load existing slides
+            // Load existing drawings and slides
             slides = data.slides || [{
-                id: generateSlideId(),
-                name: 'Slide 1',
-                drawingHistory: [],
-                historyPointer: -1
+                drawingHistory: data.drawings || [],
+                historyPointer: (data.drawings || []).length - 1
             }];
-            currentSlideIndex = data.currentSlideIndex || 0;
-            updateSlideCounter();
-            
-            // Load drawings for current slide
-            if (slides[currentSlideIndex]) {
-                slides[currentSlideIndex].drawingHistory = data.drawings || [];
-                slides[currentSlideIndex].historyPointer = slides[currentSlideIndex].drawingHistory.length - 1;
-                redrawWhiteboard();
-            }
+            currentSlide = 0;
+            loadSlide(currentSlide);
+            updateSlideIndicator();
             
             showNotification(`Joined board ${data.boardId}`);
             hideLoading();
+            
+            // Load any saved data
+            loadWhiteboard();
         });
         
         socket.on('userJoined', (user) => {
@@ -2622,8 +2751,6 @@
         });
         
         socket.on('userCursor', (data) => {
-            if (!showCursorsEnabled) return;
-            
             const userId = data.userId;
             const x = data.x;
             const y = data.y;
@@ -2655,111 +2782,94 @@
             drawAction(action);
         });
         
-        socket.on('undo', () => {
-            if (slides[currentSlideIndex].historyPointer >= 0) {
-                slides[currentSlideIndex].historyPointer--;
+        socket.on('undo', (data) => {
+            if (data.slideIndex === currentSlide) {
+                if (slides[currentSlide].historyPointer >= 0) {
+                    slides[currentSlide].historyPointer--;
+                    redrawWhiteboard();
+                }
+            }
+        });
+        
+        socket.on('redo', (data) => {
+            if (data.slideIndex === currentSlide) {
+                if (slides[currentSlide].historyPointer < slides[currentSlide].drawingHistory.length - 1) {
+                    slides[currentSlide].historyPointer++;
+                    redrawWhiteboard();
+                }
+            }
+        });
+        
+        socket.on('clear', (data) => {
+            if (data.slideIndex === currentSlide) {
+                slides[currentSlide].drawingHistory = [];
+                slides[currentSlide].historyPointer = -1;
                 redrawWhiteboard();
             }
         });
         
-        socket.on('redo', () => {
-            if (slides[currentSlideIndex].historyPointer < slides[currentSlideIndex].drawingHistory.length - 1) {
-                slides[currentSlideIndex].historyPointer++;
+        socket.on('changeSlide', (data) => {
+            if (data.userId !== userId) {
+                currentSlide = data.slideIndex;
                 redrawWhiteboard();
+                updateSlideIndicator();
             }
         });
         
-        socket.on('clear', () => {
-            slides[currentSlideIndex].drawingHistory = [];
-            slides[currentSlideIndex].historyPointer = -1;
+        socket.on('updateTextPosition', (data) => {
+            // Find and update the text position
+            for (let i = 0; i <= slides[currentSlide].historyPointer; i++) {
+                const action = slides[currentSlide].drawingHistory[i];
+                if (action.tool === 'text' && action.x === data.oldX && action.y === data.oldY) {
+                    action.x = data.newX;
+                    action.y = data.newY;
+                    break;
+                }
+            }
+            
+            // Redraw to update the position
             redrawWhiteboard();
+        });
+        
+        socket.on('updateImagePosition', (data) => {
+            // Find and update the image position
+            for (let i = 0; i <= slides[currentSlide].historyPointer; i++) {
+                const action = slides[currentSlide].drawingHistory[i];
+                if (action.tool === 'image' && action.x === data.oldX && action.y === data.oldY) {
+                    action.x = data.newX;
+                    action.y = data.newY;
+                    break;
+                }
+            }
+            
+            // Redraw to update the position
+            redrawWhiteboard();
+        });
+        
+        socket.on('reaction', (data) => {
+            if (data.userId !== userId) {
+                showNotification(`${data.userName} reacted with ${data.reaction}`);
+            }
+            
+            // Show reaction animation
+            const reactionElement = document.createElement('div');
+            reactionElement.textContent = data.reaction;
+            reactionElement.style.position = 'fixed';
+            reactionElement.style.fontSize = '40px';
+            reactionElement.style.zIndex = '1000';
+            reactionElement.style.left = `${Math.random() * 80 + 10}%`;
+            reactionElement.style.top = `${Math.random() * 80 + 10}%`;
+            reactionElement.style.animation = 'fadeInOut 2s forwards';
+            
+            document.body.appendChild(reactionElement);
+            
+            setTimeout(() => {
+                reactionElement.remove();
+            }, 2000);
         });
         
         socket.on('userCount', (count) => {
             userCount.textContent = count;
-        });
-        
-        socket.on('addSlide', (data) => {
-            slides.push(data.slide);
-            currentSlideIndex = slides.length - 1;
-            updateSlideCounter();
-            redrawWhiteboard();
-            showNotification(`${users[data.userId]?.userName || 'A user'} added a new slide`);
-        });
-        
-        socket.on('changeSlide', (data) => {
-            if (data.slideIndex >= 0 && data.slideIndex < slides.length) {
-                currentSlideIndex = data.slideIndex;
-                updateSlideCounter();
-                redrawWhiteboard();
-                showNotification(`${users[data.userId]?.userName || 'A user'} changed to slide ${currentSlideIndex + 1}`);
-            }
-        });
-        
-        socket.on('addImage', (data) => {
-            if (data.userId === userId) return;
-            
-            const img = new Image();
-            img.onload = () => {
-                const imgElement = document.createElement('div');
-                imgElement.className = 'draggable';
-                imgElement.style.left = `${data.x}px`;
-                imgElement.style.top = `${data.y}px`;
-                imgElement.dataset.id = data.id || `img-${Date.now()}`;
-                
-                const imgContent = document.createElement('img');
-                imgContent.src = data.imageData;
-                imgContent.draggable = false;
-                
-                imgElement.appendChild(imgContent);
-                whiteboard.parentElement.appendChild(imgElement);
-                
-                // Make the image draggable
-                makeDraggable(imgElement);
-            };
-            img.src = data.imageData;
-        });
-        
-        socket.on('moveImage', (data) => {
-            if (data.userId === userId) return;
-            
-            const imgElement = document.querySelector(`.draggable[data-id="${data.id}"]`);
-            if (imgElement) {
-                imgElement.style.left = `${data.x}px`;
-                imgElement.style.top = `${data.y}px`;
-            }
-        });
-        
-        socket.on('sendReaction', (data) => {
-            if (data.userId === userId) return;
-            
-            const reaction = document.createElement('div');
-            reaction.textContent = data.reaction;
-            reaction.style.position = 'absolute';
-            reaction.style.fontSize = '2rem';
-            reaction.style.animation = 'fadeIn 0.3s ease, floatUp 2s ease forwards';
-            reaction.style.zIndex = '1000';
-            
-            // Position randomly on the screen
-            const x = Math.random() * (window.innerWidth - 100);
-            const y = Math.random() * (window.innerHeight - 100);
-            reaction.style.left = `${x}px`;
-            reaction.style.top = `${y}px`;
-            
-            document.body.appendChild(reaction);
-            
-            // Remove after animation
-            setTimeout(() => {
-                reaction.remove();
-            }, 2000);
-        });
-        
-        socket.on('updateUser', (data) => {
-            if (users[data.userId]) {
-                users[data.userId].userName = data.userName;
-                users[data.userId].userColor = data.userColor;
-                updateUserList();
-            }
         });
         
         // WebRTC events
@@ -2828,8 +2938,30 @@
             });
         }
         
-        // Initialize the app
-        initApp();
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Media button event listeners
+        micBtn.addEventListener('click', toggleMic);
+        videoBtn.addEventListener('click', toggleVideo);
+        
+        // Add animation for reactions
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translateY(20px); }
+                20% { opacity: 1; transform: translateY(0); }
+                80% { opacity: 1; transform: translateY(0); }
+                100% { opacity: 0; transform: translateY(-20px); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
