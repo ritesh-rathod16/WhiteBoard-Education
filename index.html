@@ -35,78 +35,292 @@
             overflow: hidden;
         }
         
+        /* Splash Screen */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+        
+        .splash-logo {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        .splash-text {
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        
+        /* Dashboard Styles */
+        .dashboard-container {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            background-color: var(--light-color);
+        }
+        
+        .dashboard-header {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .dashboard-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--primary-color), #9b59b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .dashboard-nav {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        
+        .nav-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .dashboard-content {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: var(--white);
+            border-right: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .sidebar-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .new-board-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .new-board-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .board-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .board-item {
+            padding: 12px;
+            border-radius: 6px;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .board-item:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .board-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .board-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .board-date {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .board-item.active .board-date {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .welcome-message {
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+        
+        .welcome-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+        
+        .welcome-text {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 30px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .primary-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .secondary-btn {
+            background-color: var(--white);
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
         /* Login Page Styles */
         .login-container {
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         }
         
         .login-box {
             background-color: var(--white);
+            padding: 2rem;
             border-radius: 10px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow);
             width: 400px;
-            padding: 40px;
+            max-width: 90%;
             text-align: center;
         }
         
         .login-logo {
-            margin-bottom: 30px;
-        }
-        
-        .login-logo img {
-            height: 60px;
+            margin-bottom: 1.5rem;
         }
         
         .login-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 30px;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
             color: var(--secondary-color);
         }
         
-        .login-form .form-group {
-            margin-bottom: 20px;
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .form-group {
             text-align: left;
         }
         
-        .login-form label {
+        .form-group label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
         }
         
-        .login-form input {
+        .form-group input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 0.8rem;
             border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: var(--transition);
-        }
-        
-        .login-form input:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-radius: 5px;
+            font-size: 1rem;
         }
         
         .login-btn {
-            width: 100%;
-            padding: 12px;
             background-color: var(--primary-color);
             color: var(--white);
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
+            padding: 0.8rem;
+            border-radius: 5px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            margin-top: 10px;
         }
         
         .login-btn:hover {
@@ -114,40 +328,13 @@
         }
         
         .social-login {
-            margin-top: 30px;
-        }
-        
-        .social-login p {
-            color: #777;
-            margin-bottom: 15px;
-            position: relative;
-        }
-        
-        .social-login p::before,
-        .social-login p::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            width: 30%;
-            height: 1px;
-            background-color: #ddd;
-        }
-        
-        .social-login p::before {
-            left: 0;
-        }
-        
-        .social-login p::after {
-            right: 0;
-        }
-        
-        .social-icons {
+            margin-top: 1.5rem;
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 1rem;
         }
         
-        .social-icon {
+        .social-btn {
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -155,45 +342,30 @@
             align-items: center;
             justify-content: center;
             color: var(--white);
-            font-size: 18px;
             cursor: pointer;
             transition: var(--transition);
         }
         
-        .social-icon.google {
-            background-color: #db4437;
+        .google-btn { background-color: #DB4437; }
+        .github-btn { background-color: #333; }
+        .linkedin-btn { background-color: #0077B5; }
+        
+        .signup-link {
+            margin-top: 1rem;
+            font-size: 0.9rem;
         }
         
-        .social-icon.github {
-            background-color: #333;
-        }
-        
-        .social-icon.linkedin {
-            background-color: #0077b5;
-        }
-        
-        .social-icon:hover {
-            transform: translateY(-3px);
-        }
-        
-        .login-footer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #777;
-        }
-        
-        .login-footer a {
+        .signup-link a {
             color: var(--primary-color);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
         }
         
         /* Main App Styles */
         .container {
-            display: flex;
+            display: none;
             flex-direction: column;
             height: 100vh;
-            display: none;
         }
         
         .header {
@@ -440,13 +612,13 @@
             justify-content: center;
         }
         
+        .media-btn.off {
+            background-color: var(--accent-color);
+        }
+        
         .media-btn:hover {
             opacity: 0.9;
             transform: translateY(-1px);
-        }
-        
-        .media-btn.off {
-            background-color: var(--accent-color);
         }
         
         .video-container {
@@ -589,6 +761,152 @@
             right: -24px;
         }
         
+        /* Profile Modal */
+        .profile-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            display: none;
+        }
+        
+        .profile-content {
+            background-color: var(--white);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+        }
+        
+        .profile-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .profile-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        .profile-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .profile-body {
+            padding: 20px;
+        }
+        
+        .profile-picture-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .change-picture-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .change-picture-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .profile-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        .form-input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .profile-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .profile-btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .save-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .logout-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+        }
+        
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .toolbar {
@@ -607,45 +925,17 @@
             .panel-collapsed .right-panel {
                 width: 0;
             }
+            
+            .sidebar {
+                width: 200px;
+            }
         }
         
-        /* Drawing tools specific styles */
-        .line-width-control {
-            margin-top: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .line-width-label {
-            color: var(--white);
-            font-size: 0.7rem;
-        }
-        
-        .line-width-slider {
-            width: 80%;
-            cursor: pointer;
-            -webkit-appearance: none;
-            height: 6px;
-            border-radius: 3px;
-            background: var(--light-color);
-            outline: none;
-        }
-        
-        .line-width-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .line-width-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.1);
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
         
         /* Loading animation */
@@ -681,412 +971,100 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        
-        /* Shape preview styles */
-        .shape-preview {
-            position: absolute;
-            pointer-events: none;
-            z-index: 90;
-        }
-        
-        /* Tool selection animation */
-        @keyframes toolPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        
-        .tool.selected {
-            animation: toolPulse 0.5s ease;
-        }
-        
-        /* Improved cursor styles */
-        .cursor-name {
-            position: absolute;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
-            font-size: 12px;
-            text-shadow: 0 0 2px white;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-        
-        /* Slides navigation */
-        .slides-nav {
-            position: absolute;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 20px;
-            padding: 8px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 50;
-        }
-        
-        .slide-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .slide-btn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .slide-indicator {
-            color: white;
-            font-size: 14px;
-            min-width: 60px;
-            text-align: center;
-        }
-        
-        /* More options menu */
-        .more-menu {
-            position: absolute;
-            bottom: 60px;
-            right: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 100;
-            overflow: hidden;
-            display: none;
-        }
-        
-        .more-menu.show {
-            display: block;
-        }
-        
-        .menu-item {
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .menu-item:hover {
-            background-color: #f5f5f5;
-        }
-        
-        .menu-item i {
-            width: 20px;
-            text-align: center;
-        }
-        
-        /* Reactions */
-        .reactions {
-            position: absolute;
-            bottom: 60px;
-            left: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            padding: 8px;
-            display: flex;
-            gap: 8px;
-            z-index: 100;
-            display: none;
-        }
-        
-        .reactions.show {
-            display: flex;
-        }
-        
-        .reaction-btn {
-            font-size: 20px;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
-        }
-        
-        .reaction-btn:hover {
-            transform: scale(1.2);
-        }
-        
-        /* Draggable text */
-        .draggable-text {
-            position: absolute;
-            cursor: move;
-            user-select: none;
-            padding: 5px;
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 4px;
-            z-index: 80;
-        }
-        
-        /* Draggable image */
-        .draggable-image {
-            position: absolute;
-            cursor: move;
-            user-select: none;
-            max-width: 300px;
-            max-height: 300px;
-            z-index: 80;
-        }
-        
-        /* Recording indicator */
-        .recording-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: var(--accent-color);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 1000;
-            font-size: 14px;
-            display: none;
-        }
-        
-        .recording-dot {
-            width: 10px;
-            height: 10px;
-            background-color: white;
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
-        
-        /* Settings modal */
-        .settings-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            display: none;
-        }
-        
-        .settings-content {
-            background-color: white;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .settings-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .settings-title {
-            font-size: 20px;
-            font-weight: 600;
-        }
-        
-        .close-settings {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #777;
-        }
-        
-        .settings-section {
-            margin-bottom: 20px;
-        }
-        
-        .settings-section-title {
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--secondary-color);
-        }
-        
-        .settings-option {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #f5f5f5;
-        }
-        
-        .settings-option:last-child {
-            border-bottom: none;
-        }
-        
-        .settings-option label {
-            cursor: pointer;
-        }
-        
-        .settings-option select,
-        .settings-option input[type="range"] {
-            padding: 5px 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-        
-        /* Highlight tool */
-        .highlight-color {
-            opacity: 0.5;
-        }
-        
-        /* Save confirmation */
-        .save-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            display: none;
-        }
-        
-        .save-content {
-            background-color: white;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 400px;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .save-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-        
-        .save-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .save-btn {
-            padding: 8px 20px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-        
-        .save-confirm {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .save-discard {
-            background-color: #f0f0f0;
-            color: #333;
-        }
-        
-        .save-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
     </style>
 </head>
 <body>
-    <!-- Login Page -->
-    <div class="login-container" id="loginContainer">
-        <div class="login-box">
-            <div class="login-logo">
-                <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Education Logo">
-            </div>
-            <h1 class="login-title">Welcome to WhiteBoard Education</h1>
-            
-            <form class="login-form" id="loginForm">
-                <div class="form-group">
-                    <label for="username">Username (Optional)</label>
-                    <input type="text" id="username" placeholder="Enter your name">
-                </div>
-                <div class="form-group">
-                    <label for="loginMethod">Login Method</label>
-                    <select id="loginMethod" class="login-form input">
-                        <option value="guest">Continue as Guest</option>
-                        <option value="email">Email</option>
-                        <option value="phone">Phone</option>
-                        <option value="google">Google</option>
-                        <option value="github">GitHub</option>
-                        <option value="linkedin">LinkedIn</option>
-                    </select>
-                </div>
-                
-                <div id="emailField" class="form-group" style="display: none;">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="Enter your email">
-                </div>
-                
-                <div id="phoneField" class="form-group" style="display: none;">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" placeholder="Enter your phone number">
-                </div>
-                
-                <button type="button" class="login-btn" id="loginBtn">
-                    <i class="fas fa-sign-in-alt"></i> Continue
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Education Logo" class="splash-logo">
+        <div class="splash-text">WhiteBoard Education</div>
+    </div>
+    
+    <!-- Dashboard -->
+    <div class="dashboard-container" id="dashboardContainer">
+        <div class="dashboard-header">
+            <div class="dashboard-title">WhiteBoard Education</div>
+            <div class="dashboard-nav">
+                <button class="nav-btn" id="homeBtn">
+                    <i class="fas fa-home"></i> Home
                 </button>
-            </form>
-            
-            <div class="social-login">
-                <p>or continue with</p>
-                <div class="social-icons">
-                    <div class="social-icon google" onclick="loginWithGoogle()">
-                        <i class="fab fa-google"></i>
-                    </div>
-                    <div class="social-icon github" onclick="loginWithGithub()">
-                        <i class="fab fa-github"></i>
-                    </div>
-                    <div class="social-icon linkedin" onclick="loginWithLinkedIn()">
-                        <i class="fab fa-linkedin-in"></i>
-                    </div>
+                <button class="nav-btn profile-btn" id="profileBtn">
+                    <div class="profile-pic" id="profilePic">U</div>
+                    <span>Profile</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="dashboard-content">
+            <div class="sidebar">
+                <div class="sidebar-title">
+                    <span>My Whiteboards</span>
+                    <button class="new-board-btn" id="newBoardBtn">
+                        <i class="fas fa-plus"></i> New
+                    </button>
+                </div>
+                <div class="board-list" id="boardList">
+                    <!-- Boards will be added here dynamically -->
                 </div>
             </div>
             
-            <div class="login-footer">
-                By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+            <div class="main-content">
+                <div class="welcome-message">
+                    <h1 class="welcome-title">Welcome to WhiteBoard Education</h1>
+                    <p class="welcome-text">
+                        Create, collaborate, and share your ideas in real-time with our interactive whiteboard.
+                        Start a new whiteboard or select an existing one from the sidebar to get started.
+                    </p>
+                    <div class="action-buttons">
+                        <button class="action-btn primary-btn" id="createNewBoardBtn">
+                            <i class="fas fa-plus"></i> Create New Whiteboard
+                        </button>
+                        <button class="action-btn secondary-btn" id="learnMoreBtn">
+                            <i class="fas fa-info-circle"></i> Learn More
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- Main App -->
+    <!-- Login Page -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <div class="login-logo">
+                <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Education Logo" height="60">
+                <h1 class="logo-text">WhiteBoard Education</h1>
+            </div>
+            <h2 class="login-title">Sign In</h2>
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username or Email</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="login-btn">Sign In</button>
+            </form>
+            <div class="social-login">
+                <div class="social-btn google-btn" title="Sign in with Google">
+                    <i class="fab fa-google"></i>
+                </div>
+                <div class="social-btn github-btn" title="Sign in with GitHub">
+                    <i class="fab fa-github"></i>
+                </div>
+                <div class="social-btn linkedin-btn" title="Sign in with LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </div>
+            </div>
+            <div class="signup-link">
+                Don't have an account? <a href="#" id="signupLink">Sign up</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main App (initially hidden) -->
     <div class="container" id="appContainer">
         <div class="header">
             <div class="logo-container">
@@ -1156,49 +1134,15 @@
                     <i class="fas fa-trash-alt"></i>
                     <span class="tool-tip">Clear Board</span>
                 </div>
+                
+                <div class="tool more-options" id="moreOptions">
+                    <i class="fas fa-ellipsis-h"></i>
+                    <span class="tool-tip">More Options</span>
+                </div>
             </div>
             
             <div class="whiteboard-container">
                 <canvas id="whiteboard"></canvas>
-                <div id="shapePreview" class="shape-preview"></div>
-                
-                <!-- Slides navigation -->
-                <div class="slides-nav">
-                    <button class="slide-btn" id="prevSlide"><i class="fas fa-chevron-left"></i></button>
-                    <div class="slide-indicator" id="slideIndicator">Slide 1 of 1</div>
-                    <button class="slide-btn" id="nextSlide"><i class="fas fa-chevron-right"></i></button>
-                    <button class="slide-btn" id="addSlide"><i class="fas fa-plus"></i></button>
-                </div>
-                
-                <!-- More options menu -->
-                <div class="more-menu" id="moreMenu">
-                    <div class="menu-item" id="messageBtn">
-                        <i class="far fa-comment-dots"></i>
-                        <span>Messages</span>
-                    </div>
-                    <div class="menu-item" id="screenShareBtn">
-                        <i class="fas fa-desktop"></i>
-                        <span>Share Screen</span>
-                    </div>
-                    <div class="menu-item" id="recordBtn">
-                        <i class="fas fa-circle"></i>
-                        <span>Record Session</span>
-                    </div>
-                    <div class="menu-item" id="settingsBtn">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </div>
-                </div>
-                
-                <!-- Reactions -->
-                <div class="reactions" id="reactions">
-                    <div class="reaction-btn" data-reaction="👍">👍</div>
-                    <div class="reaction-btn" data-reaction="👎">👎</div>
-                    <div class="reaction-btn" data-reaction="👏">👏</div>
-                    <div class="reaction-btn" data-reaction="🙌">🙌</div>
-                    <div class="reaction-btn" data-reaction="🤔">🤔</div>
-                    <div class="reaction-btn" data-reaction="🙋‍♂️">🙋‍♂️</div>
-                </div>
             </div>
             
             <div class="toggle-panel" id="togglePanel">
@@ -1225,14 +1169,6 @@
                         <button id="videoBtn" class="media-btn">
                             <i class="fas fa-video"></i>
                             <span>Video</span>
-                        </button>
-                        <button id="reactionBtn" class="media-btn">
-                            <i class="far fa-smile"></i>
-                            <span>React</span>
-                        </button>
-                        <button id="moreBtn" class="media-btn">
-                            <i class="fas fa-ellipsis-h"></i>
-                            <span>More</span>
                         </button>
                     </div>
                     
@@ -1268,10 +1204,64 @@
         </div>
     </div>
     
-    <!-- Recording Indicator -->
-    <div class="recording-indicator" id="recordingIndicator">
-        <div class="recording-dot"></div>
-        <span>Recording</span>
+    <!-- Profile Modal -->
+    <div class="profile-modal" id="profileModal">
+        <div class="profile-content">
+            <div class="profile-header">
+                <div class="profile-title">Profile Settings</div>
+                <button class="profile-close" id="closeProfileModal">&times;</button>
+            </div>
+            <div class="profile-body">
+                <div class="profile-picture-container">
+                    <div class="profile-picture" id="profilePicture">
+                        <span id="profileInitials">U</span>
+                    </div>
+                    <button class="change-picture-btn" id="changePictureBtn">
+                        <i class="fas fa-camera"></i> Change Picture
+                    </button>
+                </div>
+                
+                <form class="profile-form" id="profileForm">
+                    <div class="form-row">
+                        <label class="form-label" for="profileName">Full Name</label>
+                        <input type="text" class="form-input" id="profileName" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="form-label" for="profileUsername">Username</label>
+                        <input type="text" class="form-input" id="profileUsername" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="form-label" for="profileEmail">Email</label>
+                        <input type="email" class="form-input" id="profileEmail" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="form-label" for="profilePhone">Phone</label>
+                        <input type="tel" class="form-input" id="profilePhone">
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="form-label" for="profileDob">Date of Birth</label>
+                        <input type="date" class="form-input" id="profileDob">
+                    </div>
+                    
+                    <div class="form-row">
+                        <label class="form-label" for="profileBio">Bio</label>
+                        <textarea class="form-input" id="profileBio" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="profile-footer">
+                <button class="profile-btn logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+                <button class="profile-btn save-btn" id="saveProfileBtn">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
     </div>
     
     <!-- Notification -->
@@ -1283,100 +1273,29 @@
         <div class="loading-text">Connecting to board...</div>
     </div>
     
-    <!-- Settings Modal -->
-    <div class="settings-modal" id="settingsModal">
-        <div class="settings-content">
-            <div class="settings-header">
-                <div class="settings-title">Settings</div>
-                <button class="close-settings" id="closeSettings">&times;</button>
-            </div>
-            
-            <div class="settings-section">
-                <div class="settings-section-title">Video Settings</div>
-                <div class="settings-option">
-                    <label for="videoDevice">Camera</label>
-                    <select id="videoDevice">
-                        <option value="default">Default</option>
-                    </select>
-                </div>
-                <div class="settings-option">
-                    <label for="videoResolution">Resolution</label>
-                    <select id="videoResolution">
-                        <option value="hd">HD (720p)</option>
-                        <option value="fullhd">Full HD (1080p)</option>
-                        <option value="auto">Auto</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="settings-section">
-                <div class="settings-section-title">Audio Settings</div>
-                <div class="settings-option">
-                    <label for="audioDevice">Microphone</label>
-                    <select id="audioDevice">
-                        <option value="default">Default</option>
-                    </select>
-                </div>
-                <div class="settings-option">
-                    <label for="audioVolume">Volume</label>
-                    <input type="range" id="audioVolume" min="0" max="100" value="80">
-                </div>
-            </div>
-            
-            <div class="settings-section">
-                <div class="settings-section-title">Whiteboard Settings</div>
-                <div class="settings-option">
-                    <label for="gridSize">Grid Size</label>
-                    <select id="gridSize">
-                        <option value="small">Small</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="large">Large</option>
-                        <option value="none">None</option>
-                    </select>
-                </div>
-                <div class="settings-option">
-                    <label for="autoSave">Auto-save</label>
-                    <input type="checkbox" id="autoSave" checked>
-                </div>
-            </div>
-            
-            <div class="settings-section">
-                <div class="settings-section-title">Appearance</div>
-                <div class="settings-option">
-                    <label for="theme">Theme</label>
-                    <select id="theme">
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
-                        <option value="system">System</option>
-                    </select>
-                </div>
-            </div>
-            
-            <button class="save-btn save-confirm" id="saveSettings">Save Settings</button>
-        </div>
-    </div>
-    
-    <!-- Save Confirmation Modal -->
-    <div class="save-modal" id="saveModal">
-        <div class="save-content">
-            <div class="save-title">Save before leaving?</div>
-            <p>Do you want to save your whiteboard before refreshing or leaving?</p>
-            <div class="save-buttons">
-                <button class="save-btn save-confirm" id="confirmSave">Save</button>
-                <button class="save-btn save-discard" id="discardChanges">Discard</button>
-            </div>
-        </div>
-    </div>
-    
     <script>
         // DOM Elements
+        const splashScreen = document.getElementById('splashScreen');
+        const dashboardContainer = document.getElementById('dashboardContainer');
         const loginContainer = document.getElementById('loginContainer');
         const appContainer = document.getElementById('appContainer');
         const loginForm = document.getElementById('loginForm');
-        const loginBtn = document.getElementById('loginBtn');
-        const loginMethod = document.getElementById('loginMethod');
-        const emailField = document.getElementById('emailField');
-        const phoneField = document.getElementById('phoneField');
+        const signupLink = document.getElementById('signupLink');
+        const homeBtn = document.getElementById('homeBtn');
+        const profileBtn = document.getElementById('profileBtn');
+        const profileModal = document.getElementById('profileModal');
+        const closeProfileModal = document.getElementById('closeProfileModal');
+        const profilePic = document.getElementById('profilePic');
+        const profilePicture = document.getElementById('profilePicture');
+        const profileInitials = document.getElementById('profileInitials');
+        const changePictureBtn = document.getElementById('changePictureBtn');
+        const profileForm = document.getElementById('profileForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        const newBoardBtn = document.getElementById('newBoardBtn');
+        const createNewBoardBtn = document.getElementById('createNewBoardBtn');
+        const boardList = document.getElementById('boardList');
+        const learnMoreBtn = document.getElementById('learnMoreBtn');
         
         const whiteboard = document.getElementById('whiteboard');
         const ctx = whiteboard.getContext('2d');
@@ -1390,8 +1309,6 @@
         const notification = document.getElementById('notification');
         const micBtn = document.getElementById('micBtn');
         const videoBtn = document.getElementById('videoBtn');
-        const reactionBtn = document.getElementById('reactionBtn');
-        const moreBtn = document.getElementById('moreBtn');
         const localVideo = document.getElementById('localVideo');
         const remoteVideo = document.getElementById('remoteVideo');
         const localVideoPlaceholder = localVideo.nextElementSibling;
@@ -1399,32 +1316,6 @@
         const togglePanelBtn = document.getElementById('togglePanel');
         const loadingScreen = document.getElementById('loading');
         const loadingText = loadingScreen.querySelector('.loading-text');
-        const shapePreview = document.getElementById('shapePreview');
-        const recordingIndicator = document.getElementById('recordingIndicator');
-        
-        // Slides elements
-        const prevSlideBtn = document.getElementById('prevSlide');
-        const nextSlideBtn = document.getElementById('nextSlide');
-        const addSlideBtn = document.getElementById('addSlide');
-        const slideIndicator = document.getElementById('slideIndicator');
-        
-        // More menu elements
-        const moreMenu = document.getElementById('moreMenu');
-        const messageBtn = document.getElementById('messageBtn');
-        const screenShareBtn = document.getElementById('screenShareBtn');
-        const recordBtn = document.getElementById('recordBtn');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const reactions = document.getElementById('reactions');
-        
-        // Settings modal elements
-        const settingsModal = document.getElementById('settingsModal');
-        const closeSettings = document.getElementById('closeSettings');
-        const saveSettings = document.getElementById('saveSettings');
-        
-        // Save modal elements
-        const saveModal = document.getElementById('saveModal');
-        const confirmSave = document.getElementById('confirmSave');
-        const discardChanges = document.getElementById('discardChanges');
         
         // Whiteboard state
         let currentTool = 'pencil';
@@ -1441,121 +1332,365 @@
         let textInputActive = false;
         let tempCanvas = document.createElement('canvas');
         let tempCtx = tempCanvas.getContext('2d');
-        let isHighlighter = false;
-        let isRecording = false;
-        let mediaRecorder;
-        let recordedChunks = [];
-        let currentSlide = 0;
         let slides = [];
+        let currentSlideIndex = 0;
         
-        // Media state
-        let localStream = null;
-        let peerConnection = null;
-        let isMicOn = false;
-        let isVideoOn = false;
-        const configuration = {
-            iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' },
-                { urls: 'stun:stun2.l.google.com:19302' }
-            ]
-        };
-        
-        // Keyboard shortcuts
-        const toolShortcuts = {
-            'p': 'pencil',
-            'l': 'line',
-            'r': 'rectangle',
-            'c': 'circle',
-            'e': 'eraser',
-            't': 'text',
-            'h': 'highlighter',
-            'i': 'image'
-        };
-        
-        // Socket.io connection
-        const socket = io();
-        let boardId = '';
+        // User state
         let userId = generateUserId();
         let userName = `User-${userId.substring(0, 4)}`;
         let userColor = generateRandomColor();
-        let unsavedChanges = false;
+        let userProfile = {
+            name: '',
+            username: '',
+            email: '',
+            phone: '',
+            dob: '',
+            bio: '',
+            profilePicture: ''
+        };
         
-        // Initialize login form
-        loginMethod.addEventListener('change', (e) => {
-            emailField.style.display = 'none';
-            phoneField.style.display = 'none';
-            
-            if (e.target.value === 'email') {
-                emailField.style.display = 'block';
-            } else if (e.target.value === 'phone') {
-                phoneField.style.display = 'block';
-            }
-        });
+        // Board state
+        let boardId = '';
+        let boards = [];
         
-        loginBtn.addEventListener('click', () => {
-            const method = loginMethod.value;
+        // Initialize application
+        function initApp() {
+            // Show splash screen first
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                    
+                    // Check if user is already logged in
+                    const savedUser = localStorage.getItem('whiteboardUser');
+                    if (savedUser) {
+                        const user = JSON.parse(savedUser);
+                        userId = user.id || userId;
+                        userName = user.name || userName;
+                        userColor = user.color || userColor;
+                        
+                        // Load profile if exists
+                        const savedProfile = localStorage.getItem('whiteboardProfile');
+                        if (savedProfile) {
+                            userProfile = JSON.parse(savedProfile);
+                        }
+                        
+                        // Load boards
+                        const savedBoards = localStorage.getItem('whiteboardBoards');
+                        if (savedBoards) {
+                            boards = JSON.parse(savedBoards);
+                        } else {
+                            // Create some sample boards if none exist
+                            boards = generateSampleBoards();
+                            localStorage.setItem('whiteboardBoards', JSON.stringify(boards));
+                        }
+                        
+                        // Show dashboard
+                        showDashboard();
+                    } else {
+                        // Show login if not logged in
+                        loginContainer.style.display = 'flex';
+                    }
+                }, 500);
+            }, 2000);
             
-            if (method === 'email' && document.getElementById('email').value.trim() === '') {
-                alert('Please enter your email');
-                return;
-            }
+            // Set up login form
+            loginForm.addEventListener('submit', handleLogin);
+            signupLink.addEventListener('click', showSignup);
             
-            if (method === 'phone' && document.getElementById('phone').value.trim() === '') {
-                alert('Please enter your phone number');
-                return;
-            }
+            // Set up social login buttons
+            document.querySelector('.google-btn').addEventListener('click', () => socialLogin('google'));
+            document.querySelector('.github-btn').addEventListener('click', () => socialLogin('github'));
+            document.querySelector('.linkedin-btn').addEventListener('click', () => socialLogin('linkedin'));
             
-            // Set username if provided
-            const usernameInput = document.getElementById('username').value.trim();
-            if (usernameInput) {
-                userName = usernameInput;
-            }
-            
-            // Hide login, show app
-            loginContainer.style.display = 'none';
-            appContainer.style.display = 'flex';
-            
-            // Initialize the whiteboard
-            initWhiteboard();
-        });
-        
-        function loginWithGoogle() {
-            // In a real app, this would use Google OAuth
-            userName = 'Google User';
-            loginContainer.style.display = 'none';
-            appContainer.style.display = 'flex';
-            initWhiteboard();
+            // Set up dashboard buttons
+            homeBtn.addEventListener('click', showDashboard);
+            profileBtn.addEventListener('click', showProfileModal);
+            closeProfileModal.addEventListener('click', hideProfileModal);
+            changePictureBtn.addEventListener('click', changeProfilePicture);
+            logoutBtn.addEventListener('click', logout);
+            saveProfileBtn.addEventListener('click', saveProfile);
+            newBoardBtn.addEventListener('click', createNewBoard);
+            createNewBoardBtn.addEventListener('click', createNewBoard);
+            learnMoreBtn.addEventListener('click', showLearnMore);
         }
         
-        function loginWithGithub() {
-            // In a real app, this would use GitHub OAuth
-            userName = 'GitHub User';
+        // Show dashboard
+        function showDashboard() {
+            dashboardContainer.style.display = 'block';
             loginContainer.style.display = 'none';
-            appContainer.style.display = 'flex';
-            initWhiteboard();
+            appContainer.style.display = 'none';
+            
+            // Update profile picture
+            updateProfilePicture();
+            
+            // Load boards
+            loadBoards();
         }
         
-        function loginWithLinkedIn() {
-            // In a real app, this would use LinkedIn OAuth
-            userName = 'LinkedIn User';
-            loginContainer.style.display = 'none';
+        // Load boards
+        function loadBoards() {
+            boardList.innerHTML = '';
+            
+            // Sort boards by last modified date (newest first)
+            boards.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
+            
+            boards.forEach((board, index) => {
+                const boardItem = document.createElement('div');
+                boardItem.className = 'board-item';
+                boardItem.dataset.id = board.id;
+                
+                const boardName = document.createElement('div');
+                boardName.className = 'board-name';
+                boardName.textContent = board.name;
+                
+                const boardDate = document.createElement('div');
+                boardDate.className = 'board-date';
+                boardDate.textContent = formatDate(board.lastModified);
+                
+                boardItem.appendChild(boardName);
+                boardItem.appendChild(boardDate);
+                boardList.appendChild(boardItem);
+                
+                // Add click event
+                boardItem.addEventListener('click', () => {
+                    // Remove active class from all boards
+                    document.querySelectorAll('.board-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked board
+                    boardItem.classList.add('active');
+                    
+                    // Open the board
+                    openBoard(board.id);
+                });
+            });
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString();
+        }
+        
+        // Generate sample boards
+        function generateSampleBoards() {
+            const sampleBoards = [];
+            const now = new Date();
+            
+            for (let i = 1; i <= 5; i++) {
+                sampleBoards.push({
+                    id: 'board-' + i,
+                    name: 'Whiteboard ' + i,
+                    lastModified: new Date(now.getTime() - (i * 24 * 60 * 60 * 1000)).toISOString(),
+                    drawingHistory: []
+                });
+            }
+            
+            return sampleBoards;
+        }
+        
+        // Open board
+        function openBoard(boardId) {
+            // Find the board
+            const board = boards.find(b => b.id === boardId);
+            if (!board) return;
+            
+            // Hide dashboard and show whiteboard
+            dashboardContainer.style.display = 'none';
             appContainer.style.display = 'flex';
-            initWhiteboard();
+            
+            // Initialize whiteboard
+            initWhiteboard(board);
+        }
+        
+        // Create new board
+        function createNewBoard() {
+            const newBoard = {
+                id: 'board-' + Date.now(),
+                name: 'New Whiteboard ' + (boards.length + 1),
+                lastModified: new Date().toISOString(),
+                drawingHistory: []
+            };
+            
+            boards.unshift(newBoard);
+            localStorage.setItem('whiteboardBoards', JSON.stringify(boards));
+            
+            // Open the new board
+            openBoard(newBoard.id);
+        }
+        
+        // Show profile modal
+        function showProfileModal() {
+            // Populate form with user data
+            document.getElementById('profileName').value = userProfile.name || '';
+            document.getElementById('profileUsername').value = userProfile.username || userName;
+            document.getElementById('profileEmail').value = userProfile.email || '';
+            document.getElementById('profilePhone').value = userProfile.phone || '';
+            document.getElementById('profileDob').value = userProfile.dob || '';
+            document.getElementById('profileBio').value = userProfile.bio || '';
+            
+            profileModal.style.display = 'flex';
+        }
+        
+        // Hide profile modal
+        function hideProfileModal() {
+            profileModal.style.display = 'none';
+        }
+        
+        // Change profile picture
+        function changeProfilePicture() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        userProfile.profilePicture = event.target.result;
+                        updateProfilePicture();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+        
+        // Update profile picture
+        function updateProfilePicture() {
+            if (userProfile.profilePicture) {
+                // If we have a profile picture, use it
+                profilePic.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                profilePicture.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+            } else {
+                // Otherwise use initials
+                const initials = userProfile.name ? 
+                    userProfile.name.split(' ').map(n => n[0]).join('').toUpperCase() : 
+                    userName.substring(0, 2).toUpperCase();
+                
+                profilePic.textContent = initials;
+                profileInitials.textContent = initials;
+                profilePicture.style.backgroundColor = userColor;
+            }
+        }
+        
+        // Save profile
+        function saveProfile() {
+            // Update user profile
+            userProfile = {
+                name: document.getElementById('profileName').value,
+                username: document.getElementById('profileUsername').value,
+                email: document.getElementById('profileEmail').value,
+                phone: document.getElementById('profilePhone').value,
+                dob: document.getElementById('profileDob').value,
+                bio: document.getElementById('profileBio').value,
+                profilePicture: userProfile.profilePicture
+            };
+            
+            // Update username if changed
+            if (userProfile.username && userProfile.username !== userName) {
+                userName = userProfile.username;
+                
+                // Update in localStorage
+                localStorage.setItem('whiteboardUser', JSON.stringify({
+                    id: userId,
+                    name: userName,
+                    color: userColor
+                }));
+                
+                // Update in UI
+                profilePic.textContent = userName.substring(0, 2).toUpperCase();
+            }
+            
+            // Save profile
+            localStorage.setItem('whiteboardProfile', JSON.stringify(userProfile));
+            
+            // Update profile picture
+            updateProfilePicture();
+            
+            // Hide modal
+            hideProfileModal();
+            
+            showNotification('Profile updated successfully');
+        }
+        
+        // Logout
+        function logout() {
+            // Clear user data
+            localStorage.removeItem('whiteboardUser');
+            localStorage.removeItem('whiteboardProfile');
+            
+            // Show login screen
+            hideProfileModal();
+            dashboardContainer.style.display = 'none';
+            loginContainer.style.display = 'flex';
+        }
+        
+        // Show learn more
+        function showLearnMore() {
+            alert('This is a collaborative whiteboard application that allows real-time drawing and communication with other users.');
+        }
+        
+        // Handle login
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // In a real app, you would validate credentials with a server
+            userName = username || userName;
+            
+            // Save user to localStorage
+            localStorage.setItem('whiteboardUser', JSON.stringify({
+                id: userId,
+                name: userName,
+                color: userColor
+            }));
+            
+            // Generate some sample boards for new users
+            if (!localStorage.getItem('whiteboardBoards')) {
+                boards = generateSampleBoards();
+                localStorage.setItem('whiteboardBoards', JSON.stringify(boards));
+            }
+            
+            // Show dashboard
+            showDashboard();
+        }
+        
+        // Show signup (placeholder)
+        function showSignup(e) {
+            e.preventDefault();
+            alert('Sign up functionality would be implemented here');
+        }
+        
+        // Social login (placeholder)
+        function socialLogin(provider) {
+            alert(`Would authenticate with ${provider} in a real app`);
+            
+            // For demo purposes, create a random user
+            userName = `User-${Math.floor(Math.random() * 1000)}`;
+            userColor = generateRandomColor();
+            
+            localStorage.setItem('whiteboardUser', JSON.stringify({
+                id: userId,
+                name: userName,
+                color: userColor
+            }));
+            
+            // Generate some sample boards
+            boards = generateSampleBoards();
+            localStorage.setItem('whiteboardBoards', JSON.stringify(boards));
+            
+            // Show dashboard
+            showDashboard();
         }
         
         // Initialize whiteboard
-        function initWhiteboard() {
+        function initWhiteboard(board) {
             // Set canvas size
             resizeCanvas();
-            
-            // Initialize slides
-            slides = [{
-                drawingHistory: [],
-                historyPointer: -1
-            }];
-            currentSlide = 0;
-            updateSlideIndicator();
             
             // Set initial styles
             ctx.strokeStyle = currentColor;
@@ -1569,36 +1704,145 @@
             tempCanvas.width = whiteboard.width;
             tempCanvas.height = whiteboard.height;
             
-            // Load board if ID exists in URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlBoardId = urlParams.get('board');
+            // Set board ID
+            boardId = board.id;
+            boardIdElement.textContent = board.id;
             
-            if (urlBoardId) {
-                showLoading('Joining board...');
-                socket.emit('joinBoard', { boardId: urlBoardId, userId, userName, userColor });
-            } else {
-                showLoading('Creating new board...');
-                socket.emit('createBoard', { userId, userName, userColor });
-            }
+            // Update URL with board ID
+            const url = new URL(window.location.href);
+            url.searchParams.set('board', board.id);
+            window.history.pushState({}, '', url);
             
-            // Hide loading screen after connection is established
-            setTimeout(() => {
-                hideLoading();
-            }, 2000);
+            // Initialize slides
+            slides = board.slides || [{
+                id: generateSlideId(),
+                name: 'Slide 1',
+                drawingHistory: board.drawingHistory || [],
+                historyPointer: (board.drawingHistory || []).length - 1
+            }];
+            currentSlideIndex = 0;
             
-            // Setup beforeunload handler
-            window.addEventListener('beforeunload', (e) => {
-                if (unsavedChanges) {
-                    e.preventDefault();
-                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-                    showSaveModal();
+            // Connect to socket.io
+            showLoading('Connecting to board...');
+            socket.emit('joinBoard', { 
+                boardId: board.id, 
+                userId, 
+                userName, 
+                userColor 
+            });
+            
+            // Set up event listeners
+            setupEventListeners();
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Window resize
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Tool selection
+            tools.forEach(tool => {
+                tool.addEventListener('click', () => {
+                    if (textInputActive) return;
+                    
+                    const toolName = tool.dataset.tool;
+                    selectTool(toolName);
+                });
+            });
+            
+            // Color picker
+            colorPicker.addEventListener('input', (e) => {
+                currentColor = e.target.value;
+                ctx.strokeStyle = currentColor;
+                ctx.fillStyle = currentColor;
+            });
+            
+            // Line width
+            lineWidthSlider.addEventListener('input', (e) => {
+                currentLineWidth = parseInt(e.target.value);
+                ctx.lineWidth = currentLineWidth;
+                ctx.font = `${currentLineWidth * 5}px Arial`;
+            });
+            
+            // Copy board ID
+            copyBoardIdBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(boardId).then(() => {
+                    showNotification('Board ID copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy board ID:', err);
+                    showNotification('Failed to copy Board ID');
+                });
+            });
+            
+            // Toggle panel
+            togglePanelBtn.addEventListener('click', () => {
+                document.querySelector('.container').classList.toggle('panel-collapsed');
+                const icon = togglePanelBtn.querySelector('i');
+                if (document.querySelector('.container').classList.contains('panel-collapsed')) {
+                    icon.classList.remove('fa-chevron-left');
+                    icon.classList.add('fa-chevron-right');
+                } else {
+                    icon.classList.remove('fa-chevron-right');
+                    icon.classList.add('fa-chevron-left');
                 }
             });
+            
+            // Media buttons
+            micBtn.addEventListener('click', toggleMic);
+            videoBtn.addEventListener('click', toggleVideo);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleKeyDown);
+            
+            // Whiteboard events
+            whiteboard.addEventListener('mousedown', startDrawing);
+            whiteboard.addEventListener('mousemove', draw);
+            whiteboard.addEventListener('mouseup', stopDrawing);
+            whiteboard.addEventListener('mouseout', stopDrawing);
+            whiteboard.addEventListener('click', handleClick);
+        }
+        
+        // Handle keyboard shortcuts
+        function handleKeyDown(e) {
+            if (textInputActive) return;
+            
+            // Tool shortcuts
+            const toolShortcuts = {
+                'p': 'pencil',
+                'l': 'line',
+                'r': 'rectangle',
+                'c': 'circle',
+                'e': 'eraser',
+                't': 'text',
+                'h': 'highlighter'
+            };
+            
+            if (toolShortcuts[e.key.toLowerCase()]) {
+                const toolName = toolShortcuts[e.key.toLowerCase()];
+                selectTool(toolName);
+                e.preventDefault();
+            }
+            
+            // Undo/Redo shortcuts
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z') {
+                    undo();
+                    e.preventDefault();
+                } else if (e.key === 'y') {
+                    redo();
+                    e.preventDefault();
+                }
+            }
         }
         
         // Generate a unique user ID
         function generateUserId() {
             return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+        }
+        
+        // Generate a slide ID
+        function generateSlideId() {
+            return 'slide-' + Math.random().toString(36).substring(2, 9);
         }
         
         // Generate a random color
@@ -1617,216 +1861,6 @@
             // Redraw everything after resize
             redrawWhiteboard();
         }
-        
-        // Event Listeners
-        window.addEventListener('resize', resizeCanvas);
-        
-        tools.forEach(tool => {
-            tool.addEventListener('click', () => {
-                if (textInputActive) return;
-                
-                const toolName = tool.dataset.tool;
-                selectTool(toolName);
-                
-                // Add selection animation
-                tool.classList.add('selected');
-                setTimeout(() => {
-                    tool.classList.remove('selected');
-                }, 500);
-            });
-        });
-        
-        colorPicker.addEventListener('input', (e) => {
-            currentColor = e.target.value;
-            ctx.strokeStyle = currentColor;
-            ctx.fillStyle = currentColor;
-        });
-        
-        lineWidthSlider.addEventListener('input', (e) => {
-            currentLineWidth = parseInt(e.target.value);
-            ctx.lineWidth = currentLineWidth;
-            ctx.font = `${currentLineWidth * 5}px Arial`;
-        });
-        
-        copyBoardIdBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(boardId).then(() => {
-                showNotification('Board ID copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy board ID:', err);
-                showNotification('Failed to copy Board ID');
-            });
-        });
-        
-        togglePanelBtn.addEventListener('click', () => {
-            document.querySelector('.container').classList.toggle('panel-collapsed');
-            const icon = togglePanelBtn.querySelector('i');
-            if (document.querySelector('.container').classList.contains('panel-collapsed')) {
-                icon.classList.remove('fa-chevron-left');
-                icon.classList.add('fa-chevron-right');
-            } else {
-                icon.classList.remove('fa-chevron-right');
-                icon.classList.add('fa-chevron-left');
-            }
-        });
-        
-        // More menu event listeners
-        moreBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            moreMenu.classList.toggle('show');
-            reactions.classList.remove('show');
-        });
-        
-        messageBtn.addEventListener('click', () => {
-            showNotification('Messages feature coming soon!');
-            moreMenu.classList.remove('show');
-        });
-        
-        screenShareBtn.addEventListener('click', () => {
-            startScreenShare();
-            moreMenu.classList.remove('show');
-        });
-        
-        recordBtn.addEventListener('click', () => {
-            toggleRecording();
-            moreMenu.classList.remove('show');
-        });
-        
-        settingsBtn.addEventListener('click', () => {
-            showSettings();
-            moreMenu.classList.remove('show');
-        });
-        
-        // Reactions event listeners
-        reactionBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            reactions.classList.toggle('show');
-            moreMenu.classList.remove('show');
-        });
-        
-        document.querySelectorAll('.reaction-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const reaction = e.target.getAttribute('data-reaction');
-                sendReaction(reaction);
-                reactions.classList.remove('show');
-            });
-        });
-        
-        // Close menus when clicking outside
-        document.addEventListener('click', () => {
-            moreMenu.classList.remove('show');
-            reactions.classList.remove('show');
-        });
-        
-        // Slides navigation
-        prevSlideBtn.addEventListener('click', () => {
-            if (currentSlide > 0) {
-                saveCurrentSlide();
-                currentSlide--;
-                loadSlide(currentSlide);
-                updateSlideIndicator();
-            }
-        });
-        
-        nextSlideBtn.addEventListener('click', () => {
-            if (currentSlide < slides.length - 1) {
-                saveCurrentSlide();
-                currentSlide++;
-                loadSlide(currentSlide);
-                updateSlideIndicator();
-            }
-        });
-        
-        addSlideBtn.addEventListener('click', () => {
-            saveCurrentSlide();
-            slides.push({
-                drawingHistory: [],
-                historyPointer: -1
-            });
-            currentSlide = slides.length - 1;
-            loadSlide(currentSlide);
-            updateSlideIndicator();
-            showNotification('New slide added');
-        });
-        
-        // Settings modal
-        closeSettings.addEventListener('click', () => {
-            settingsModal.style.display = 'none';
-        });
-        
-        saveSettings.addEventListener('click', () => {
-            // In a real app, save settings here
-            settingsModal.style.display = 'none';
-            showNotification('Settings saved');
-        });
-        
-        // Save modal
-        confirmSave.addEventListener('click', () => {
-            saveWhiteboard();
-            saveModal.style.display = 'none';
-            unsavedChanges = false;
-            window.location.reload();
-        });
-        
-        discardChanges.addEventListener('click', () => {
-            saveModal.style.display = 'none';
-            unsavedChanges = false;
-            window.location.reload();
-        });
-        
-        function showSaveModal() {
-            saveModal.style.display = 'flex';
-        }
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (textInputActive) return;
-            
-            // Tool shortcuts
-            if (toolShortcuts[e.key.toLowerCase()]) {
-                const toolName = toolShortcuts[e.key.toLowerCase()];
-                selectTool(toolName);
-                
-                // Find and animate the tool button
-                const toolButton = document.querySelector(`.tool[data-tool="${toolName}"]`);
-                if (toolButton) {
-                    toolButton.classList.add('selected');
-                    setTimeout(() => {
-                        toolButton.classList.remove('selected');
-                    }, 500);
-                }
-                
-                e.preventDefault();
-            }
-            
-            // Undo/Redo shortcuts
-            if (e.ctrlKey || e.metaKey) {
-                if (e.key === 'z') {
-                    undo();
-                    e.preventDefault();
-                } else if (e.key === 'y') {
-                    redo();
-                    e.preventDefault();
-                } else if (e.key === 's') {
-                    saveWhiteboard();
-                    e.preventDefault();
-                }
-            }
-            
-            // Slide navigation shortcuts
-            if (e.key === 'ArrowLeft' && currentSlide > 0) {
-                saveCurrentSlide();
-                currentSlide--;
-                loadSlide(currentSlide);
-                updateSlideIndicator();
-                e.preventDefault();
-            } else if (e.key === 'ArrowRight' && currentSlide < slides.length - 1) {
-                saveCurrentSlide();
-                currentSlide++;
-                loadSlide(currentSlide);
-                updateSlideIndicator();
-                e.preventDefault();
-            }
-        });
         
         // Select a tool
         function selectTool(toolName) {
@@ -1855,12 +1889,8 @@
                 } else if (toolName === 'text') {
                     startTextInput();
                 } else if (toolName === 'highlighter') {
-                    isHighlighter = true;
                     ctx.globalAlpha = 0.5;
-                } else if (toolName === 'image') {
-                    uploadImage();
                 } else {
-                    isHighlighter = false;
                     ctx.globalAlpha = 1.0;
                 }
             }
@@ -1890,201 +1920,13 @@
                 
                 // Draw the text
                 drawAction(action);
-                
-                // Make text draggable
-                makeTextDraggable(text, lastX, lastY, currentColor, currentLineWidth);
             }
             
             textInputActive = false;
             selectTool('pencil');
         }
         
-        // Upload image
-        function uploadImage() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            
-            input.onchange = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        // Draw image on canvas
-                        const action = {
-                            tool: 'image',
-                            x: whiteboard.width / 2 - img.width / 2,
-                            y: whiteboard.height / 2 - img.height / 2,
-                            width: img.width,
-                            height: img.height,
-                            imageData: event.target.result,
-                            userId
-                        };
-                        
-                        // Add to history
-                        addToHistory(action);
-                        
-                        // Send to server
-                        socket.emit('draw', action);
-                        
-                        // Draw the image
-                        drawAction(action);
-                        
-                        // Make image draggable
-                        makeImageDraggable(img, action.x, action.y);
-                    };
-                    img.src = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            };
-            
-            input.click();
-        }
-        
-        // Make text draggable
-        function makeTextDraggable(text, x, y, color, size) {
-            const textElement = document.createElement('div');
-            textElement.className = 'draggable-text';
-            textElement.textContent = text;
-            textElement.style.color = color;
-            textElement.style.fontSize = `${size * 5}px`;
-            textElement.style.left = `${x}px`;
-            textElement.style.top = `${y}px`;
-            
-            whiteboard.parentElement.appendChild(textElement);
-            
-            // Make draggable
-            let isDragging = false;
-            let offsetX, offsetY;
-            
-            textElement.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                offsetX = e.clientX - textElement.getBoundingClientRect().left;
-                offsetY = e.clientY - textElement.getBoundingClientRect().top;
-                e.stopPropagation();
-            });
-            
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                
-                const containerRect = whiteboard.parentElement.getBoundingClientRect();
-                const x = e.clientX - containerRect.left - offsetX;
-                const y = e.clientY - containerRect.top - offsetY;
-                
-                textElement.style.left = `${x}px`;
-                textElement.style.top = `${y}px`;
-            });
-            
-            document.addEventListener('mouseup', () => {
-                if (isDragging) {
-                    isDragging = false;
-                    
-                    // Update the position in the drawing history
-                    const rect = textElement.getBoundingClientRect();
-                    const containerRect = whiteboard.parentElement.getBoundingClientRect();
-                    const newX = rect.left - containerRect.left;
-                    const newY = rect.top - containerRect.top;
-                    
-                    // Find the text action in history and update its position
-                    for (let i = 0; i <= slides[currentSlide].historyPointer; i++) {
-                        const action = slides[currentSlide].drawingHistory[i];
-                        if (action.tool === 'text' && action.x === x && action.y === y) {
-                            action.x = newX;
-                            action.y = newY;
-                            break;
-                        }
-                    }
-                    
-                    // Notify other users
-                    socket.emit('updateTextPosition', {
-                        oldX: x,
-                        oldY: y,
-                        newX,
-                        newY,
-                        boardId,
-                        userId
-                    });
-                }
-            });
-        }
-        
-        // Make image draggable
-        function makeImageDraggable(img, x, y) {
-            const imgElement = document.createElement('img');
-            imgElement.className = 'draggable-image';
-            imgElement.src = img.src;
-            imgElement.style.width = `${img.width}px`;
-            imgElement.style.height = `${img.height}px`;
-            imgElement.style.left = `${x}px`;
-            imgElement.style.top = `${y}px`;
-            
-            whiteboard.parentElement.appendChild(imgElement);
-            
-            // Make draggable
-            let isDragging = false;
-            let offsetX, offsetY;
-            
-            imgElement.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                offsetX = e.clientX - imgElement.getBoundingClientRect().left;
-                offsetY = e.clientY - imgElement.getBoundingClientRect().top;
-                e.stopPropagation();
-            });
-            
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                
-                const containerRect = whiteboard.parentElement.getBoundingClientRect();
-                const x = e.clientX - containerRect.left - offsetX;
-                const y = e.clientY - containerRect.top - offsetY;
-                
-                imgElement.style.left = `${x}px`;
-                imgElement.style.top = `${y}px`;
-            });
-            
-            document.addEventListener('mouseup', () => {
-                if (isDragging) {
-                    isDragging = false;
-                    
-                    // Update the position in the drawing history
-                    const rect = imgElement.getBoundingClientRect();
-                    const containerRect = whiteboard.parentElement.getBoundingClientRect();
-                    const newX = rect.left - containerRect.left;
-                    const newY = rect.top - containerRect.top;
-                    
-                    // Find the image action in history and update its position
-                    for (let i = 0; i <= slides[currentSlide].historyPointer; i++) {
-                        const action = slides[currentSlide].drawingHistory[i];
-                        if (action.tool === 'image' && action.x === x && action.y === y) {
-                            action.x = newX;
-                            action.y = newY;
-                            break;
-                        }
-                    }
-                    
-                    // Notify other users
-                    socket.emit('updateImagePosition', {
-                        oldX: x,
-                        oldY: y,
-                        newX,
-                        newY,
-                        boardId,
-                        userId
-                    });
-                }
-            });
-        }
-        
         // Drawing functions
-        whiteboard.addEventListener('mousedown', startDrawing);
-        whiteboard.addEventListener('mousemove', draw);
-        whiteboard.addEventListener('mouseup', stopDrawing);
-        whiteboard.addEventListener('mouseout', stopDrawing);
-        whiteboard.addEventListener('click', handleClick);
-        
         function startDrawing(e) {
             if (currentTool === 'undo' || currentTool === 'redo' || currentTool === 'clear' || textInputActive) return;
             
@@ -2118,33 +1960,16 @@
             
             switch (currentTool) {
                 case 'pencil':
-                case 'highlighter':
-                    ctx.strokeStyle = currentColor;
-                    ctx.lineTo(x, y);
-                    ctx.stroke();
-                    
-                    // Send drawing data to server
-                    socket.emit('draw', {
-                        tool: currentTool,
-                        color: currentColor,
-                        x1: lastX,
-                        y1: lastY,
-                        x2: x,
-                        y2: y,
-                        lineWidth: currentLineWidth,
-                        userId
-                    });
-                    break;
-                    
                 case 'eraser':
-                    ctx.strokeStyle = '#ffffff';
+                case 'highlighter':
+                    ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
                     ctx.lineTo(x, y);
                     ctx.stroke();
                     
                     // Send drawing data to server
                     socket.emit('draw', {
                         tool: currentTool,
-                        color: '#ffffff',
+                        color: currentTool === 'eraser' ? '#ffffff' : currentColor,
                         x1: lastX,
                         y1: lastY,
                         x2: x,
@@ -2165,46 +1990,49 @@
         
         function drawShapePreview(x1, y1, x2, y2, shapeType) {
             // Clear the preview
-            shapePreview.innerHTML = '';
+            const preview = document.getElementById('shapePreview');
+            if (preview) preview.innerHTML = '';
             
             // Create a div for the preview
-            const preview = document.createElement('div');
-            preview.style.position = 'absolute';
-            preview.style.border = `${currentLineWidth}px solid ${currentColor}`;
-            preview.style.backgroundColor = shapeType === 'rectangle' ? `${currentColor}20` : 'transparent';
+            const previewDiv = document.createElement('div');
+            previewDiv.style.position = 'absolute';
+            previewDiv.style.border = `${currentLineWidth}px solid ${currentColor}`;
+            previewDiv.style.backgroundColor = shapeType === 'rectangle' ? `${currentColor}20` : 'transparent';
             
             switch (shapeType) {
                 case 'line':
-                    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2);
                     const angle = Math.atan2(y2 - y1, x2 - x1);
                     
-                    preview.style.width = `${length}px`;
-                    preview.style.height = '0';
-                    preview.style.borderBottom = `${currentLineWidth}px solid ${currentColor}`;
-                    preview.style.transformOrigin = '0 0';
-                    preview.style.transform = `rotate(${angle}rad)`;
-                    preview.style.left = `${x1}px`;
-                    preview.style.top = `${y1}px`;
+                    previewDiv.style.width = `${length}px`;
+                    previewDiv.style.height = '0';
+                    previewDiv.style.borderBottom = `${currentLineWidth}px solid ${currentColor}`;
+                    previewDiv.style.transformOrigin = '0 0';
+                    previewDiv.style.transform = `rotate(${angle}rad)`;
+                    previewDiv.style.left = `${x1}px`;
+                    previewDiv.style.top = `${y1}px`;
                     break;
                     
                 case 'rectangle':
-                    preview.style.left = `${Math.min(x1, x2)}px`;
-                    preview.style.top = `${Math.min(y1, y2)}px`;
-                    preview.style.width = `${Math.abs(x2 - x1)}px`;
-                    preview.style.height = `${Math.abs(y2 - y1)}px`;
+                    previewDiv.style.left = `${Math.min(x1, x2)}px`;
+                    previewDiv.style.top = `${Math.min(y1, y2)}px`;
+                    previewDiv.style.width = `${Math.abs(x2 - x1)}px`;
+                    previewDiv.style.height = `${Math.abs(y2 - y1)}px`;
                     break;
                     
                 case 'circle':
                     const radius = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    preview.style.width = `${radius * 2}px`;
-                    preview.style.height = `${radius * 2}px`;
-                    preview.style.borderRadius = '50%';
-                    preview.style.left = `${x1 - radius}px`;
-                    preview.style.top = `${y1 - radius}px`;
+                    previewDiv.style.width = `${radius * 2}px`;
+                    previewDiv.style.height = `${radius * 2}px`;
+                    previewDiv.style.borderRadius = '50%';
+                    previewDiv.style.left = `${x1 - radius}px`;
+                    previewDiv.style.top = `${y1 - radius}px`;
                     break;
             }
             
-            shapePreview.appendChild(preview);
+            if (preview) {
+                preview.appendChild(previewDiv);
+            }
         }
         
         function handleClick(e) {
@@ -2222,7 +2050,8 @@
             const y = e.offsetY;
             
             // Clear the preview
-            shapePreview.innerHTML = '';
+            const preview = document.getElementById('shapePreview');
+            if (preview) preview.innerHTML = '';
             
             // For shapes, complete the drawing and add to history
             if (currentTool === 'line' || currentTool === 'rectangle' || currentTool === 'circle') {
@@ -2246,50 +2075,71 @@
                 // Draw the shape
                 drawAction(shape);
             } else if (currentTool === 'pencil' || currentTool === 'eraser' || currentTool === 'highlighter') {
-                // For pencil/eraser/highlighter, the path is already drawn
+                // For pencil/eraser, the path is already drawn
                 ctx.closePath();
             }
             
             isDrawing = false;
-            unsavedChanges = true;
         }
         
         // History functions
         function addToHistory(action) {
             // If we're not at the end of history, discard future actions
-            if (slides[currentSlide].historyPointer < slides[currentSlide].drawingHistory.length - 1) {
-                slides[currentSlide].drawingHistory = slides[currentSlide].drawingHistory.slice(0, slides[currentSlide].historyPointer + 1);
+            if (historyPointer < slides[currentSlideIndex].drawingHistory.length - 1) {
+                slides[currentSlideIndex].drawingHistory = slides[currentSlideIndex].drawingHistory.slice(0, historyPointer + 1);
             }
             
-            slides[currentSlide].drawingHistory.push(action);
-            slides[currentSlide].historyPointer = slides[currentSlide].drawingHistory.length - 1;
+            slides[currentSlideIndex].drawingHistory.push(action);
+            slides[currentSlideIndex].historyPointer = slides[currentSlideIndex].drawingHistory.length - 1;
+            
+            // Update board in localStorage
+            updateCurrentBoard();
+        }
+        
+        function updateCurrentBoard() {
+            // Find the current board
+            const boardIndex = boards.findIndex(b => b.id === boardId);
+            if (boardIndex !== -1) {
+                // Update the board
+                boards[boardIndex].drawingHistory = slides[currentSlideIndex].drawingHistory;
+                boards[boardIndex].lastModified = new Date().toISOString();
+                
+                // Save to localStorage
+                localStorage.setItem('whiteboardBoards', JSON.stringify(boards));
+            }
         }
         
         function undo() {
-            if (slides[currentSlide].historyPointer >= 0) {
-                slides[currentSlide].historyPointer--;
+            if (slides[currentSlideIndex].historyPointer >= 0) {
+                slides[currentSlideIndex].historyPointer--;
                 redrawWhiteboard();
-                socket.emit('undo', { userId, slideIndex: currentSlide });
-                unsavedChanges = true;
+                socket.emit('undo', { userId });
+                
+                // Update board in localStorage
+                updateCurrentBoard();
             }
         }
         
         function redo() {
-            if (slides[currentSlide].historyPointer < slides[currentSlide].drawingHistory.length - 1) {
-                slides[currentSlide].historyPointer++;
+            if (slides[currentSlideIndex].historyPointer < slides[currentSlideIndex].drawingHistory.length - 1) {
+                slides[currentSlideIndex].historyPointer++;
                 redrawWhiteboard();
-                socket.emit('redo', { userId, slideIndex: currentSlide });
-                unsavedChanges = true;
+                socket.emit('redo', { userId });
+                
+                // Update board in localStorage
+                updateCurrentBoard();
             }
         }
         
         function clearBoard() {
             if (confirm('Are you sure you want to clear the board? This cannot be undone.')) {
-                slides[currentSlide].drawingHistory = [];
-                slides[currentSlide].historyPointer = -1;
+                slides[currentSlideIndex].drawingHistory = [];
+                slides[currentSlideIndex].historyPointer = -1;
                 redrawWhiteboard();
-                socket.emit('clear', { userId, slideIndex: currentSlide });
-                unsavedChanges = true;
+                socket.emit('clear', { userId });
+                
+                // Update board in localStorage
+                updateCurrentBoard();
             }
         }
         
@@ -2298,29 +2148,21 @@
             ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
             
             // Redraw all actions up to history pointer
-            for (let i = 0; i <= slides[currentSlide].historyPointer; i++) {
-                const action = slides[currentSlide].drawingHistory[i];
+            for (let i = 0; i <= slides[currentSlideIndex].historyPointer; i++) {
+                const action = slides[currentSlideIndex].drawingHistory[i];
                 drawAction(action, false);
             }
         }
         
         function drawAction(action, addToHistoryFlag = true) {
-            if (!action) return;
-            
             ctx.strokeStyle = action.color;
             ctx.fillStyle = action.color;
             ctx.lineWidth = action.lineWidth || 3;
             
-            if (action.tool === 'highlighter') {
-                ctx.globalAlpha = 0.5;
-            } else {
-                ctx.globalAlpha = 1.0;
-            }
-            
             switch (action.tool) {
                 case 'pencil':
-                case 'highlighter':
                 case 'eraser':
+                case 'highlighter':
                     ctx.beginPath();
                     ctx.moveTo(action.x1, action.y1);
                     ctx.lineTo(action.x2, action.y2);
@@ -2353,44 +2195,11 @@
                     ctx.font = `${action.size * 5}px Arial`;
                     ctx.fillText(action.text, action.x, action.y);
                     break;
-                    
-                case 'image':
-                    const img = new Image();
-                    img.onload = () => {
-                        ctx.drawImage(img, action.x, action.y, action.width, action.height);
-                    };
-                    img.src = action.imageData;
-                    break;
             }
             
             if (addToHistoryFlag) {
                 addToHistory(action);
             }
-        }
-        
-        // Slides functions
-        function saveCurrentSlide() {
-            slides[currentSlide] = {
-                drawingHistory: [...slides[currentSlide].drawingHistory],
-                historyPointer: slides[currentSlide].historyPointer
-            };
-        }
-        
-        function loadSlide(index) {
-            if (index < 0 || index >= slides.length) return;
-            
-            currentSlide = index;
-            redrawWhiteboard();
-            
-            // Notify other users
-            socket.emit('changeSlide', {
-                slideIndex: currentSlide,
-                userId
-            });
-        }
-        
-        function updateSlideIndicator() {
-            slideIndicator.textContent = `Slide ${currentSlide + 1} of ${slides.length}`;
         }
         
         // Media functions
@@ -2471,155 +2280,18 @@
             }
         }
         
-        async function startScreenShare() {
-            try {
-                const stream = await navigator.mediaDevices.getDisplayMedia({ 
-                    video: true,
-                    audio: true
-                });
-                
-                // Replace the local video with screen share
-                localVideo.srcObject = stream;
-                localVideoPlaceholder.style.display = 'none';
-                localVideo.style.display = 'block';
-                
-                // Update WebRTC connection
-                if (peerConnection) {
-                    // Remove old video tracks
-                    const senders = peerConnection.getSenders();
-                    senders.forEach(sender => {
-                        if (sender.track.kind === 'video') {
-                            peerConnection.removeTrack(sender);
-                        }
-                    });
-                    
-                    // Add screen share track
-                    stream.getTracks().forEach(track => {
-                        peerConnection.addTrack(track, stream);
-                    });
-                }
-                
-                showNotification('Screen sharing started');
-                
-                // Handle when user stops screen sharing
-                stream.getVideoTracks()[0].onended = () => {
-                    showNotification('Screen sharing stopped');
-                    if (isVideoOn) {
-                        toggleVideo(); // Restore camera
-                    } else {
-                        localVideo.srcObject = null;
-                        localVideo.style.display = 'none';
-                        localVideoPlaceholder.style.display = 'flex';
-                    }
-                };
-            } catch (err) {
-                console.error('Error sharing screen:', err);
-                showNotification('Could not share screen');
-            }
-        }
-        
-        function toggleRecording() {
-            if (isRecording) {
-                stopRecording();
-            } else {
-                startRecording();
-            }
-        }
-        
-        function startRecording() {
-            if (!localStream) {
-                showNotification('Please enable video or audio first');
-                return;
-            }
-            
-            recordedChunks = [];
-            const options = { mimeType: 'video/webm' };
-            mediaRecorder = new MediaRecorder(localStream, options);
-            
-            mediaRecorder.ondataavailable = (e) => {
-                if (e.data.size > 0) {
-                    recordedChunks.push(e.data);
-                }
-            };
-            
-            mediaRecorder.onstop = () => {
-                const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                const url = URL.createObjectURL(blob);
-                
-                // Create download link
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `whiteboard-session-${new Date().toISOString()}.webm`;
-                a.click();
-                
-                showNotification('Recording saved');
-            };
-            
-            mediaRecorder.start();
-            isRecording = true;
-            recordingIndicator.style.display = 'flex';
-            showNotification('Recording started');
-        }
-        
-        function stopRecording() {
-            if (!isRecording) return;
-            
-            mediaRecorder.stop();
-            isRecording = false;
-            recordingIndicator.style.display = 'none';
-            showNotification('Recording stopped');
-        }
-        
-        function sendReaction(reaction) {
-            socket.emit('reaction', { 
-                reaction,
-                userId,
-                userName
-            });
-            
-            showNotification(`You reacted with ${reaction}`);
-        }
-        
-        function showSettings() {
-            settingsModal.style.display = 'flex';
-        }
-        
-        function saveWhiteboard() {
-            // In a real app, this would save to a database or file
-            const data = {
-                slides,
-                createdAt: new Date().toISOString(),
-                createdBy: userName
-            };
-            
-            // For demo purposes, we'll just save to localStorage
-            localStorage.setItem(`whiteboard-${boardId}`, JSON.stringify(data));
-            
-            showNotification('Whiteboard saved');
-            unsavedChanges = false;
-        }
-        
-        function loadWhiteboard() {
-            const savedData = localStorage.getItem(`whiteboard-${boardId}`);
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                slides = data.slides || [{
-                    drawingHistory: [],
-                    historyPointer: -1
-                }];
-                currentSlide = 0;
-                loadSlide(currentSlide);
-                updateSlideIndicator();
-                showNotification('Whiteboard loaded');
-            }
-        }
-        
         function setupPeerConnection() {
             if (peerConnection) {
                 peerConnection.close();
             }
             
-            peerConnection = new RTCPeerConnection(configuration);
+            peerConnection = new RTCPeerConnection({
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' }
+                ]
+            });
             
             // Add local stream to connection
             if (localStream) {
@@ -2671,41 +2343,27 @@
             loadingScreen.style.display = 'none';
         }
         
-        // Socket.io event handlers
-        socket.on('boardCreated', (data) => {
-            boardId = data.boardId;
-            boardIdElement.textContent = data.boardId;
+        // Notification function
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.style.display = 'block';
             
-            // Update URL with board ID
-            const url = new URL(window.location.href);
-            url.searchParams.set('board', data.boardId);
-            window.history.pushState({}, '', url);
-            
-            showNotification('New board created! Share the URL to collaborate.');
-            hideLoading();
-            
-            // Load any saved data
-            loadWhiteboard();
-        });
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
         
+        // Socket.io event handlers
         socket.on('boardJoined', (data) => {
             boardId = data.boardId;
             boardIdElement.textContent = data.boardId;
             
-            // Load existing drawings and slides
-            slides = data.slides || [{
-                drawingHistory: data.drawings || [],
-                historyPointer: (data.drawings || []).length - 1
-            }];
-            currentSlide = 0;
-            loadSlide(currentSlide);
-            updateSlideIndicator();
+            // Load existing users
+            users = data.users || {};
+            updateUserList();
             
-            showNotification(`Joined board ${data.boardId}`);
             hideLoading();
-            
-            // Load any saved data
-            loadWhiteboard();
+            showNotification(`Joined board ${data.boardId}`);
         });
         
         socket.on('userJoined', (user) => {
@@ -2715,16 +2373,6 @@
             
             // If we have media and a new user joins, set up connection
             if (localStream && Object.keys(users).length === 2) {
-                setupPeerConnection();
-            }
-        });
-        
-        socket.on('existingUsers', (existingUsers) => {
-            users = { ...users, ...existingUsers };
-            updateUserList();
-            
-            // If there are existing users and we have media, set up connection
-            if (localStream && Object.keys(existingUsers).length > 0) {
                 setupPeerConnection();
             }
         });
@@ -2782,90 +2430,24 @@
             drawAction(action);
         });
         
-        socket.on('undo', (data) => {
-            if (data.slideIndex === currentSlide) {
-                if (slides[currentSlide].historyPointer >= 0) {
-                    slides[currentSlide].historyPointer--;
-                    redrawWhiteboard();
-                }
-            }
-        });
-        
-        socket.on('redo', (data) => {
-            if (data.slideIndex === currentSlide) {
-                if (slides[currentSlide].historyPointer < slides[currentSlide].drawingHistory.length - 1) {
-                    slides[currentSlide].historyPointer++;
-                    redrawWhiteboard();
-                }
-            }
-        });
-        
-        socket.on('clear', (data) => {
-            if (data.slideIndex === currentSlide) {
-                slides[currentSlide].drawingHistory = [];
-                slides[currentSlide].historyPointer = -1;
+        socket.on('undo', () => {
+            if (slides[currentSlideIndex].historyPointer >= 0) {
+                slides[currentSlideIndex].historyPointer--;
                 redrawWhiteboard();
             }
         });
         
-        socket.on('changeSlide', (data) => {
-            if (data.userId !== userId) {
-                currentSlide = data.slideIndex;
+        socket.on('redo', () => {
+            if (slides[currentSlideIndex].historyPointer < slides[currentSlideIndex].drawingHistory.length - 1) {
+                slides[currentSlideIndex].historyPointer++;
                 redrawWhiteboard();
-                updateSlideIndicator();
             }
         });
         
-        socket.on('updateTextPosition', (data) => {
-            // Find and update the text position
-            for (let i = 0; i <= slides[currentSlide].historyPointer; i++) {
-                const action = slides[currentSlide].drawingHistory[i];
-                if (action.tool === 'text' && action.x === data.oldX && action.y === data.oldY) {
-                    action.x = data.newX;
-                    action.y = data.newY;
-                    break;
-                }
-            }
-            
-            // Redraw to update the position
+        socket.on('clear', () => {
+            slides[currentSlideIndex].drawingHistory = [];
+            slides[currentSlideIndex].historyPointer = -1;
             redrawWhiteboard();
-        });
-        
-        socket.on('updateImagePosition', (data) => {
-            // Find and update the image position
-            for (let i = 0; i <= slides[currentSlide].historyPointer; i++) {
-                const action = slides[currentSlide].drawingHistory[i];
-                if (action.tool === 'image' && action.x === data.oldX && action.y === data.oldY) {
-                    action.x = data.newX;
-                    action.y = data.newY;
-                    break;
-                }
-            }
-            
-            // Redraw to update the position
-            redrawWhiteboard();
-        });
-        
-        socket.on('reaction', (data) => {
-            if (data.userId !== userId) {
-                showNotification(`${data.userName} reacted with ${data.reaction}`);
-            }
-            
-            // Show reaction animation
-            const reactionElement = document.createElement('div');
-            reactionElement.textContent = data.reaction;
-            reactionElement.style.position = 'fixed';
-            reactionElement.style.fontSize = '40px';
-            reactionElement.style.zIndex = '1000';
-            reactionElement.style.left = `${Math.random() * 80 + 10}%`;
-            reactionElement.style.top = `${Math.random() * 80 + 10}%`;
-            reactionElement.style.animation = 'fadeInOut 2s forwards';
-            
-            document.body.appendChild(reactionElement);
-            
-            setTimeout(() => {
-                reactionElement.remove();
-            }, 2000);
         });
         
         socket.on('userCount', (count) => {
@@ -2938,30 +2520,8 @@
             });
         }
         
-        function showNotification(message) {
-            notification.textContent = message;
-            notification.style.display = 'block';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
-        }
-        
-        // Media button event listeners
-        micBtn.addEventListener('click', toggleMic);
-        videoBtn.addEventListener('click', toggleVideo);
-        
-        // Add animation for reactions
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeInOut {
-                0% { opacity: 0; transform: translateY(20px); }
-                20% { opacity: 1; transform: translateY(0); }
-                80% { opacity: 1; transform: translateY(0); }
-                100% { opacity: 0; transform: translateY(-20px); }
-            }
-        `;
-        document.head.appendChild(style);
+        // Initialize the app
+        initApp();
     </script>
 </body>
 </html>
