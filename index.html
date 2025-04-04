@@ -23,229 +23,259 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f7fa;
+            background-color: var(--light-color);
             color: var(--text-color);
             height: 100vh;
             overflow: hidden;
         }
         
-        /* New Modern Login Page Styles */
-        .login-container {
+        /* Splash Screen */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+        
+        .splash-logo {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        .splash-text {
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        
+        /* Modern Login Page */
+        .login-container {
+            display: none;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
+            background-color: #f5f7fa;
         }
         
-        .login-box {
-            background-color: var(--white);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            width: 400px;
-            padding: 40px;
-            text-align: center;
-            position: relative;
+        .login-wrapper {
+            display: flex;
+            width: 900px;
+            max-width: 90%;
+            height: 550px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
             overflow: hidden;
         }
         
-        .login-box::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            z-index: 0;
-        }
-        
-        .login-content {
-            position: relative;
-            z-index: 1;
+        .login-left {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            color: white;
         }
         
         .login-logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+        }
+        
+        .login-welcome {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .login-description {
+            font-size: 1rem;
+            text-align: center;
+            opacity: 0.9;
             margin-bottom: 30px;
         }
         
-        .login-logo img {
-            height: 60px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        .login-right {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .login-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            text-align: center;
+        }
+        
+        .login-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .login-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: var(--transition);
+        }
+        
+        .login-tab.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .form-group {
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
             color: var(--secondary-color);
         }
         
-        .login-subtitle {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 30px;
-        }
-        
-        .login-form .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-            position: relative;
-        }
-        
-        .login-form label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark-color);
-            font-size: 14px;
-        }
-        
-        .login-form input {
+        .form-group input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px;
             border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 6px;
+            font-size: 1rem;
             transition: var(--transition);
-            background-color: #f9fafc;
         }
         
-        .login-form input:focus {
+        .form-group input:focus {
             border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-            background-color: var(--white);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
         
-        .password-container {
-            position: relative;
-        }
-        
-        .toggle-password {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #999;
-        }
-        
-        .login-options {
+        .remember-forgot {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            font-size: 13px;
+            margin-bottom: 15px;
         }
         
         .remember-me {
             display: flex;
             align-items: center;
+            gap: 5px;
         }
         
-        .remember-me input {
-            margin-right: 8px;
-        }
-        
-        .forgot-password a {
+        .forgot-password {
             color: var(--primary-color);
             text-decoration: none;
-            font-weight: 500;
+            font-size: 0.9rem;
         }
         
         .login-btn {
-            width: 100%;
-            padding: 14px;
             background-color: var(--primary-color);
             color: var(--white);
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
         }
         
         .login-btn:hover {
             background-color: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(52, 152, 219, 0.3);
         }
         
-        .divider {
+        .login-divider {
             display: flex;
             align-items: center;
             margin: 20px 0;
-            color: #999;
-            font-size: 13px;
+            color: #666;
         }
         
-        .divider::before,
-        .divider::after {
+        .login-divider::before,
+        .login-divider::after {
             content: "";
             flex: 1;
-            height: 1px;
-            background-color: #eee;
-            margin: 0 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .login-divider::before {
+            margin-right: 10px;
+        }
+        
+        .login-divider::after {
+            margin-left: 10px;
         }
         
         .social-login {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
             margin-bottom: 20px;
         }
         
-        .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-        }
-        
-        .social-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
+        .social-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--white);
-            font-size: 18px;
+            gap: 8px;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            background-color: white;
+            color: var(--text-color);
         }
         
-        .social-icon.google {
-            background-color: #DB4437;
+        .social-btn:hover {
+            background-color: #f5f5f5;
         }
         
-        .social-icon.github {
-            background-color: #333;
-        }
-        
-        .social-icon.linkedin {
-            background-color: #0077B5;
-        }
-        
-        .social-icon.facebook {
-            background-color: #4267B2;
-        }
-        
-        .social-icon:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
+        .google-btn { color: #DB4437; }
+        .github-btn { color: #333; }
+        .linkedin-btn { color: #0077B5; }
+        .email-btn { color: var(--secondary-color); }
+        .phone-btn { color: var(--primary-color); }
         
         .register-link {
-            font-size: 14px;
-            color: #666;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 15px;
         }
         
         .register-link a {
@@ -254,274 +284,256 @@
             font-weight: 600;
         }
         
-        .login-footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #999;
-            line-height: 1.5;
-        }
-        
-        .login-footer a {
-            color: #666;
-            text-decoration: none;
-        }
-        
-        /* Registration Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background-color: white;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            animation: modalFadeIn 0.3s ease;
-        }
-        
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--secondary-color);
-        }
-        
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #999;
-        }
-        
-        .register-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .register-tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #999;
-            border-bottom: 2px solid transparent;
-            transition: var(--transition);
-        }
-        
-        .register-tab.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-        }
-        
-        .register-form {
-            display: none;
-        }
-        
-        .register-form.active {
-            display: block;
-        }
-        
-        /* Main App Styles (hidden initially) */
+        /* Main App Styles */
         .container {
-            display: flex;
+            display: none;
             flex-direction: column;
             height: 100vh;
-            display: none;
         }
         
-        /* ... (rest of your existing app styles remain the same) ... */
-        
-        /* Loading animation */
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
+        /* ... (rest of your existing styles remain the same) ... */
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
-        .loading-text {
-            color: white;
-            margin-top: 20px;
-            font-size: 1.2rem;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .login-wrapper {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .login-left {
+                padding: 30px 20px;
+            }
+            
+            .login-right {
+                padding: 30px 20px;
+            }
+            
+            .social-btn {
+                min-width: calc(50% - 10px);
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Education Logo" class="splash-logo">
+        <div class="splash-text">WhiteBoard Education</div>
+    </div>
+    
     <!-- Login Page -->
     <div class="login-container" id="loginContainer">
-        <div class="login-box">
-            <div class="login-content">
-                <div class="login-logo">
-                    <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Education Logo">
+        <div class="login-wrapper">
+            <div class="login-left">
+                <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Education Logo" class="login-logo">
+                <h1 class="login-welcome">Welcome Back!</h1>
+                <p class="login-description">
+                    Collaborate in real-time with our interactive whiteboard.
+                    Sign in to access your boards and start creating.
+                </p>
+            </div>
+            
+            <div class="login-right">
+                <h2 class="login-title">Sign In</h2>
+                
+                <div class="login-tabs">
+                    <div class="login-tab active" id="loginTab">Login</div>
+                    <div class="login-tab" id="registerTab">Register</div>
                 </div>
-                <h1 class="login-title">Welcome to WhiteBoard</h1>
-                <p class="login-subtitle">Collaborate in real-time with your team</p>
                 
                 <form class="login-form" id="loginForm">
                     <div class="form-group">
-                        <label for="loginUsername">Username</label>
-                        <input type="text" id="loginUsername" placeholder="Enter your username" required>
+                        <label for="username">Username or Email</label>
+                        <input type="text" id="username" required>
                     </div>
-                    
                     <div class="form-group">
-                        <label for="loginPassword">Password</label>
-                        <div class="password-container">
-                            <input type="password" id="loginPassword" placeholder="Enter your password" required>
-                            <i class="fas fa-eye toggle-password" id="togglePassword"></i>
-                        </div>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required>
                     </div>
                     
-                    <div class="login-options">
+                    <div class="remember-forgot">
                         <div class="remember-me">
                             <input type="checkbox" id="rememberMe">
                             <label for="rememberMe">Remember me</label>
                         </div>
-                        <div class="forgot-password">
-                            <a href="#">Forgot password?</a>
-                        </div>
+                        <a href="#" class="forgot-password">Forgot password?</a>
                     </div>
                     
-                    <button type="button" class="login-btn" id="loginBtn">
-                        <i class="fas fa-sign-in-alt"></i> Sign In
-                    </button>
-                    
-                    <div class="divider">or continue with</div>
-                    
-                    <div class="social-login">
-                        <div class="social-icons">
-                            <div class="social-icon google" id="googleLogin">
-                                <i class="fab fa-google"></i>
-                            </div>
-                            <div class="social-icon facebook" id="facebookLogin">
-                                <i class="fab fa-facebook-f"></i>
-                            </div>
-                            <div class="social-icon github" id="githubLogin">
-                                <i class="fab fa-github"></i>
-                            </div>
-                            <div class="social-icon linkedin" id="linkedinLogin">
-                                <i class="fab fa-linkedin-in"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="register-link">
-                        Not registered yet? <a href="#" id="showRegister">Create an account</a>
-                    </div>
-                    
-                    <div class="login-footer">
-                        By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-                    </div>
+                    <button type="submit" class="login-btn">Sign In</button>
                 </form>
+                
+                <div class="login-divider">or continue with</div>
+                
+                <div class="social-login">
+                    <button class="social-btn google-btn" id="googleLogin">
+                        <i class="fab fa-google"></i> Google
+                    </button>
+                    <button class="social-btn github-btn" id="githubLogin">
+                        <i class="fab fa-github"></i> GitHub
+                    </button>
+                    <button class="social-btn linkedin-btn" id="linkedinLogin">
+                        <i class="fab fa-linkedin-in"></i> LinkedIn
+                    </button>
+                    <button class="social-btn email-btn" id="emailRegister">
+                        <i class="fas fa-envelope"></i> Email
+                    </button>
+                    <button class="social-btn phone-btn" id="phoneRegister">
+                        <i class="fas fa-phone"></i> Phone
+                    </button>
+                </div>
+                
+                <div class="register-link">
+                    Don't have an account? <a href="#" id="showRegister">Register now</a>
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- Registration Modal -->
-    <div class="modal" id="registerModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Create Account</div>
-                <button class="close-modal" id="closeModal">&times;</button>
+    <!-- Main App (initially hidden) -->
+    <div class="container" id="appContainer">
+        <div class="header">
+            <div class="logo-container">
+                <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Education Logo" class="logo-img">
+                <div class="logo-text">WhiteBoard Education</div>
             </div>
-            
-            <div class="register-tabs">
-                <div class="register-tab active" data-tab="email">Email</div>
-                <div class="register-tab" data-tab="phone">Phone</div>
+            <div class="user-count">
+                <i class="fas fa-users"></i>
+                <span id="userCount">0</span>
             </div>
-            
-            <form class="register-form active" id="emailRegisterForm">
-                <div class="form-group">
-                    <label for="registerName">Full Name</label>
-                    <input type="text" id="registerName" placeholder="Enter your full name" required>
+        </div>
+        
+        <div class="main">
+            <div class="toolbar">
+                <div class="tool active" data-tool="pencil">
+                    <i class="fas fa-pencil-alt"></i>
+                    <span class="tool-tip">Pencil (P)</span>
+                </div>
+                <div class="tool" data-tool="line">
+                    <i class="fas fa-slash"></i>
+                    <span class="tool-tip">Line (L)</span>
+                </div>
+                <div class="tool" data-tool="rectangle">
+                    <i class="far fa-square"></i>
+                    <span class="tool-tip">Rectangle (R)</span>
+                </div>
+                <div class="tool" data-tool="circle">
+                    <i class="far fa-circle"></i>
+                    <span class="tool-tip">Circle (C)</span>
+                </div>
+                <div class="tool" data-tool="eraser">
+                    <i class="fas fa-eraser"></i>
+                    <span class="tool-tip">Eraser (E)</span>
+                </div>
+                <div class="tool" data-tool="text">
+                    <i class="fas fa-font"></i>
+                    <span class="tool-tip">Text (T)</span>
+                </div>
+                <div class="tool" data-tool="highlighter">
+                    <i class="fas fa-highlighter"></i>
+                    <span class="tool-tip">Highlighter (H)</span>
+                </div>
+                <div class="tool" data-tool="image">
+                    <i class="far fa-image"></i>
+                    <span class="tool-tip">Image (I)</span>
+                </div>
+                <div class="tool" data-tool="undo">
+                    <i class="fas fa-undo"></i>
+                    <span class="tool-tip">Undo (Ctrl+Z)</span>
+                </div>
+                <div class="tool" data-tool="redo">
+                    <i class="fas fa-redo"></i>
+                    <span class="tool-tip">Redo (Ctrl+Y)</span>
                 </div>
                 
-                <div class="form-group">
-                    <label for="registerEmail">Email</label>
-                    <input type="email" id="registerEmail" placeholder="Enter your email" required>
+                <div class="color-picker-container">
+                    <div class="color-picker-label">Color</div>
+                    <input type="color" class="color-picker" id="colorPicker" value="#000000">
                 </div>
                 
-                <div class="form-group">
-                    <label for="registerPassword">Password</label>
-                    <div class="password-container">
-                        <input type="password" id="registerPassword" placeholder="Create a password" required>
-                        <i class="fas fa-eye toggle-password" id="toggleRegisterPassword"></i>
+                <div class="line-width-control">
+                    <div class="line-width-label">Size</div>
+                    <input type="range" class="line-width-slider" id="lineWidth" min="1" max="20" value="3">
+                </div>
+                
+                <div class="tool" data-tool="clear">
+                    <i class="fas fa-trash-alt"></i>
+                    <span class="tool-tip">Clear Board</span>
+                </div>
+            </div>
+            
+            <div class="whiteboard-container">
+                <canvas id="whiteboard"></canvas>
+            </div>
+            
+            <div class="toggle-panel" id="togglePanel">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            
+            <div class="right-panel">
+                <div class="user-list-container">
+                    <div class="user-list-title">
+                        <i class="fas fa-users"></i>
+                        <h3>Online Users</h3>
+                    </div>
+                    <div id="userList">
+                        <!-- Users will be added here dynamically -->
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="registerConfirmPassword">Confirm Password</label>
-                    <input type="password" id="registerConfirmPassword" placeholder="Confirm your password" required>
+                <div class="media-container">
+                    <div class="media-controls">
+                        <button id="micBtn" class="media-btn">
+                            <i class="fas fa-microphone"></i>
+                            <span>Mic</span>
+                        </button>
+                        <button id="videoBtn" class="media-btn">
+                            <i class="fas fa-video"></i>
+                            <span>Video</span>
+                        </button>
+                    </div>
+                    
+                    <div class="video-container">
+                        <video id="localVideo" autoplay muted playsinline></video>
+                        <div class="video-placeholder">
+                            <i class="fas fa-user"></i>
+                            <div class="video-placeholder-text">Your video will appear here</div>
+                        </div>
+                    </div>
+                    
+                    <div class="video-container">
+                        <video id="remoteVideo" autoplay playsinline></video>
+                        <div class="video-placeholder">
+                            <i class="fas fa-users"></i>
+                            <div class="video-placeholder-text">Other participant's video will appear here</div>
+                        </div>
+                    </div>
                 </div>
-                
-                <button type="button" class="login-btn" id="registerEmailBtn">
-                    <i class="fas fa-user-plus"></i> Sign Up
-                </button>
-            </form>
-            
-            <form class="register-form" id="phoneRegisterForm">
-                <div class="form-group">
-                    <label for="registerPhoneName">Full Name</label>
-                    <input type="text" id="registerPhoneName" placeholder="Enter your full name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="registerPhone">Phone Number</label>
-                    <input type="tel" id="registerPhone" placeholder="Enter your phone number" required>
-                </div>
-                
-                <button type="button" class="login-btn" id="registerPhoneBtn">
-                    <i class="fas fa-user-plus"></i> Sign Up with Phone
-                </button>
-            </form>
+            </div>
         </div>
-    </div>
-    
-    <!-- Main App (hidden initially) -->
-    <div class="container" id="appContainer">
-        <!-- ... (your existing app HTML remains the same) ... -->
+        
+        <div class="footer">
+            <div class="footer-info">
+                <span>Real-time collaboration with WebRTC & Socket.io</span>
+            </div>
+            <div class="board-actions">
+                <button class="board-btn" id="copyBoardId">
+                    <i class="fas fa-copy"></i> Copy Board ID
+                </button>
+                <span id="boardId">Loading...</span>
+            </div>
+        </div>
     </div>
     
     <!-- Loading Screen -->
@@ -532,387 +544,1003 @@
     
     <script>
         // DOM Elements
+        const splashScreen = document.getElementById('splashScreen');
         const loginContainer = document.getElementById('loginContainer');
         const appContainer = document.getElementById('appContainer');
         const loginForm = document.getElementById('loginForm');
-        const loginBtn = document.getElementById('loginBtn');
-        const togglePassword = document.getElementById('togglePassword');
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
         const showRegister = document.getElementById('showRegister');
-        const registerModal = document.getElementById('registerModal');
-        const closeModal = document.getElementById('closeModal');
-        const registerTabs = document.querySelectorAll('.register-tab');
-        const registerForms = document.querySelectorAll('.register-form');
+        const googleLogin = document.getElementById('googleLogin');
+        const githubLogin = document.getElementById('githubLogin');
+        const linkedinLogin = document.getElementById('linkedinLogin');
+        const emailRegister = document.getElementById('emailRegister');
+        const phoneRegister = document.getElementById('phoneRegister');
+        
+        const whiteboard = document.getElementById('whiteboard');
+        const ctx = whiteboard.getContext('2d');
+        const tools = document.querySelectorAll('.tool');
+        const colorPicker = document.getElementById('colorPicker');
+        const lineWidthSlider = document.getElementById('lineWidth');
+        const userList = document.getElementById('userList');
+        const userCount = document.getElementById('userCount');
+        const boardIdElement = document.getElementById('boardId');
+        const copyBoardIdBtn = document.getElementById('copyBoardId');
         const loadingScreen = document.getElementById('loading');
+        const loadingText = loadingScreen.querySelector('.loading-text');
         
-        // Toggle password visibility
-        togglePassword.addEventListener('click', function() {
-            const passwordInput = document.getElementById('loginPassword');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.classList.toggle('fa-eye-slash');
+        // Whiteboard state
+        let currentTool = 'pencil';
+        let currentColor = '#000000';
+        let currentLineWidth = 3;
+        let isDrawing = false;
+        let startX = 0;
+        let startY = 0;
+        let lastX = 0;
+        let lastY = 0;
+        let drawingHistory = [];
+        let historyPointer = -1;
+        let users = {};
+        let textInputActive = false;
+        
+        // User state
+        let userId = generateUserId();
+        let userName = `User-${userId.substring(0, 4)}`;
+        let userColor = generateRandomColor();
+        
+        // Board state
+        let boardId = '';
+        
+        // Socket.io connection
+        const socket = io({
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            timeout: 20000
         });
         
-        // Show registration modal
-        showRegister.addEventListener('click', function(e) {
-            e.preventDefault();
-            registerModal.style.display = 'flex';
-        });
-        
-        // Close registration modal
-        closeModal.addEventListener('click', function() {
-            registerModal.style.display = 'none';
-        });
-        
-        // Switch between registration tabs
-        registerTabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                // Remove active class from all tabs and forms
-                registerTabs.forEach(t => t.classList.remove('active'));
-                registerForms.forEach(f => f.classList.remove('active'));
-                
-                // Add active class to clicked tab and corresponding form
-                this.classList.add('active');
-                const tabName = this.getAttribute('data-tab');
-                document.getElementById(`${tabName}RegisterForm`).classList.add('active');
-            });
-        });
-        
-        // Social login handlers
-        document.getElementById('googleLogin').addEventListener('click', loginWithGoogle);
-        document.getElementById('facebookLogin').addEventListener('click', loginWithFacebook);
-        document.getElementById('githubLogin').addEventListener('click', loginWithGithub);
-        document.getElementById('linkedinLogin').addEventListener('click', loginWithLinkedIn);
-        
-        // Registration handlers
-        document.getElementById('registerEmailBtn').addEventListener('click', registerWithEmail);
-        document.getElementById('registerPhoneBtn').addEventListener('click', registerWithPhone);
-        
-        // Login handler
-        loginBtn.addEventListener('click', handleLogin);
-        
-        // Login functions
-        function handleLogin() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value;
+        // Initialize application
+        function initApp() {
+            // Show splash screen first
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                    
+                    // Check if user is already logged in (from localStorage)
+                    const savedUser = localStorage.getItem('whiteboardUser');
+                    if (savedUser) {
+                        const user = JSON.parse(savedUser);
+                        userId = user.id || userId;
+                        userName = user.name || userName;
+                        userColor = user.color || userColor;
+                        
+                        // Show loading screen while connecting
+                        showLoading('Connecting to whiteboard...');
+                        
+                        // Create a new board (in a real app, you would load existing boards)
+                        createNewBoard();
+                    } else {
+                        // Show login if not logged in
+                        loginContainer.style.display = 'flex';
+                    }
+                }, 500);
+            }, 2000);
             
+            // Set up login form
+            loginForm.addEventListener('submit', handleLogin);
+            
+            // Set up tab switching
+            loginTab.addEventListener('click', () => {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                document.querySelector('.register-link').innerHTML = 
+                    'Don\'t have an account? <a href="#" id="showRegister">Register now</a>';
+            });
+            
+            registerTab.addEventListener('click', () => {
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
+                document.querySelector('.register-link').innerHTML = 
+                    'Already have an account? <a href="#" id="showLogin">Login</a>';
+            });
+            
+            showRegister.addEventListener('click', (e) => {
+                e.preventDefault();
+                registerTab.click();
+            });
+            
+            // Set up social login buttons
+            googleLogin.addEventListener('click', () => socialLogin('google'));
+            githubLogin.addEventListener('click', () => socialLogin('github'));
+            linkedinLogin.addEventListener('click', () => socialLogin('linkedin'));
+            emailRegister.addEventListener('click', () => socialLogin('email'));
+            phoneRegister.addEventListener('click', () => socialLogin('phone'));
+        }
+        
+        // Handle login
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation
             if (!username || !password) {
                 alert('Please enter both username and password');
                 return;
             }
             
-            showLoading('Authenticating...');
+            // In a real app, you would validate credentials with a server
+            userName = username;
             
-            // In a real app, you would validate credentials with your backend
-            setTimeout(() => {
-                // For demo purposes, we'll just proceed with login
-                userName = username;
-                loginContainer.style.display = 'none';
-                appContainer.style.display = 'flex';
-                hideLoading();
+            // Save user to localStorage
+            localStorage.setItem('whiteboardUser', JSON.stringify({
+                id: userId,
+                name: userName,
+                color: userColor
+            }));
+            
+            // Show loading screen while connecting
+            showLoading('Connecting to whiteboard...');
+            
+            // Create a new board
+            createNewBoard();
+        }
+        
+        // Social login (placeholder)
+        function socialLogin(provider) {
+            // For demo purposes, we'll just simulate a successful login
+            userName = `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`;
+            userColor = generateRandomColor();
+            
+            localStorage.setItem('whiteboardUser', JSON.stringify({
+                id: userId,
+                name: userName,
+                color: userColor
+            }));
+            
+            // Show loading screen while connecting
+            showLoading('Connecting to whiteboard...');
+            
+            // Create a new board
+            createNewBoard();
+        }
+        
+        // Create new board
+        function createNewBoard() {
+            // Generate a random board ID
+            boardId = 'board-' + Math.random().toString(36).substring(2, 9);
+            
+            // Hide login and show loading
+            loginContainer.style.display = 'none';
+            
+            // Initialize whiteboard
+            initWhiteboard();
+            
+            // Connect to socket.io
+            socket.emit('createBoard', { 
+                boardId, 
+                userId, 
+                userName, 
+                userColor 
+            });
+        }
+        
+        // Initialize whiteboard
+        function initWhiteboard() {
+            // Set canvas size
+            resizeCanvas();
+            
+            // Set initial styles
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentLineWidth;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.font = `${currentLineWidth * 5}px Arial`;
+            ctx.fillStyle = currentColor;
+            
+            // Set board ID in UI
+            boardIdElement.textContent = boardId;
+            
+            // Update URL with board ID
+            const url = new URL(window.location.href);
+            url.searchParams.set('board', boardId);
+            window.history.pushState({}, '', url);
+            
+            // Set up event listeners
+            setupEventListeners();
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Window resize
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Tool selection
+            tools.forEach(tool => {
+                tool.addEventListener('click', () => {
+                    if (textInputActive) return;
+                    
+                    const toolName = tool.dataset.tool;
+                    selectTool(toolName);
+                });
+            });
+            
+            // Color picker
+            colorPicker.addEventListener('input', (e) => {
+                currentColor = e.target.value;
+                ctx.strokeStyle = currentColor;
+                ctx.fillStyle = currentColor;
+            });
+            
+            // Line width
+            lineWidthSlider.addEventListener('input', (e) => {
+                currentLineWidth = parseInt(e.target.value);
+                ctx.lineWidth = currentLineWidth;
+                ctx.font = `${currentLineWidth * 5}px Arial`;
+            });
+            
+            // Copy board ID
+            copyBoardIdBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(boardId).then(() => {
+                    showNotification('Board ID copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy board ID:', err);
+                    showNotification('Failed to copy Board ID');
+                });
+            });
+            
+            // Toggle panel
+            togglePanelBtn.addEventListener('click', () => {
+                document.querySelector('.container').classList.toggle('panel-collapsed');
+                const icon = togglePanelBtn.querySelector('i');
+                if (document.querySelector('.container').classList.contains('panel-collapsed')) {
+                    icon.classList.remove('fa-chevron-left');
+                    icon.classList.add('fa-chevron-right');
+                } else {
+                    icon.classList.remove('fa-chevron-right');
+                    icon.classList.add('fa-chevron-left');
+                }
+            });
+            
+            // Media buttons
+            micBtn.addEventListener('click', toggleMic);
+            videoBtn.addEventListener('click', toggleVideo);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleKeyDown);
+            
+            // Whiteboard events
+            whiteboard.addEventListener('mousedown', startDrawing);
+            whiteboard.addEventListener('mousemove', draw);
+            whiteboard.addEventListener('mouseup', stopDrawing);
+            whiteboard.addEventListener('mouseout', stopDrawing);
+            whiteboard.addEventListener('click', handleClick);
+        }
+        
+        // Handle keyboard shortcuts
+        function handleKeyDown(e) {
+            if (textInputActive) return;
+            
+            // Tool shortcuts
+            const toolShortcuts = {
+                'p': 'pencil',
+                'l': 'line',
+                'r': 'rectangle',
+                'c': 'circle',
+                'e': 'eraser',
+                't': 'text',
+                'h': 'highlighter',
+                'i': 'image'
+            };
+            
+            if (toolShortcuts[e.key.toLowerCase()]) {
+                const toolName = toolShortcuts[e.key.toLowerCase()];
+                selectTool(toolName);
+                e.preventDefault();
+            }
+            
+            // Undo/Redo shortcuts
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z') {
+                    undo();
+                    e.preventDefault();
+                } else if (e.key === 'y') {
+                    redo();
+                    e.preventDefault();
+                }
+            }
+        }
+        
+        // Generate a unique user ID
+        function generateUserId() {
+            return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+        }
+        
+        // Generate a random color
+        function generateRandomColor() {
+            return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
+        }
+        
+        // Resize canvas to fit container
+        function resizeCanvas() {
+            const container = whiteboard.parentElement;
+            whiteboard.width = container.offsetWidth;
+            whiteboard.height = container.offsetHeight;
+            
+            // Redraw everything after resize
+            redrawWhiteboard();
+        }
+        
+        // Select a tool
+        function selectTool(toolName) {
+            // If already selected, don't do anything
+            if (currentTool === toolName && toolName !== 'text') return;
+            
+            // Deselect all tools
+            tools.forEach(t => t.classList.remove('active'));
+            
+            // Find and select the new tool
+            const newTool = Array.from(tools).find(t => t.dataset.tool === toolName);
+            if (newTool) {
+                newTool.classList.add('active');
+                currentTool = toolName;
                 
-                // Initialize the whiteboard
-                initWhiteboard();
-            }, 1500);
+                // Handle special tools
+                if (toolName === 'undo') {
+                    undo();
+                    selectTool('pencil');
+                } else if (toolName === 'redo') {
+                    redo();
+                    selectTool('pencil');
+                } else if (toolName === 'clear') {
+                    clearBoard();
+                    selectTool('pencil');
+                } else if (toolName === 'text') {
+                    startTextInput();
+                } else if (toolName === 'highlighter') {
+                    ctx.globalAlpha = 0.5;
+                } else {
+                    ctx.globalAlpha = 1.0;
+                }
+            }
         }
         
-        function loginWithGoogle() {
-            showLoading('Signing in with Google...');
-            // In a real app, this would use Google OAuth
-            setTimeout(() => {
-                userName = 'Google User';
-                loginContainer.style.display = 'none';
-                appContainer.style.display = 'flex';
-                hideLoading();
-                initWhiteboard();
-            }, 1500);
-        }
-        
-        function loginWithFacebook() {
-            showLoading('Signing in with Facebook...');
-            // In a real app, this would use Facebook OAuth
-            setTimeout(() => {
-                userName = 'Facebook User';
-                loginContainer.style.display = 'none';
-                appContainer.style.display = 'flex';
-                hideLoading();
-                initWhiteboard();
-            }, 1500);
-        }
-        
-        function loginWithGithub() {
-            showLoading('Signing in with GitHub...');
-            // In a real app, this would use GitHub OAuth
-            setTimeout(() => {
-                userName = 'GitHub User';
-                loginContainer.style.display = 'none';
-                appContainer.style.display = 'flex';
-                hideLoading();
-                initWhiteboard();
-            }, 1500);
-        }
-        
-        function loginWithLinkedIn() {
-            showLoading('Signing in with LinkedIn...');
-            // In a real app, this would use LinkedIn OAuth
-            setTimeout(() => {
-                userName = 'LinkedIn User';
-                loginContainer.style.display = 'none';
-                appContainer.style.display = 'flex';
-                hideLoading();
-                initWhiteboard();
-            }, 1500);
-        }
-        
-        function registerWithEmail() {
-            const name = document.getElementById('registerName').value.trim();
-            const email = document.getElementById('registerEmail').value.trim();
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+        // Start text input
+        function startTextInput() {
+            textInputActive = true;
+            const text = prompt('Enter your text:');
             
-            if (!name || !email || !password || !confirmPassword) {
-                alert('Please fill all fields');
-                return;
+            if (text) {
+                const action = {
+                    tool: 'text',
+                    color: currentColor,
+                    x: lastX,
+                    y: lastY,
+                    text: text,
+                    size: currentLineWidth,
+                    userId
+                };
+                
+                // Add to history
+                addToHistory(action);
+                
+                // Send to server
+                socket.emit('draw', action);
+                
+                // Draw the text
+                drawAction(action);
             }
             
-            if (password !== confirmPassword) {
-                alert('Passwords do not match');
-                return;
-            }
-            
-            showLoading('Creating account...');
-            
-            // In a real app, this would register with your backend
-            setTimeout(() => {
-                userName = name;
-                registerModal.style.display = 'none';
-                loginContainer.style.display = 'none';
-                appContainer.style.display = 'flex';
-                hideLoading();
-                initWhiteboard();
-            }, 1500);
+            textInputActive = false;
+            selectTool('pencil');
         }
         
-        function registerWithPhone() {
-            const name = document.getElementById('registerPhoneName').value.trim();
-            const phone = document.getElementById('registerPhone').value.trim();
+        // Drawing functions
+        function startDrawing(e) {
+            if (currentTool === 'undo' || currentTool === 'redo' || currentTool === 'clear' || textInputActive) return;
             
-            if (!name || !phone) {
-                alert('Please fill all fields');
-                return;
+            isDrawing = true;
+            startX = e.offsetX;
+            startY = e.offsetY;
+            lastX = e.offsetX;
+            lastY = e.offsetY;
+            
+            // Start a new path for freehand drawing
+            if (currentTool === 'pencil' || currentTool === 'eraser' || currentTool === 'highlighter') {
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
             }
             
-            showLoading('Creating account...');
-            
-            // In a real app, this would register with your backend
-            setTimeout(() => {
-                userName = name;
-                registerModal.style.display = 'none';
-                loginContainer.style.display = 'none';
-                appContainer.style.display = 'flex';
-                hideLoading();
-                initWhiteboard();
-            }, 1500);
+            // Send cursor position to other users
+            socket.emit('cursorMove', { x: e.offsetX, y: e.offsetY, userId });
         }
         
-        // Loading functions
+        function draw(e) {
+            const x = e.offsetX;
+            const y = e.offsetY;
+            
+            // Always send cursor position
+            socket.emit('cursorMove', { x, y, userId });
+            
+            if (!isDrawing) return;
+            
+            lastX = x;
+            lastY = y;
+            
+            switch (currentTool) {
+                case 'pencil':
+                case 'eraser':
+                case 'highlighter':
+                    ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    
+                    // Send drawing data to server
+                    socket.emit('draw', {
+                        tool: currentTool,
+                        color: currentTool === 'eraser' ? '#ffffff' : currentColor,
+                        x1: lastX,
+                        y1: lastY,
+                        x2: x,
+                        y2: y,
+                        lineWidth: currentLineWidth,
+                        userId
+                    });
+                    break;
+                    
+                case 'line':
+                case 'rectangle':
+                case 'circle':
+                    // For shapes, we'll just show a preview and handle the final drawing in stopDrawing
+                    drawShapePreview(startX, startY, x, y, currentTool);
+                    break;
+            }
+        }
+        
+        function drawShapePreview(x1, y1, x2, y2, shapeType) {
+            // Clear the preview
+            const preview = document.getElementById('shapePreview');
+            if (preview) preview.innerHTML = '';
+            
+            // Create a div for the preview
+            const previewDiv = document.createElement('div');
+            previewDiv.style.position = 'absolute';
+            previewDiv.style.border = `${currentLineWidth}px solid ${currentColor}`;
+            previewDiv.style.backgroundColor = shapeType === 'rectangle' ? `${currentColor}20` : 'transparent';
+            
+            switch (shapeType) {
+                case 'line':
+                    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                    const angle = Math.atan2(y2 - y1, x2 - x1);
+                    
+                    previewDiv.style.width = `${length}px`;
+                    previewDiv.style.height = '0';
+                    previewDiv.style.borderBottom = `${currentLineWidth}px solid ${currentColor}`;
+                    previewDiv.style.transformOrigin = '0 0';
+                    previewDiv.style.transform = `rotate(${angle}rad)`;
+                    previewDiv.style.left = `${x1}px`;
+                    previewDiv.style.top = `${y1}px`;
+                    break;
+                    
+                case 'rectangle':
+                    previewDiv.style.left = `${Math.min(x1, x2)}px`;
+                    previewDiv.style.top = `${Math.min(y1, y2)}px`;
+                    previewDiv.style.width = `${Math.abs(x2 - x1)}px`;
+                    previewDiv.style.height = `${Math.abs(y2 - y1)}px`;
+                    break;
+                    
+                case 'circle':
+                    const radius = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                    previewDiv.style.width = `${radius * 2}px`;
+                    previewDiv.style.height = `${radius * 2}px`;
+                    previewDiv.style.borderRadius = '50%';
+                    previewDiv.style.left = `${x1 - radius}px`;
+                    previewDiv.style.top = `${y1 - radius}px`;
+                    break;
+            }
+            
+            if (preview) {
+                preview.appendChild(previewDiv);
+            }
+        }
+        
+        function handleClick(e) {
+            if (currentTool === 'text') {
+                lastX = e.offsetX;
+                lastY = e.offsetY;
+                startTextInput();
+            }
+        }
+        
+        function stopDrawing(e) {
+            if (!isDrawing || currentTool === 'text') return;
+            
+            const x = e.offsetX;
+            const y = e.offsetY;
+            
+            // Clear the preview
+            const preview = document.getElementById('shapePreview');
+            if (preview) preview.innerHTML = '';
+            
+            // For shapes, complete the drawing and add to history
+            if (currentTool === 'line' || currentTool === 'rectangle' || currentTool === 'circle') {
+                const shape = {
+                    tool: currentTool,
+                    color: currentColor,
+                    x1: startX,
+                    y1: startY,
+                    x2: x,
+                    y2: y,
+                    lineWidth: currentLineWidth,
+                    userId
+                };
+                
+                // Add to history
+                addToHistory(shape);
+                
+                // Send to server
+                socket.emit('draw', shape);
+                
+                // Draw the shape
+                drawAction(shape);
+            } else if (currentTool === 'pencil' || currentTool === 'eraser' || currentTool === 'highlighter') {
+                // For pencil/eraser, the path is already drawn
+                ctx.closePath();
+            }
+            
+            isDrawing = false;
+        }
+        
+        // History functions
+        function addToHistory(action) {
+            // If we're not at the end of history, discard future actions
+            if (historyPointer < drawingHistory.length - 1) {
+                drawingHistory = drawingHistory.slice(0, historyPointer + 1);
+            }
+            
+            drawingHistory.push(action);
+            historyPointer = drawingHistory.length - 1;
+        }
+        
+        function undo() {
+            if (historyPointer >= 0) {
+                historyPointer--;
+                redrawWhiteboard();
+                socket.emit('undo', { userId });
+            }
+        }
+        
+        function redo() {
+            if (historyPointer < drawingHistory.length - 1) {
+                historyPointer++;
+                redrawWhiteboard();
+                socket.emit('redo', { userId });
+            }
+        }
+        
+        function clearBoard() {
+            if (confirm('Are you sure you want to clear the board? This cannot be undone.')) {
+                drawingHistory = [];
+                historyPointer = -1;
+                redrawWhiteboard();
+                socket.emit('clear', { userId });
+            }
+        }
+        
+        function redrawWhiteboard() {
+            // Clear canvas
+            ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+            
+            // Redraw all actions up to history pointer
+            for (let i = 0; i <= historyPointer; i++) {
+                const action = drawingHistory[i];
+                drawAction(action, false);
+            }
+        }
+        
+        function drawAction(action, addToHistoryFlag = true) {
+            ctx.strokeStyle = action.color;
+            ctx.fillStyle = action.color;
+            ctx.lineWidth = action.lineWidth || 3;
+            
+            switch (action.tool) {
+                case 'pencil':
+                case 'eraser':
+                case 'highlighter':
+                    ctx.beginPath();
+                    ctx.moveTo(action.x1, action.y1);
+                    ctx.lineTo(action.x2, action.y2);
+                    ctx.stroke();
+                    break;
+                    
+                case 'line':
+                    ctx.beginPath();
+                    ctx.moveTo(action.x1, action.y1);
+                    ctx.lineTo(action.x2, action.y2);
+                    ctx.stroke();
+                    break;
+                    
+                case 'rectangle':
+                    ctx.beginPath();
+                    const rectWidth = action.x2 - action.x1;
+                    const rectHeight = action.y2 - action.y1;
+                    ctx.rect(action.x1, action.y1, rectWidth, rectHeight);
+                    ctx.stroke();
+                    break;
+                    
+                case 'circle':
+                    ctx.beginPath();
+                    const radius = Math.sqrt(Math.pow(action.x2 - action.x1, 2) + Math.pow(action.y2 - action.y1, 2));
+                    ctx.arc(action.x1, action.y1, radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                    break;
+                    
+                case 'text':
+                    ctx.font = `${action.size * 5}px Arial`;
+                    ctx.fillText(action.text, action.x, action.y);
+                    break;
+            }
+            
+            if (addToHistoryFlag) {
+                addToHistory(action);
+            }
+        }
+        
+        // Media functions
+        async function toggleMic() {
+            try {
+                if (!localStream) {
+                    localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: isVideoOn });
+                    if (isVideoOn) {
+                        localVideo.srcObject = localStream;
+                        localVideoPlaceholder.style.display = 'none';
+                        localVideo.style.display = 'block';
+                    }
+                }
+                
+                const audioTracks = localStream.getAudioTracks();
+                audioTracks.forEach(track => {
+                    track.enabled = !track.enabled;
+                });
+                
+                isMicOn = !isMicOn;
+                micBtn.classList.toggle('off', !isMicOn);
+                micBtn.querySelector('i').className = isMicOn ? 'fas fa-microphone' : 'fas fa-microphone-slash';
+                showNotification(isMicOn ? 'Microphone enabled' : 'Microphone muted');
+                
+                // Update WebRTC connection if it exists
+                if (peerConnection) {
+                    setupPeerConnection();
+                }
+            } catch (err) {
+                console.error('Error accessing microphone:', err);
+                showNotification('Could not access microphone');
+                isMicOn = false;
+                micBtn.classList.add('off');
+                micBtn.querySelector('i').className = 'fas fa-microphone-slash';
+            }
+        }
+        
+        async function toggleVideo() {
+            try {
+                if (!localStream) {
+                    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: isMicOn });
+                    localVideo.srcObject = localStream;
+                    localVideoPlaceholder.style.display = 'none';
+                    localVideo.style.display = 'block';
+                    isVideoOn = true;
+                    videoBtn.classList.remove('off');
+                    videoBtn.querySelector('i').className = 'fas fa-video';
+                    showNotification('Video enabled');
+                    
+                    // Start WebRTC connection
+                    setupPeerConnection();
+                } else {
+                    const videoTracks = localStream.getVideoTracks();
+                    videoTracks.forEach(track => {
+                        track.enabled = !track.enabled;
+                    });
+                    
+                    isVideoOn = !isVideoOn;
+                    videoBtn.classList.toggle('off', !isVideoOn);
+                    videoBtn.querySelector('i').className = isVideoOn ? 'fas fa-video' : 'fas fa-video-slash';
+                    localVideoPlaceholder.style.display = isVideoOn ? 'none' : 'flex';
+                    localVideo.style.display = isVideoOn ? 'block' : 'none';
+                    showNotification(isVideoOn ? 'Video enabled' : 'Video disabled');
+                    
+                    // Update WebRTC connection if it exists
+                    if (peerConnection) {
+                        setupPeerConnection();
+                    }
+                }
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+                showNotification('Could not access camera');
+                isVideoOn = false;
+                videoBtn.classList.add('off');
+                videoBtn.querySelector('i').className = 'fas fa-video-slash';
+                localVideoPlaceholder.style.display = 'flex';
+                localVideo.style.display = 'none';
+            }
+        }
+        
+        function setupPeerConnection() {
+            if (peerConnection) {
+                peerConnection.close();
+            }
+            
+            peerConnection = new RTCPeerConnection({
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' }
+                ]
+            });
+            
+            // Add local stream to connection
+            if (localStream) {
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                });
+            }
+            
+            // Listen for ICE candidates
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    socket.emit('iceCandidate', { 
+                        candidate: event.candidate,
+                        boardId,
+                        userId
+                    });
+                }
+            };
+            
+            // Listen for remote stream
+            peerConnection.ontrack = (event) => {
+                remoteVideo.srcObject = event.streams[0];
+                remoteVideoPlaceholder.style.display = 'none';
+                remoteVideo.style.display = 'block';
+            };
+            
+            // Create and send offer
+            peerConnection.createOffer()
+                .then(offer => peerConnection.setLocalDescription(offer))
+                .then(() => {
+                    socket.emit('offer', {
+                        offer: peerConnection.localDescription,
+                        boardId,
+                        userId
+                    });
+                })
+                .catch(err => {
+                    console.error('Error creating offer:', err);
+                });
+        }
+        
+        // Loading screen functions
         function showLoading(message) {
             loadingScreen.style.display = 'flex';
-            document.querySelector('.loading-text').textContent = message;
+            loadingText.textContent = message;
         }
         
         function hideLoading() {
             loadingScreen.style.display = 'none';
         }
         
-        // Initialize whiteboard (fixed connection issue)
-        function initWhiteboard() {
-            showLoading('Connecting to whiteboard...');
+        // Notification function
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
             
-            // Set canvas size
-            const whiteboard = document.getElementById('whiteboard');
-            const ctx = whiteboard.getContext('2d');
-            const container = whiteboard.parentElement;
-            whiteboard.width = container.offsetWidth;
-            whiteboard.height = container.offsetHeight;
-            
-            // Initialize slides
-            const slides = [{
-                drawingHistory: [],
-                historyPointer: -1
-            }];
-            let currentSlide = 0;
-            
-            // Set initial styles
-            ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.font = '15px Arial';
-            ctx.fillStyle = '#000000';
-            
-            // Socket.io connection - fixed part
-            const socket = io('https://whiteboard-server.example.com', { 
-                reconnectionAttempts: 5,
-                reconnectionDelay: 1000,
-                timeout: 20000
-            });
-            
-            let boardId = '';
-            let userId = generateUserId();
-            
-            // Handle successful connection
-            socket.on('connect', () => {
-                hideLoading();
-                
-                // Load board if ID exists in URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const urlBoardId = urlParams.get('board');
-                
-                if (urlBoardId) {
-                    socket.emit('joinBoard', { 
-                        boardId: urlBoardId, 
-                        userId, 
-                        userName, 
-                        userColor: generateRandomColor() 
-                    });
-                } else {
-                    socket.emit('createBoard', { 
-                        userId, 
-                        userName, 
-                        userColor: generateRandomColor() 
-                    });
-                }
-            });
-            
-            // Handle connection errors
-            socket.on('connect_error', (err) => {
-                console.error('Connection error:', err);
-                showLoading('Connection failed. Retrying...');
-            });
-            
-            socket.on('disconnect', (reason) => {
-                if (reason === 'io server disconnect') {
-                    // Server intentionally disconnected, try to reconnect
-                    socket.connect();
-                }
-                showLoading('Disconnected. Reconnecting...');
-            });
-            
-            // Board created/joined handlers
-            socket.on('boardCreated', (data) => {
-                boardId = data.boardId;
-                document.getElementById('boardId').textContent = data.boardId;
-                
-                // Update URL with board ID
-                const url = new URL(window.location.href);
-                url.searchParams.set('board', data.boardId);
-                window.history.pushState({}, '', url);
-                
-                showNotification('New board created! Share the URL to collaborate.');
-            });
-            
-            socket.on('boardJoined', (data) => {
-                boardId = data.boardId;
-                document.getElementById('boardId').textContent = data.boardId;
-                
-                // Load existing drawings
-                if (data.drawings && data.drawings.length > 0) {
-                    slides[currentSlide].drawingHistory = data.drawings;
-                    slides[currentSlide].historyPointer = data.drawings.length - 1;
-                    redrawWhiteboard();
-                }
-                
-                showNotification(`Joined board ${data.boardId}`);
-            });
-            
-            // Helper functions
-            function generateUserId() {
-                return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
-            }
-            
-            function generateRandomColor() {
-                return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
-            }
-            
-            function redrawWhiteboard() {
-                ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
-                for (let i = 0; i <= slides[currentSlide].historyPointer; i++) {
-                    const action = slides[currentSlide].drawingHistory[i];
-                    drawAction(action, false);
-                }
-            }
-            
-            function drawAction(action, addToHistory = true) {
-                if (!action) return;
-                
-                ctx.strokeStyle = action.color || '#000000';
-                ctx.fillStyle = action.color || '#000000';
-                ctx.lineWidth = action.lineWidth || 3;
-                
-                switch (action.tool) {
-                    case 'pencil':
-                    case 'eraser':
-                        ctx.beginPath();
-                        ctx.moveTo(action.x1, action.y1);
-                        ctx.lineTo(action.x2, action.y2);
-                        ctx.stroke();
-                        break;
-                        
-                    case 'line':
-                        ctx.beginPath();
-                        ctx.moveTo(action.x1, action.y1);
-                        ctx.lineTo(action.x2, action.y2);
-                        ctx.stroke();
-                        break;
-                        
-                    case 'rectangle':
-                        ctx.beginPath();
-                        const rectWidth = action.x2 - action.x1;
-                        const rectHeight = action.y2 - action.y1;
-                        ctx.rect(action.x1, action.y1, rectWidth, rectHeight);
-                        ctx.stroke();
-                        break;
-                        
-                    case 'circle':
-                        ctx.beginPath();
-                        const radius = Math.sqrt(Math.pow(action.x2 - action.x1, 2) + Math.pow(action.y2 - action.y1, 2));
-                        ctx.arc(action.x1, action.y1, radius, 0, Math.PI * 2);
-                        ctx.stroke();
-                        break;
-                        
-                    case 'text':
-                        ctx.font = `${action.size * 5}px Arial`;
-                        ctx.fillText(action.text, action.x, action.y);
-                        break;
-                }
-                
-                if (addToHistory) {
-                    addToHistory(action);
-                }
-            }
-            
-            function addToHistory(action) {
-                if (slides[currentSlide].historyPointer < slides[currentSlide].drawingHistory.length - 1) {
-                    slides[currentSlide].drawingHistory = slides[currentSlide].drawingHistory.slice(0, slides[currentSlide].historyPointer + 1);
-                }
-                
-                slides[currentSlide].drawingHistory.push(action);
-                slides[currentSlide].historyPointer = slides[currentSlide].drawingHistory.length - 1;
-            }
-            
-            function showNotification(message) {
-                const notification = document.getElementById('notification');
-                notification.textContent = message;
-                notification.style.display = 'block';
-                
+            setTimeout(() => {
+                notification.style.opacity = '0';
                 setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 3000);
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+        
+        // Socket.io event handlers
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+        
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+        });
+        
+        socket.on('connect_error', (err) => {
+            console.error('Connection error:', err);
+            hideLoading();
+            showNotification('Connection error. Please try again.');
+        });
+        
+        socket.on('boardCreated', (data) => {
+            boardId = data.boardId;
+            boardIdElement.textContent = data.boardId;
+            
+            // Hide loading and show app
+            hideLoading();
+            appContainer.style.display = 'flex';
+            
+            showNotification('New board created! Share the URL to collaborate.');
+        });
+        
+        socket.on('boardJoined', (data) => {
+            boardId = data.boardId;
+            boardIdElement.textContent = data.boardId;
+            
+            // Load existing users
+            users = data.users || {};
+            updateUserList();
+            
+            // Hide loading and show app
+            hideLoading();
+            appContainer.style.display = 'flex';
+            
+            showNotification(`Joined board ${data.boardId}`);
+        });
+        
+        socket.on('userJoined', (user) => {
+            users[user.userId] = user;
+            updateUserList();
+            showNotification(`${user.userName} joined the board`);
+            
+            // If we have media and a new user joins, set up connection
+            if (localStream && Object.keys(users).length === 2) {
+                setupPeerConnection();
+            }
+        });
+        
+        socket.on('userLeft', (userId) => {
+            const userName = users[userId]?.userName || 'A user';
+            delete users[userId];
+            
+            // Remove cursor
+            const cursor = document.getElementById(`cursor-${userId}`);
+            if (cursor) cursor.remove();
+            
+            updateUserList();
+            showNotification(`${userName} left the board`);
+            
+            // Reset peer connection if no users left
+            if (Object.keys(users).length <= 1 && peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+                remoteVideo.srcObject = null;
+                remoteVideo.style.display = 'none';
+                remoteVideoPlaceholder.style.display = 'flex';
+            }
+        });
+        
+        socket.on('userCursor', (data) => {
+            const userId = data.userId;
+            const x = data.x;
+            const y = data.y;
+            const color = users[userId]?.userColor || '#000000';
+            
+            let cursor = document.getElementById(`cursor-${userId}`);
+            
+            if (!cursor) {
+                cursor = document.createElement('div');
+                cursor.id = `cursor-${userId}`;
+                cursor.className = 'cursor';
+                cursor.style.backgroundColor = color;
+                
+                // Add user name to cursor
+                const userName = document.createElement('div');
+                userName.className = 'cursor-name';
+                userName.textContent = users[userId]?.userName || 'User';
+                userName.style.color = color;
+                cursor.appendChild(userName);
+                
+                whiteboard.parentElement.appendChild(cursor);
             }
             
-            // Now initialize the rest of your whiteboard functionality...
-            // (Add all your existing whiteboard event listeners and drawing logic here)
+            cursor.style.left = `${x}px`;
+            cursor.style.top = `${y}px`;
+        });
+        
+        socket.on('drawing', (action) => {
+            drawAction(action);
+        });
+        
+        socket.on('undo', () => {
+            if (historyPointer >= 0) {
+                historyPointer--;
+                redrawWhiteboard();
+            }
+        });
+        
+        socket.on('redo', () => {
+            if (historyPointer < drawingHistory.length - 1) {
+                historyPointer++;
+                redrawWhiteboard();
+            }
+        });
+        
+        socket.on('clear', () => {
+            drawingHistory = [];
+            historyPointer = -1;
+            redrawWhiteboard();
+        });
+        
+        socket.on('userCount', (count) => {
+            userCount.textContent = count;
+        });
+        
+        // WebRTC events
+        socket.on('offer', async (data) => {
+            if (data.userId === userId) return;
+            
+            if (!peerConnection) {
+                setupPeerConnection();
+            }
+            
+            try {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+                
+                socket.emit('answer', {
+                    answer,
+                    boardId,
+                    userId,
+                    toUserId: data.userId
+                });
+            } catch (err) {
+                console.error('Error handling offer:', err);
+            }
+        });
+        
+        socket.on('answer', async (data) => {
+            if (data.userId === userId) return;
+            try {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+            } catch (err) {
+                console.error('Error handling answer:', err);
+            }
+        });
+        
+        socket.on('iceCandidate', async (data) => {
+            if (data.userId === userId) return;
+            try {
+                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+            } catch (err) {
+                console.error('Error adding ICE candidate:', err);
+            }
+        });
+        
+        // Helper functions
+        function updateUserList() {
+            userList.innerHTML = '';
+            
+            Object.values(users).forEach(user => {
+                if (user.userId === userId) return;
+                
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item';
+                
+                const userColor = document.createElement('div');
+                userColor.className = 'user-color';
+                userColor.style.backgroundColor = user.userColor;
+                
+                const userName = document.createElement('div');
+                userName.className = 'user-name';
+                userName.textContent = user.userName;
+                
+                userItem.appendChild(userColor);
+                userItem.appendChild(userName);
+                userList.appendChild(userItem);
+            });
         }
+        
+        // Initialize the app
+        initApp();
     </script>
 </body>
 </html>
