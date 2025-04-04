@@ -13,7 +13,6 @@
       --dark-color: #2c3e50;
       --light-color: #f5f5f5;
       --danger-color: #e74c3c;
-      --success-color: #2ecc71;
     }
     
     body {
@@ -107,7 +106,6 @@
     
     .auth-form-group {
       margin-bottom: 1.5rem;
-      position: relative;
     }
     
     .auth-form-label {
@@ -454,153 +452,6 @@
       white-space: nowrap;
     }
     
-    /* Video Elements */
-    .video-container {
-      position: absolute;
-      bottom: 1rem;
-      right: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      z-index: 100;
-    }
-    
-    .video-element {
-      width: 160px;
-      height: 120px;
-      background: var(--dark-color);
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    
-    .video-element video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .video-label {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(0,0,0,0.5);
-      color: white;
-      padding: 0.25rem;
-      font-size: 0.7rem;
-      text-align: center;
-    }
-    
-    /* AI Assistant */
-    .ai-assistant {
-      position: absolute;
-      bottom: 1rem;
-      left: 1rem;
-      width: 300px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 100;
-      display: none;
-    }
-    
-    .ai-header {
-      padding: 0.75rem 1rem;
-      background: var(--primary-color);
-      color: white;
-      border-radius: 8px 8px 0 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .ai-title {
-      font-weight: 500;
-    }
-    
-    .ai-close {
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
-    
-    .ai-messages {
-      height: 200px;
-      overflow-y: auto;
-      padding: 1rem;
-      background: #f9f9f9;
-    }
-    
-    .ai-message {
-      margin-bottom: 0.75rem;
-      padding: 0.5rem 0.75rem;
-      border-radius: 4px;
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-    
-    .ai-user {
-      background: #e3f2fd;
-      margin-left: 20px;
-    }
-    
-    .ai-bot {
-      background: #f1f1f1;
-      margin-right: 20px;
-    }
-    
-    .ai-input-container {
-      display: flex;
-      padding: 0.75rem;
-      border-top: 1px solid #eee;
-    }
-    
-    .ai-input {
-      flex: 1;
-      padding: 0.5rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 0.9rem;
-    }
-    
-    .ai-send {
-      margin-left: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    
-    /* Notifications */
-    .notification {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      padding: 0.75rem 1rem;
-      border-radius: 5px;
-      color: white;
-      background: var(--dark-color);
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-      transform: translateX(200%);
-      transition: transform 0.3s ease;
-      z-index: 1000;
-    }
-    
-    .notification.show {
-      transform: translateX(0);
-    }
-    
-    .notification.success {
-      background: var(--success-color);
-    }
-    
-    .notification.error {
-      background: var(--danger-color);
-    }
-    
     /* Responsive */
     @media (max-width: 992px) {
       .auth-container {
@@ -628,10 +479,6 @@
       .tool-group {
         padding-right: 0.5rem;
       }
-      
-      .ai-assistant {
-        width: 250px;
-      }
     }
     
     @media (max-width: 576px) {
@@ -658,12 +505,6 @@
       
       .toolbar {
         padding: 0.5rem;
-      }
-      
-      .ai-assistant {
-        width: 90%;
-        left: 5%;
-        bottom: 70px;
       }
     }
   </style>
@@ -693,8 +534,8 @@
           <span>Voice chat capabilities</span>
         </div>
         <div class="auth-feature">
-          <i class="fas fa-robot"></i>
-          <span>AI-powered assistance</span>
+          <i class="fas fa-history"></i>
+          <span>Undo/redo functionality</span>
         </div>
       </div>
     </div>
@@ -710,13 +551,11 @@
           <div class="auth-form-group">
             <label class="auth-form-label">Email</label>
             <input type="email" class="auth-form-input" id="login-email" placeholder="Enter your email">
-            <div class="auth-form-error" id="login-email-error"></div>
           </div>
           
           <div class="auth-form-group">
             <label class="auth-form-label">Password</label>
             <input type="password" class="auth-form-input" id="login-password" placeholder="Enter your password">
-            <div class="auth-form-error" id="login-password-error"></div>
           </div>
           
           <div class="auth-form-options">
@@ -737,9 +576,6 @@
             <button class="auth-social-button github" id="github-login">
               <i class="fab fa-github"></i> GitHub
             </button>
-            <button class="auth-social-button linkedin" id="linkedin-login">
-              <i class="fab fa-linkedin"></i> LinkedIn
-            </button>
           </div>
         </div>
         
@@ -747,25 +583,21 @@
           <div class="auth-form-group">
             <label class="auth-form-label">Name</label>
             <input type="text" class="auth-form-input" id="register-name" placeholder="Enter your name">
-            <div class="auth-form-error" id="register-name-error"></div>
           </div>
           
           <div class="auth-form-group">
             <label class="auth-form-label">Email</label>
             <input type="email" class="auth-form-input" id="register-email" placeholder="Enter your email">
-            <div class="auth-form-error" id="register-email-error"></div>
           </div>
           
           <div class="auth-form-group">
             <label class="auth-form-label">Password</label>
             <input type="password" class="auth-form-input" id="register-password" placeholder="Create a password">
-            <div class="auth-form-error" id="register-password-error"></div>
           </div>
           
           <div class="auth-form-group">
             <label class="auth-form-label">Confirm Password</label>
             <input type="password" class="auth-form-input" id="register-confirm" placeholder="Confirm your password">
-            <div class="auth-form-error" id="register-confirm-error"></div>
           </div>
           
           <button class="auth-form-button" id="register-btn">Register</button>
@@ -778,9 +610,6 @@
             </button>
             <button class="auth-social-button github" id="github-register">
               <i class="fab fa-github"></i> GitHub
-            </button>
-            <button class="auth-social-button linkedin" id="linkedin-register">
-              <i class="fab fa-linkedin"></i> LinkedIn
             </button>
           </div>
         </div>
@@ -846,12 +675,6 @@
       </div>
       
       <div class="tool-group">
-        <button class="tool-button" id="ai-assistant-btn" title="AI Assistant">
-          <i class="fas fa-robot"></i>
-        </button>
-      </div>
-      
-      <div class="tool-group">
         <button class="tool-button" id="sidebar-toggle" title="Toggle Sidebar">
           <i class="fas fa-users"></i>
         </button>
@@ -887,9 +710,6 @@
             <button class="media-button" id="camera-toggle" title="Toggle Camera">
               <i class="fas fa-video"></i>
             </button>
-            <button class="media-button" id="screen-share" title="Share Screen">
-              <i class="fas fa-desktop"></i>
-            </button>
           </div>
         </div>
         
@@ -908,33 +728,10 @@
         <div class="canvas-container">
           <canvas id="whiteboard"></canvas>
           <div class="cursors-layer" id="cursors-layer"></div>
-          
-          <!-- Video Elements Container -->
-          <div class="video-container" id="video-container">
-            <!-- Remote videos will be added here -->
-          </div>
-          
-          <!-- AI Assistant -->
-          <div class="ai-assistant" id="ai-assistant">
-            <div class="ai-header">
-              <div class="ai-title">AI Assistant</div>
-              <button class="ai-close" id="ai-close">&times;</button>
-            </div>
-            <div class="ai-messages" id="ai-messages">
-              <div class="ai-message ai-bot">Hello! I'm your AI assistant. How can I help you with your whiteboard today?</div>
-            </div>
-            <div class="ai-input-container">
-              <input type="text" class="ai-input" id="ai-input" placeholder="Ask me anything...">
-              <button class="ai-send" id="ai-send">Send</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
   </div>
-  
-  <!-- Notification -->
-  <div class="notification" id="notification"></div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
@@ -943,13 +740,13 @@
   
   <!-- Main Application Script -->
   <script>
-    // Firebase Configuration
+    // Firebase Configuration - REPLACE WITH YOUR OWN CONFIG
     const firebaseConfig = {
-      apiKey: "AIzaSyD7Q82l2QjSzJJkrrUe0WpMZJ1DqD8e1Fk",
-      authDomain: "collabboard-demo.firebaseapp.com",
-      databaseURL: "https://collabboard-demo-default-rtdb.firebaseio.com",
-      projectId: "collabboard-demo",
-      storageBucket: "collabboard-demo.appspot.com",
+      apiKey: "AIzaSyDzZ2Z2Z2Z2Z2Z2Z2Z2Z2Z2Z2Z2Z2Z2Z2",
+      authDomain: "your-project-id.firebaseapp.com",
+      databaseURL: "https://your-project-id.firebaseio.com",
+      projectId: "your-project-id",
+      storageBucket: "your-project-id.appspot.com",
       messagingSenderId: "123456789012",
       appId: "1:123456789012:web:abcdef1234567890abcdef"
     };
@@ -960,21 +757,12 @@
     const auth = firebase.auth();
     const googleProvider = new firebase.auth.GoogleAuthProvider();
     const githubProvider = new firebase.auth.GithubAuthProvider();
-    const linkedinProvider = new firebase.auth.OAuthProvider('linkedin.com');
 
     // Application State
     const appState = {
       currentUser: null,
       whiteboard: null,
-      media: {
-        audioEnabled: false,
-        videoEnabled: false,
-        screenSharing: false,
-        localStream: null,
-        peerConnections: {}
-      },
-      currentSession: window.location.hash.substring(1) || 'default-session',
-      aiEnabled: true
+      currentSession: window.location.hash.substring(1) || 'default-session'
     };
 
     // DOM Elements
@@ -987,10 +775,8 @@
       registerBtn: document.getElementById('register-btn'),
       googleLogin: document.getElementById('google-login'),
       githubLogin: document.getElementById('github-login'),
-      linkedinLogin: document.getElementById('linkedin-login'),
       googleRegister: document.getElementById('google-register'),
       githubRegister: document.getElementById('github-register'),
-      linkedinRegister: document.getElementById('linkedin-register'),
       logoutBtn: document.getElementById('logout-btn'),
       userAvatar: document.getElementById('user-avatar'),
       userName: document.getElementById('user-name'),
@@ -998,32 +784,17 @@
       sidebarToggle: document.getElementById('sidebar-toggle'),
       usersList: document.getElementById('users-list'),
       usersCount: document.getElementById('users-count'),
-      videoContainer: document.getElementById('video-container'),
-      micToggle: document.getElementById('mic-toggle'),
-      cameraToggle: document.getElementById('camera-toggle'),
-      screenShare: document.getElementById('screen-share'),
       chatMessages: document.getElementById('chat-messages'),
       chatInput: document.getElementById('chat-input'),
-      sendMessage: document.getElementById('send-message'),
-      aiAssistant: document.getElementById('ai-assistant'),
-      aiAssistantBtn: document.getElementById('ai-assistant-btn'),
-      aiClose: document.getElementById('ai-close'),
-      aiMessages: document.getElementById('ai-messages'),
-      aiInput: document.getElementById('ai-input'),
-      aiSend: document.getElementById('ai-send'),
-      notification: document.getElementById('notification')
+      sendMessage: document.getElementById('send-message')
     };
 
     // Initialize the application
     function initApp() {
       setupAuthListeners();
       setupAuthUI();
-      setupMediaControls();
+      setupSidebarToggle();
       setupChat();
-      setupAI();
-      
-      // Check for remembered login
-      checkRememberedLogin();
     }
 
     // Authentication Setup
@@ -1047,68 +818,59 @@
       });
 
       // Login with email
-      elements.loginBtn.addEventListener('click', () => {
+      elements.loginBtn.addEventListener('click', async () => {
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
-        const rememberMe = document.getElementById('remember-me').checked;
         
-        // Validate inputs
-        if (!validateEmail(email)) {
-          showError('login-email-error', 'Please enter a valid email address');
-          return;
+        try {
+          const userCredential = await auth.signInWithEmailAndPassword(email, password);
+          console.log("User logged in:", userCredential.user);
+        } catch (error) {
+          console.error("Login error:", error);
+          alert(error.message);
         }
-        
-        if (password.length < 6) {
-          showError('login-password-error', 'Password must be at least 6 characters');
-          return;
-        }
-        
-        clearErrors();
-        loginWithEmail(email, password, rememberMe);
       });
 
       // Register with email
-      elements.registerBtn.addEventListener('click', () => {
+      elements.registerBtn.addEventListener('click', async () => {
         const name = document.getElementById('register-name').value;
         const email = document.getElementById('register-email').value;
         const password = document.getElementById('register-password').value;
         const confirm = document.getElementById('register-confirm').value;
         
-        // Validate inputs
-        if (name.length < 2) {
-          showError('register-name-error', 'Name must be at least 2 characters');
-          return;
-        }
-        
-        if (!validateEmail(email)) {
-          showError('register-email-error', 'Please enter a valid email address');
-          return;
-        }
-        
-        if (password.length < 6) {
-          showError('register-password-error', 'Password must be at least 6 characters');
-          return;
-        }
-        
         if (password !== confirm) {
-          showError('register-confirm-error', "Passwords don't match");
+          alert("Passwords don't match!");
           return;
         }
         
-        clearErrors();
-        registerWithEmail(name, email, password);
+        try {
+          const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+          await userCredential.user.updateProfile({ displayName: name });
+          console.log("User registered:", userCredential.user);
+        } catch (error) {
+          console.error("Registration error:", error);
+          alert(error.message);
+        }
       });
 
       // Social logins
       elements.googleLogin.addEventListener('click', () => loginWithProvider(googleProvider));
       elements.githubLogin.addEventListener('click', () => loginWithProvider(githubProvider));
-      elements.linkedinLogin.addEventListener('click', () => loginWithProvider(linkedinProvider));
       elements.googleRegister.addEventListener('click', () => loginWithProvider(googleProvider));
       elements.githubRegister.addEventListener('click', () => loginWithProvider(githubProvider));
-      elements.linkedinRegister.addEventListener('click', () => loginWithProvider(linkedinProvider));
 
       // Logout
       elements.logoutBtn.addEventListener('click', logout);
+    }
+
+    async function loginWithProvider(provider) {
+      try {
+        const result = await auth.signInWithPopup(provider);
+        console.log("Social login success:", result.user);
+      } catch (error) {
+        console.error("Social login error:", error);
+        alert(error.message);
+      }
     }
 
     function switchAuthTab(tabName) {
@@ -1120,135 +882,18 @@
       elements.registerForm.style.display = tabName === 'register' ? 'block' : 'none';
     }
 
-    function validateEmail(email) {
-      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return re.test(email);
-    }
-
-    function showError(elementId, message) {
-      const element = document.getElementById(elementId);
-      element.textContent = message;
-      element.style.color = 'var(--danger-color)';
-      element.style.fontSize = '0.8rem';
-      element.style.marginTop = '0.25rem';
-    }
-
-    function clearErrors() {
-      document.querySelectorAll('.auth-form-error').forEach(el => {
-        el.textContent = '';
-      });
-    }
-
-    async function loginWithEmail(email, password, rememberMe = false) {
-      try {
-        showNotification('Logging in...');
-        
-        // Set persistence based on remember me
-        const persistence = rememberMe ? 
-          firebase.auth.Auth.Persistence.LOCAL : 
-          firebase.auth.Auth.Persistence.SESSION;
-        
-        await auth.setPersistence(persistence);
-        await auth.signInWithEmailAndPassword(email, password);
-        
-        showNotification('Login successful!', 'success');
-      } catch (error) {
-        console.error('Login error:', error);
-        let errorMessage = 'Login failed. Please try again.';
-        
-        switch (error.code) {
-          case 'auth/user-not-found':
-            errorMessage = 'No user found with this email.';
-            break;
-          case 'auth/wrong-password':
-            errorMessage = 'Incorrect password. Please try again.';
-            break;
-          case 'auth/too-many-requests':
-            errorMessage = 'Too many attempts. Please try again later.';
-            break;
-        }
-        
-        showNotification(errorMessage, 'error');
-      }
-    }
-
-    async function registerWithEmail(name, email, password) {
-      try {
-        showNotification('Creating your account...');
-        
-        const { user } = await auth.createUserWithEmailAndPassword(email, password);
-        await user.updateProfile({ displayName: name });
-        
-        // Store additional user data in database
-        await database.ref(`users/${user.uid}`).set({
-          name,
-          email,
-          createdAt: firebase.database.ServerValue.TIMESTAMP
-        });
-        
-        showNotification('Registration successful!', 'success');
-      } catch (error) {
-        console.error('Registration error:', error);
-        let errorMessage = 'Registration failed. Please try again.';
-        
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            errorMessage = 'Email already in use.';
-            break;
-          case 'auth/invalid-email':
-            errorMessage = 'Invalid email address.';
-            break;
-          case 'auth/weak-password':
-            errorMessage = 'Password should be at least 6 characters.';
-            break;
-        }
-        
-        showNotification(errorMessage, 'error');
-      }
-    }
-
-    async function loginWithProvider(provider) {
-      try {
-        showNotification('Signing in...');
-        await auth.signInWithPopup(provider);
-        showNotification('Login successful!', 'success');
-      } catch (error) {
-        console.error('Provider login error:', error);
-        showNotification('Login failed. Please try again.', 'error');
-      }
-    }
-
-    function checkRememberedLogin() {
-      const rememberedEmail = localStorage.getItem('rememberedEmail');
-      if (rememberedEmail) {
-        document.getElementById('login-email').value = rememberedEmail;
-        document.getElementById('remember-me').checked = true;
-      }
-    }
-
     async function logout() {
       try {
-        showNotification('Logging out...');
-        
-        // Stop all media streams
-        stopAllMedia();
-        
-        // Clean up whiteboard
-        if (appState.whiteboard) {
-          appState.whiteboard.cleanup();
-          appState.whiteboard = null;
-        }
-        
-        // Sign out
         await auth.signOut();
-        showNotification('Logged out successfully', 'success');
+        console.log("User logged out");
       } catch (error) {
-        console.error('Logout error:', error);
-        showNotification('Logout failed. Please try again.', 'error');
+        console.error("Logout error:", error);
+        alert(error.message);
       }
     }
 
     function handleUserLogin(user) {
+      console.log("User logged in:", user);
       appState.currentUser = user;
       
       // Update UI
@@ -1268,15 +913,10 @@
         appState.currentSession
       );
       appState.whiteboard.init();
-      
-      // Initialize media
-      initMedia();
-      
-      // Update session URL
-      window.location.hash = appState.currentSession;
     }
 
     function handleUserLogout() {
+      console.log("User logged out");
       appState.currentUser = null;
       
       // Update UI
@@ -1285,27 +925,13 @@
       
       // Clear any existing data
       elements.usersList.innerHTML = '';
-      elements.videoContainer.innerHTML = '';
       elements.chatMessages.innerHTML = '';
-    }
-
-    // Notification system
-    function showNotification(message, type = 'info') {
-      const notification = elements.notification;
-      notification.textContent = message;
-      notification.className = 'notification';
       
-      if (type === 'success') {
-        notification.classList.add('success');
-      } else if (type === 'error') {
-        notification.classList.add('error');
+      // Clean up whiteboard if it exists
+      if (appState.whiteboard) {
+        appState.whiteboard.cleanup();
+        appState.whiteboard = null;
       }
-      
-      notification.classList.add('show');
-      
-      setTimeout(() => {
-        notification.classList.remove('show');
-      }, 3000);
     }
 
     // Whiteboard Class
@@ -1932,161 +1558,43 @@
       }
     }
 
-    // Media Controls
-    function setupMediaControls() {
-      elements.micToggle.addEventListener('click', toggleMicrophone);
-      elements.cameraToggle.addEventListener('click', toggleCamera);
-      elements.screenShare.addEventListener('click', toggleScreenShare);
+    // Sidebar Toggle
+    function setupSidebarToggle() {
       elements.sidebarToggle.addEventListener('click', toggleSidebar);
     }
 
-    async function initMedia() {
-      try {
-        // Get user media
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: true
-        });
-        
-        appState.media.localStream = stream;
-        appState.media.audioEnabled = true;
-        appState.media.videoEnabled = true;
-        
-        // Update UI
-        elements.micToggle.classList.add('active');
-        elements.cameraToggle.classList.add('active');
-        
-        // Create local video element
-        createVideoElement(stream, 'You', true);
-        
-        // Initialize WebRTC connections (simplified)
-        // In a real app, you would implement proper signaling and peer connections
-      } catch (error) {
-        console.error('Error accessing media devices:', error);
-        showNotification('Could not access camera/microphone', 'error');
-      }
+    function toggleSidebar() {
+      elements.sidebar.classList.toggle('open');
     }
 
-    function toggleMicrophone() {
-      if (!appState.media.localStream) return;
+    // User List Management
+    function updateUserList(users) {
+      if (!users) return;
       
-      appState.media.audioEnabled = !appState.media.audioEnabled;
-      appState.media.localStream.getAudioTracks().forEach(track => {
-        track.enabled = appState.media.audioEnabled;
+      elements.usersList.innerHTML = '';
+      let userCount = 0;
+      
+      Object.entries(users).forEach(([userId, userData]) => {
+        if (userId === appState.currentUser?.uid) return;
+        
+        userCount++;
+        
+        const userElement = document.createElement('div');
+        userElement.className = 'user-item';
+        
+        const userColor = document.createElement('div');
+        userColor.className = 'user-color';
+        userColor.style.backgroundColor = userData.color;
+        
+        const userName = document.createElement('span');
+        userName.textContent = userData.name;
+        
+        userElement.appendChild(userColor);
+        userElement.appendChild(userName);
+        elements.usersList.appendChild(userElement);
       });
       
-      elements.micToggle.classList.toggle('active', appState.media.audioEnabled);
-      showNotification(appState.media.audioEnabled ? 'Microphone on' : 'Microphone off');
-    }
-
-    function toggleCamera() {
-      if (!appState.media.localStream) return;
-      
-      appState.media.videoEnabled = !appState.media.videoEnabled;
-      appState.media.localStream.getVideoTracks().forEach(track => {
-        track.enabled = appState.media.videoEnabled;
-      });
-      
-      elements.cameraToggle.classList.toggle('active', appState.media.videoEnabled);
-      showNotification(appState.media.videoEnabled ? 'Camera on' : 'Camera off');
-    }
-
-    async function toggleScreenShare() {
-      try {
-        if (appState.media.screenSharing) {
-          // Stop screen sharing
-          appState.media.screenStream.getTracks().forEach(track => track.stop());
-          appState.media.screenSharing = false;
-          elements.screenShare.classList.remove('active');
-          showNotification('Screen sharing stopped');
-          
-          // Restore camera
-          const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-          appState.media.localStream.getVideoTracks().forEach(track => {
-            appState.media.localStream.removeTrack(track);
-          });
-          stream.getVideoTracks().forEach(track => {
-            appState.media.localStream.addTrack(track);
-          });
-        } else {
-          // Start screen sharing
-          const screenStream = await navigator.mediaDevices.getDisplayMedia({
-            video: true,
-            audio: false
-          });
-          
-          appState.media.screenStream = screenStream;
-          appState.media.screenSharing = true;
-          elements.screenShare.classList.add('active');
-          showNotification('Screen sharing started');
-          
-          // Replace camera with screen share
-          appState.media.localStream.getVideoTracks().forEach(track => {
-            appState.media.localStream.removeTrack(track);
-          });
-          screenStream.getVideoTracks().forEach(track => {
-            appState.media.localStream.addTrack(track);
-          });
-        }
-      } catch (error) {
-        console.error('Error toggling screen share:', error);
-        showNotification('Failed to toggle screen sharing', 'error');
-      }
-    }
-
-    function createVideoElement(stream, name, isLocal = false) {
-      const videoContainer = document.createElement('div');
-      videoContainer.className = 'video-element';
-      
-      const videoElement = document.createElement('video');
-      videoElement.srcObject = stream;
-      videoElement.autoplay = true;
-      videoElement.playsInline = true;
-      
-      if (isLocal) {
-        videoElement.muted = true;
-      }
-      
-      const videoLabel = document.createElement('div');
-      videoLabel.className = 'video-label';
-      videoLabel.textContent = name;
-      
-      videoContainer.appendChild(videoElement);
-      videoContainer.appendChild(videoLabel);
-      
-      if (isLocal) {
-        // Insert at the beginning
-        elements.videoContainer.insertBefore(videoContainer, elements.videoContainer.firstChild);
-      } else {
-        elements.videoContainer.appendChild(videoContainer);
-      }
-      
-      return videoContainer;
-    }
-
-    function stopAllMedia() {
-      if (appState.media.localStream) {
-        appState.media.localStream.getTracks().forEach(track => track.stop());
-      }
-      
-      if (appState.media.screenStream) {
-        appState.media.screenStream.getTracks().forEach(track => track.stop());
-      }
-      
-      // Close all peer connections
-      Object.values(appState.media.peerConnections).forEach(pc => pc.close());
-      
-      // Reset media state
-      appState.media = {
-        audioEnabled: false,
-        videoEnabled: false,
-        screenSharing: false,
-        localStream: null,
-        peerConnections: {}
-      };
-      
-      // Clear video elements
-      elements.videoContainer.innerHTML = '';
+      elements.usersCount.textContent = userCount;
     }
 
     // Chat Functionality
@@ -2135,89 +1643,6 @@
       
       elements.chatMessages.appendChild(messageElement);
       elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
-    }
-
-    // AI Assistant
-    function setupAI() {
-      elements.aiAssistantBtn.addEventListener('click', toggleAIAssistant);
-      elements.aiClose.addEventListener('click', toggleAIAssistant);
-      elements.aiSend.addEventListener('click', sendAIMessage);
-      elements.aiInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          sendAIMessage();
-        }
-      });
-    }
-
-    function toggleAIAssistant() {
-      elements.aiAssistant.style.display = elements.aiAssistant.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function sendAIMessage() {
-      const message = elements.aiInput.value.trim();
-      if (!message) return;
-      
-      // Add user message to chat
-      addAIMessage(message, 'user');
-      elements.aiInput.value = '';
-      
-      // Simulate AI response (in a real app, you'd call an AI API)
-      setTimeout(() => {
-        const responses = [
-          "I can help you with drawing suggestions. Try using the rectangle tool to create a frame for your diagram.",
-          "Would you like me to suggest a color palette for your whiteboard?",
-          "You can use the text tool to add labels to your diagrams. Just click the text icon and click where you want to add text.",
-          "For better collaboration, make sure all participants have their microphones enabled.",
-          "Try using different line widths to create visual hierarchy in your drawings."
-        ];
-        
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        addAIMessage(randomResponse, 'bot');
-      }, 1000);
-    }
-
-    function addAIMessage(message, sender) {
-      const messageElement = document.createElement('div');
-      messageElement.className = `ai-message ai-${sender}`;
-      messageElement.textContent = message;
-      
-      elements.aiMessages.appendChild(messageElement);
-      elements.aiMessages.scrollTop = elements.aiMessages.scrollHeight;
-    }
-
-    // User List Management
-    function updateUserList(users) {
-      if (!users) return;
-      
-      elements.usersList.innerHTML = '';
-      let userCount = 0;
-      
-      Object.entries(users).forEach(([userId, userData]) => {
-        if (userId === appState.currentUser?.uid) return;
-        
-        userCount++;
-        
-        const userElement = document.createElement('div');
-        userElement.className = 'user-item';
-        
-        const userColor = document.createElement('div');
-        userColor.className = 'user-color';
-        userColor.style.backgroundColor = userData.color;
-        
-        const userName = document.createElement('span');
-        userName.textContent = userData.name;
-        
-        userElement.appendChild(userColor);
-        userElement.appendChild(userName);
-        elements.usersList.appendChild(userElement);
-      });
-      
-      elements.usersCount.textContent = userCount;
-    }
-
-    // Sidebar Toggle
-    function toggleSidebar() {
-      elements.sidebar.classList.toggle('open');
     }
 
     // Initialize the app when DOM is loaded
