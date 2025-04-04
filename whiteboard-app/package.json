@@ -1,1 +1,19 @@
-
+{
+  "name": "whiteboard-app",
+  "version": "1.0.0",
+  "description": "Real-time collaborative whiteboard",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "firebase": "^9.6.0",
+    "gh-pages": "^3.2.3",
+    "vite": "^2.7.10"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.8"
+  }
+}
