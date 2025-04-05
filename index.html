@@ -3,36 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CollabBoard - Real-time Collaborative Whiteboard</title>
+    <title>CollabBoard Pro - Advanced Collaborative Whiteboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #6e8efb;
-            --secondary-color: #a777e3;
-            --dark-color: #2c3e50;
-            --light-color: #f5f5f5;
-            --danger-color: #e74c3c;
-            --success-color: #34a853;
-            --warning-color: #fbbc05;
+            --primary-color: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #4338ca;
+            --secondary-color: #10b981;
+            --dark-color: #1e293b;
+            --darker-color: #0f172a;
+            --light-color: #f8fafc;
+            --gray-color: #94a3b8;
+            --danger-color: #ef4444;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --border-radius: 8px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.2s ease-in-out;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background-color: var(--light-color);
-            color: #333;
+            color: var(--darker-color);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         /* Auth Screen */
         .auth-container {
             display: flex;
             min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .auth-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            z-index: -1;
+        }
+        
+        .auth-background::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         .auth-left {
             flex: 1;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -40,28 +87,69 @@
             color: white;
             padding: 2rem;
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
         
         .auth-logo {
             font-size: 3rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .auth-logo i {
+            font-size: 2.5rem;
+        }
+        
+        .auth-tagline {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
         }
         
         .auth-features {
             max-width: 500px;
             margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
         }
         
         .auth-feature {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            margin-bottom: 1rem;
+            gap: 0.5rem;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+        }
+        
+        .auth-feature:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
         }
         
         .auth-feature i {
-            margin-right: 1rem;
-            font-size: 1.2rem;
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .auth-feature-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .auth-feature-desc {
+            font-size: 0.85rem;
+            opacity: 0.8;
         }
         
         .auth-right {
@@ -72,34 +160,58 @@
             align-items: center;
             padding: 2rem;
             background-color: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 2;
         }
         
         .auth-card {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
             overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .auth-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
         
         .auth-tabs {
             display: flex;
+            background: var(--light-color);
         }
         
         .auth-tab {
             flex: 1;
-            padding: 1rem;
+            padding: 1.25rem;
             text-align: center;
             cursor: pointer;
-            background: #f8f9fa;
-            transition: all 0.3s;
+            font-weight: 500;
+            color: var(--gray-color);
+            transition: var(--transition);
+            position: relative;
         }
         
         .auth-tab.active {
+            color: var(--primary-color);
             background: white;
-            font-weight: bold;
-            border-bottom: 3px solid var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px 3px 0 0;
         }
         
         .auth-form {
@@ -114,20 +226,24 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
+            color: var(--darker-color);
+            font-size: 0.95rem;
         }
         
         .auth-form-input {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 0.85rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
             font-size: 1rem;
-            transition: border 0.3s;
+            transition: var(--transition);
+            background: var(--light-color);
         }
         
         .auth-form-input:focus {
             outline: none;
-            border-color: var(--primary-color);
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
         
         .auth-form-options {
@@ -141,50 +257,67 @@
         .auth-form-checkbox {
             display: flex;
             align-items: center;
+            gap: 0.5rem;
         }
         
         .auth-form-checkbox input {
-            margin-right: 0.5rem;
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-color);
         }
         
         .auth-form-link {
             color: var(--primary-color);
             text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
         }
         
         .auth-form-link:hover {
+            color: var(--primary-dark);
             text-decoration: underline;
         }
         
         .auth-form-button {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.85rem;
             background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             font-size: 1rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
         
         .auth-form-button:hover {
-            background-color: #5a7df4;
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .auth-form-button:active {
+            transform: translateY(0);
         }
         
         .auth-divider {
             display: flex;
             align-items: center;
             margin: 1.5rem 0;
-            color: #777;
+            color: var(--gray-color);
+            font-size: 0.85rem;
         }
         
         .auth-divider::before,
         .auth-divider::after {
             content: "";
             flex: 1;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #e2e8f0;
         }
         
         .auth-divider::before {
@@ -206,12 +339,18 @@
             align-items: center;
             justify-content: center;
             padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
+            background: white;
+        }
+        
+        .auth-social-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
         
         .auth-social-button i {
@@ -220,18 +359,21 @@
         }
         
         .auth-social-button.google {
-            background: white;
             color: #757575;
         }
         
-        .auth-social-button.github {
-            background: #333;
-            color: white;
+        .auth-social-button.google:hover {
+            border-color: #db4437;
+            color: #db4437;
         }
         
-        .auth-social-button.linkedin {
-            background: #0077b5;
-            color: white;
+        .auth-social-button.github {
+            color: #333;
+        }
+        
+        .auth-social-button.github:hover {
+            border-color: #333;
+            background: #f5f5f5;
         }
         
         /* App Container */
@@ -239,46 +381,55 @@
             display: none;
             flex-direction: column;
             height: 100vh;
+            background: var(--light-color);
         }
         
         /* Toolbar */
         .toolbar {
             display: flex;
-            padding: 0.75rem 1rem;
+            padding: 0.75rem 1.5rem;
             background-color: var(--dark-color);
             align-items: center;
-            gap: 0.75rem;
+            gap: 1rem;
             flex-wrap: wrap;
+            box-shadow: var(--shadow-md);
+            z-index: 10;
         }
         
         .tool-group {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding-right: 0.75rem;
-            border-right: 1px solid rgba(255,255,255,0.1);
+            padding-right: 1rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .tool-button {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             color: white;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition);
         }
         
         .tool-button:hover {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
         }
         
         .tool-button.active {
             background: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tool-button i {
+            font-size: 1.1rem;
         }
         
         .tool-button.danger {
@@ -288,20 +439,38 @@
         .tool-separator {
             width: 1px;
             height: 24px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
         }
         
         .tool-input {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            border-radius: 5px;
-            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius);
+            padding: 0.35rem 0.75rem;
             color: white;
+            height: 40px;
+            transition: var(--transition);
         }
         
         .tool-input:focus {
             outline: none;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+        
+        .tool-input[type="color"] {
+            padding: 0;
+            width: 40px;
+            cursor: pointer;
+        }
+        
+        .tool-input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: var(--border-radius);
+        }
+        
+        .tool-input[type="range"] {
+            width: 100px;
         }
         
         .user-menu {
@@ -312,21 +481,28 @@
         }
         
         .user-avatar {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: var(--primary-color);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: bold;
-            font-size: 0.9rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .user-avatar:hover {
+            transform: scale(1.1);
         }
         
         .user-name {
             color: white;
             font-weight: 500;
+            cursor: pointer;
         }
         
         /* Main Content */
@@ -334,28 +510,62 @@
             display: flex;
             flex: 1;
             overflow: hidden;
+            position: relative;
         }
         
         /* Sidebar */
         .sidebar {
-            width: 250px;
-            background-color: #34495e;
-            color: white;
+            width: 280px;
+            background-color: white;
+            color: var(--darker-color);
             display: flex;
             flex-direction: column;
+            border-right: 1px solid #e2e8f0;
+            transition: transform 0.3s ease;
+            z-index: 5;
         }
         
-        .sidebar-section {
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+        .sidebar-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .sidebar-title {
-            font-weight: 500;
-            margin-bottom: 0.75rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark-color);
+        }
+        
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: var(--gray-color);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: none;
+        }
+        
+        .sidebar-section {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            color: var(--dark-color);
+            font-size: 0.95rem;
+        }
+        
+        .section-title i {
+            margin-right: 0.5rem;
+            color: var(--gray-color);
         }
         
         .user-list {
@@ -368,39 +578,389 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
         }
         
-        .user-color {
-            width: 12px;
-            height: 12px;
+        .user-item:hover {
+            background: var(--light-color);
+        }
+        
+        .user-avatar-sm {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name-sm {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .user-status {
+            font-size: 0.75rem;
+            color: var(--gray-color);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-color);
+        }
+        
+        .status-indicator.away {
+            background: var(--warning-color);
         }
         
         .media-controls {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            margin-top: 1rem;
         }
         
         .media-button {
-            width: 36px;
-            height: 36px;
+            flex: 1;
+            padding: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 5px;
-            color: white;
+            background: var(--light-color);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            color: var(--dark-color);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.9rem;
         }
         
         .media-button:hover {
-            background: rgba(255,255,255,0.2);
+            background: #f1f5f9;
         }
         
         .media-button.active {
             background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .media-button i {
+            margin-right: 0.5rem;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            background: var(--light-color);
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .chat-message.sent {
+            align-self: flex-end;
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .chat-message.received {
+            align-self: flex-start;
+        }
+        
+        .chat-sender {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        .chat-sender.sent {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .chat-sender.received {
+            color: var(--primary-color);
+        }
+        
+        .chat-text {
+            font-size: 0.9rem;
+        }
+        
+        .chat-time {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            align-self: flex-end;
+        }
+        
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+        
+        .chat-send {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .chat-send:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Database Section */
+        .database-section {
+            padding: 1.25rem 1.5rem;
+            background: var(--light-color);
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .data-form {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .data-input {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+        }
+        
+        .data-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+        }
+        
+        .data-submit {
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .data-submit:hover {
+            background: var(--primary-dark);
+        }
+        
+        .data-list {
+            list-style: none;
+            margin-top: 1rem;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .data-item {
+            padding: 0.75rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 0.5rem;
+            border-radius: var(--border-radius);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .data-text {
+            font-size: 0.9rem;
+        }
+        
+        .data-user {
+            font-size: 0.75rem;
+            color: var(--gray-color);
+        }
+        
+        .data-delete {
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .data-delete:hover {
+            transform: scale(1.2);
+        }
+        
+        /* Storage Section */
+        .storage-section {
+            padding: 1.25rem 1.5rem;
+            background: var(--light-color);
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .upload-area {
+            border: 2px dashed #e2e8f0;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 1rem;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary-light);
+            background: rgba(79, 70, 229, 0.05);
+        }
+        
+        .upload-area i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .upload-text {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+        }
+        
+        .upload-text strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        #filePreview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 1rem;
+            border-radius: var(--border-radius);
+            display: none;
+        }
+        
+        .file-list {
+            margin-top: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+            background: white;
+        }
+        
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light-color);
+            border-radius: var(--border-radius);
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+        }
+        
+        .file-info {
+            flex: 1;
+        }
+        
+        .file-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .file-size {
+            font-size: 0.75rem;
+            color: var(--gray-color);
+        }
+        
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .file-action {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .file-action:hover {
+            background: #f1f5f9;
+        }
+        
+        .file-action.download {
+            color: var(--success-color);
+        }
+        
+        .file-action.delete {
+            color: var(--danger-color);
         }
         
         /* Canvas Area */
@@ -408,13 +968,16 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: #f0f0f0;
+            background: #f5f5f5;
+            position: relative;
+            overflow: hidden;
         }
         
         .canvas-container {
             flex: 1;
             position: relative;
             overflow: hidden;
+            touch-action: none;
         }
         
         #whiteboard {
@@ -423,6 +986,7 @@
             width: 100%;
             height: 100%;
             touch-action: none;
+            box-shadow: var(--shadow-sm);
         }
         
         .cursors-layer {
@@ -432,175 +996,358 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
+            z-index: 2;
         }
         
         .remote-cursor {
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             transform: translate(-50%, -50%);
+            z-index: 3;
         }
         
         .cursor-name {
             position: absolute;
             top: 15px;
             left: 0;
-            background-color: rgba(0,0,0,0.7);
+            background-color: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
             white-space: nowrap;
+            transform: translateX(-50%);
+            z-index: 4;
         }
         
-        /* Database Section */
-        .database-section {
-            padding: 1rem;
-            background: #f9f9f9;
-            border-radius: 5px;
-            margin-top: 1rem;
-        }
-        
-        .data-list {
-            list-style: none;
-            margin-top: 1rem;
-            padding: 0;
-        }
-        
-        .data-list li {
-            padding: 0.5rem;
+        /* Whiteboard Tools Panel */
+        .tools-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
             background: white;
-            border: 1px solid #eee;
-            margin-bottom: 0.5rem;
-            border-radius: 4px;
-        }
-        
-        /* Storage Section */
-        .storage-section {
-            padding: 1rem;
-            background: #f9f9f9;
-            border-radius: 5px;
-            margin-top: 1rem;
-        }
-        
-        #filePreview {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 1rem;
-            display: none;
-        }
-        
-        /* Messages */
-        .message {
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
             padding: 0.75rem;
-            border-radius: 4px;
-            margin-top: 1rem;
-            display: none;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
         
-        .error {
-            background-color: #ffebee;
-            color: var(--danger-color);
-            display: block;
+        .panel-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
         }
         
-        .success {
-            background-color: #e6f4ea;
-            color: var(--success-color);
-            display: block;
+        .panel-group:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
         }
         
-        .warning {
-            background-color: #fff8e1;
-            color: var(--warning-color);
-            display: block;
+        .panel-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+        
+        /* Session Info */
+        .session-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .session-link {
+            color: var(--primary-light);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        /* Notifications */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            padding: 1rem;
+            max-width: 300px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 100;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .notification-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .notification-icon.success {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .notification-icon.error {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .notification-icon.warning {
+            background: var(--warning-color);
+            color: white;
+        }
+        
+        .notification-icon.info {
+            background: var(--info-color);
+            color: white;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .notification-message {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--gray-color);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(79, 70, 229, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-weight: 500;
+            color: var(--dark-color);
         }
         
         /* Responsive */
+        @media (max-width: 1200px) {
+            .sidebar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                transform: translateX(-100%);
+                z-index: 20;
+                box-shadow: var(--shadow-lg);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .sidebar-close {
+                display: block;
+            }
+        }
+        
         @media (max-width: 992px) {
             .auth-container {
                 flex-direction: column;
+                min-height: auto;
             }
             
             .auth-left {
-                padding: 2rem;
+                padding: 3rem 2rem;
             }
             
-            .sidebar {
-                width: 200px;
+            .auth-features {
+                grid-template-columns: 1fr;
+            }
+            
+            .toolbar {
+                padding: 0.75rem;
+                gap: 0.75rem;
+            }
+            
+            .tool-group {
+                padding-right: 0.75rem;
             }
         }
         
         @media (max-width: 768px) {
-            .sidebar {
-                width: 180px;
-            }
-            
-            .toolbar {
-                gap: 0.5rem;
-            }
-            
-            .tool-group {
-                padding-right: 0.5rem;
-            }
-        }
-        
-        @media (max-width: 576px) {
             .auth-card {
                 box-shadow: none;
+                max-width: 100%;
             }
             
-            .sidebar {
-                position: absolute;
-                top: 60px;
-                left: -250px;
-                bottom: 0;
-                z-index: 100;
-                transition: transform 0.3s;
-            }
-            
-            .sidebar.open {
-                transform: translateX(250px);
-            }
-            
-            .main-content {
-                position: relative;
+            .auth-right {
+                padding: 2rem 1rem;
             }
             
             .toolbar {
                 padding: 0.5rem;
+                gap: 0.5rem;
+            }
+            
+            .tool-button {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .user-name {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .auth-left {
+                padding: 2rem 1rem;
+            }
+            
+            .auth-logo {
+                font-size: 2rem;
+            }
+            
+            .auth-tagline {
+                font-size: 1rem;
+            }
+            
+            .auth-feature {
+                padding: 1rem;
+            }
+            
+            .tool-group {
+                border-right: none;
+                padding-right: 0;
+            }
+            
+            .session-info {
+                bottom: 10px;
+                left: 10px;
+                font-size: 0.75rem;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loading-text">Loading...</div>
+    </div>
+
     <!-- Authentication Screen -->
     <div class="auth-container" id="auth-container">
+        <div class="auth-background"></div>
+        
         <div class="auth-left">
-            <div class="auth-logo">CollabBoard</div>
-            <p>Real-time collaborative whiteboard with Firebase integration</p>
+            <div class="auth-logo">
+                <i class="fas fa-chalkboard"></i>
+                <span>CollabBoard Pro</span>
+            </div>
+            <p class="auth-tagline">The most advanced real-time collaborative whiteboard with Firebase integration</p>
             
             <div class="auth-features">
                 <div class="auth-feature">
                     <i class="fas fa-users"></i>
-                    <span>Real-time collaboration with multiple users</span>
+                    <div class="auth-feature-title">Real-time Collaboration</div>
+                    <div class="auth-feature-desc">Work simultaneously with multiple users with live cursors</div>
                 </div>
                 <div class="auth-feature">
-                    <i class="fas fa-draw-polygon"></i>
-                    <span>Multiple drawing tools and shapes</span>
+                    <i class="fas fa-paint-brush"></i>
+                    <div class="auth-feature-title">Advanced Tools</div>
+                    <div class="auth-feature-desc">Multiple drawing tools, shapes, and text with rich formatting</div>
                 </div>
                 <div class="auth-feature">
                     <i class="fas fa-database"></i>
-                    <span>Firestore database integration</span>
+                    <div class="auth-feature-title">Firebase Integration</div>
+                    <div class="auth-feature-desc">Real-time sync with Firestore and file storage with Firebase Storage</div>
                 </div>
                 <div class="auth-feature">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <span>File storage with Firebase Storage</span>
+                    <i class="fas fa-comments"></i>
+                    <div class="auth-feature-title">Integrated Chat</div>
+                    <div class="auth-feature-desc">Communicate with collaborators in real-time</div>
                 </div>
                 <div class="auth-feature">
                     <i class="fas fa-history"></i>
-                    <span>Undo/redo functionality</span>
+                    <div class="auth-feature-title">Version History</div>
+                    <div class="auth-feature-desc">Track changes and revert to previous versions</div>
+                </div>
+                <div class="auth-feature">
+                    <i class="fas fa-share-alt"></i>
+                    <div class="auth-feature-title">Easy Sharing</div>
+                    <div class="auth-feature-desc">Share your boards with a simple link</div>
                 </div>
             </div>
         </div>
@@ -608,19 +1355,19 @@
         <div class="auth-right">
             <div class="auth-card">
                 <div class="auth-tabs">
-                    <div class="auth-tab active" data-tab="login">Login</div>
-                    <div class="auth-tab" data-tab="register">Register</div>
+                    <div class="auth-tab active" data-tab="login">Sign In</div>
+                    <div class="auth-tab" data-tab="register">Sign Up</div>
                 </div>
                 
                 <div class="auth-form" id="login-form">
                     <div class="auth-form-group">
-                        <label class="auth-form-label">Email</label>
-                        <input type="email" class="auth-form-input" id="login-email" placeholder="Enter your email">
+                        <label class="auth-form-label">Email Address</label>
+                        <input type="email" class="auth-form-input" id="login-email" placeholder="Enter your email" autocomplete="username">
                     </div>
                     
                     <div class="auth-form-group">
                         <label class="auth-form-label">Password</label>
-                        <input type="password" class="auth-form-input" id="login-password" placeholder="Enter your password">
+                        <input type="password" class="auth-form-input" id="login-password" placeholder="Enter your password" autocomplete="current-password">
                     </div>
                     
                     <div class="auth-form-options">
@@ -630,7 +1377,9 @@
                         <a href="#" class="auth-form-link" id="forgot-password">Forgot password?</a>
                     </div>
                     
-                    <button class="auth-form-button" id="login-btn">Login</button>
+                    <button class="auth-form-button" id="login-btn">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
                     <div id="login-message" class="message hidden"></div>
                     
                     <div class="auth-divider">or continue with</div>
@@ -647,26 +1396,28 @@
                 
                 <div class="auth-form" id="register-form" style="display: none;">
                     <div class="auth-form-group">
-                        <label class="auth-form-label">Name</label>
+                        <label class="auth-form-label">Full Name</label>
                         <input type="text" class="auth-form-input" id="register-name" placeholder="Enter your name">
                     </div>
                     
                     <div class="auth-form-group">
-                        <label class="auth-form-label">Email</label>
-                        <input type="email" class="auth-form-input" id="register-email" placeholder="Enter your email">
+                        <label class="auth-form-label">Email Address</label>
+                        <input type="email" class="auth-form-input" id="register-email" placeholder="Enter your email" autocomplete="username">
                     </div>
                     
                     <div class="auth-form-group">
                         <label class="auth-form-label">Password</label>
-                        <input type="password" class="auth-form-input" id="register-password" placeholder="Create a password" minlength="6">
+                        <input type="password" class="auth-form-input" id="register-password" placeholder="Create a password" minlength="6" autocomplete="new-password">
                     </div>
                     
                     <div class="auth-form-group">
                         <label class="auth-form-label">Confirm Password</label>
-                        <input type="password" class="auth-form-input" id="register-confirm" placeholder="Confirm your password">
+                        <input type="password" class="auth-form-input" id="register-confirm" placeholder="Confirm your password" autocomplete="new-password">
                     </div>
                     
-                    <button class="auth-form-button" id="register-btn">Register</button>
+                    <button class="auth-form-button" id="register-btn">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
                     <div id="register-message" class="message hidden"></div>
                     
                     <div class="auth-divider">or sign up with</div>
@@ -689,66 +1440,82 @@
         <!-- Toolbar -->
         <div class="toolbar">
             <div class="tool-group">
-                <button class="tool-button" id="select-tool" title="Select">
+                <button class="tool-button" id="select-tool" title="Select (V)">
                     <i class="fas fa-mouse-pointer"></i>
                 </button>
             </div>
             
             <div class="tool-group">
-                <button class="tool-button active" id="pen-tool" title="Pen">
+                <button class="tool-button active" id="pen-tool" title="Pen (P)">
                     <i class="fas fa-pen"></i>
                 </button>
-                <button class="tool-button" id="line-tool" title="Line">
+                <button class="tool-button" id="line-tool" title="Line (L)">
                     <i class="fas fa-slash"></i>
                 </button>
-                <button class="tool-button" id="rect-tool" title="Rectangle">
+                <button class="tool-button" id="rect-tool" title="Rectangle (R)">
                     <i class="fas fa-square"></i>
                 </button>
-                <button class="tool-button" id="circle-tool" title="Circle">
+                <button class="tool-button" id="circle-tool" title="Circle (C)">
                     <i class="fas fa-circle"></i>
                 </button>
-                <button class="tool-button" id="triangle-tool" title="Triangle">
+                <button class="tool-button" id="triangle-tool" title="Triangle (T)">
                     <i class="fas fa-play"></i>
                 </button>
-                <button class="tool-button" id="text-tool" title="Text">
+                <button class="tool-button" id="text-tool" title="Text (X)">
                     <i class="fas fa-font"></i>
                 </button>
-            </div>
-            
-            <div class="tool-group">
-                <button class="tool-button" id="eraser-tool" title="Eraser">
+                <button class="tool-button" id="eraser-tool" title="Eraser (E)">
                     <i class="fas fa-eraser"></i>
                 </button>
             </div>
             
             <div class="tool-group">
                 <input type="color" class="tool-input" id="color-picker" value="#000000" title="Color">
-                <input type="range" class="tool-input" id="stroke-width" min="1" max="20" value="3" title="Stroke Width">
+                <input type="range" class="tool-input" id="stroke-width" min="1" max="50" value="3" title="Stroke Width">
+                <select class="tool-input" id="stroke-style" title="Stroke Style">
+                    <option value="solid">Solid</option>
+                    <option value="dashed">Dashed</option>
+                    <option value="dotted">Dotted</option>
+                </select>
             </div>
             
             <div class="tool-group">
-                <button class="tool-button" id="undo-btn" title="Undo">
+                <button class="tool-button" id="undo-btn" title="Undo (Ctrl+Z)">
                     <i class="fas fa-undo"></i>
                 </button>
-                <button class="tool-button" id="redo-btn" title="Redo">
+                <button class="tool-button" id="redo-btn" title="Redo (Ctrl+Y)">
                     <i class="fas fa-redo"></i>
                 </button>
-            </div>
-            
-            <div class="tool-group">
-                <button class="tool-button" id="clear-btn" title="Clear Canvas">
+                <button class="tool-button" id="clear-btn" title="Clear Canvas (Del)">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
             
             <div class="tool-group">
-                <button class="tool-button" id="sidebar-toggle" title="Toggle Sidebar">
+                <button class="tool-button" id="zoom-in" title="Zoom In (+)">
+                    <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="tool-button" id="zoom-out" title="Zoom Out (-)">
+                    <i class="fas fa-search-minus"></i>
+                </button>
+                <button class="tool-button" id="zoom-reset" title="Reset Zoom (0)">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+            
+            <div class="tool-group">
+                <button class="tool-button" id="sidebar-toggle" title="Toggle Sidebar (B)">
                     <i class="fas fa-users"></i>
+                </button>
+                <button class="tool-button" id="fullscreen-btn" title="Toggle Fullscreen (F)">
+                    <i class="fas fa-expand"></i>
                 </button>
             </div>
             
             <div class="user-menu">
-                <div class="user-avatar" id="user-avatar">U</div>
+                <div class="user-avatar" id="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
                 <div class="user-name" id="user-name">User</div>
                 <button class="tool-button" id="logout-btn" title="Logout">
                     <i class="fas fa-sign-out-alt"></i>
@@ -760,8 +1527,16 @@
         <div class="main-content">
             <!-- Sidebar -->
             <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">Collaborators</div>
+                    <button class="sidebar-close" id="sidebar-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
                 <div class="sidebar-section">
-                    <div class="sidebar-title">
+                    <div class="section-title">
+                        <i class="fas fa-users"></i>
                         <span>Online Users</span>
                         <span id="users-count">0</span>
                     </div>
@@ -769,52 +1544,83 @@
                 </div>
                 
                 <div class="sidebar-section">
-                    <div class="sidebar-title">Media Controls</div>
+                    <div class="section-title">
+                        <i class="fas fa-video"></i>
+                        <span>Media Controls</span>
+                    </div>
                     <div class="media-controls">
                         <button class="media-button" id="mic-toggle" title="Toggle Microphone">
                             <i class="fas fa-microphone"></i>
+                            <span>Mic</span>
                         </button>
                         <button class="media-button" id="camera-toggle" title="Toggle Camera">
                             <i class="fas fa-video"></i>
+                            <span>Camera</span>
+                        </button>
+                        <button class="media-button" id="screen-share" title="Share Screen">
+                            <i class="fas fa-desktop"></i>
+                            <span>Share</span>
                         </button>
                     </div>
                 </div>
                 
                 <div class="sidebar-section">
-                    <div class="sidebar-title">Chat</div>
-                    <div id="chat-messages" style="height: 200px; overflow-y: auto; margin-bottom: 1rem;"></div>
-                    <div class="auth-form-group">
-                        <input type="text" class="auth-form-input" id="chat-input" placeholder="Type a message...">
+                    <div class="section-title">
+                        <i class="fas fa-comments"></i>
+                        <span>Chat</span>
                     </div>
-                    <button class="auth-form-button" id="send-message">Send</button>
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chat-messages"></div>
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message...">
+                            <button class="chat-send" id="send-message">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Database Section -->
-                <div class="database-section">
-                    <h3>Firestore Database</h3>
-                    <form id="add-data-form">
-                        <div class="auth-form-group">
-                            <input type="text" class="auth-form-input" id="data-field" placeholder="Enter some text" required>
-                        </div>
-                        <button class="auth-form-button" type="submit">Add to Database</button>
-                    </form>
-                    <div id="db-message" class="message hidden"></div>
-                    
-                    <h4>Stored Data</h4>
-                    <ul class="data-list" id="data-list"></ul>
+                <div class="sidebar-section">
+                    <div class="section-title">
+                        <i class="fas fa-database"></i>
+                        <span>Session Data</span>
+                    </div>
+                    <div class="database-section">
+                        <form class="data-form" id="add-data-form">
+                            <input type="text" class="data-input" id="data-field" placeholder="Enter some text" required>
+                            <button type="submit" class="data-submit">Add</button>
+                        </form>
+                        <div id="db-message" class="message hidden"></div>
+                        
+                        <div class="section-title">Stored Data</div>
+                        <ul class="data-list" id="data-list"></ul>
+                    </div>
                 </div>
                 
                 <!-- Storage Section -->
-                <div class="storage-section">
-                    <h3>File Storage</h3>
-                    <form id="upload-form">
-                        <div class="auth-form-group">
-                            <input type="file" class="auth-form-input" id="file-input" required>
+                <div class="sidebar-section">
+                    <div class="section-title">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>File Storage</span>
+                    </div>
+                    <div class="storage-section">
+                        <div class="upload-area" id="upload-area">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <div class="upload-text">
+                                <strong>Click to upload</strong> or drag and drop files
+                            </div>
+                            <input type="file" id="file-input" style="display: none;">
                         </div>
                         <img id="file-preview" class="hidden">
-                        <button class="auth-form-button" type="submit">Upload File</button>
-                    </form>
-                    <div id="storage-message" class="message hidden"></div>
+                        <button class="auth-form-button" id="upload-btn" style="display: none;">
+                            <i class="fas fa-upload"></i> Upload File
+                        </button>
+                        <div id="storage-message" class="message hidden"></div>
+                        
+                        <div class="section-title">Uploaded Files</div>
+                        <div class="file-list" id="file-list"></div>
+                    </div>
                 </div>
             </div>
             
@@ -824,315 +1630,618 @@
                     <canvas id="whiteboard"></canvas>
                     <div class="cursors-layer" id="cursors-layer"></div>
                 </div>
+                
+                <!-- Tools Panel -->
+                <div class="tools-panel" id="tools-panel">
+                    <div class="panel-group">
+                        <div class="panel-title">Tools</div>
+                        <div class="tool-buttons">
+                            <button class="tool-button active" id="panel-pen-tool" title="Pen">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                            <button class="tool-button" id="panel-line-tool" title="Line">
+                                <i class="fas fa-slash"></i>
+                            </button>
+                            <button class="tool-button" id="panel-rect-tool" title="Rectangle">
+                                <i class="fas fa-square"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-group">
+                        <div class="panel-title">Color</div>
+                        <input type="color" class="tool-input" id="panel-color-picker" value="#000000" title="Color">
+                    </div>
+                    <div class="panel-group">
+                        <div class="panel-title">Width</div>
+                        <input type="range" class="tool-input" id="panel-stroke-width" min="1" max="50" value="3" title="Stroke Width">
+                    </div>
+                </div>
+                
+                <!-- Session Info -->
+                <div class="session-info">
+                    <i class="fas fa-link"></i>
+                    <span>Session: <span class="session-link" id="session-id">default-session</span></span>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Notifications -->
+    <div class="notification" id="notification">
+        <div class="notification-icon success">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title" id="notification-title">Success</div>
+            <div class="notification-message" id="notification-message">Operation completed successfully</div>
+        </div>
+        <button class="notification-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
     <!-- Firebase SDK -->
-    <script type="module">
-        // Import Firebase services
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword,
-            signOut,
-            onAuthStateChanged,
-            GoogleAuthProvider,
-            GithubAuthProvider,
-            signInWithPopup
-        } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
-        import { 
-            getFirestore,
-            collection,
-            addDoc,
-            query,
-            onSnapshot,
-            serverTimestamp,
-            doc,
-            set,
-            onDisconnect,
-            ref as dbRef,
-            onValue
-        } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
-        import { 
-            getStorage,
-            ref as storageRef,
-            uploadBytes,
-            getDownloadURL
-        } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-storage.js";
-        import { logEvent } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics.js";
-
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAmNO9fq1FgMDlZwG52jJOc8bKfzyeY35E",
-            authDomain: "whiteboard-education.firebaseapp.com",
-            projectId: "whiteboard-education",
-            storageBucket: "whiteboard-education.appspot.com",
-            messagingSenderId: "817729043078",
-            appId: "1:817729043078:web:aa1fa40eac37015d592f07",
-            measurementId: "G-DM592KZGEV"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-        const googleProvider = new GoogleAuthProvider();
-        const githubProvider = new GithubAuthProvider();
-
-        // Application State
-        const appState = {
-            currentUser: null,
-            whiteboard: null,
-            currentSession: window.location.hash.substring(1) || 'default-session'
-        };
-
-        // DOM Elements
-        const elements = {
-            authContainer: document.getElementById('auth-container'),
-            appContainer: document.getElementById('app-container'),
-            loginForm: document.getElementById('login-form'),
-            registerForm: document.getElementById('register-form'),
-            loginBtn: document.getElementById('login-btn'),
-            registerBtn: document.getElementById('register-btn'),
-            googleLogin: document.getElementById('google-login'),
-            githubLogin: document.getElementById('github-login'),
-            googleRegister: document.getElementById('google-register'),
-            githubRegister: document.getElementById('github-register'),
-            logoutBtn: document.getElementById('logout-btn'),
-            userAvatar: document.getElementById('user-avatar'),
-            userName: document.getElementById('user-name'),
-            sidebar: document.getElementById('sidebar'),
-            sidebarToggle: document.getElementById('sidebar-toggle'),
-            usersList: document.getElementById('users-list'),
-            usersCount: document.getElementById('users-count'),
-            chatMessages: document.getElementById('chat-messages'),
-            chatInput: document.getElementById('chat-input'),
-            sendMessage: document.getElementById('send-message'),
-            addDataForm: document.getElementById('add-data-form'),
-            dataField: document.getElementById('data-field'),
-            dataList: document.getElementById('data-list'),
-            uploadForm: document.getElementById('upload-form'),
-            fileInput: document.getElementById('file-input'),
-            filePreview: document.getElementById('file-preview'),
-            loginMessage: document.getElementById('login-message'),
-            registerMessage: document.getElementById('register-message'),
-            dbMessage: document.getElementById('db-message'),
-            storageMessage: document.getElementById('storage-message')
-        };
-
-        // Initialize the application
-        function initApp() {
-            setupAuthListeners();
-            setupAuthUI();
-            setupSidebarToggle();
-            setupChat();
-            setupDatabase();
-            setupStorage();
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics-compat.js"></script>
+    
+    <script>
+        // Enhanced Collaborative Whiteboard Application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show loading overlay
+            const loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.classList.add('active');
             
-            // Log initial page view
-            logEvent(analytics, 'page_view');
-        }
+            // Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyAmNO9fq1FgMDlZwG52jJOc8bKfzyeY35E",
+                authDomain: "whiteboard-education.firebaseapp.com",
+                projectId: "whiteboard-education",
+                storageBucket: "whiteboard-education.appspot.com",
+                messagingSenderId: "817729043078",
+                appId: "1:817729043078:web:aa1fa40eac37015d592f07",
+                measurementId: "G-DM592KZGEV"
+            };
 
-        // Authentication Setup
-        function setupAuthListeners() {
-            onAuthStateChanged(auth, user => {
-                if (user) {
-                    handleUserLogin(user);
-                } else {
-                    handleUserLogout();
-                }
-            });
-        }
-
-        function setupAuthUI() {
-            // Tab switching
-            document.querySelectorAll('.auth-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabName = tab.getAttribute('data-tab');
-                    switchAuthTab(tabName);
-                });
-            });
-
-            // Login with email
-            elements.loginBtn.addEventListener('click', async () => {
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
+            // Initialize Firebase
+            const app = firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            const db = firebase.firestore();
+            const storage = firebase.storage();
+            const analytics = firebase.analytics();
+            
+            // Initialize Firebase Performance Monitoring
+            // const perf = firebase.performance();
+            
+            // Application State
+            const appState = {
+                currentUser: null,
+                whiteboard: null,
+                currentSession: generateSessionId(),
+                onlineUsers: {},
+                unsubscribeFunctions: [], // To store all unsubscribe functions
+                undoStack: [],
+                redoStack: [],
+                zoomLevel: 1
+            };
+            
+            // Generate a unique session ID
+            function generateSessionId() {
+                return 'session-' + Math.random().toString(36).substr(2, 9);
+            }
+            
+            // DOM Elements
+            const elements = {
+                authContainer: document.getElementById('auth-container'),
+                appContainer: document.getElementById('app-container'),
+                loginForm: document.getElementById('login-form'),
+                registerForm: document.getElementById('register-form'),
+                loginBtn: document.getElementById('login-btn'),
+                registerBtn: document.getElementById('register-btn'),
+                googleLogin: document.getElementById('google-login'),
+                githubLogin: document.getElementById('github-login'),
+                googleRegister: document.getElementById('google-register'),
+                githubRegister: document.getElementById('github-register'),
+                logoutBtn: document.getElementById('logout-btn'),
+                userAvatar: document.getElementById('user-avatar'),
+                userName: document.getElementById('user-name'),
+                sidebar: document.getElementById('sidebar'),
+                sidebarToggle: document.getElementById('sidebar-toggle'),
+                sidebarClose: document.getElementById('sidebar-close'),
+                usersList: document.getElementById('users-list'),
+                usersCount: document.getElementById('users-count'),
+                chatMessages: document.getElementById('chat-messages'),
+                chatInput: document.getElementById('chat-input'),
+                sendMessage: document.getElementById('send-message'),
+                addDataForm: document.getElementById('add-data-form'),
+                dataField: document.getElementById('data-field'),
+                dataList: document.getElementById('data-list'),
+                uploadArea: document.getElementById('upload-area'),
+                fileInput: document.getElementById('file-input'),
+                filePreview: document.getElementById('file-preview'),
+                uploadBtn: document.getElementById('upload-btn'),
+                fileList: document.getElementById('file-list'),
+                loginMessage: document.getElementById('login-message'),
+                registerMessage: document.getElementById('register-message'),
+                dbMessage: document.getElementById('db-message'),
+                storageMessage: document.getElementById('storage-message'),
+                notification: document.getElementById('notification'),
+                notificationTitle: document.getElementById('notification-title'),
+                notificationMessage: document.getElementById('notification-message'),
+                sessionId: document.getElementById('session-id'),
+                loadingOverlay: document.getElementById('loading-overlay'),
+                loadingText: document.getElementById('loading-text'),
+                fullscreenBtn: document.getElementById('fullscreen-btn'),
+                zoomIn: document.getElementById('zoom-in'),
+                zoomOut: document.getElementById('zoom-out'),
+                zoomReset: document.getElementById('zoom-reset')
+            };
+            
+            // Session ID display
+            elements.sessionId.textContent = appState.currentSession;
+            
+            // Show notification
+            function showNotification(title, message, type = 'success') {
+                const icon = elements.notification.querySelector('.notification-icon');
+                icon.className = 'notification-icon ' + type;
+                icon.innerHTML = type === 'success' ? '<i class="fas fa-check"></i>' : 
+                                type === 'error' ? '<i class="fas fa-times"></i>' : 
+                                type === 'warning' ? '<i class="fas fa-exclamation"></i>' : 
+                                '<i class="fas fa-info-circle"></i>';
                 
-                try {
-                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                    showMessage(elements.loginMessage, `Signed in as ${userCredential.user.email}`, 'success');
-                    logEvent(analytics, 'login', { method: 'email' });
-                } catch (error) {
-                    showMessage(elements.loginMessage, error.message, 'error');
-                    logEvent(analytics, 'login_error', { method: 'email', error: error.message });
-                }
-            });
-
-            // Register with email
-            elements.registerBtn.addEventListener('click', async () => {
-                const name = document.getElementById('register-name').value;
-                const email = document.getElementById('register-email').value;
-                const password = document.getElementById('register-password').value;
-                const confirm = document.getElementById('register-confirm').value;
+                elements.notificationTitle.textContent = title;
+                elements.notificationMessage.textContent = message;
+                elements.notification.classList.add('show');
                 
-                if (password !== confirm) {
-                    showMessage(elements.registerMessage, "Passwords don't match!", 'error');
-                    return;
-                }
-                
-                try {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    await userCredential.user.updateProfile({ displayName: name });
-                    showMessage(elements.registerMessage, `Account created for ${email}`, 'success');
-                    logEvent(analytics, 'sign_up', { method: 'email' });
-                } catch (error) {
-                    showMessage(elements.registerMessage, error.message, 'error');
-                    logEvent(analytics, 'sign_up_error', { method: 'email', error: error.message });
-                }
+                setTimeout(() => {
+                    elements.notification.classList.remove('show');
+                }, 5000);
+            }
+            
+            // Close notification
+            elements.notification.querySelector('.notification-close').addEventListener('click', () => {
+                elements.notification.classList.remove('show');
             });
-
-            // Social logins
-            elements.googleLogin.addEventListener('click', () => loginWithProvider(googleProvider, 'login'));
-            elements.githubLogin.addEventListener('click', () => loginWithProvider(githubProvider, 'login'));
-            elements.googleRegister.addEventListener('click', () => loginWithProvider(googleProvider, 'sign_up'));
-            elements.githubRegister.addEventListener('click', () => loginWithProvider(githubProvider, 'sign_up'));
-
-            // Logout
-            elements.logoutBtn.addEventListener('click', logout);
-        }
-
-        async function loginWithProvider(provider, actionType) {
-            try {
-                const result = await signInWithPopup(auth, provider);
-                console.log("Social login success:", result.user);
-                logEvent(analytics, actionType, { method: provider.providerId });
-            } catch (error) {
-                console.error("Social login error:", error);
-                showMessage(
-                    actionType === 'login' ? elements.loginMessage : elements.registerMessage,
-                    error.message,
-                    'error'
-                );
-                logEvent(analytics, `${actionType}_error`, { 
-                    method: provider.providerId, 
-                    error: error.message 
+            
+            // Initialize the application
+            function initApp() {
+                setupAuthListeners();
+                setupAuthUI();
+                setupSidebarToggle();
+                setupChat();
+                setupDatabase();
+                setupStorage();
+                setupFullscreen();
+                setupZoomControls();
+                
+                // Hide loading overlay after initialization
+                setTimeout(() => {
+                    elements.loadingOverlay.classList.remove('active');
+                }, 1000);
+                
+                // Log initial page view
+                analytics.logEvent('page_view');
+            }
+            
+            // Setup fullscreen functionality
+            function setupFullscreen() {
+                elements.fullscreenBtn.addEventListener('click', toggleFullscreen);
+                
+                document.addEventListener('fullscreenchange', () => {
+                    if (document.fullscreenElement) {
+                        elements.fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                        elements.fullscreenBtn.title = 'Exit Fullscreen (F)';
+                    } else {
+                        elements.fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                        elements.fullscreenBtn.title = 'Enter Fullscreen (F)';
+                    }
                 });
             }
-        }
-
-        function switchAuthTab(tabName) {
-            document.querySelectorAll('.auth-tab').forEach(tab => {
-                tab.classList.toggle('active', tab.getAttribute('data-tab') === tabName);
-            });
             
-            elements.loginForm.style.display = tabName === 'login' ? 'block' : 'none';
-            elements.registerForm.style.display = tabName === 'register' ? 'block' : 'none';
-        }
-
-        async function logout() {
-            try {
-                await signOut(auth);
-                console.log("User logged out");
-                logEvent(analytics, 'logout');
-            } catch (error) {
-                console.error("Logout error:", error);
-                alert(error.message);
-            }
-        }
-
-        function handleUserLogin(user) {
-            console.log("User logged in:", user);
-            appState.currentUser = user;
-            
-            // Update UI
-            elements.authContainer.style.display = 'none';
-            elements.appContainer.style.display = 'flex';
-            
-            // Set user info
-            const displayName = user.displayName || user.email.split('@')[0];
-            elements.userName.textContent = displayName;
-            elements.userAvatar.textContent = displayName.charAt(0).toUpperCase();
-            
-            // Initialize whiteboard
-            appState.whiteboard = new Whiteboard(
-                document.getElementById('whiteboard'),
-                user.uid,
-                displayName,
-                appState.currentSession
-            );
-            appState.whiteboard.init();
-        }
-
-        function handleUserLogout() {
-            console.log("User logged out");
-            appState.currentUser = null;
-            
-            // Update UI
-            elements.authContainer.style.display = 'flex';
-            elements.appContainer.style.display = 'none';
-            
-            // Clear any existing data
-            elements.usersList.innerHTML = '';
-            elements.chatMessages.innerHTML = '';
-            elements.dataList.innerHTML = '';
-            
-            // Clean up whiteboard if it exists
-            if (appState.whiteboard) {
-                appState.whiteboard.cleanup();
-                appState.whiteboard = null;
-            }
-        }
-
-        // Database Setup
-        function setupDatabase() {
-            elements.addDataForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const text = elements.dataField.value.trim();
-                
-                if (!text) {
-                    showMessage(elements.dbMessage, 'Please enter some text', 'error');
-                    return;
-                }
-                
-                try {
-                    const docRef = await addDoc(collection(db, 'items'), {
-                        text: text,
-                        createdAt: serverTimestamp(),
-                        userId: appState.currentUser?.uid || 'anonymous',
-                        userName: appState.currentUser?.displayName || 'Anonymous'
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        showNotification('Error', 'Failed to enter fullscreen mode', 'error');
+                        console.error('Fullscreen error:', err);
                     });
-                    showMessage(elements.dbMessage, 'Data added successfully!', 'success');
-                    elements.dataField.value = '';
-                    logEvent(analytics, 'database_write');
-                } catch (error) {
-                    showMessage(elements.dbMessage, error.message, 'error');
-                    logEvent(analytics, 'database_error', { error: error.message });
+                } else {
+                    document.exitFullscreen();
                 }
-            });
+            }
             
-            // Real-time data listener
-            const q = query(collection(db, 'items'));
-            onSnapshot(q, (querySnapshot) => {
-                elements.dataList.innerHTML = '';
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const li = document.createElement('li');
-                    li.textContent = `${data.userName}: ${data.text}`;
-                    elements.dataList.appendChild(li);
+            // Setup zoom controls
+            function setupZoomControls() {
+                elements.zoomIn.addEventListener('click', () => {
+                    appState.zoomLevel = Math.min(appState.zoomLevel + 0.1, 3);
+                    updateZoom();
                 });
-            });
-        }
-
-        // Storage Setup
-        function setupStorage() {
-            elements.fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
+                
+                elements.zoomOut.addEventListener('click', () => {
+                    appState.zoomLevel = Math.max(appState.zoomLevel - 0.1, 0.5);
+                    updateZoom();
+                });
+                
+                elements.zoomReset.addEventListener('click', () => {
+                    appState.zoomLevel = 1;
+                    updateZoom();
+                });
+                
+                // Keyboard shortcuts for zoom
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        if (e.key === '+' || e.key === '=') {
+                            e.preventDefault();
+                            appState.zoomLevel = Math.min(appState.zoomLevel + 0.1, 3);
+                            updateZoom();
+                        } else if (e.key === '-' || e.key === '_') {
+                            e.preventDefault();
+                            appState.zoomLevel = Math.max(appState.zoomLevel - 0.1, 0.5);
+                            updateZoom();
+                        } else if (e.key === '0') {
+                            e.preventDefault();
+                            appState.zoomLevel = 1;
+                            updateZoom();
+                        }
+                    }
+                });
+            }
+            
+            function updateZoom() {
+                if (appState.whiteboard) {
+                    appState.whiteboard.setZoom(appState.zoomLevel);
+                }
+            }
+            
+            // Authentication Setup
+            function setupAuthListeners() {
+                auth.onAuthStateChanged(user => {
+                    if (user) {
+                        handleUserLogin(user);
+                    } else {
+                        handleUserLogout();
+                    }
+                });
+            }
+            
+            function setupAuthUI() {
+                // Tab switching
+                document.querySelectorAll('.auth-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabName = tab.getAttribute('data-tab');
+                        switchAuthTab(tabName);
+                    });
+                });
+                
+                // Login with email
+                elements.loginBtn.addEventListener('click', async () => {
+                    const email = document.getElementById('login-email').value;
+                    const password = document.getElementById('login-password').value;
+                    
+                    if (!email || !password) {
+                        showNotification('Error', 'Please enter both email and password', 'error');
+                        return;
+                    }
+                    
+                    try {
+                        elements.loadingText.textContent = 'Signing in...';
+                        elements.loadingOverlay.classList.add('active');
+                        
+                        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                        showNotification('Success', `Signed in as ${userCredential.user.email}`);
+                        analytics.logEvent('login', { method: 'email' });
+                    } catch (error) {
+                        showNotification('Error', error.message, 'error');
+                        analytics.logEvent('login_error', { method: 'email', error: error.message });
+                    } finally {
+                        elements.loadingOverlay.classList.remove('active');
+                    }
+                });
+                
+                // Register with email
+                elements.registerBtn.addEventListener('click', async () => {
+                    const name = document.getElementById('register-name').value;
+                    const email = document.getElementById('register-email').value;
+                    const password = document.getElementById('register-password').value;
+                    const confirm = document.getElementById('register-confirm').value;
+                    
+                    if (!name || !email || !password || !confirm) {
+                        showNotification('Error', 'Please fill in all fields', 'error');
+                        return;
+                    }
+                    
+                    if (password !== confirm) {
+                        showNotification('Error', "Passwords don't match!", 'error');
+                        return;
+                    }
+                    
+                    try {
+                        elements.loadingText.textContent = 'Creating account...';
+                        elements.loadingOverlay.classList.add('active');
+                        
+                        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                        await userCredential.user.updateProfile({ displayName: name });
+                        
+                        // Create user document in Firestore
+                        await db.collection('users').doc(userCredential.user.uid).set({
+                            name: name,
+                            email: email,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        showNotification('Success', `Account created for ${email}`);
+                        analytics.logEvent('sign_up', { method: 'email' });
+                    } catch (error) {
+                        showNotification('Error', error.message, 'error');
+                        analytics.logEvent('sign_up_error', { method: 'email', error: error.message });
+                    } finally {
+                        elements.loadingOverlay.classList.remove('active');
+                    }
+                });
+                
+                // Social logins
+                elements.googleLogin.addEventListener('click', () => loginWithProvider(new firebase.auth.GoogleAuthProvider(), 'login'));
+                elements.githubLogin.addEventListener('click', () => loginWithProvider(new firebase.auth.GithubAuthProvider(), 'login'));
+                elements.googleRegister.addEventListener('click', () => loginWithProvider(new firebase.auth.GoogleAuthProvider(), 'sign_up'));
+                elements.githubRegister.addEventListener('click', () => loginWithProvider(new firebase.auth.GithubAuthProvider(), 'sign_up'));
+                
+                // Logout
+                elements.logoutBtn.addEventListener('click', logout);
+                
+                // Forgot password
+                document.getElementById('forgot-password').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('login-email').value;
+                    
+                    if (!email) {
+                        showNotification('Error', 'Please enter your email address', 'error');
+                        return;
+                    }
+                    
+                    try {
+                        elements.loadingText.textContent = 'Sending reset email...';
+                        elements.loadingOverlay.classList.add('active');
+                        
+                        await auth.sendPasswordResetEmail(email);
+                        showNotification('Success', 'Password reset email sent. Please check your inbox.');
+                        analytics.logEvent('password_reset_request');
+                    } catch (error) {
+                        showNotification('Error', error.message, 'error');
+                        analytics.logEvent('password_reset_error', { error: error.message });
+                    } finally {
+                        elements.loadingOverlay.classList.remove('active');
+                    }
+                });
+            }
+            
+            async function loginWithProvider(provider, actionType) {
+                try {
+                    elements.loadingText.textContent = 'Signing in...';
+                    elements.loadingOverlay.classList.add('active');
+                    
+                    const result = await auth.signInWithPopup(provider);
+                    
+                    // Check if this is a new user
+                    if (result.additionalUserInfo?.isNewUser) {
+                        // Create user document in Firestore
+                        await db.collection('users').doc(result.user.uid).set({
+                            name: result.user.displayName,
+                            email: result.user.email,
+                            provider: provider.providerId,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    } else {
+                        // Update last login time
+                        await db.collection('users').doc(result.user.uid).update({
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                    
+                    showNotification('Success', `Signed in as ${result.user.displayName || result.user.email}`);
+                    analytics.logEvent(actionType, { method: provider.providerId });
+                } catch (error) {
+                    showNotification('Error', error.message, 'error');
+                    analytics.logEvent(`${actionType}_error`, { 
+                        method: provider.providerId, 
+                        error: error.message 
+                    });
+                } finally {
+                    elements.loadingOverlay.classList.remove('active');
+                }
+            }
+            
+            function switchAuthTab(tabName) {
+                document.querySelectorAll('.auth-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.getAttribute('data-tab') === tabName);
+                });
+                
+                elements.loginForm.style.display = tabName === 'login' ? 'block' : 'none';
+                elements.registerForm.style.display = tabName === 'register' ? 'block' : 'none';
+            }
+            
+            async function logout() {
+                try {
+                    await auth.signOut();
+                    showNotification('Success', 'You have been logged out');
+                    analytics.logEvent('logout');
+                } catch (error) {
+                    showNotification('Error', error.message, 'error');
+                }
+            }
+            
+            async function handleUserLogin(user) {
+                console.log("User logged in:", user);
+                appState.currentUser = user;
+                
+                // Update UI
+                elements.authContainer.style.display = 'none';
+                elements.appContainer.style.display = 'flex';
+                
+                // Set user info
+                const displayName = user.displayName || user.email.split('@')[0];
+                elements.userName.textContent = displayName;
+                elements.userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                
+                // Initialize whiteboard
+                appState.whiteboard = new Whiteboard(
+                    document.getElementById('whiteboard'),
+                    user.uid,
+                    displayName,
+                    appState.currentSession
+                );
+                appState.whiteboard.init();
+                
+                // Load user data from Firestore
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    // Update UI with additional user data if needed
+                }
+                
+                // Track user session
+                analytics.logEvent('session_start', {
+                    user_id: user.uid,
+                    session_id: appState.currentSession
+                });
+            }
+            
+            function handleUserLogout() {
+                console.log("User logged out");
+                appState.currentUser = null;
+                
+                // Clean up all Firebase listeners
+                appState.unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
+                appState.unsubscribeFunctions = [];
+                
+                // Update UI
+                elements.authContainer.style.display = 'flex';
+                elements.appContainer.style.display = 'none';
+                
+                // Clear any existing data
+                elements.usersList.innerHTML = '';
+                elements.chatMessages.innerHTML = '';
+                elements.dataList.innerHTML = '';
+                elements.fileList.innerHTML = '';
+                
+                // Clean up whiteboard if it exists
+                if (appState.whiteboard) {
+                    appState.whiteboard.cleanup();
+                    appState.whiteboard = null;
+                }
+            }
+            
+            // Database Setup
+            function setupDatabase() {
+                elements.addDataForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const text = elements.dataField.value.trim();
+                    
+                    if (!text) {
+                        showNotification('Error', 'Please enter some text', 'error');
+                        return;
+                    }
+                    
+                    try {
+                        await db.collection(`sessions/${appState.currentSession}/data`).add({
+                            text: text,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            userId: appState.currentUser.uid,
+                            userName: appState.currentUser.displayName || appState.currentUser.email
+                        });
+                        
+                        elements.dataField.value = '';
+                        showNotification('Success', 'Data added to database');
+                        analytics.logEvent('database_write');
+                    } catch (error) {
+                        showNotification('Error', error.message, 'error');
+                        analytics.logEvent('database_error', { error: error.message });
+                    }
+                });
+                
+                // Real-time data listener
+                const unsubscribe = db.collection(`sessions/${appState.currentSession}/data`)
+                    .orderBy('createdAt', 'desc')
+                    .limit(20)
+                    .onSnapshot(querySnapshot => {
+                        elements.dataList.innerHTML = '';
+                        querySnapshot.forEach(doc => {
+                            const data = doc.data();
+                            const li = document.createElement('li');
+                            li.className = 'data-item';
+                            
+                            li.innerHTML = `
+                                <div>
+                                    <div class="data-text">${data.text}</div>
+                                    <div class="data-user">${data.userName}</div>
+                                </div>
+                                <i class="fas fa-trash data-delete" data-id="${doc.id}"></i>
+                            `;
+                            
+                            elements.dataList.appendChild(li);
+                        });
+                        
+                        // Add event listeners to delete buttons
+                        document.querySelectorAll('.data-delete').forEach(btn => {
+                            btn.addEventListener('click', async (e) => {
+                                const id = e.target.getAttribute('data-id');
+                                try {
+                                    await db.collection(`sessions/${appState.currentSession}/data`).doc(id).delete();
+                                    showNotification('Success', 'Item deleted');
+                                    analytics.logEvent('database_delete');
+                                } catch (error) {
+                                    showNotification('Error', error.message, 'error');
+                                }
+                            });
+                        });
+                    });
+                
+                appState.unsubscribeFunctions.push(unsubscribe);
+            }
+            
+            // Storage Setup
+            function setupStorage() {
+                // Handle file selection
+                elements.uploadArea.addEventListener('click', () => {
+                    elements.fileInput.click();
+                });
+                
+                // Handle drag and drop
+                elements.uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    elements.uploadArea.style.borderColor = var(--primary-color);
+                    elements.uploadArea.style.background = 'rgba(79, 70, 229, 0.05)';
+                });
+                
+                elements.uploadArea.addEventListener('dragleave', () => {
+                    elements.uploadArea.style.borderColor = '#e2e8f0';
+                    elements.uploadArea.style.background = 'transparent';
+                });
+                
+                elements.uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    elements.uploadArea.style.borderColor = '#e2e8f0';
+                    elements.uploadArea.style.background = 'transparent';
+                    
+                    if (e.dataTransfer.files.length) {
+                        elements.fileInput.files = e.dataTransfer.files;
+                        handleFileSelection(e.dataTransfer.files[0]);
+                    }
+                });
+                
+                elements.fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length) {
+                        handleFileSelection(e.target.files[0]);
+                    }
+                });
+                
+                // Handle file preview and upload
+                function handleFileSelection(file) {
+                    if (!file) return;
+                    
+                    // Show preview for images
                     if (file.type.startsWith('image/')) {
                         const reader = new FileReader();
                         reader.onload = (e) => {
@@ -1143,791 +2252,1199 @@
                     } else {
                         elements.filePreview.style.display = 'none';
                     }
-                }
-            });
-            
-            elements.uploadForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const file = elements.fileInput.files[0];
-                
-                if (!file) {
-                    showMessage(elements.storageMessage, 'Please select a file', 'error');
-                    return;
-                }
-                
-                try {
-                    const storageRef = storageRef(storage, `uploads/${file.name}`);
-                    await uploadBytes(storageRef, file);
-                    const downloadURL = await getDownloadURL(storageRef);
                     
-                    showMessage(elements.storageMessage, 'File uploaded successfully!', 'success');
-                    elements.fileInput.value = '';
-                    elements.filePreview.style.display = 'none';
+                    // Show upload button
+                    elements.uploadBtn.style.display = 'block';
                     
-                    console.log('File available at', downloadURL);
-                    logEvent(analytics, 'file_upload', { file_type: file.type });
-                } catch (error) {
-                    showMessage(elements.storageMessage, error.message, 'error');
-                    logEvent(analytics, 'file_upload_error', { error: error.message });
-                }
-            });
-        }
-
-        // Sidebar Toggle
-        function setupSidebarToggle() {
-            elements.sidebarToggle.addEventListener('click', toggleSidebar);
-        }
-
-        function toggleSidebar() {
-            elements.sidebar.classList.toggle('open');
-            logEvent(analytics, 'toggle_sidebar', { 
-                state: elements.sidebar.classList.contains('open') ? 'open' : 'closed' 
-            });
-        }
-
-        // Chat Functionality
-        function setupChat() {
-            elements.sendMessage.addEventListener('click', sendChatMessage);
-            elements.chatInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    sendChatMessage();
-                }
-            });
-            
-            // Listen for chat messages
-            const chatRef = collection(db, `chat/${appState.currentSession}/messages`);
-            onSnapshot(chatRef, (querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    const message = doc.data();
-                    addChatMessage(message);
-                });
-            });
-        }
-
-        function sendChatMessage() {
-            const text = elements.chatInput.value.trim();
-            if (!text || !appState.currentUser) return;
-            
-            const message = {
-                text,
-                senderId: appState.currentUser.uid,
-                senderName: appState.currentUser.displayName || appState.currentUser.email,
-                timestamp: serverTimestamp()
-            };
-            
-            addDoc(collection(db, `chat/${appState.currentSession}/messages`), message);
-            elements.chatInput.value = '';
-            logEvent(analytics, 'send_message');
-        }
-
-        function addChatMessage(message) {
-            const messageElement = document.createElement('div');
-            messageElement.className = 'chat-message';
-            
-            const senderElement = document.createElement('strong');
-            senderElement.textContent = message.senderName + ': ';
-            
-            const textElement = document.createElement('span');
-            textElement.textContent = message.text;
-            
-            messageElement.appendChild(senderElement);
-            messageElement.appendChild(textElement);
-            
-            elements.chatMessages.appendChild(messageElement);
-            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
-        }
-
-        // Whiteboard Class
-        class Whiteboard {
-            constructor(canvasElement, userId, userName, sessionId) {
-                this.canvas = canvasElement;
-                this.ctx = canvasElement.getContext('2d');
-                this.userId = userId;
-                this.userName = userName;
-                this.sessionId = sessionId;
-                this.currentTool = 'pen';
-                this.currentColor = '#000000';
-                this.currentWidth = 3;
-                this.isDrawing = false;
-                this.lastX = 0;
-                this.lastY = 0;
-                this.startX = 0;
-                this.startY = 0;
-                this.drawingHistory = [];
-                this.historyIndex = -1;
-                this.tempCanvas = null;
-                
-                this.resizeCanvas();
-                window.addEventListener('resize', () => this.resizeCanvas());
-            }
-
-            resizeCanvas() {
-                const container = this.canvas.parentElement;
-                this.canvas.width = container.clientWidth;
-                this.canvas.height = container.clientHeight;
-                this.redrawCanvas();
-            }
-
-            init() {
-                this.setupEventListeners();
-                this.setupFirebaseListeners();
-                this.setupUserPresence();
-                logEvent(analytics, 'whiteboard_init');
-            }
-
-            setupEventListeners() {
-                // Mouse events
-                this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
-                this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
-                this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
-                this.canvas.addEventListener('mouseout', this.handleMouseUp.bind(this));
-
-                // Touch events
-                this.canvas.addEventListener('touchstart', this.handleTouchStart.bind(this));
-                this.canvas.addEventListener('touchmove', this.handleTouchMove.bind(this));
-                this.canvas.addEventListener('touchend', this.handleTouchEnd.bind(this));
-
-                // Tool buttons
-                document.getElementById('pen-tool').addEventListener('click', () => this.setTool('pen'));
-                document.getElementById('line-tool').addEventListener('click', () => this.setTool('line'));
-                document.getElementById('rect-tool').addEventListener('click', () => this.setTool('rect'));
-                document.getElementById('circle-tool').addEventListener('click', () => this.setTool('circle'));
-                document.getElementById('triangle-tool').addEventListener('click', () => this.setTool('triangle'));
-                document.getElementById('text-tool').addEventListener('click', () => this.setTool('text'));
-                document.getElementById('eraser-tool').addEventListener('click', () => this.setTool('eraser'));
-                document.getElementById('select-tool').addEventListener('click', () => this.setTool('select'));
-                
-                // Color and width
-                document.getElementById('color-picker').addEventListener('change', (e) => {
-                    this.currentColor = e.target.value;
-                });
-                
-                document.getElementById('stroke-width').addEventListener('input', (e) => {
-                    this.currentWidth = parseInt(e.target.value);
-                });
-                
-                // Actions
-                document.getElementById('undo-btn').addEventListener('click', () => this.undo());
-                document.getElementById('redo-btn').addEventListener('click', () => this.redo());
-                document.getElementById('clear-btn').addEventListener('click', () => this.clearCanvas());
-            }
-
-            setTool(tool) {
-                this.currentTool = tool;
-                
-                // Update active tool button
-                document.querySelectorAll('.tool-button').forEach(btn => btn.classList.remove('active'));
-                document.getElementById(`${tool}-tool`).classList.add('active');
-                
-                logEvent(analytics, 'whiteboard_tool_change', { tool });
-            }
-
-            handleMouseDown(e) {
-                this.isDrawing = true;
-                const rect = this.canvas.getBoundingClientRect();
-                this.lastX = e.clientX - rect.left;
-                this.lastY = e.clientY - rect.top;
-                
-                // For shape tools, store the starting point
-                if (['line', 'rect', 'circle', 'triangle'].includes(this.currentTool)) {
-                    this.startX = this.lastX;
-                    this.startY = this.lastY;
+                    // Set up upload button
+                    elements.uploadBtn.onclick = async (e) => {
+                        e.preventDefault();
+                        
+                        try {
+                            elements.loadingText.textContent = 'Uploading file...';
+                            elements.loadingOverlay.classList.add('active');
+                            
+                            // Create a reference to the file
+                            const fileRef = storage.ref().child(`uploads/${appState.currentSession}/${file.name}`);
+                            
+                            // Upload the file
+                            const snapshot = await fileRef.put(file);
+                            const downloadURL = await snapshot.ref.getDownloadURL();
+                            
+                            // Save file metadata to Firestore
+                            await db.collection(`sessions/${appState.currentSession}/files`).add({
+                                name: file.name,
+                                type: file.type,
+                                size: file.size,
+                                url: downloadURL,
+                                uploadedBy: appState.currentUser.uid,
+                                uploadedByName: appState.currentUser.displayName || appState.currentUser.email,
+                                uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                            
+                            showNotification('Success', 'File uploaded successfully!');
+                            elements.fileInput.value = '';
+                            elements.filePreview.style.display = 'none';
+                            elements.uploadBtn.style.display = 'none';
+                            
+                            analytics.logEvent('file_upload', { 
+                                file_type: file.type,
+                                file_size: file.size
+                            });
+                        } catch (error) {
+                            showNotification('Error', error.message, 'error');
+                            analytics.logEvent('file_upload_error', { error: error.message });
+                        } finally {
+                            elements.loadingOverlay.classList.remove('active');
+                        }
+                    };
                 }
                 
-                // For freehand/pen, start a new path
-                if (this.currentTool === 'pen' || this.currentTool === 'eraser') {
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(this.lastX, this.lastY);
-                }
+                // Load existing files
+                const unsubscribeFiles = db.collection(`sessions/${appState.currentSession}/files`)
+                    .orderBy('uploadedAt', 'desc')
+                    .limit(10)
+                    .onSnapshot(querySnapshot => {
+                        elements.fileList.innerHTML = '';
+                        querySnapshot.forEach(doc => {
+                            const file = doc.data();
+                            const fileItem = document.createElement('div');
+                            fileItem.className = 'file-item';
+                            
+                            let iconClass = 'fa-file';
+                            if (file.type.startsWith('image/')) iconClass = 'fa-image';
+                            else if (file.type.startsWith('video/')) iconClass = 'fa-video';
+                            else if (file.type.startsWith('audio/')) iconClass = 'fa-music';
+                            else if (file.type.includes('pdf')) iconClass = 'fa-file-pdf';
+                            else if (file.type.includes('word')) iconClass = 'fa-file-word';
+                            else if (file.type.includes('excel')) iconClass = 'fa-file-excel';
+                            else if (file.type.includes('powerpoint')) iconClass = 'fa-file-powerpoint';
+                            else if (file.type.includes('zip')) iconClass = 'fa-file-archive';
+                            
+                            fileItem.innerHTML = `
+                                <div class="file-icon">
+                                    <i class="fas ${iconClass}"></i>
+                                </div>
+                                <div class="file-info">
+                                    <div class="file-name">${file.name}</div>
+                                    <div class="file-size">${formatFileSize(file.size)}</div>
+                                </div>
+                                <div class="file-actions">
+                                    <div class="file-action download" data-url="${file.url}" data-name="${file.name}">
+                                        <i class="fas fa-download"></i>
+                                    </div>
+                                    <div class="file-action delete" data-id="${doc.id}" data-name="${file.name}">
+                                        <i class="fas fa-trash"></i>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            elements.fileList.appendChild(fileItem);
+                        });
+                        
+                        // Add event listeners to file actions
+                        document.querySelectorAll('.file-action.download').forEach(btn => {
+                            btn.addEventListener('click', (e) => {
+                                const url = e.currentTarget.getAttribute('data-url');
+                                const name = e.currentTarget.getAttribute('data-name');
+                                downloadFile(url, name);
+                            });
+                        });
+                        
+                        document.querySelectorAll('.file-action.delete').forEach(btn => {
+                            btn.addEventListener('click', async (e) => {
+                                const id = e.currentTarget.getAttribute('data-id');
+                                const name = e.currentTarget.getAttribute('data-name');
+                                
+                                if (confirm(`Are you sure you want to delete "${name}"?`)) {
+                                    try {
+                                        await db.collection(`sessions/${appState.currentSession}/files`).doc(id).delete();
+                                        
+                                        // Also delete from storage if needed
+                                        const fileRef = storage.ref().child(`uploads/${appState.currentSession}/${name}`);
+                                        await fileRef.delete();
+                                        
+                                        showNotification('Success', 'File deleted');
+                                        analytics.logEvent('file_delete');
+                                    } catch (error) {
+                                        showNotification('Error', error.message, 'error');
+                                    }
+                                }
+                            });
+                        });
+                    });
                 
-                // For text tool, prompt for input
-                if (this.currentTool === 'text') {
-                    const text = prompt('Enter text:');
-                    if (text) {
-                        this.drawText(this.lastX, this.lastY, text);
+                appState.unsubscribeFunctions.push(unsubscribeFiles);
+            }
+            
+            // Helper function to format file size
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            // Helper function to download files
+            function downloadFile(url, name) {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = name;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                analytics.logEvent('file_download', { file_name: name });
+            }
+            
+            // Sidebar Toggle
+            function setupSidebarToggle() {
+                elements.sidebarToggle.addEventListener('click', toggleSidebar);
+                elements.sidebarClose.addEventListener('click', toggleSidebar);
+                
+                // Keyboard shortcut (B)
+                document.addEventListener('keydown', (e) => {
+                    if (e.key.toLowerCase() === 'b') {
+                        toggleSidebar();
                     }
-                    this.isDrawing = false;
-                }
+                });
             }
-
-            handleMouseMove(e) {
-                if (!this.isDrawing) return;
+            
+            function toggleSidebar() {
+                elements.sidebar.classList.toggle('open');
+                analytics.logEvent('toggle_sidebar', { 
+                    state: elements.sidebar.classList.contains('open') ? 'open' : 'closed' 
+                });
+            }
+            
+            // Chat Functionality
+            function setupChat() {
+                elements.sendMessage.addEventListener('click', sendChatMessage);
+                elements.chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendChatMessage();
+                    }
+                });
                 
-                const rect = this.canvas.getBoundingClientRect();
-                const currentX = e.clientX - rect.left;
-                const currentY = e.clientY - rect.top;
+                // Listen for chat messages
+                const unsubscribeChat = db.collection(`sessions/${appState.currentSession}/chat`)
+                    .orderBy('timestamp', 'asc')
+                    .limit(100)
+                    .onSnapshot(querySnapshot => {
+                        querySnapshot.docChanges().forEach(change => {
+                            if (change.type === 'added') {
+                                const message = change.doc.data();
+                                addChatMessage(message);
+                            }
+                        });
+                    });
                 
-                // Update cursor position for other users
-                this.updateCursorPosition(currentX, currentY);
+                appState.unsubscribeFunctions.push(unsubscribeChat);
+            }
+            
+            function sendChatMessage() {
+                const text = elements.chatInput.value.trim();
+                if (!text || !appState.currentUser) return;
                 
-                // Clear any temporary drawing
-                if (this.tempCanvas) {
-                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                const message = {
+                    text,
+                    senderId: appState.currentUser.uid,
+                    senderName: appState.currentUser.displayName || appState.currentUser.email,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                db.collection(`sessions/${appState.currentSession}/chat`).add(message);
+                elements.chatInput.value = '';
+                analytics.logEvent('send_message');
+            }
+            
+            function addChatMessage(message) {
+                const messageElement = document.createElement('div');
+                messageElement.className = `chat-message ${message.senderId === appState.currentUser.uid ? 'sent' : 'received'}`;
+                
+                const senderElement = document.createElement('div');
+                senderElement.className = `chat-sender ${message.senderId === appState.currentUser.uid ? 'sent' : 'received'}`;
+                senderElement.textContent = message.senderName;
+                
+                const textElement = document.createElement('div');
+                textElement.className = 'chat-text';
+                textElement.textContent = message.text;
+                
+                const timeElement = document.createElement('div');
+                timeElement.className = 'chat-time';
+                timeElement.textContent = formatTimestamp(message.timestamp);
+                
+                messageElement.appendChild(senderElement);
+                messageElement.appendChild(textElement);
+                messageElement.appendChild(timeElement);
+                
+                elements.chatMessages.appendChild(messageElement);
+                elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+            }
+            
+            // Helper function to format timestamp
+            function formatTimestamp(timestamp) {
+                if (!timestamp) return '';
+                
+                const date = timestamp.toDate();
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            
+            // Whiteboard Class
+            class Whiteboard {
+                constructor(canvasElement, userId, userName, sessionId) {
+                    this.canvas = canvasElement;
+                    this.ctx = canvasElement.getContext('2d');
+                    this.userId = userId;
+                    this.userName = userName;
+                    this.sessionId = sessionId;
+                    this.currentTool = 'pen';
+                    this.currentColor = '#000000';
+                    this.currentWidth = 3;
+                    this.currentStyle = 'solid';
+                    this.isDrawing = false;
+                    this.lastX = 0;
+                    this.lastY = 0;
+                    this.startX = 0;
+                    this.startY = 0;
+                    this.drawingHistory = [];
+                    this.historyIndex = -1;
+                    this.tempCanvas = null;
+                    this.zoomLevel = 1;
+                    this.offsetX = 0;
+                    this.offsetY = 0;
+                    this.isPanning = false;
+                    this.panStartX = 0;
+                    this.panStartY = 0;
+                    
+                    this.resizeCanvas();
+                    window.addEventListener('resize', () => this.resizeCanvas());
+                }
+                
+                resizeCanvas() {
+                    const container = this.canvas.parentElement;
+                    this.canvas.width = container.clientWidth;
+                    this.canvas.height = container.clientHeight;
                     this.redrawCanvas();
                 }
                 
-                switch (this.currentTool) {
-                    case 'pen':
-                        this.drawFreehand(currentX, currentY);
-                        break;
-                    case 'line':
-                        this.drawTempLine(currentX, currentY);
-                        break;
-                    case 'rect':
-                        this.drawTempRect(currentX, currentY);
-                        break;
-                    case 'circle':
-                        this.drawTempCircle(currentX, currentY);
-                        break;
-                    case 'triangle':
-                        this.drawTempTriangle(currentX, currentY);
-                        break;
-                    case 'eraser':
-                        this.erase(currentX, currentY);
-                        break;
+                init() {
+                    this.setupEventListeners();
+                    this.setupFirebaseListeners();
+                    this.setupUserPresence();
+                    analytics.logEvent('whiteboard_init');
                 }
                 
-                this.lastX = currentX;
-                this.lastY = currentY;
-            }
-
-            handleMouseUp() {
-                if (!this.isDrawing) return;
-                this.isDrawing = false;
-                
-                // If we have a temporary drawing, finalize it
-                if (this.tempCanvas) {
-                    this.finalizeDrawing();
-                    this.tempCanvas = null;
+                setZoom(level) {
+                    this.zoomLevel = level;
+                    this.redrawCanvas();
                 }
                 
-                // Record the drawing action for undo/redo
-                if (this.currentTool !== 'eraser') {
-                    this.recordDrawingAction();
-                }
-                
-                logEvent(analytics, 'whiteboard_draw', { tool: this.currentTool });
-            }
-
-            handleTouchStart(e) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const mouseEvent = new MouseEvent('mousedown', {
-                    clientX: touch.clientX,
-                    clientY: touch.clientY
-                });
-                this.handleMouseDown(mouseEvent);
-            }
-
-            handleTouchMove(e) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const mouseEvent = new MouseEvent('mousemove', {
-                    clientX: touch.clientX,
-                    clientY: touch.clientY
-                });
-                this.handleMouseMove(mouseEvent);
-            }
-
-            handleTouchEnd(e) {
-                e.preventDefault();
-                this.handleMouseUp();
-            }
-
-            drawFreehand(x, y) {
-                this.ctx.lineTo(x, y);
-                this.ctx.strokeStyle = this.currentTool === 'eraser' ? '#ffffff' : this.currentColor;
-                this.ctx.lineWidth = this.currentWidth;
-                this.ctx.lineCap = 'round';
-                this.ctx.lineJoin = 'round';
-                this.ctx.stroke();
-                
-                // Broadcast drawing to other users
-                this.broadcastDrawing({
-                    type: 'path',
-                    points: [{x: this.lastX, y: this.lastY}, {x, y}],
-                    color: this.currentColor,
-                    width: this.currentWidth
-                });
-            }
-
-            drawTempLine(x, y) {
-                this.tempCanvas = document.createElement('canvas');
-                this.tempCanvas.width = this.canvas.width;
-                this.tempCanvas.height = this.canvas.height;
-                const tempCtx = this.tempCanvas.getContext('2d');
-                
-                tempCtx.beginPath();
-                tempCtx.moveTo(this.startX, this.startY);
-                tempCtx.lineTo(x, y);
-                tempCtx.strokeStyle = this.currentColor;
-                tempCtx.lineWidth = this.currentWidth;
-                tempCtx.stroke();
-                
-                this.ctx.drawImage(this.tempCanvas, 0, 0);
-            }
-
-            drawTempRect(x, y) {
-                this.tempCanvas = document.createElement('canvas');
-                this.tempCanvas.width = this.canvas.width;
-                this.tempCanvas.height = this.canvas.height;
-                const tempCtx = this.tempCanvas.getContext('2d');
-                
-                tempCtx.beginPath();
-                tempCtx.rect(this.startX, this.startY, x - this.startX, y - this.startY);
-                tempCtx.strokeStyle = this.currentColor;
-                tempCtx.lineWidth = this.currentWidth;
-                tempCtx.stroke();
-                
-                this.ctx.drawImage(this.tempCanvas, 0, 0);
-            }
-
-            drawTempCircle(x, y) {
-                this.tempCanvas = document.createElement('canvas');
-                this.tempCanvas.width = this.canvas.width;
-                this.tempCanvas.height = this.canvas.height;
-                const tempCtx = this.tempCanvas.getContext('2d');
-                
-                const radius = Math.sqrt(
-                    Math.pow(x - this.startX, 2) + 
-                    Math.pow(y - this.startY, 2)
-                );
-                
-                tempCtx.beginPath();
-                tempCtx.arc(this.startX, this.startY, radius, 0, Math.PI * 2);
-                tempCtx.strokeStyle = this.currentColor;
-                tempCtx.lineWidth = this.currentWidth;
-                tempCtx.stroke();
-                
-                this.ctx.drawImage(this.tempCanvas, 0, 0);
-            }
-
-            drawTempTriangle(x, y) {
-                this.tempCanvas = document.createElement('canvas');
-                this.tempCanvas.width = this.canvas.width;
-                this.tempCanvas.height = this.canvas.height;
-                const tempCtx = this.tempCanvas.getContext('2d');
-                
-                tempCtx.beginPath();
-                tempCtx.moveTo(this.startX + (x - this.startX) / 2, this.startY);
-                tempCtx.lineTo(x, y);
-                tempCtx.lineTo(this.startX, y);
-                tempCtx.closePath();
-                tempCtx.strokeStyle = this.currentColor;
-                tempCtx.lineWidth = this.currentWidth;
-                tempCtx.stroke();
-                
-                this.ctx.drawImage(this.tempCanvas, 0, 0);
-            }
-
-            drawText(x, y, text) {
-                this.ctx.font = `${this.currentWidth * 5}px Arial`;
-                this.ctx.fillStyle = this.currentColor;
-                this.ctx.fillText(text, x, y);
-                
-                this.broadcastDrawing({
-                    type: 'text',
-                    x,
-                    y,
-                    text,
-                    color: this.currentColor,
-                    size: this.currentWidth * 5
-                });
-            }
-
-            finalizeDrawing() {
-                if (!this.tempCanvas) return;
-                
-                const tempCtx = this.tempCanvas.getContext('2d');
-                const imageData = tempCtx.getImageData(0, 0, this.tempCanvas.width, this.tempCanvas.height);
-                this.ctx.putImageData(imageData, 0, 0);
-                
-                // Broadcast the final drawing
-                let drawingData = null;
-                
-                switch (this.currentTool) {
-                    case 'line':
-                        drawingData = {
-                            type: 'line',
-                            start: {x: this.startX, y: this.startY},
-                            end: {x: this.lastX, y: this.lastY},
-                            color: this.currentColor,
-                            width: this.currentWidth
-                        };
-                        break;
-                    case 'rect':
-                        drawingData = {
-                            type: 'rect',
-                            start: {x: this.startX, y: this.startY},
-                            end: {x: this.lastX, y: this.lastY},
-                            color: this.currentColor,
-                            width: this.currentWidth
-                        };
-                        break;
-                    case 'circle':
-                        const radius = Math.sqrt(
-                            Math.pow(this.lastX - this.startX, 2) + 
-                            Math.pow(this.lastY - this.startY, 2)
-                        );
-                        drawingData = {
-                            type: 'circle',
-                            center: {x: this.startX, y: this.startY},
-                            radius,
-                            color: this.currentColor,
-                            width: this.currentWidth
-                        };
-                        break;
-                    case 'triangle':
-                        drawingData = {
-                            type: 'triangle',
-                            points: [
-                                {x: this.startX + (this.lastX - this.startX) / 2, y: this.startY},
-                                {x: this.lastX, y: this.lastY},
-                                {x: this.startX, y: this.lastY}
-                            ],
-                            color: this.currentColor,
-                            width: this.currentWidth
-                        };
-                        break;
-                }
-                
-                if (drawingData) {
-                    this.broadcastDrawing(drawingData);
-                }
-            }
-
-            erase(x, y) {
-                this.ctx.globalCompositeOperation = 'destination-out';
-                this.ctx.beginPath();
-                this.ctx.arc(x, y, this.currentWidth, 0, Math.PI * 2);
-                this.ctx.fill();
-                this.ctx.globalCompositeOperation = 'source-over';
-                
-                // Broadcast erase action
-                this.broadcastErase(x, y, this.currentWidth);
-            }
-
-            broadcastDrawing(data) {
-                addDoc(collection(db, `drawings/${this.sessionId}/items`), {
-                    ...data,
-                    userId: this.userId,
-                    userName: this.userName,
-                    timestamp: serverTimestamp()
-                });
-            }
-
-            broadcastErase(x, y, radius) {
-                addDoc(collection(db, `erases/${this.sessionId}/items`), {
-                    x,
-                    y,
-                    radius,
-                    userId: this.userId,
-                    userName: this.userName,
-                    timestamp: serverTimestamp()
-                });
-            }
-
-            updateCursorPosition(x, y) {
-                const cursorRef = dbRef(db, `cursors/${this.sessionId}/${this.userId}`);
-                set(cursorRef, {
-                    x,
-                    y,
-                    name: this.userName,
-                    color: this.getUserColor(),
-                    lastUpdated: serverTimestamp()
-                });
-            }
-
-            setupFirebaseListeners() {
-                // Listen for drawings
-                const drawingsRef = collection(db, `drawings/${this.sessionId}/items`);
-                onSnapshot(drawingsRef, (querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                        const drawing = doc.data();
-                        if (drawing.userId !== this.userId) {
-                            this.renderRemoteDrawing(drawing);
+                setupEventListeners() {
+                    // Mouse events
+                    this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
+                    this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
+                    this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
+                    this.canvas.addEventListener('mouseout', this.handleMouseUp.bind(this));
+                    
+                    // Touch events
+                    this.canvas.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+                    this.canvas.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+                    this.canvas.addEventListener('touchend', this.handleTouchEnd.bind(this));
+                    
+                    // Tool buttons
+                    document.getElementById('pen-tool').addEventListener('click', () => this.setTool('pen'));
+                    document.getElementById('line-tool').addEventListener('click', () => this.setTool('line'));
+                    document.getElementById('rect-tool').addEventListener('click', () => this.setTool('rect'));
+                    document.getElementById('circle-tool').addEventListener('click', () => this.setTool('circle'));
+                    document.getElementById('triangle-tool').addEventListener('click', () => this.setTool('triangle'));
+                    document.getElementById('text-tool').addEventListener('click', () => this.setTool('text'));
+                    document.getElementById('eraser-tool').addEventListener('click', () => this.setTool('eraser'));
+                    document.getElementById('select-tool').addEventListener('click', () => this.setTool('select'));
+                    
+                    // Panel tool buttons
+                    document.getElementById('panel-pen-tool').addEventListener('click', () => this.setTool('pen'));
+                    document.getElementById('panel-line-tool').addEventListener('click', () => this.setTool('line'));
+                    document.getElementById('panel-rect-tool').addEventListener('click', () => this.setTool('rect'));
+                    
+                    // Color and width
+                    document.getElementById('color-picker').addEventListener('change', (e) => {
+                        this.currentColor = e.target.value;
+                        document.getElementById('panel-color-picker').value = e.target.value;
+                    });
+                    
+                    document.getElementById('panel-color-picker').addEventListener('change', (e) => {
+                        this.currentColor = e.target.value;
+                        document.getElementById('color-picker').value = e.target.value;
+                    });
+                    
+                    document.getElementById('stroke-width').addEventListener('input', (e) => {
+                        this.currentWidth = parseInt(e.target.value);
+                        document.getElementById('panel-stroke-width').value = e.target.value;
+                    });
+                    
+                    document.getElementById('panel-stroke-width').addEventListener('input', (e) => {
+                        this.currentWidth = parseInt(e.target.value);
+                        document.getElementById('stroke-width').value = e.target.value;
+                    });
+                    
+                    document.getElementById('stroke-style').addEventListener('change', (e) => {
+                        this.currentStyle = e.target.value;
+                    });
+                    
+                    // Keyboard shortcuts
+                    document.addEventListener('keydown', (e) => {
+                        // Only trigger if not typing in an input field
+                        if (document.activeElement.tagName === 'INPUT') return;
+                        
+                        switch (e.key.toLowerCase()) {
+                            case 'p': this.setTool('pen'); break;
+                            case 'l': this.setTool('line'); break;
+                            case 'r': this.setTool('rect'); break;
+                            case 'c': this.setTool('circle'); break;
+                            case 't': this.setTool('triangle'); break;
+                            case 'x': this.setTool('text'); break;
+                            case 'e': this.setTool('eraser'); break;
+                            case 'v': this.setTool('select'); break;
+                            case 'z': if (e.ctrlKey || e.metaKey) this.undo(); break;
+                            case 'y': if (e.ctrlKey || e.metaKey) this.redo(); break;
+                            case 'delete': this.clearSelection(); break;
+                            case 'b': toggleSidebar(); break;
+                            case 'f': toggleFullscreen(); break;
                         }
                     });
-                });
-                
-                // Listen for erases
-                const erasesRef = collection(db, `erases/${this.sessionId}/items`);
-                onSnapshot(erasesRef, (querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                        const erase = doc.data();
-                        if (erase.userId !== this.userId) {
-                            this.renderRemoteErase(erase);
-                        }
-                    });
-                });
-                
-                // Listen for cursor movements
-                const cursorsRef = dbRef(db, `cursors/${this.sessionId}`);
-                onValue(cursorsRef, (snapshot) => {
-                    const cursors = snapshot.val() || {};
-                    Object.entries(cursors).forEach(([userId, cursor]) => {
-                        if (userId !== this.userId) {
-                            this.updateRemoteCursor(userId, cursor);
-                        }
-                    });
-                });
-            }
-
-            renderRemoteDrawing(drawing) {
-                this.ctx.save();
-                
-                switch (drawing.type) {
-                    case 'path':
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(drawing.points[0].x, drawing.points[0].y);
-                        this.ctx.lineTo(drawing.points[1].x, drawing.points[1].y);
-                        this.ctx.strokeStyle = drawing.color;
-                        this.ctx.lineWidth = drawing.width;
-                        this.ctx.lineCap = 'round';
-                        this.ctx.lineJoin = 'round';
-                        this.ctx.stroke();
-                        break;
-                    case 'line':
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(drawing.start.x, drawing.start.y);
-                        this.ctx.lineTo(drawing.end.x, drawing.end.y);
-                        this.ctx.strokeStyle = drawing.color;
-                        this.ctx.lineWidth = drawing.width;
-                        this.ctx.stroke();
-                        break;
-                    case 'rect':
-                        this.ctx.beginPath();
-                        this.ctx.rect(drawing.start.x, drawing.start.y, 
-                                     drawing.end.x - drawing.start.x, 
-                                     drawing.end.y - drawing.start.y);
-                        this.ctx.strokeStyle = drawing.color;
-                        this.ctx.lineWidth = drawing.width;
-                        this.ctx.stroke();
-                        break;
-                    case 'circle':
-                        this.ctx.beginPath();
-                        this.ctx.arc(drawing.center.x, drawing.center.y, 
-                                    drawing.radius, 0, Math.PI * 2);
-                        this.ctx.strokeStyle = drawing.color;
-                        this.ctx.lineWidth = drawing.width;
-                        this.ctx.stroke();
-                        break;
-                    case 'triangle':
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(drawing.points[0].x, drawing.points[0].y);
-                        this.ctx.lineTo(drawing.points[1].x, drawing.points[1].y);
-                        this.ctx.lineTo(drawing.points[2].x, drawing.points[2].y);
-                        this.ctx.closePath();
-                        this.ctx.strokeStyle = drawing.color;
-                        this.ctx.lineWidth = drawing.width;
-                        this.ctx.stroke();
-                        break;
-                    case 'text':
-                        this.ctx.font = `${drawing.size}px Arial`;
-                        this.ctx.fillStyle = drawing.color;
-                        this.ctx.fillText(drawing.text, drawing.x, drawing.y);
-                        break;
                 }
                 
-                this.ctx.restore();
-            }
-
-            renderRemoteErase(erase) {
-                this.ctx.save();
-                this.ctx.globalCompositeOperation = 'destination-out';
-                this.ctx.beginPath();
-                this.ctx.arc(erase.x, erase.y, erase.radius, 0, Math.PI * 2);
-                this.ctx.fill();
-                this.ctx.restore();
-            }
-
-            updateRemoteCursor(userId, cursor) {
-                let cursorElement = document.getElementById(`cursor-${userId}`);
-                
-                if (!cursorElement) {
-                    cursorElement = document.createElement('div');
-                    cursorElement.id = `cursor-${userId}`;
-                    cursorElement.className = 'remote-cursor';
-                    cursorElement.style.backgroundColor = cursor.color;
+                setTool(tool) {
+                    this.currentTool = tool;
                     
-                    const nameTag = document.createElement('div');
-                    nameTag.className = 'cursor-name';
-                    nameTag.textContent = cursor.name;
-                    cursorElement.appendChild(nameTag);
+                    // Update active tool button
+                    document.querySelectorAll('.tool-button').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById(`${tool}-tool`)?.classList.add('active');
                     
-                    document.getElementById('cursors-layer').appendChild(cursorElement);
+                    // Update panel buttons
+                    document.querySelectorAll('#tools-panel .tool-button').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById(`panel-${tool}-tool`)?.classList.add('active');
+                    
+                    analytics.logEvent('whiteboard_tool_change', { tool });
                 }
                 
-                const rect = this.canvas.getBoundingClientRect();
-                cursorElement.style.left = `${cursor.x + rect.left}px`;
-                cursorElement.style.top = `${cursor.y + rect.top}px`;
-            }
-
-            setupUserPresence() {
-                const presenceRef = dbRef(db, `presence/${this.sessionId}/${this.userId}`);
-                
-                // Set user as online
-                set(presenceRef, {
-                    name: this.userName,
-                    color: this.getUserColor(),
-                    lastOnline: serverTimestamp()
-                });
-                
-                // Remove user when they disconnect
-                onDisconnect(presenceRef).remove();
-                
-                // Listen for user presence changes
-                onValue(dbRef(db, `presence/${this.sessionId}`), (snapshot) => {
-                    const users = snapshot.val() || {};
-                    updateUserList(users);
-                });
-            }
-
-            getUserColor() {
-                const hash = Array.from(this.userId).reduce((hash, char) => {
-                    return char.charCodeAt(0) + ((hash << 5) - hash);
-                }, 0);
-                return `hsl(${Math.abs(hash % 360)}, 70%, 60%)`;
-            }
-
-            undo() {
-                if (this.historyIndex >= 0) {
-                    const action = this.drawingHistory[this.historyIndex];
-                    this.reverseAction(action);
-                    this.historyIndex--;
+                handleMouseDown(e) {
+                    if (this.currentTool === 'select') {
+                        this.isPanning = true;
+                        this.panStartX = e.clientX - this.offsetX;
+                        this.panStartY = e.clientY - this.offsetY;
+                        this.canvas.style.cursor = 'grabbing';
+                        return;
+                    }
                     
-                    // Broadcast undo
-                    addDoc(collection(db, `actions/${this.sessionId}/items`), {
-                        type: 'undo',
-                        actionId: action.id,
+                    this.isDrawing = true;
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.lastX = (e.clientX - rect.left - this.offsetX) / this.zoomLevel;
+                    this.lastY = (e.clientY - rect.top - this.offsetY) / this.zoomLevel;
+                    
+                    // For shape tools, store the starting point
+                    if (['line', 'rect', 'circle', 'triangle'].includes(this.currentTool)) {
+                        this.startX = this.lastX;
+                        this.startY = this.lastY;
+                    }
+                    
+                    // For freehand/pen, start a new path
+                    if (this.currentTool === 'pen' || this.currentTool === 'eraser') {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(this.lastX, this.lastY);
+                    }
+                    
+                    // For text tool, prompt for input
+                    if (this.currentTool === 'text') {
+                        const text = prompt('Enter text:');
+                        if (text) {
+                            this.drawText(this.lastX, this.lastY, text);
+                        }
+                        this.isDrawing = false;
+                    }
+                }
+                
+                handleMouseMove(e) {
+                    if (this.currentTool === 'select' && this.isPanning) {
+                        const rect = this.canvas.getBoundingClientRect();
+                        this.offsetX = e.clientX - rect.left - this.panStartX;
+                        this.offsetY = e.clientY - rect.top - this.panStartY;
+                        this.redrawCanvas();
+                        return;
+                    }
+                    
+                    if (!this.isDrawing) return;
+                    
+                    const rect = this.canvas.getBoundingClientRect();
+                    const currentX = (e.clientX - rect.left - this.offsetX) / this.zoomLevel;
+                    const currentY = (e.clientY - rect.top - this.offsetY) / this.zoomLevel;
+                    
+                    // Update cursor position for other users
+                    this.updateCursorPosition(currentX, currentY);
+                    
+                    // Clear any temporary drawing
+                    if (this.tempCanvas) {
+                        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                        this.redrawCanvas();
+                    }
+                    
+                    switch (this.currentTool) {
+                        case 'pen':
+                            this.drawFreehand(currentX, currentY);
+                            break;
+                        case 'line':
+                            this.drawTempLine(currentX, currentY);
+                            break;
+                        case 'rect':
+                            this.drawTempRect(currentX, currentY);
+                            break;
+                        case 'circle':
+                            this.drawTempCircle(currentX, currentY);
+                            break;
+                        case 'triangle':
+                            this.drawTempTriangle(currentX, currentY);
+                            break;
+                        case 'eraser':
+                            this.erase(currentX, currentY);
+                            break;
+                    }
+                    
+                    this.lastX = currentX;
+                    this.lastY = currentY;
+                }
+                
+                handleMouseUp() {
+                    if (this.currentTool === 'select') {
+                        this.isPanning = false;
+                        this.canvas.style.cursor = 'grab';
+                        return;
+                    }
+                    
+                    if (!this.isDrawing) return;
+                    this.isDrawing = false;
+                    
+                    // If we have a temporary drawing, finalize it
+                    if (this.tempCanvas) {
+                        this.finalizeDrawing();
+                        this.tempCanvas = null;
+                    }
+                    
+                    // Record the drawing action for undo/redo
+                    if (this.currentTool !== 'eraser') {
+                        this.recordDrawingAction();
+                    }
+                    
+                    analytics.logEvent('whiteboard_draw', { tool: this.currentTool });
+                }
+                
+                handleTouchStart(e) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const mouseEvent = new MouseEvent('mousedown', {
+                        clientX: touch.clientX,
+                        clientY: touch.clientY
+                    });
+                    this.handleMouseDown(mouseEvent);
+                }
+                
+                handleTouchMove(e) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const mouseEvent = new MouseEvent('mousemove', {
+                        clientX: touch.clientX,
+                        clientY: touch.clientY
+                    });
+                    this.handleMouseMove(mouseEvent);
+                }
+                
+                handleTouchEnd(e) {
+                    e.preventDefault();
+                    this.handleMouseUp();
+                }
+                
+                drawFreehand(x, y) {
+                    this.ctx.lineTo(x, y);
+                    this.ctx.strokeStyle = this.currentTool === 'eraser' ? '#ffffff' : this.currentColor;
+                    this.ctx.lineWidth = this.currentWidth;
+                    this.ctx.lineCap = 'round';
+                    this.ctx.lineJoin = 'round';
+                    
+                    // Apply stroke style
+                    if (this.currentStyle === 'dashed') {
+                        this.ctx.setLineDash([5, 3]);
+                    } else if (this.currentStyle === 'dotted') {
+                        this.ctx.setLineDash([2, 2]);
+                    } else {
+                        this.ctx.setLineDash([]);
+                    }
+                    
+                    this.ctx.stroke();
+                    
+                    // Broadcast drawing to other users
+                    this.broadcastDrawing({
+                        type: 'path',
+                        points: [{x: this.lastX, y: this.lastY}, {x, y}],
+                        color: this.currentColor,
+                        width: this.currentWidth,
+                        style: this.currentStyle
+                    });
+                }
+                
+                drawTempLine(x, y) {
+                    this.tempCanvas = document.createElement('canvas');
+                    this.tempCanvas.width = this.canvas.width;
+                    this.tempCanvas.height = this.canvas.height;
+                    const tempCtx = this.tempCanvas.getContext('2d');
+                    
+                    tempCtx.beginPath();
+                    tempCtx.moveTo(this.startX, this.startY);
+                    tempCtx.lineTo(x, y);
+                    tempCtx.strokeStyle = this.currentColor;
+                    tempCtx.lineWidth = this.currentWidth;
+                    
+                    // Apply stroke style
+                    if (this.currentStyle === 'dashed') {
+                        tempCtx.setLineDash([5, 3]);
+                    } else if (this.currentStyle === 'dotted') {
+                        tempCtx.setLineDash([2, 2]);
+                    } else {
+                        tempCtx.setLineDash([]);
+                    }
+                    
+                    tempCtx.stroke();
+                    
+                    this.ctx.drawImage(this.tempCanvas, 0, 0);
+                }
+                
+                drawTempRect(x, y) {
+                    this.tempCanvas = document.createElement('canvas');
+                    this.tempCanvas.width = this.canvas.width;
+                    this.tempCanvas.height = this.canvas.height;
+                    const tempCtx = this.tempCanvas.getContext('2d');
+                    
+                    tempCtx.beginPath();
+                    tempCtx.rect(this.startX, this.startY, x - this.startX, y - this.startY);
+                    tempCtx.strokeStyle = this.currentColor;
+                    tempCtx.lineWidth = this.currentWidth;
+                    
+                    // Apply stroke style
+                    if (this.currentStyle === 'dashed') {
+                        tempCtx.setLineDash([5, 3]);
+                    } else if (this.currentStyle === 'dotted') {
+                        tempCtx.setLineDash([2, 2]);
+                    } else {
+                        tempCtx.setLineDash([]);
+                    }
+                    
+                    tempCtx.stroke();
+                    
+                    this.ctx.drawImage(this.tempCanvas, 0, 0);
+                }
+                
+                drawTempCircle(x, y) {
+                    this.tempCanvas = document.createElement('canvas');
+                    this.tempCanvas.width = this.canvas.width;
+                    this.tempCanvas.height = this.canvas.height;
+                    const tempCtx = this.tempCanvas.getContext('2d');
+                    
+                    const radius = Math.sqrt(
+                        Math.pow(x - this.startX, 2) + 
+                        Math.pow(y - this.startY, 2)
+                    );
+                    
+                    tempCtx.beginPath();
+                    tempCtx.arc(this.startX, this.startY, radius, 0, Math.PI * 2);
+                    tempCtx.strokeStyle = this.currentColor;
+                    tempCtx.lineWidth = this.currentWidth;
+                    
+                    // Apply stroke style
+                    if (this.currentStyle === 'dashed') {
+                        tempCtx.setLineDash([5, 3]);
+                    } else if (this.currentStyle === 'dotted') {
+                        tempCtx.setLineDash([2, 2]);
+                    } else {
+                        tempCtx.setLineDash([]);
+                    }
+                    
+                    tempCtx.stroke();
+                    
+                    this.ctx.drawImage(this.tempCanvas, 0, 0);
+                }
+                
+                drawTempTriangle(x, y) {
+                    this.tempCanvas = document.createElement('canvas');
+                    this.tempCanvas.width = this.canvas.width;
+                    this.tempCanvas.height = this.canvas.height;
+                    const tempCtx = this.tempCanvas.getContext('2d');
+                    
+                    tempCtx.beginPath();
+                    tempCtx.moveTo(this.startX + (x - this.startX) / 2, this.startY);
+                    tempCtx.lineTo(x, y);
+                    tempCtx.lineTo(this.startX, y);
+                    tempCtx.closePath();
+                    tempCtx.strokeStyle = this.currentColor;
+                    tempCtx.lineWidth = this.currentWidth;
+                    
+                    // Apply stroke style
+                    if (this.currentStyle === 'dashed') {
+                        tempCtx.setLineDash([5, 3]);
+                    } else if (this.currentStyle === 'dotted') {
+                        tempCtx.setLineDash([2, 2]);
+                    } else {
+                        tempCtx.setLineDash([]);
+                    }
+                    
+                    tempCtx.stroke();
+                    
+                    this.ctx.drawImage(this.tempCanvas, 0, 0);
+                }
+                
+                drawText(x, y, text) {
+                    this.ctx.font = `${this.currentWidth * 5}px Arial`;
+                    this.ctx.fillStyle = this.currentColor;
+                    this.ctx.fillText(text, x, y);
+                    
+                    this.broadcastDrawing({
+                        type: 'text',
+                        x,
+                        y,
+                        text,
+                        color: this.currentColor,
+                        size: this.currentWidth * 5
+                    });
+                }
+                
+                finalizeDrawing() {
+                    if (!this.tempCanvas) return;
+                    
+                    const tempCtx = this.tempCanvas.getContext('2d');
+                    const imageData = tempCtx.getImageData(0, 0, this.tempCanvas.width, this.tempCanvas.height);
+                    this.ctx.putImageData(imageData, 0, 0);
+                    
+                    // Broadcast the final drawing
+                    let drawingData = null;
+                    
+                    switch (this.currentTool) {
+                        case 'line':
+                            drawingData = {
+                                type: 'line',
+                                start: {x: this.startX, y: this.startY},
+                                end: {x: this.lastX, y: this.lastY},
+                                color: this.currentColor,
+                                width: this.currentWidth,
+                                style: this.currentStyle
+                            };
+                            break;
+                        case 'rect':
+                            drawingData = {
+                                type: 'rect',
+                                start: {x: this.startX, y: this.startY},
+                                end: {x: this.lastX, y: this.lastY},
+                                color: this.currentColor,
+                                width: this.currentWidth,
+                                style: this.currentStyle
+                            };
+                            break;
+                        case 'circle':
+                            const radius = Math.sqrt(
+                                Math.pow(this.lastX - this.startX, 2) + 
+                                Math.pow(this.lastY - this.startY, 2)
+                            );
+                            drawingData = {
+                                type: 'circle',
+                                center: {x: this.startX, y: this.startY},
+                                radius,
+                                color: this.currentColor,
+                                width: this.currentWidth,
+                                style: this.currentStyle
+                            };
+                            break;
+                        case 'triangle':
+                            drawingData = {
+                                type: 'triangle',
+                                points: [
+                                    {x: this.startX + (this.lastX - this.startX) / 2, y: this.startY},
+                                    {x: this.lastX, y: this.lastY},
+                                    {x: this.startX, y: this.lastY}
+                                ],
+                                color: this.currentColor,
+                                width: this.currentWidth,
+                                style: this.currentStyle
+                            };
+                            break;
+                    }
+                    
+                    if (drawingData) {
+                        this.broadcastDrawing(drawingData);
+                    }
+                }
+                
+                erase(x, y) {
+                    this.ctx.globalCompositeOperation = 'destination-out';
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, this.currentWidth, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.globalCompositeOperation = 'source-over';
+                    
+                    // Broadcast erase action
+                    this.broadcastErase(x, y, this.currentWidth);
+                }
+                
+                broadcastDrawing(data) {
+                    db.collection(`drawings/${this.sessionId}/items`).add({
+                        ...data,
                         userId: this.userId,
                         userName: this.userName,
-                        timestamp: serverTimestamp()
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    
-                    logEvent(analytics, 'whiteboard_undo');
                 }
-            }
-
-            redo() {
-                if (this.historyIndex < this.drawingHistory.length - 1) {
-                    this.historyIndex++;
-                    const action = this.drawingHistory[this.historyIndex];
-                    this.applyAction(action);
-                    
-                    // Broadcast redo
-                    addDoc(collection(db, `actions/${this.sessionId}/items`), {
-                        type: 'redo',
-                        actionId: action.id,
+                
+                broadcastErase(x, y, radius) {
+                    db.collection(`erases/${this.sessionId}/items`).add({
+                        x,
+                        y,
+                        radius,
                         userId: this.userId,
                         userName: this.userName,
-                        timestamp: serverTimestamp()
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                updateCursorPosition(x, y) {
+                    db.collection(`cursors`).doc(`${this.sessionId}_${this.userId}`).set({
+                        x,
+                        y,
+                        name: this.userName,
+                        color: this.getUserColor(),
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                setupFirebaseListeners() {
+                    // Listen for drawings
+                    const unsubscribeDrawings = db.collection(`drawings/${this.sessionId}/items`)
+                        .onSnapshot(querySnapshot => {
+                            querySnapshot.docChanges().forEach(change => {
+                                if (change.type === 'added') {
+                                    const drawing = change.doc.data();
+                                    if (drawing.userId !== this.userId) {
+                                        this.renderRemoteDrawing(drawing);
+                                    }
+                                }
+                            });
+                        });
+                    
+                    appState.unsubscribeFunctions.push(unsubscribeDrawings);
+                    
+                    // Listen for erases
+                    const unsubscribeErases = db.collection(`erases/${this.sessionId}/items`)
+                        .onSnapshot(querySnapshot => {
+                            querySnapshot.docChanges().forEach(change => {
+                                if (change.type === 'added') {
+                                    const erase = change.doc.data();
+                                    if (erase.userId !== this.userId) {
+                                        this.renderRemoteErase(erase);
+                                    }
+                                }
+                            });
+                        });
+                    
+                    appState.unsubscribeFunctions.push(unsubscribeErases);
+                    
+                    // Listen for cursor movements
+                    const unsubscribeCursors = db.collection(`cursors`)
+                        .where(firebase.firestore.FieldPath.documentId(), '>=', `${this.sessionId}_`)
+                        .where(firebase.firestore.FieldPath.documentId(), '<=', `${this.sessionId}_\uf8ff`)
+                        .onSnapshot(querySnapshot => {
+                            const cursors = {};
+                            querySnapshot.forEach(doc => {
+                                const cursor = doc.data();
+                                const userId = doc.id.split('_')[1];
+                                cursors[userId] = cursor;
+                            });
+                            
+                            // Remove cursors for users who are no longer active
+                            document.querySelectorAll('.remote-cursor').forEach(cursor => {
+                                const userId = cursor.id.split('-')[1];
+                                if (!cursors[userId]) {
+                                    cursor.remove();
+                                }
+                            });
+                            
+                            // Update existing cursors or create new ones
+                            Object.entries(cursors).forEach(([userId, cursor]) => {
+                                if (userId !== this.userId) {
+                                    this.updateRemoteCursor(userId, cursor);
+                                }
+                            });
+                        });
+                    
+                    appState.unsubscribeFunctions.push(unsubscribeCursors);
+                }
+                
+                renderRemoteDrawing(drawing) {
+                    this.ctx.save();
+                    this.ctx.translate(this.offsetX, this.offsetY);
+                    this.ctx.scale(this.zoomLevel, this.zoomLevel);
+                    
+                    switch (drawing.type) {
+                        case 'path':
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(drawing.points[0].x, drawing.points[0].y);
+                            this.ctx.lineTo(drawing.points[1].x, drawing.points[1].y);
+                            this.ctx.strokeStyle = drawing.color;
+                            this.ctx.lineWidth = drawing.width;
+                            this.ctx.lineCap = 'round';
+                            this.ctx.lineJoin = 'round';
+                            
+                            if (drawing.style === 'dashed') {
+                                this.ctx.setLineDash([5, 3]);
+                            } else if (drawing.style === 'dotted') {
+                                this.ctx.setLineDash([2, 2]);
+                            } else {
+                                this.ctx.setLineDash([]);
+                            }
+                            
+                            this.ctx.stroke();
+                            break;
+                        case 'line':
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(drawing.start.x, drawing.start.y);
+                            this.ctx.lineTo(drawing.end.x, drawing.end.y);
+                            this.ctx.strokeStyle = drawing.color;
+                            this.ctx.lineWidth = drawing.width;
+                            
+                            if (drawing.style === 'dashed') {
+                                this.ctx.setLineDash([5, 3]);
+                            } else if (drawing.style === 'dotted') {
+                                this.ctx.setLineDash([2, 2]);
+                            } else {
+                                this.ctx.setLineDash([]);
+                            }
+                            
+                            this.ctx.stroke();
+                            break;
+                        case 'rect':
+                            this.ctx.beginPath();
+                            this.ctx.rect(drawing.start.x, drawing.start.y, 
+                                         drawing.end.x - drawing.start.x, 
+                                         drawing.end.y - drawing.start.y);
+                            this.ctx.strokeStyle = drawing.color;
+                            this.ctx.lineWidth = drawing.width;
+                            
+                            if (drawing.style === 'dashed') {
+                                this.ctx.setLineDash([5, 3]);
+                            } else if (drawing.style === 'dotted') {
+                                this.ctx.setLineDash([2, 2]);
+                            } else {
+                                this.ctx.setLineDash([]);
+                            }
+                            
+                            this.ctx.stroke();
+                            break;
+                        case 'circle':
+                            this.ctx.beginPath();
+                            this.ctx.arc(drawing.center.x, drawing.center.y, 
+                                        drawing.radius, 0, Math.PI * 2);
+                            this.ctx.strokeStyle = drawing.color;
+                            this.ctx.lineWidth = drawing.width;
+                            
+                            if (drawing.style === 'dashed') {
+                                this.ctx.setLineDash([5, 3]);
+                            } else if (drawing.style === 'dotted') {
+                                this.ctx.setLineDash([2, 2]);
+                            } else {
+                                this.ctx.setLineDash([]);
+                            }
+                            
+                            this.ctx.stroke();
+                            break;
+                        case 'triangle':
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(drawing.points[0].x, drawing.points[0].y);
+                            this.ctx.lineTo(drawing.points[1].x, drawing.points[1].y);
+                            this.ctx.lineTo(drawing.points[2].x, drawing.points[2].y);
+                            this.ctx.closePath();
+                            this.ctx.strokeStyle = drawing.color;
+                            this.ctx.lineWidth = drawing.width;
+                            
+                            if (drawing.style === 'dashed') {
+                                this.ctx.setLineDash([5, 3]);
+                            } else if (drawing.style === 'dotted') {
+                                this.ctx.setLineDash([2, 2]);
+                            } else {
+                                this.ctx.setLineDash([]);
+                            }
+                            
+                            this.ctx.stroke();
+                            break;
+                        case 'text':
+                            this.ctx.font = `${drawing.size}px Arial`;
+                            this.ctx.fillStyle = drawing.color;
+                            this.ctx.fillText(drawing.text, drawing.x, drawing.y);
+                            break;
+                    }
+                    
+                    this.ctx.restore();
+                }
+                
+                renderRemoteErase(erase) {
+                    this.ctx.save();
+                    this.ctx.translate(this.offsetX, this.offsetY);
+                    this.ctx.scale(this.zoomLevel, this.zoomLevel);
+                    
+                    this.ctx.globalCompositeOperation = 'destination-out';
+                    this.ctx.beginPath();
+                    this.ctx.arc(erase.x, erase.y, erase.radius, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                }
+                
+                updateRemoteCursor(userId, cursor) {
+                    let cursorElement = document.getElementById(`cursor-${userId}`);
+                    
+                    if (!cursorElement) {
+                        cursorElement = document.createElement('div');
+                        cursorElement.id = `cursor-${userId}`;
+                        cursorElement.className = 'remote-cursor';
+                        cursorElement.style.backgroundColor = cursor.color;
+                        
+                        const nameTag = document.createElement('div');
+                        nameTag.className = 'cursor-name';
+                        nameTag.textContent = cursor.name;
+                        cursorElement.appendChild(nameTag);
+                        
+                        document.getElementById('cursors-layer').appendChild(cursorElement);
+                    }
+                    
+                    const rect = this.canvas.getBoundingClientRect();
+                    const x = (cursor.x * this.zoomLevel) + this.offsetX + rect.left;
+                    const y = (cursor.y * this.zoomLevel) + this.offsetY + rect.top;
+                    
+                    cursorElement.style.left = `${x}px`;
+                    cursorElement.style.top = `${y}px`;
+                    
+                    // Remove cursor if not updated for a while
+                    setTimeout(() => {
+                        if (cursorElement) {
+                            const now = new Date().getTime();
+                            const lastUpdated = cursor.lastUpdated?.toDate().getTime() || now;
+                            if (now - lastUpdated > 5000) {
+                                cursorElement.remove();
+                            }
+                        }
+                    }, 5000);
+                }
+                
+                setupUserPresence() {
+                    const userRef = db.collection('presence').doc(`${this.sessionId}_${this.userId}`);
+                    
+                    // Set user as online
+                    userRef.set({
+                        name: this.userName,
+                        color: this.getUserColor(),
+                        lastOnline: firebase.firestore.FieldValue.serverTimestamp(),
+                        status: 'online'
                     });
                     
-                    logEvent(analytics, 'whiteboard_redo');
+                    // Remove user when they disconnect
+                    userRef.onDisconnect().update({
+                        status: 'offline',
+                        lastOnline: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Listen for user presence changes
+                    const unsubscribePresence = db.collection('presence')
+                        .where(firebase.firestore.FieldPath.documentId(), '>=', `${this.sessionId}_`)
+                        .where(firebase.firestore.FieldPath.documentId(), '<=', `${this.sessionId}_\uf8ff`)
+                        .onSnapshot(querySnapshot => {
+                            const users = {};
+                            querySnapshot.forEach(doc => {
+                                const userData = doc.data();
+                                const userId = doc.id.split('_')[1];
+                                users[userId] = userData;
+                            });
+                            updateUserList(users);
+                        });
+                    
+                    appState.unsubscribeFunctions.push(unsubscribePresence);
                 }
-            }
-
-            clearCanvas() {
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 
-                // Broadcast clear
-                addDoc(collection(db, `actions/${this.sessionId}/items`), {
-                    type: 'clear',
-                    userId: this.userId,
-                    userName: this.userName,
-                    timestamp: serverTimestamp()
-                });
-                
-                logEvent(analytics, 'whiteboard_clear');
-            }
-
-            redrawCanvas() {
-                // Redraw all drawings from history up to current index
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                for (let i = 0; i <= this.historyIndex; i++) {
-                    this.applyAction(this.drawingHistory[i]);
+                getUserColor() {
+                    // Generate a consistent color based on user ID
+                    const hash = Array.from(this.userId).reduce((hash, char) => {
+                        return char.charCodeAt(0) + ((hash << 5) - hash);
+                    }, 0);
+                    return `hsl(${Math.abs(hash % 360)}, 70%, 60%)`;
                 }
-            }
-
-            recordDrawingAction() {
-                // Capture current canvas state
-                const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
                 
-                // Add to history
-                this.drawingHistory.splice(this.historyIndex + 1);
-                this.drawingHistory.push({
-                    id: Date.now(),
-                    imageData
-                });
-                this.historyIndex = this.drawingHistory.length - 1;
-            }
-
-            applyAction(action) {
-                this.ctx.putImageData(action.imageData, 0, 0);
-            }
-
-            reverseAction(action) {
-                // For undo, we revert to the previous state
-                if (this.historyIndex > 0) {
-                    const prevAction = this.drawingHistory[this.historyIndex - 1];
-                    this.ctx.putImageData(prevAction.imageData, 0, 0);
-                } else {
+                undo() {
+                    if (this.historyIndex >= 0) {
+                        const action = this.drawingHistory[this.historyIndex];
+                        this.reverseAction(action);
+                        this.historyIndex--;
+                        
+                        // Broadcast undo
+                        db.collection(`actions/${this.sessionId}/items`).add({
+                            type: 'undo',
+                            actionId: action.id,
+                            userId: this.userId,
+                            userName: this.userName,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        analytics.logEvent('whiteboard_undo');
+                    }
+                }
+                
+                redo() {
+                    if (this.historyIndex < this.drawingHistory.length - 1) {
+                        this.historyIndex++;
+                        const action = this.drawingHistory[this.historyIndex];
+                        this.applyAction(action);
+                        
+                        // Broadcast redo
+                        db.collection(`actions/${this.sessionId}/items`).add({
+                            type: 'redo',
+                            actionId: action.id,
+                            userId: this.userId,
+                            userName: this.userName,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        analytics.logEvent('whiteboard_redo');
+                    }
+                }
+                
+                clearCanvas() {
                     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    // Broadcast clear
+                    db.collection(`actions/${this.sessionId}/items`).add({
+                        type: 'clear',
+                        userId: this.userId,
+                        userName: this.userName,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Reset history
+                    this.drawingHistory = [];
+                    this.historyIndex = -1;
+                    
+                    analytics.logEvent('whiteboard_clear');
+                }
+                
+                clearSelection() {
+                    // TODO: Implement selection clearing
+                    console.log('Clear selection');
+                }
+                
+                redrawCanvas() {
+                    // Clear canvas
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    // Apply zoom and pan transformations
+                    this.ctx.save();
+                    this.ctx.translate(this.offsetX, this.offsetY);
+                    this.ctx.scale(this.zoomLevel, this.zoomLevel);
+                    
+                    // Redraw all drawings from history up to current index
+                    for (let i = 0; i <= this.historyIndex; i++) {
+                        this.applyAction(this.drawingHistory[i]);
+                    }
+                    
+                    this.ctx.restore();
+                }
+                
+                recordDrawingAction() {
+                    // Capture current canvas state
+                    const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+                    
+                    // Add to history
+                    this.drawingHistory.splice(this.historyIndex + 1);
+                    this.drawingHistory.push({
+                        id: Date.now(),
+                        imageData
+                    });
+                    this.historyIndex = this.drawingHistory.length - 1;
+                }
+                
+                applyAction(action) {
+                    this.ctx.putImageData(action.imageData, 0, 0);
+                }
+                
+                reverseAction(action) {
+                    // For undo, we revert to the previous state
+                    if (this.historyIndex > 0) {
+                        const prevAction = this.drawingHistory[this.historyIndex - 1];
+                        this.ctx.putImageData(prevAction.imageData, 0, 0);
+                    } else {
+                        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    }
+                }
+                
+                cleanup() {
+                    // Clean up is handled by the main app's unsubscribe functions
                 }
             }
-
-            cleanup() {
-                // Clean up Firebase listeners
-                // Note: In Firebase v9, we need to store the unsubscribe functions
-                // and call them here. For simplicity, we're omitting that in this example.
+            
+            // User List Management
+            function updateUserList(users) {
+                if (!users) return;
+                
+                elements.usersList.innerHTML = '';
+                let userCount = 0;
+                
+                Object.entries(users).forEach(([userId, userData]) => {
+                    if (userId === appState.currentUser?.uid) return;
+                    
+                    userCount++;
+                    
+                    const userElement = document.createElement('div');
+                    userElement.className = 'user-item';
+                    
+                    const userAvatar = document.createElement('div');
+                    userAvatar.className = 'user-avatar-sm';
+                    userAvatar.style.backgroundColor = userData.color;
+                    userAvatar.textContent = userData.name.charAt(0).toUpperCase();
+                    
+                    const userInfo = document.createElement('div');
+                    userInfo.className = 'user-info';
+                    
+                    const userName = document.createElement('div');
+                    userName.className = 'user-name-sm';
+                    userName.textContent = userData.name;
+                    
+                    const userStatus = document.createElement('div');
+                    userStatus.className = 'user-status';
+                    
+                    const statusIndicator = document.createElement('div');
+                    statusIndicator.className = 'status-indicator ' + 
+                        (userData.status === 'online' ? '' : 'away');
+                    
+                    const statusText = document.createElement('span');
+                    statusText.textContent = userData.status === 'online' ? 'Online' : 'Offline';
+                    
+                    userStatus.appendChild(statusIndicator);
+                    userStatus.appendChild(statusText);
+                    
+                    userInfo.appendChild(userName);
+                    userInfo.appendChild(userStatus);
+                    
+                    userElement.appendChild(userAvatar);
+                    userElement.appendChild(userInfo);
+                    
+                    elements.usersList.appendChild(userElement);
+                });
+                
+                elements.usersCount.textContent = userCount;
             }
-        }
-
-        // User List Management
-        function updateUserList(users) {
-            if (!users) return;
             
-            elements.usersList.innerHTML = '';
-            let userCount = 0;
-            
-            Object.entries(users).forEach(([userId, userData]) => {
-                if (userId === appState.currentUser?.uid) return;
-                
-                userCount++;
-                
-                const userElement = document.createElement('div');
-                userElement.className = 'user-item';
-                
-                const userColor = document.createElement('div');
-                userColor.className = 'user-color';
-                userColor.style.backgroundColor = userData.color;
-                
-                const userName = document.createElement('span');
-                userName.textContent = userData.name;
-                
-                userElement.appendChild(userColor);
-                userElement.appendChild(userName);
-                elements.usersList.appendChild(userElement);
-            });
-            
-            elements.usersCount.textContent = userCount;
-        }
-
-        // Helper function to show messages
-        function showMessage(element, message, type) {
-            element.textContent = message;
-            element.className = `message ${type}`;
-            element.style.display = 'block';
-            
-            setTimeout(() => {
-                element.style.display = 'none';
-            }, 5000);
-        }
-
-        // Initialize the app when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initApp);
+            // Initialize the app
+            initApp();
+        });
     </script>
 </body>
 </html>
