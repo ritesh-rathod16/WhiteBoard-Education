@@ -832,6 +832,7 @@
     <script type="module">
         // Import Firebase services
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics.js";
         import { 
             getAuth, 
             createUserWithEmailAndPassword, 
@@ -848,16 +849,22 @@
             addDoc,
             query,
             onSnapshot,
-            serverTimestamp
+            serverTimestamp,
+            doc,
+            set,
+            onDisconnect,
+            ref as dbRef,
+            onValue
         } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
         import { 
             getStorage,
-            ref,
+            ref as storageRef,
             uploadBytes,
             getDownloadURL
         } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-storage.js";
+        import { logEvent } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics.js";
 
-        // Firebase configuration - REPLACE WITH YOUR CONFIG
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAmNO9fq1FgMDlZwG52jJOc8bKfzyeY35E",
             authDomain: "whiteboard-education.firebaseapp.com",
@@ -870,6 +877,7 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const storage = getStorage(app);
@@ -925,6 +933,9 @@
             setupChat();
             setupDatabase();
             setupStorage();
+            
+            // Log initial page view
+            logEvent(analytics, 'page_view');
         }
 
         // Authentication Setup
@@ -955,8 +966,10 @@
                 try {
                     const userCredential = await signInWithEmailAndPassword(auth, email, password);
                     showMessage(elements.loginMessage, `Signed in as ${userCredential.user.email}`, 'success');
+                    logEvent(analytics, 'login', { method: 'email' });
                 } catch (error) {
                     showMessage(elements.loginMessage, error.message, 'error');
+                    logEvent(analytics, 'login_error', { method: 'email', error: error.message });
                 }
             });
 
@@ -976,28 +989,39 @@
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     await userCredential.user.updateProfile({ displayName: name });
                     showMessage(elements.registerMessage, `Account created for ${email}`, 'success');
+                    logEvent(analytics, 'sign_up', { method: 'email' });
                 } catch (error) {
                     showMessage(elements.registerMessage, error.message, 'error');
+                    logEvent(analytics, 'sign_up_error', { method: 'email', error: error.message });
                 }
             });
 
             // Social logins
-            elements.googleLogin.addEventListener('click', () => loginWithProvider(googleProvider));
-            elements.githubLogin.addEventListener('click', () => loginWithProvider(githubProvider));
-            elements.googleRegister.addEventListener('click', () => loginWithProvider(googleProvider));
-            elements.githubRegister.addEventListener('click', () => loginWithProvider(githubProvider));
+            elements.googleLogin.addEventListener('click', () => loginWithProvider(googleProvider, 'login'));
+            elements.githubLogin.addEventListener('click', () => loginWithProvider(githubProvider, 'login'));
+            elements.googleRegister.addEventListener('click', () => loginWithProvider(googleProvider, 'sign_up'));
+            elements.githubRegister.addEventListener('click', () => loginWithProvider(githubProvider, 'sign_up'));
 
             // Logout
             elements.logoutBtn.addEventListener('click', logout);
         }
 
-        async function loginWithProvider(provider) {
+        async function loginWithProvider(provider, actionType) {
             try {
                 const result = await signInWithPopup(auth, provider);
                 console.log("Social login success:", result.user);
+                logEvent(analytics, actionType, { method: provider.providerId });
             } catch (error) {
                 console.error("Social login error:", error);
-                alert(error.message);
+                showMessage(
+                    actionType === 'login' ? elements.loginMessage : elements.registerMessage,
+                    error.message,
+                    'error'
+                );
+                logEvent(analytics, `${actionType}_error`, { 
+                    method: provider.providerId, 
+                    error: error.message 
+                });
             }
         }
 
@@ -1014,6 +1038,7 @@
             try {
                 await signOut(auth);
                 console.log("User logged out");
+                logEvent(analytics, 'logout');
             } catch (error) {
                 console.error("Logout error:", error);
                 alert(error.message);
@@ -1083,8 +1108,10 @@
                     });
                     showMessage(elements.dbMessage, 'Data added successfully!', 'success');
                     elements.dataField.value = '';
+                    logEvent(analytics, 'database_write');
                 } catch (error) {
                     showMessage(elements.dbMessage, error.message, 'error');
+                    logEvent(analytics, 'database_error', { error: error.message });
                 }
             });
             
@@ -1129,7 +1156,7 @@
                 }
                 
                 try {
-                    const storageRef = ref(storage, `uploads/${file.name}`);
+                    const storageRef = storageRef(storage, `uploads/${file.name}`);
                     await uploadBytes(storageRef, file);
                     const downloadURL = await getDownloadURL(storageRef);
                     
@@ -1138,8 +1165,10 @@
                     elements.filePreview.style.display = 'none';
                     
                     console.log('File available at', downloadURL);
+                    logEvent(analytics, 'file_upload', { file_type: file.type });
                 } catch (error) {
                     showMessage(elements.storageMessage, error.message, 'error');
+                    logEvent(analytics, 'file_upload_error', { error: error.message });
                 }
             });
         }
@@ -1151,6 +1180,9 @@
 
         function toggleSidebar() {
             elements.sidebar.classList.toggle('open');
+            logEvent(analytics, 'toggle_sidebar', { 
+                state: elements.sidebar.classList.contains('open') ? 'open' : 'closed' 
+            });
         }
 
         // Chat Functionality
@@ -1185,6 +1217,7 @@
             
             addDoc(collection(db, `chat/${appState.currentSession}/messages`), message);
             elements.chatInput.value = '';
+            logEvent(analytics, 'send_message');
         }
 
         function addChatMessage(message) {
@@ -1239,6 +1272,7 @@
                 this.setupEventListeners();
                 this.setupFirebaseListeners();
                 this.setupUserPresence();
+                logEvent(analytics, 'whiteboard_init');
             }
 
             setupEventListeners() {
@@ -1284,6 +1318,8 @@
                 // Update active tool button
                 document.querySelectorAll('.tool-button').forEach(btn => btn.classList.remove('active'));
                 document.getElementById(`${tool}-tool`).classList.add('active');
+                
+                logEvent(analytics, 'whiteboard_tool_change', { tool });
             }
 
             handleMouseDown(e) {
@@ -1369,6 +1405,8 @@
                 if (this.currentTool !== 'eraser') {
                     this.recordDrawingAction();
                 }
+                
+                logEvent(analytics, 'whiteboard_draw', { tool: this.currentTool });
             }
 
             handleTouchStart(e) {
@@ -1590,7 +1628,7 @@
             }
 
             updateCursorPosition(x, y) {
-                const cursorRef = ref(db, `cursors/${this.sessionId}/${this.userId}`);
+                const cursorRef = dbRef(db, `cursors/${this.sessionId}/${this.userId}`);
                 set(cursorRef, {
                     x,
                     y,
@@ -1624,7 +1662,7 @@
                 });
                 
                 // Listen for cursor movements
-                const cursorsRef = ref(db, `cursors/${this.sessionId}`);
+                const cursorsRef = dbRef(db, `cursors/${this.sessionId}`);
                 onValue(cursorsRef, (snapshot) => {
                     const cursors = snapshot.val() || {};
                     Object.entries(cursors).forEach(([userId, cursor]) => {
@@ -1726,7 +1764,7 @@
             }
 
             setupUserPresence() {
-                const presenceRef = ref(db, `presence/${this.sessionId}/${this.userId}`);
+                const presenceRef = dbRef(db, `presence/${this.sessionId}/${this.userId}`);
                 
                 // Set user as online
                 set(presenceRef, {
@@ -1739,7 +1777,7 @@
                 onDisconnect(presenceRef).remove();
                 
                 // Listen for user presence changes
-                onValue(ref(db, `presence/${this.sessionId}`), (snapshot) => {
+                onValue(dbRef(db, `presence/${this.sessionId}`), (snapshot) => {
                     const users = snapshot.val() || {};
                     updateUserList(users);
                 });
@@ -1766,6 +1804,8 @@
                         userName: this.userName,
                         timestamp: serverTimestamp()
                     });
+                    
+                    logEvent(analytics, 'whiteboard_undo');
                 }
             }
 
@@ -1783,6 +1823,8 @@
                         userName: this.userName,
                         timestamp: serverTimestamp()
                     });
+                    
+                    logEvent(analytics, 'whiteboard_redo');
                 }
             }
 
@@ -1796,6 +1838,8 @@
                     userName: this.userName,
                     timestamp: serverTimestamp()
                 });
+                
+                logEvent(analytics, 'whiteboard_clear');
             }
 
             redrawCanvas() {
