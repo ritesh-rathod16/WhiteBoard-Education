@@ -3,196 +3,652 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Whiteboard</title>
+    <title>Real-Time Collaborative Whiteboard</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
-        body {
+        :root {
+            --primary: #4f46e5;
+            --white: #ffffff;
+            --black: #000000;
+            --gray: #e5e7eb;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            background-color: #f0f0f0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
         }
-        
+
+        body {
+            background-color: #f3f4f6;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .user-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Main Layout */
+        .container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+
+        /* Toolbar */
+        .toolbar {
+            width: 80px;
+            background: var(--white);
+            padding: 16px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+        }
+
+        .tool:hover {
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        .tool.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Whiteboard */
+        .whiteboard-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--white);
+            background-image: 
+                linear-gradient(#e5e7eb 1px, transparent 1px),
+                linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
         #whiteboard {
-            display: block;
-            background-color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
             cursor: crosshair;
         }
-        
-        .toolbar {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+
+        /* Right Panel (Video & Participants) */
+        .right-panel {
+            width: 300px;
+            background: var(--white);
+            border-left: 1px solid var(--gray);
+            padding: 16px;
+            overflow-y: auto;
         }
-        
-        .tool {
+
+        .panel-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: var(--black);
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .media-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .media-btn {
+            flex: 1;
             padding: 8px;
-            margin: 2px;
             border: none;
-            background: #eee;
-            border-radius: 3px;
+            border-radius: 6px;
+            background: var(--gray);
             cursor: pointer;
         }
-        
-        .tool.active {
-            background: #4CAF50;
+
+        .media-btn.off {
+            background: #ef4444;
+            color: var(--white);
+        }
+
+        /* Participants List */
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 6px;
+            background: var(--gray);
+        }
+
+        .user-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        /* Cursors */
+        .cursor {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            border: 2px solid var(--white);
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .cursor-name {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 12px;
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.7);
             color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
         }
-        
-        .color-picker {
-            width: 30px;
-            height: 30px;
-            border: none;
-            vertical-align: middle;
-            cursor: pointer;
-        }
-        
-        .size-slider {
-            width: 100px;
-            vertical-align: middle;
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--black);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: 8px;
+            z-index: 1000;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <canvas id="whiteboard"></canvas>
-    
-    <div class="toolbar">
-        <button class="tool active" data-tool="pencil">Pencil</button>
-        <button class="tool" data-tool="line">Line</button>
-        <button class="tool" data-tool="rectangle">Rectangle</button>
-        <button class="tool" data-tool="circle">Circle</button>
-        <button class="tool" data-tool="eraser">Eraser</button>
-        <br>
-        <input type="color" class="color-picker" value="#000000">
-        <input type="range" class="size-slider" min="1" max="20" value="3">
-        <button class="tool" data-tool="clear">Clear</button>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">Collaborative Whiteboard</div>
+        <div class="user-count" id="userCount">0 users</div>
     </div>
 
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <button class="tool active" data-tool="pencil" title="Pencil (P)">
+                ✏️
+            </button>
+            <button class="tool" data-tool="line" title="Line (L)">
+                ━
+            </button>
+            <button class="tool" data-tool="rectangle" title="Rectangle (R)">
+                ▭
+            </button>
+            <button class="tool" data-tool="circle" title="Circle (C)">
+                ○
+            </button>
+            <button class="tool" data-tool="eraser" title="Eraser (E)">
+                🧽
+            </button>
+            <button class="tool" data-tool="text" title="Text (T)">
+                T
+            </button>
+            <hr style="width: 80%; margin: 8px 0;">
+            <button class="tool" data-tool="undo" title="Undo (Ctrl+Z)">
+                ↩️
+            </button>
+            <button class="tool" data-tool="redo" title="Redo (Ctrl+Y)">
+                ↪️
+            </button>
+            <button class="tool" data-tool="clear" title="Clear">
+                🗑️
+            </button>
+            <hr style="width: 80%; margin: 8px 0;">
+            <input type="color" id="colorPicker" value="#000000" style="width: 40px; height: 40px; border: none; cursor: pointer;">
+            <input type="range" id="lineWidth" min="1" max="20" value="3" style="width: 80%;">
+        </div>
+
+        <!-- Whiteboard -->
+        <div class="whiteboard-container">
+            <canvas id="whiteboard"></canvas>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <div class="panel-title">Video & Participants</div>
+            
+            <!-- Media Controls -->
+            <div class="media-controls">
+                <button class="media-btn" id="micBtn">
+                    🎤 Mic
+                </button>
+                <button class="media-btn" id="videoBtn">
+                    📹 Video
+                </button>
+            </div>
+
+            <!-- Local Video -->
+            <div class="video-container">
+                <video id="localVideo" autoplay muted playsinline></video>
+            </div>
+
+            <!-- Remote Video -->
+            <div class="video-container">
+                <video id="remoteVideo" autoplay playsinline></video>
+            </div>
+
+            <!-- Participants -->
+            <div class="panel-title">Participants</div>
+            <div class="user-list" id="userList"></div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
     <script>
-        // Get canvas and context
-        const canvas = document.getElementById('whiteboard');
-        const ctx = canvas.getContext('2d');
-        
-        // Set canvas size
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-        
-        // Drawing state
+        // DOM Elements
+        const whiteboard = document.getElementById('whiteboard');
+        const ctx = whiteboard.getContext('2d');
+        const tools = document.querySelectorAll('.tool');
+        const colorPicker = document.getElementById('colorPicker');
+        const lineWidthSlider = document.getElementById('lineWidth');
+        const userList = document.getElementById('userList');
+        const userCount = document.getElementById('userCount');
+        const micBtn = document.getElementById('micBtn');
+        const videoBtn = document.getElementById('videoBtn');
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const notification = document.getElementById('notification');
+
+        // Whiteboard State
         let currentTool = 'pencil';
         let currentColor = '#000000';
-        let currentSize = 3;
+        let currentLineWidth = 3;
         let isDrawing = false;
         let startX, startY;
-        
-        // Tool selection
-        const tools = document.querySelectorAll('.tool');
-        tools.forEach(tool => {
-            tool.addEventListener('click', () => {
-                tools.forEach(t => t.classList.remove('active'));
-                tool.classList.add('active');
-                currentTool = tool.dataset.tool;
-                
-                if (currentTool === 'clear') {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    tool.classList.remove('active');
-                    document.querySelector('[data-tool="pencil"]').classList.add('active');
-                    currentTool = 'pencil';
-                }
+        let drawingHistory = [];
+        let historyPointer = -1;
+        let users = {};
+        let userId = generateId();
+        let userName = `User-${Math.floor(Math.random() * 1000)}`;
+        let userColor = generateRandomColor();
+        let boardId = window.location.pathname.split('/').pop() || generateId();
+        let socket = null;
+        let peerConnection = null;
+        let localStream = null;
+        let remoteStream = null;
+        let isMicOn = false;
+        let isVideoOn = false;
+
+        // Initialize
+        function init() {
+            resizeCanvas();
+            setupEventListeners();
+            connectToSocket();
+            setupMedia();
+        }
+
+        // Resize Canvas
+        function resizeCanvas() {
+            whiteboard.width = window.innerWidth - 380;
+            whiteboard.height = window.innerHeight - 60;
+        }
+
+        // Connect to Socket.io
+        function connectToSocket() {
+            socket = io();
+
+            socket.on('connect', () => {
+                socket.emit('joinBoard', { boardId, userId, userName, userColor });
             });
-        });
-        
-        // Color picker
-        document.querySelector('.color-picker').addEventListener('input', (e) => {
-            currentColor = e.target.value;
-        });
-        
-        // Size slider
-        document.querySelector('.size-slider').addEventListener('input', (e) => {
-            currentSize = parseInt(e.target.value);
-        });
-        
-        // Drawing functions
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
-        
+
+            socket.on('userJoined', (data) => {
+                users[data.userId] = data;
+                updateUserList();
+            });
+
+            socket.on('userLeft', (userId) => {
+                delete users[userId];
+                updateUserList();
+            });
+
+            socket.on('draw', (action) => {
+                drawAction(action);
+            });
+
+            socket.on('cursorMove', (data) => {
+                updateCursor(data);
+            });
+
+            socket.on('clear', () => {
+                ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+            });
+        }
+
+        // Setup Media (WebRTC)
+        async function setupMedia() {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                localVideo.srcObject = localStream;
+                isMicOn = true;
+                isVideoOn = true;
+                setupPeerConnection();
+            } catch (err) {
+                console.error("Media Error:", err);
+            }
+        }
+
+        function setupPeerConnection() {
+            peerConnection = new RTCPeerConnection({
+                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+            });
+
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+
+            peerConnection.ontrack = (event) => {
+                remoteVideo.srcObject = event.streams[0];
+            };
+
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    socket.emit('iceCandidate', { candidate: event.candidate, boardId, userId });
+                }
+            };
+        }
+
+        // Drawing Functions
         function startDrawing(e) {
             isDrawing = true;
-            startX = e.clientX;
-            startY = e.clientY;
-            
+            startX = e.clientX - whiteboard.offsetLeft;
+            startY = e.clientY - whiteboard.offsetTop;
+
             if (currentTool === 'pencil' || currentTool === 'eraser') {
                 ctx.beginPath();
                 ctx.moveTo(startX, startY);
+                ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+                ctx.lineWidth = currentLineWidth;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
-                ctx.strokeStyle = currentTool === 'eraser' ? 'white' : currentColor;
-                ctx.lineWidth = currentSize;
             }
         }
-        
+
         function draw(e) {
             if (!isDrawing) return;
-            
-            const x = e.clientX;
-            const y = e.clientY;
-            
+
+            const x = e.clientX - whiteboard.offsetLeft;
+            const y = e.clientY - whiteboard.offsetTop;
+
+            // Send cursor position
+            socket.emit('cursorMove', { x, y, userId, userName, userColor });
+
             switch (currentTool) {
                 case 'pencil':
                 case 'eraser':
                     ctx.lineTo(x, y);
                     ctx.stroke();
+                    socket.emit('draw', {
+                        tool: currentTool,
+                        color: currentTool === 'eraser' ? '#ffffff' : currentColor,
+                        x1: startX,
+                        y1: startY,
+                        x2: x,
+                        y2: y,
+                        lineWidth: currentLineWidth,
+                        userId
+                    });
                     break;
-                    
+
                 case 'line':
-                    redrawCanvas();
-                    ctx.beginPath();
-                    ctx.moveTo(startX, startY);
-                    ctx.lineTo(x, y);
-                    ctx.strokeStyle = currentColor;
-                    ctx.lineWidth = currentSize;
-                    ctx.stroke();
-                    break;
-                    
                 case 'rectangle':
-                    redrawCanvas();
-                    ctx.beginPath();
-                    ctx.rect(startX, startY, x - startX, y - startY);
-                    ctx.strokeStyle = currentColor;
-                    ctx.lineWidth = currentSize;
-                    ctx.stroke();
-                    break;
-                    
                 case 'circle':
+                    // Preview shape while drawing
                     redrawCanvas();
-                    const radius = Math.sqrt(Math.pow(x - startX, 2) + Math.pow(y - startY, 2);
-                    ctx.beginPath();
-                    ctx.arc(startX, startY, radius, 0, Math.PI * 2);
-                    ctx.strokeStyle = currentColor;
-                    ctx.lineWidth = currentSize;
-                    ctx.stroke();
+                    drawShape(startX, startY, x, y, currentTool);
                     break;
             }
         }
-        
+
         function stopDrawing() {
+            if (!isDrawing) return;
             isDrawing = false;
+
+            if (currentTool === 'line' || currentTool === 'rectangle' || currentTool === 'circle') {
+                const action = {
+                    tool: currentTool,
+                    color: currentColor,
+                    x1: startX,
+                    y1: startY,
+                    x2: lastX,
+                    y2: lastY,
+                    lineWidth: currentLineWidth,
+                    userId
+                };
+                socket.emit('draw', action);
+                addToHistory(action);
+            }
         }
-        
-        // Redraw canvas (for shape previews)
-        function redrawCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // In a real app, you would redraw all existing elements here
+
+        function drawShape(x1, y1, x2, y2, shape) {
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentLineWidth;
+            ctx.beginPath();
+
+            switch (shape) {
+                case 'line':
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    break;
+                case 'rectangle':
+                    ctx.rect(x1, y1, x2 - x1, y2 - y1);
+                    break;
+                case 'circle':
+                    const radius = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                    ctx.arc(x1, y1, radius, 0, Math.PI * 2);
+                    break;
+            }
+
+            ctx.stroke();
         }
+
+        function drawAction(action) {
+            ctx.strokeStyle = action.color;
+            ctx.lineWidth = action.lineWidth;
+            ctx.beginPath();
+
+            switch (action.tool) {
+                case 'pencil':
+                case 'eraser':
+                    ctx.moveTo(action.x1, action.y1);
+                    ctx.lineTo(action.x2, action.y2);
+                    break;
+                case 'line':
+                    ctx.moveTo(action.x1, action.y1);
+                    ctx.lineTo(action.x2, action.y2);
+                    break;
+                case 'rectangle':
+                    ctx.rect(action.x1, action.y1, action.x2 - action.x1, action.y2 - action.y1);
+                    break;
+                case 'circle':
+                    const radius = Math.sqrt(Math.pow(action.x2 - action.x1, 2) + Math.pow(action.y2 - action.y1, 2));
+                    ctx.arc(action.x1, action.y1, radius, 0, Math.PI * 2);
+                    break;
+            }
+
+            ctx.stroke();
+        }
+
+        // Cursor Tracking
+        function updateCursor(data) {
+            let cursor = document.querySelector(`.cursor-${data.userId}`);
+            if (!cursor) {
+                cursor = document.createElement('div');
+                cursor.className = `cursor cursor-${data.userId}`;
+                cursor.style.backgroundColor = data.userColor;
+                document.body.appendChild(cursor);
+
+                const nameTag = document.createElement('div');
+                nameTag.className = 'cursor-name';
+                nameTag.textContent = data.userName;
+                cursor.appendChild(nameTag);
+            }
+
+            cursor.style.left = `${data.x}px`;
+            cursor.style.top = `${data.y}px`;
+        }
+
+        // User List Management
+        function updateUserList() {
+            userList.innerHTML = '';
+            Object.values(users).forEach(user => {
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item';
+                
+                const userColor = document.createElement('div');
+                userColor.className = 'user-color';
+                userColor.style.backgroundColor = user.userColor;
+                
+                const userName = document.createElement('div');
+                userName.textContent = user.userName;
+                
+                userItem.appendChild(userColor);
+                userItem.appendChild(userName);
+                userList.appendChild(userItem);
+            });
+
+            userCount.textContent = `${Object.keys(users).length} users`;
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Tool Selection
+            tools.forEach(tool => {
+                tool.addEventListener('click', () => {
+                    const toolName = tool.dataset.tool;
+                    selectTool(toolName);
+                });
+            });
+
+            // Color & Size
+            colorPicker.addEventListener('input', (e) => {
+                currentColor = e.target.value;
+            });
+
+            lineWidthSlider.addEventListener('input', (e) => {
+                currentLineWidth = parseInt(e.target.value);
+            });
+
+            // Media Controls
+            micBtn.addEventListener('click', toggleMic);
+            videoBtn.addEventListener('click', toggleVideo);
+
+            // Drawing Events
+            whiteboard.addEventListener('mousedown', startDrawing);
+            whiteboard.addEventListener('mousemove', draw);
+            whiteboard.addEventListener('mouseup', stopDrawing);
+            whiteboard.addEventListener('mouseout', stopDrawing);
+
+            // Window Resize
+            window.addEventListener('resize', resizeCanvas);
+        }
+
+        // Helper Functions
+        function generateId() {
+            return Math.random().toString(36).substring(2, 9);
+        }
+
+        function generateRandomColor() {
+            return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
+        }
+
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Toggle Mic/Video
+        function toggleMic() {
+            if (!localStream) return;
+            const audioTrack = localStream.getAudioTracks()[0];
+            audioTrack.enabled = !audioTrack.enabled;
+            isMicOn = audioTrack.enabled;
+            micBtn.classList.toggle('off', !isMicOn);
+            showNotification(isMicOn ? 'Mic ON' : 'Mic OFF');
+        }
+
+        function toggleVideo() {
+            if (!localStream) return;
+            const videoTrack = localStream.getVideoTracks()[0];
+            videoTrack.enabled = !videoTrack.enabled;
+            isVideoOn = videoTrack.enabled;
+            videoBtn.classList.toggle('off', !isVideoOn);
+            showNotification(isVideoOn ? 'Video ON' : 'Video OFF');
+        }
+
+        // Initialize
+        init();
     </script>
 </body>
 </html>
