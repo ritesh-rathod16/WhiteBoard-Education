@@ -3,2572 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CollabBoard - Next-Gen Collaborative Whiteboard</title>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="A modern website template with responsive design">
+    <title>Modern Website</title>
     <style>
+        /* CSS Reset & Base Styles */
         :root {
-            --primary: #4f46e5;
-            --primary-light: #6366f1;
-            --primary-dark: #4338ca;
-            --secondary: #10b981;
-            --accent: #f59e0b;
-            --danger: #ef4444;
-            --light: #f3f4f6;
-            --dark: #1f2937;
-            --text: #111827;
-            --white: #ffffff;
-            --gray: #6b7280;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-            --radius: 12px;
-            --radius-sm: 8px;
+            --primary: #2563eb;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
         }
-
+        
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            box-sizing: border-box;
         }
-
+        
         body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
             background-color: var(--light);
-            color: var(--text);
-            height: 100vh;
-            overflow: hidden;
         }
-
+        
+        /* Layout */
         .container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
         }
-
-        /* Header Styles */
-        .header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: var(--white);
-            padding: 12px 24px;
+        
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: var(--shadow);
-            z-index: 100;
-            position: relative;
+            padding: 1rem 0;
         }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-img {
-            height: 36px;
-            width: auto;
-        }
-
-        .logo-text {
+        
+        .logo {
             font-size: 1.5rem;
             font-weight: 700;
-            background: linear-gradient(90deg, var(--white), #e0e7ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            position: relative;
-            overflow: hidden;
+            color: var(--primary);
+            text-decoration: none;
         }
-
-        .header-controls {
+        
+        .nav-links {
             display: flex;
-            align-items: center;
-            gap: 16px;
+            gap: 2rem;
         }
-
-        .user-count {
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(5px);
-        }
-
-        /* Main Content Layout */
-        .main {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Toolbar Styles */
-        .toolbar {
-            width: 80px;
-            background-color: var(--white);
-            padding: 16px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-            z-index: 10;
-        }
-
-        .tool-group {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            margin-bottom: 8px;
-        }
-
-        .tool {
-            width: 48px;
-            height: 48px;
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+        
+        .nav-links a {
+            text-decoration: none;
             color: var(--dark);
-            position: relative;
-            background-color: transparent;
-            border: none;
+            font-weight: 500;
+            transition: color 0.3s;
         }
-
-        .tool:hover {
-            background-color: rgba(79, 70, 229, 0.1);
+        
+        .nav-links a:hover {
             color: var(--primary);
         }
-
-        .tool.active {
-            background-color: var(--primary);
-            color: var(--white);
-            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
-        }
-
-        .tool-tip {
-            position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: var(--dark);
-            color: var(--white);
-            padding: 6px 12px;
-            border-radius: var(--radius-sm);
-            font-size: 0.8rem;
-            white-space: nowrap;
-            pointer-events: none;
-            opacity: 0;
-            margin-left: 12px;
-            z-index: 100;
-        }
-
-        .tool:hover .tool-tip {
-            opacity: 1;
-        }
-
-        /* Color and Size Controls */
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            padding: 0 8px;
-        }
-
-        .control-label {
-            color: var(--gray);
-            font-size: 0.7rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .color-picker {
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--light);
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            padding: 0;
-            background: none;
-            overflow: hidden;
-        }
-
-        .color-picker:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow);
-        }
-
-        .line-width-slider {
-            width: 80%;
-            cursor: pointer;
-            -webkit-appearance: none;
-            height: 6px;
-            border-radius: 3px;
-            background: var(--light);
-            outline: none;
-        }
-
-        .line-width-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
-        }
-
-        .line-width-slider::-webkit-slider-thumb:hover {
-            background: var(--primary-dark);
-        }
-
-        /* Whiteboard Canvas */
-        .whiteboard-container {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-            background-color: var(--white);
-            background-image: 
-                linear-gradient(#e5e7eb 1px, transparent 1px),
-                linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-
-        #whiteboard {
-            position: absolute;
-            top: 0;
-            left: 0;
-            cursor: crosshair;
-        }
-
-        /* Right Panel - Video & Participants */
-        .right-panel {
-            width: 320px;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--white);
-            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.05);
-            z-index: 10;
-            border-left: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .panel-header {
-            padding: 16px;
-            font-weight: 600;
-            color: var(--dark);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .panel-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-        }
-
-        .video-container {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16/9;
-            background-color: var(--dark);
-            border-radius: var(--radius-sm);
-            overflow: hidden;
-            margin-bottom: 16px;
-        }
-
-        .video-placeholder {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            background-color: var(--dark);
+        
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0;
             text-align: center;
         }
-
-        .video-placeholder i {
-            font-size: 2rem;
-            margin-bottom: 8px;
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
             color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto 2rem;
         }
-
-        .video-placeholder-text {
-            font-size: 0.9rem;
-            color: var(--gray);
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .media-controls {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .media-btn {
-            flex: 1;
-            padding: 10px;
-            border-radius: var(--radius-sm);
-            border: none;
-            background-color: var(--light);
-            color: var(--dark);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-weight: 500;
-        }
-
-        .media-btn:hover {
-            background-color: #e5e7eb;
-        }
-
-        .media-btn.off {
-            background-color: var(--danger);
-            color: var(--white);
-        }
-
-        /* Participants List */
-        .user-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .user-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
-
-        .user-name {
-            flex: 1;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .user-role {
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background-color: rgba(16, 185, 129, 0.1);
-            color: var(--secondary);
-        }
-
-        /* Footer */
-        .footer {
-            padding: 12px 24px;
-            background-color: var(--white);
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .board-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .board-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .board-btn {
-            padding: 6px 12px;
-            background-color: var(--light);
-            color: var(--dark);
-            border: none;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .board-btn:hover {
-            background-color: #e5e7eb;
-        }
-
-        #boardId {
-            font-family: 'Fira Code', monospace;
-            background-color: rgba(0, 0, 0, 0.05);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-        }
-
-        /* Toggle Panel Button */
-        .toggle-panel {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: var(--primary);
-            color: var(--white);
-            width: 24px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px 0 0 8px;
-            cursor: pointer;
-            z-index: 20;
-            border: none;
-        }
-
-        .toggle-panel:hover {
-            background-color: var(--primary-dark);
-        }
-
-        /* Panel Collapsed State */
-        .panel-collapsed .right-panel {
-            width: 0;
-            overflow: hidden;
-            border-left: none;
-        }
-
-        /* Notifications */
-        .notification {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--dark);
-            color: var(--white);
-            padding: 12px 24px;
-            border-radius: var(--radius);
-            z-index: 1000;
-            display: none;
-            max-width: 80%;
-            text-align: center;
-            box-shadow: var(--shadow-lg);
-        }
-
-        /* Loading Screen */
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.9);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            backdrop-filter: blur(5px);
-        }
-
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid rgba(79, 70, 229, 0.1);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        .loading-text {
-            color: var(--dark);
-            margin-top: 16px;
-            font-size: 1rem;
-            font-weight: 500;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Cursors */
-        .cursor {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 100;
-            border: 2px solid var(--white);
-            box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-        }
-
-        .cursor-name {
-            position: absolute;
-            top: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
-            font-size: 12px;
-            font-weight: 500;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        /* Shape Preview */
-        .shape-preview {
-            position: absolute;
-            pointer-events: none;
-            z-index: 90;
-        }
-
-        /* More Menu */
-        .more-menu {
-            position: relative;
+        
+        .btn {
             display: inline-block;
-        }
-
-        .more-btn {
-            background: none;
-            border: none;
-            color: var(--white);
-            cursor: pointer;
-            font-size: 1.2rem;
-            padding: 8px;
-            border-radius: var(--radius-sm);
-        }
-
-        .dropdown-content {
-            position: absolute;
-            right: 0;
-            top: 100%;
-            background-color: var(--white);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-            z-index: 1000;
-            min-width: 200px;
-            padding: 8px 0;
-            display: none;
-        }
-
-        .dropdown-content.show {
-            display: block;
-        }
-
-        .dropdown-item {
-            padding: 10px 16px;
-            text-align: left;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-            color: var(--dark);
-        }
-
-        .dropdown-item:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-            color: var(--primary);
-        }
-
-        /* Lobby Screen */
-        .lobby {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-
-        .lobby-content {
-            background-color: var(--white);
-            border-radius: var(--radius);
-            padding: 24px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-        }
-
-        .lobby-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--dark);
-        }
-
-        .lobby-description {
-            color: var(--gray);
-            margin-bottom: 24px;
-            font-size: 0.9rem;
-        }
-
-        .lobby-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: var(--radius-sm);
-            font-size: 1rem;
-            margin-bottom: 16px;
-        }
-
-        .lobby-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
-        }
-
-        .lobby-btn {
-            width: 100%;
-            padding: 12px;
             background-color: var(--primary);
-            color: var(--white);
-            border: none;
-            border-radius: var(--radius-sm);
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .lobby-btn:hover {
-            background-color: var(--primary-dark);
-        }
-
-        /* Waiting Room */
-        .waiting-room {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-
-        .waiting-content {
-            background-color: var(--white);
-            border-radius: var(--radius);
-            padding: 24px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-        }
-
-        .waiting-title {
-            font-size: 1.5rem;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
             font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--dark);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-
-        .waiting-description {
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 4rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links a {
             color: var(--gray);
-            margin-bottom: 24px;
-            font-size: 0.9rem;
+            text-decoration: none;
+            transition: color 0.3s;
         }
-
-        /* Responsive Adjustments */
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        /* Responsive */
         @media (max-width: 768px) {
-            .toolbar {
-                width: 60px;
+            .nav-links {
+                display: none; /* Replace with hamburger menu in real projects */
             }
             
-            .right-panel {
-                position: absolute;
-                right: 0;
-                top: 0;
-                bottom: 0;
-                z-index: 50;
+            .hero h1 {
+                font-size: 2rem;
             }
-            
-            .panel-collapsed .right-panel {
-                width: 0;
-            }
-        }
-
-        /* Export Options Modal */
-        .export-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-
-        .export-content {
-            background-color: var(--white);
-            border-radius: var(--radius);
-            padding: 24px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .export-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--dark);
-        }
-
-        .export-options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .export-btn {
-            padding: 12px;
-            border-radius: var(--radius-sm);
-            border: none;
-            background-color: var(--primary);
-            color: var(--white);
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .export-btn:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .export-btn.secondary {
-            background-color: var(--light);
-            color: var(--dark);
-        }
-
-        .export-btn.secondary:hover {
-            background-color: #e5e7eb;
-        }
-
-        /* Virtual Background Selector */
-        .background-selector {
-            margin-bottom: 16px;
-        }
-
-        .background-title {
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: var(--dark);
-        }
-
-        .background-options {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-        }
-
-        .background-option {
-            width: 80px;
-            height: 60px;
-            border-radius: var(--radius-sm);
-            overflow: hidden;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-
-        .background-option.selected {
-            border-color: var(--primary);
-        }
-
-        .background-option img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Pinned Element Styles */
-        .pinned-element {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70%;
-            height: 70%;
-            z-index: 1000;
-            background-color: var(--white);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .pinned-header {
-            padding: 12px 16px;
-            background-color: var(--primary);
-            color: var(--white);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .pinned-title {
-            font-weight: 500;
-        }
-
-        .pinned-close {
-            background: none;
-            border: none;
-            color: var(--white);
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-
-        .pinned-content {
-            flex: 1;
-            position: relative;
-        }
-
-        /* Save Prompt */
-        .save-prompt {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-
-        .save-content {
-            background-color: var(--white);
-            border-radius: var(--radius);
-            padding: 24px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-        }
-
-        .save-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--dark);
-        }
-
-        .save-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-        }
-
-        .save-btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: var(--radius-sm);
-            border: none;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .save-btn.primary {
-            background-color: var(--primary);
-            color: var(--white);
-        }
-
-        .save-btn.primary:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .save-btn.secondary {
-            background-color: var(--light);
-            color: var(--dark);
-        }
-
-        .save-btn.secondary:hover {
-            background-color: #e5e7eb;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo-container">
-                <img src="https://via.placeholder.com/36" alt="CollabBoard Logo" class="logo-img">
-                <div class="logo-text">CollabBoard</div>
-            </div>
-            <div class="header-controls">
-                <div class="user-count">
-                    <i class="fas fa-users"></i>
-                    <span id="userCount">0</span>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">BrandName</a>
+                <div class="nav-links">
+                    <a href="#">Home</a>
+                    <a href="#">Features</a>
+                    <a href="#">Pricing</a>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
                 </div>
-                <div class="more-menu">
-                    <button class="more-btn" id="moreBtn">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <div class="dropdown-content" id="dropdownContent">
-                        <div class="dropdown-item" id="inviteOption">
-                            <i class="fas fa-user-plus"></i>
-                            <span>Invite People</span>
-                        </div>
-                        <div class="dropdown-item" id="participantsOption">
-                            <i class="fas fa-users"></i>
-                            <span>Participants</span>
-                        </div>
-                        <div class="dropdown-item" id="exportOption">
-                            <i class="fas fa-download"></i>
-                            <span>Export Board</span>
-                        </div>
-                        <div class="dropdown-item" id="settingsOption">
-                            <i class="fas fa-cog"></i>
-                            <span>Settings</span>
-                        </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>Build Amazing Websites</h1>
+                <p>A complete solution for your next project with modern technologies and best practices.</p>
+                <a href="#" class="btn">Get Started</a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">Why Choose Us</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3>Fast Performance</h3>
+                        <p>Optimized code and modern techniques ensure your site loads in milliseconds.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Responsive Design</h3>
+                        <p>Looks perfect on all devices from smartphones to desktops.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Easy Customization</h3>
+                        <p>Clean code structure makes customization simple.</p>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
+    </main>
 
-        <!-- Main Content -->
-        <div class="main">
-            <!-- Toolbar -->
-            <div class="toolbar">
-                <div class="tool-group">
-                    <button class="tool active" data-tool="pencil" id="pencilTool">
-                        <i class="fas fa-pencil-alt"></i>
-                        <span class="tool-tip">Pencil (P)</span>
-                    </button>
-                    <button class="tool" data-tool="line" id="lineTool">
-                        <i class="fas fa-slash"></i>
-                        <span class="tool-tip">Line (L)</span>
-                    </button>
-                    <button class="tool" data-tool="rectangle" id="rectangleTool">
-                        <i class="far fa-square"></i>
-                        <span class="tool-tip">Rectangle (R)</span>
-                    </button>
-                    <button class="tool" data-tool="circle" id="circleTool">
-                        <i class="far fa-circle"></i>
-                        <span class="tool-tip">Circle (C)</span>
-                    </button>
-                    <button class="tool" data-tool="eraser" id="eraserTool">
-                        <i class="fas fa-eraser"></i>
-                        <span class="tool-tip">Eraser (E)</span>
-                    </button>
-                    <button class="tool" data-tool="text" id="textTool">
-                        <i class="fas fa-font"></i>
-                        <span class="tool-tip">Text (T)</span>
-                    </button>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
                 </div>
-
-                <div class="tool-group">
-                    <button class="tool" data-tool="undo" id="undoTool">
-                        <i class="fas fa-undo"></i>
-                        <span class="tool-tip">Undo (Ctrl+Z)</span>
-                    </button>
-                    <button class="tool" data-tool="redo" id="redoTool">
-                        <i class="fas fa-redo"></i>
-                        <span class="tool-tip">Redo (Ctrl+Y)</span>
-                    </button>
-                    <button class="tool" data-tool="clear" id="clearTool">
-                        <i class="fas fa-trash-alt"></i>
-                        <span class="tool-tip">Clear Board</span>
-                    </button>
+                <div class="footer-column">
+                    <h3>Product</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Documentation</a></li>
+                    </ul>
                 </div>
-
-                <div class="control-group">
-                    <div class="control-label">Color</div>
-                    <input type="color" class="color-picker" id="colorPicker" value="#000000">
-                </div>
-
-                <div class="control-group">
-                    <div class="control-label">Size</div>
-                    <input type="range" class="line-width-slider" id="lineWidth" min="1" max="20" value="3">
-                </div>
-            </div>
-
-            <!-- Whiteboard -->
-            <div class="whiteboard-container">
-                <canvas id="whiteboard"></canvas>
-                <div id="shapePreview" class="shape-preview"></div>
-            </div>
-
-            <!-- Right Panel Toggle -->
-            <button class="toggle-panel" id="togglePanel">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-
-            <!-- Right Panel -->
-            <div class="right-panel">
-                <div class="panel-header">
-                    <span>Video & Participants</span>
-                </div>
-                <div class="panel-content">
-                    <!-- Video Controls -->
-                    <div class="media-controls">
-                        <button class="media-btn" id="micBtn">
-                            <i class="fas fa-microphone"></i>
-                            <span>Mic</span>
-                        </button>
-                        <button class="media-btn" id="videoBtn">
-                            <i class="fas fa-video"></i>
-                            <span>Video</span>
-                        </button>
-                    </div>
-
-                    <!-- Virtual Background Selector -->
-                    <div class="background-selector">
-                        <div class="background-title">Virtual Background</div>
-                        <div class="background-options">
-                            <div class="background-option" data-bg="none">
-                                <div style="width:100%;height:100%;background-color:#f3f4f6;display:flex;align-items:center;justify-content:center;">
-                                    <i class="fas fa-times"></i>
-                                </div>
-                            </div>
-                            <div class="background-option" data-bg="office">
-                                <img src="https://via.placeholder.com/80x60/4f46e5/ffffff?text=Office" alt="Office">
-                            </div>
-                            <div class="background-option" data-bg="nature">
-                                <img src="https://via.placeholder.com/80x60/10b981/ffffff?text=Nature" alt="Nature">
-                            </div>
-                            <div class="background-option" data-bg="abstract">
-                                <img src="https://via.placeholder.com/80x60/f59e0b/ffffff?text=Abstract" alt="Abstract">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Local Video -->
-                    <div class="video-container">
-                        <video id="localVideo" autoplay muted playsinline></video>
-                        <div class="video-placeholder">
-                            <i class="fas fa-user"></i>
-                            <div class="video-placeholder-text">Your video will appear here</div>
-                        </div>
-                    </div>
-
-                    <!-- Remote Video -->
-                    <div class="video-container">
-                        <video id="remoteVideo" autoplay playsinline></video>
-                        <div class="video-placeholder">
-                            <i class="fas fa-users"></i>
-                            <div class="video-placeholder-text">Other participant's video will appear here</div>
-                        </div>
-                    </div>
-
-                    <!-- Participants List -->
-                    <div class="panel-header">
-                        <span>Participants</span>
-                        <span id="participantCount">0</span>
-                    </div>
-                    <div class="user-list" id="userList">
-                        <!-- Users will be added here dynamically -->
-                    </div>
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
+    </footer>
 
-        <!-- Footer -->
-        <div class="footer">
-            <div class="board-info">
-                <span>Real-time collaboration with WebRTC & Socket.io</span>
-            </div>
-            <div class="board-actions">
-                <button class="board-btn" id="copyBoardId">
-                    <i class="fas fa-copy"></i>
-                    <span>Copy Board ID</span>
-                </button>
-                <span id="boardId">Loading...</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification -->
-    <div class="notification" id="notification"></div>
-
-    <!-- Loading Screen -->
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-        <div class="loading-text" id="loadingText">Connecting to board...</div>
-    </div>
-
-    <!-- Lobby Screen -->
-    <div class="lobby" id="lobby">
-        <div class="lobby-content">
-            <h2 class="lobby-title">Join the Session</h2>
-            <p class="lobby-description">Enter your name to join the collaborative whiteboard</p>
-            <input type="text" class="lobby-input" id="userNameInput" placeholder="Your Name">
-            <button class="lobby-btn" id="joinBtn">Join Session</button>
-        </div>
-    </div>
-
-    <!-- Waiting Room -->
-    <div class="waiting-room" id="waitingRoom">
-        <div class="waiting-content">
-            <h2 class="waiting-title">Waiting for Host</h2>
-            <p class="waiting-description">The host will admit you to the session shortly</p>
-        </div>
-    </div>
-
-    <!-- Export Modal -->
-    <div class="export-modal" id="exportModal">
-        <div class="export-content">
-            <h3 class="export-title">Export Whiteboard</h3>
-            <div class="export-options">
-                <button class="export-btn" id="exportPdf">
-                    <i class="fas fa-file-pdf"></i>
-                    <span>Export as PDF</span>
-                </button>
-                <button class="export-btn" id="exportPng">
-                    <i class="fas fa-file-image"></i>
-                    <span>Export as PNG</span>
-                </button>
-                <button class="export-btn" id="exportJpg">
-                    <i class="fas fa-file-image"></i>
-                    <span>Export as JPG</span>
-                </button>
-            </div>
-            <button class="export-btn secondary" id="cancelExport">
-                <span>Cancel</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Invite Modal -->
-    <div class="export-modal" id="inviteModal">
-        <div class="export-content">
-            <h3 class="export-title">Invite Participants</h3>
-            <div style="margin-bottom: 16px;">
-                <p style="margin-bottom: 8px; font-size: 0.9rem; color: var(--gray);">Share this link to invite others:</p>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="inviteLink" style="flex:1;padding:8px;border:1px solid rgba(0,0,0,0.1);border-radius:var(--radius-sm);" readonly>
-                    <button id="copyInviteLink" style="padding:8px 12px;background-color:var(--primary);color:white;border:none;border-radius:var(--radius-sm);cursor:pointer;">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-            </div>
-            <div style="margin-bottom: 16px;">
-                <p style="margin-bottom: 8px; font-size: 0.9rem; color: var(--gray);">Or share this code:</p>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <div id="boardCode" style="flex:1;padding:8px;background-color:var(--light);border-radius:var(--radius-sm);font-family:monospace;text-align:center;"></div>
-                </div>
-            </div>
-            <button class="export-btn secondary" id="closeInviteModal">
-                <span>Close</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Participants Modal -->
-    <div class="export-modal" id="participantsModal">
-        <div class="export-content">
-            <h3 class="export-title">Participants</h3>
-            <div id="participantsList" style="max-height:300px;overflow-y:auto;margin-bottom:16px;">
-                <!-- Participants will be listed here -->
-            </div>
-            <div id="waitingList" style="margin-bottom:16px;display:none;">
-                <h4 style="font-size:0.9rem;margin-bottom:8px;color:var(--dark);">Waiting for approval</h4>
-                <div id="waitingParticipants">
-                    <!-- Waiting participants will be listed here -->
-                </div>
-            </div>
-            <button class="export-btn secondary" id="closeParticipantsModal">
-                <span>Close</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div class="export-modal" id="settingsModal">
-        <div class="export-content">
-            <h3 class="export-title">Settings</h3>
-            <div style="margin-bottom:16px;">
-                <label style="display:block;margin-bottom:8px;font-size:0.9rem;color:var(--dark);">Your Name</label>
-                <input type="text" id="userNameSetting" style="width:100%;padding:8px;border:1px solid rgba(0,0,0,0.1);border-radius:var(--radius-sm);">
-            </div>
-            <div style="margin-bottom:16px;">
-                <label style="display:block;margin-bottom:8px;font-size:0.9rem;color:var(--dark);">Drawing Color</label>
-                <input type="color" id="userColorSetting" style="width:100%;height:40px;">
-            </div>
-            <div style="margin-bottom:16px;">
-                <label style="display:block;margin-bottom:8px;font-size:0.9rem;color:var(--dark);">Require Approval for New Participants</label>
-                <label class="switch">
-                    <input type="checkbox" id="approvalSetting">
-                    <span class="slider round"></span>
-                </label>
-            </div>
-            <button class="export-btn" id="saveSettings">
-                <span>Save Settings</span>
-            </button>
-            <button class="export-btn secondary" id="closeSettingsModal">
-                <span>Cancel</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Pinned Element -->
-    <div class="pinned-element" id="pinnedElement" style="display:none;">
-        <div class="pinned-header">
-            <div class="pinned-title" id="pinnedTitle">Pinned Content</div>
-            <button class="pinned-close" id="pinnedClose">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="pinned-content" id="pinnedContent"></div>
-    </div>
-
-    <!-- Save Prompt -->
-    <div class="save-prompt" id="savePrompt" style="display:none;">
-        <div class="save-content">
-            <h3 class="save-title">Save Changes?</h3>
-            <p style="color:var(--gray);margin-bottom:16px;">Do you want to save your whiteboard before leaving?</p>
-            <div class="save-buttons">
-                <button class="save-btn primary" id="saveBoard">Save</button>
-                <button class="save-btn secondary" id="discardChanges">Discard</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- JavaScript (can be moved to separate file) -->
     <script>
-        // DOM Elements
-        const whiteboard = document.getElementById('whiteboard');
-        const ctx = whiteboard.getContext('2d');
-        const tools = document.querySelectorAll('.tool');
-        const colorPicker = document.getElementById('colorPicker');
-        const lineWidthSlider = document.getElementById('lineWidth');
-        const userList = document.getElementById('userList');
-        const userCount = document.getElementById('userCount');
-        const participantCount = document.getElementById('participantCount');
-        const boardIdElement = document.getElementById('boardId');
-        const copyBoardIdBtn = document.getElementById('copyBoardId');
-        const notification = document.getElementById('notification');
-        const micBtn = document.getElementById('micBtn');
-        const videoBtn = document.getElementById('videoBtn');
-        const localVideo = document.getElementById('localVideo');
-        const remoteVideo = document.getElementById('remoteVideo');
-        const localVideoPlaceholder = localVideo.nextElementSibling;
-        const remoteVideoPlaceholder = remoteVideo.nextElementSibling;
-        const togglePanelBtn = document.getElementById('togglePanel');
-        const loadingScreen = document.getElementById('loading');
-        const loadingText = document.getElementById('loadingText');
-        const shapePreview = document.getElementById('shapePreview');
-        const lobbyScreen = document.getElementById('lobby');
-        const waitingRoom = document.getElementById('waitingRoom');
-        const userNameInput = document.getElementById('userNameInput');
-        const joinBtn = document.getElementById('joinBtn');
-        const moreBtn = document.getElementById('moreBtn');
-        const dropdownContent = document.getElementById('dropdownContent');
-        const exportModal = document.getElementById('exportModal');
-        const exportPdf = document.getElementById('exportPdf');
-        const exportPng = document.getElementById('exportPng');
-        const exportJpg = document.getElementById('exportJpg');
-        const cancelExport = document.getElementById('cancelExport');
-        const inviteModal = document.getElementById('inviteModal');
-        const inviteLink = document.getElementById('inviteLink');
-        const copyInviteLink = document.getElementById('copyInviteLink');
-        const boardCode = document.getElementById('boardCode');
-        const closeInviteModal = document.getElementById('closeInviteModal');
-        const participantsModal = document.getElementById('participantsModal');
-        const participantsList = document.getElementById('participantsList');
-        const waitingList = document.getElementById('waitingList');
-        const waitingParticipants = document.getElementById('waitingParticipants');
-        const closeParticipantsModal = document.getElementById('closeParticipantsModal');
-        const settingsModal = document.getElementById('settingsModal');
-        const userNameSetting = document.getElementById('userNameSetting');
-        const userColorSetting = document.getElementById('userColorSetting');
-        const approvalSetting = document.getElementById('approvalSetting');
-        const saveSettings = document.getElementById('saveSettings');
-        const closeSettingsModal = document.getElementById('closeSettingsModal');
-        const pinnedElement = document.getElementById('pinnedElement');
-        const pinnedTitle = document.getElementById('pinnedTitle');
-        const pinnedContent = document.getElementById('pinnedContent');
-        const pinnedClose = document.getElementById('pinnedClose');
-        const savePrompt = document.getElementById('savePrompt');
-        const saveBoard = document.getElementById('saveBoard');
-        const discardChanges = document.getElementById('discardChanges');
-        const backgroundOptions = document.querySelectorAll('.background-option');
-
-        // Whiteboard state
-        let currentTool = 'pencil';
-        let currentColor = '#000000';
-        let currentLineWidth = 3;
-        let isDrawing = false;
-        let startX = 0;
-        let startY = 0;
-        let lastX = 0;
-        let lastY = 0;
-        let drawingHistory = [];
-        let historyPointer = -1;
-        let users = {};
-        let isTextInputActive = false;
-        let tempCanvas = document.createElement('canvas');
-        let tempCtx = tempCanvas.getContext('2d');
-
-        // Application state
-        let isHost = false;
-        let requiresApproval = false;
-        let hasUnsavedChanges = false;
-        let isPanelCollapsed = false;
-        let userId = generateUserId();
-        let userName = "Guest";
-        let userColor = generateRandomColor();
-        let boardId = generateBoardId();
-        let waitingUsers = [];
-        let socket = null;
-
-        // Media state
-        let localStream = null;
-        let remoteStream = null;
-        let peerConnection = null;
-        let isMicOn = false;
-        let isVideoOn = false;
-        let virtualBackground = null;
-        let backgroundProcessor = null;
-
-        const configuration = {
-            iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' },
-                { urls: 'stun:stun2.l.google.com:19302' }
-            ]
-        };
-
-        // Keyboard shortcuts
-        const toolShortcuts = {
-            'p': 'pencil',
-            'l': 'line',
-            'r': 'rectangle',
-            'c': 'circle',
-            'e': 'eraser',
-            't': 'text',
-            'z': 'undo',
-            'y': 'redo'
-        };
-
-        // Generate a unique user ID
-        function generateUserId() {
-            return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
-        }
-
-        // Generate a random color
-        function generateRandomColor() {
-            return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
-        }
-
-        // Generate a board ID
-        function generateBoardId() {
-            return Math.random().toString(36).substring(2, 8).toUpperCase();
-        }
-
-        // Initialize the application
-        function init() {
-            // Set canvas size
-            resizeCanvas();
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Website loaded successfully!');
             
-            // Set initial styles
-            ctx.strokeStyle = currentColor;
-            ctx.lineWidth = currentLineWidth;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.font = `${currentLineWidth * 5}px Arial`;
-            ctx.fillStyle = currentColor;
-            
-            // Initialize temp canvas
-            tempCanvas.width = whiteboard.width;
-            tempCanvas.height = whiteboard.height;
-            
-            // Check if we're joining an existing board
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlBoardId = urlParams.get('board');
-            
-            if (urlBoardId) {
-                // Show lobby screen to get user name
-                showLobby();
-            } else {
-                // We're creating a new board - show lobby to get user name
-                showLobby();
-                isHost = true;
-                requiresApproval = false;
-            }
-            
-            // Set up event listeners
-            setupEventListeners();
-        }
-
-        // Set up all event listeners
-        function setupEventListeners() {
-            // Window resize
-            window.addEventListener('resize', resizeCanvas);
-            
-            // Before unload - prompt to save changes
-            window.addEventListener('beforeunload', (e) => {
-                if (hasUnsavedChanges) {
+            // Example interactive element
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-                    showSavePrompt();
-                }
-            });
-            
-            // Tool selection
-            tools.forEach(tool => {
-                tool.addEventListener('click', () => {
-                    if (isTextInputActive) return;
-                    const toolName = tool.dataset.tool;
-                    selectTool(toolName);
+                    alert('Button clicked! Implement your functionality here.');
                 });
             });
-            
-            // Color and size controls
-            colorPicker.addEventListener('input', (e) => {
-                currentColor = e.target.value;
-                ctx.strokeStyle = currentColor;
-                ctx.fillStyle = currentColor;
-            });
-            
-            lineWidthSlider.addEventListener('input', (e) => {
-                currentLineWidth = parseInt(e.target.value);
-                ctx.lineWidth = currentLineWidth;
-                ctx.font = `${currentLineWidth * 5}px Arial`;
-            });
-            
-            // Copy board ID
-            copyBoardIdBtn.addEventListener('click', () => {
-                navigator.clipboard.writeText(boardIdElement.textContent).then(() => {
-                    showNotification('Board ID copied to clipboard!');
-                }).catch(err => {
-                    console.error('Failed to copy board ID:', err);
-                    showNotification('Failed to copy Board ID');
-                });
-            });
-            
-            // Toggle panel
-            togglePanelBtn.addEventListener('click', () => {
-                isPanelCollapsed = !isPanelCollapsed;
-                document.querySelector('.container').classList.toggle('panel-collapsed');
-                const icon = togglePanelBtn.querySelector('i');
-                
-                if (isPanelCollapsed) {
-                    icon.classList.remove('fa-chevron-left');
-                    icon.classList.add('fa-chevron-right');
-                } else {
-                    icon.classList.remove('fa-chevron-right');
-                    icon.classList.add('fa-chevron-left');
-                }
-            });
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                if (isTextInputActive) return;
-                
-                // Tool shortcuts
-                if (toolShortcuts[e.key.toLowerCase()]) {
-                    const toolName = toolShortcuts[e.key.toLowerCase()];
-                    selectTool(toolName);
-                    e.preventDefault();
-                }
-                
-                // Undo/Redo shortcuts
-                if (e.ctrlKey || e.metaKey) {
-                    if (e.key === 'z') {
-                        undo();
-                        e.preventDefault();
-                    } else if (e.key === 'y') {
-                        redo();
-                        e.preventDefault();
-                    }
-                }
-            });
-            
-            // Whiteboard drawing events
-            whiteboard.addEventListener('mousedown', startDrawing);
-            whiteboard.addEventListener('mousemove', draw);
-            whiteboard.addEventListener('mouseup', stopDrawing);
-            whiteboard.addEventListener('mouseout', stopDrawing);
-            whiteboard.addEventListener('click', handleClick);
-            
-            // Media controls
-            micBtn.addEventListener('click', toggleMic);
-            videoBtn.addEventListener('click', toggleVideo);
-            
-            // Lobby screen
-            joinBtn.addEventListener('click', joinSession);
-            userNameInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    joinSession();
-                }
-            });
-            
-            // More menu
-            moreBtn.addEventListener('click', toggleMoreMenu);
-            
-            // Export modal
-            exportPdf.addEventListener('click', exportAsPdf);
-            exportPng.addEventListener('click', exportAsPng);
-            exportJpg.addEventListener('click', exportAsJpg);
-            cancelExport.addEventListener('click', () => {
-                exportModal.style.display = 'none';
-            });
-            
-            // Invite modal
-            copyInviteLink.addEventListener('click', copyInviteLinkToClipboard);
-            closeInviteModal.addEventListener('click', () => {
-                inviteModal.style.display = 'none';
-            });
-            
-            // Participants modal
-            closeParticipantsModal.addEventListener('click', () => {
-                participantsModal.style.display = 'none';
-            });
-            
-            // Settings modal
-            saveSettings.addEventListener('click', saveUserSettings);
-            closeSettingsModal.addEventListener('click', () => {
-                settingsModal.style.display = 'none';
-            });
-            
-            // Pinned element
-            pinnedClose.addEventListener('click', () => {
-                pinnedElement.style.display = 'none';
-            });
-            
-            // Save prompt
-            saveBoard.addEventListener('click', saveCurrentBoard);
-            discardChanges.addEventListener('click', () => {
-                hasUnsavedChanges = false;
-                savePrompt.style.display = 'none';
-                // In a real app, we would navigate away here
-            });
-            
-            // Background options
-            backgroundOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    selectBackground(option.dataset.bg);
-                });
-            });
-            
-            // Dropdown menu items
-            document.getElementById('inviteOption').addEventListener('click', showInviteModal);
-            document.getElementById('participantsOption').addEventListener('click', showParticipantsModal);
-            document.getElementById('exportOption').addEventListener('click', showExportModal);
-            document.getElementById('settingsOption').addEventListener('click', showSettingsModal);
-        }
-        
-        // Resize canvas to fit container
-        function resizeCanvas() {
-            const container = whiteboard.parentElement;
-            whiteboard.width = container.offsetWidth;
-            whiteboard.height = container.offsetHeight;
-            tempCanvas.width = container.offsetWidth;
-            tempCanvas.height = container.offsetHeight;
-            
-            // Redraw everything after resize
-            redrawWhiteboard();
-        }
-        
-        // Show loading screen
-        function showLoading(message) {
-            loadingText.textContent = message;
-            loadingScreen.style.display = 'flex';
-            lobbyScreen.style.display = 'none';
-            waitingRoom.style.display = 'none';
-        }
-        
-        // Hide loading screen
-        function hideLoading() {
-            loadingScreen.style.display = 'none';
-        }
-        
-        // Show lobby screen
-        function showLobby() {
-            lobbyScreen.style.display = 'flex';
-            waitingRoom.style.display = 'none';
-            loadingScreen.style.display = 'none';
-        }
-        
-        // Show waiting room
-        function showWaitingRoom() {
-            waitingRoom.style.display = 'flex';
-            lobbyScreen.style.display = 'none';
-            loadingScreen.style.display = 'none';
-        }
-        
-        // Join the session
-        function joinSession() {
-            const name = userNameInput.value.trim();
-            if (name === '') {
-                alert('Please enter your name');
-                return;
-            }
-            
-            setUserName(name);
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlBoardId = urlParams.get('board');
-            
-            if (urlBoardId) {
-                // Joining existing board
-                showLoading('Joining board...');
-                
-                // Connect to socket.io server
-                socket = io();
-                
-                // Check if approval is required
-                socket.emit('checkApproval', { boardId: urlBoardId }, (response) => {
-                    if (response.requiresApproval) {
-                        showWaitingRoom();
-                        // The host will approve or reject the user
-                    } else {
-                        // No approval needed, join directly
-                        socket.emit('joinBoard', { 
-                            boardId: urlBoardId, 
-                            userId: getUserId(),
-                            userName: getUserName(),
-                            userColor: getUserColor()
-                        });
-                    }
-                });
-            } else {
-                // Creating new board
-                showLoading('Creating new board...');
-                isHost = true;
-                
-                socket = io();
-                socket.emit('createBoard', { 
-                    userId: getUserId(),
-                    userName: getUserName(),
-                    userColor: getUserColor(),
-                    requiresApproval: requiresApproval
-                });
-                
-                // Set the board ID
-                setBoardId(boardId);
-            }
-            
-            // Set up socket event listeners
-            setupSocketListeners();
-        }
-        
-        // Set up socket.io event listeners
-        function setupSocketListeners() {
-            if (!socket) return;
-            
-            socket.on('connect', () => {
-                console.log('Connected to server');
-            });
-            
-            socket.on('boardCreated', (data) => {
-                setBoardId(data.boardId);
-                hideLoading();
-            });
-            
-            socket.on('userJoined', (data) => {
-                users[data.userId] = data;
-                updateUserList();
-            });
-            
-            socket.on('userLeft', (userId) => {
-                delete users[userId];
-                updateUserList();
-            });
-            
-            socket.on('draw', (action) => {
-                drawAction(action);
-            });
-            
-            socket.on('clear', () => {
-                drawingHistory = [];
-                historyPointer = -1;
-                redrawWhiteboard();
-            });
-            
-            socket.on('cursorMove', (data) => {
-                // Update cursor position for other users
-            });
-            
-            socket.on('offer', async (data) => {
-                if (!peerConnection) {
-                    setupPeerConnection();
-                }
-                
-                try {
-                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-                    const answer = await peerConnection.createAnswer();
-                    await peerConnection.setLocalDescription(answer);
-                    
-                    socket.emit('answer', {
-                        answer: answer,
-                        boardId: getBoardId(),
-                        userId: getUserId(),
-                        toUserId: data.userId
-                    });
-                } catch (err) {
-                    console.error('Error handling offer:', err);
-                }
-            });
-            
-            socket.on('answer', async (data) => {
-                try {
-                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-                } catch (err) {
-                    console.error('Error handling answer:', err);
-                }
-            });
-            
-            socket.on('iceCandidate', async (data) => {
-                try {
-                    if (data.candidate) {
-                        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-                    }
-                } catch (err) {
-                    console.error('Error adding ICE candidate:', err);
-                }
-            });
-            
-            socket.on('notification', (message) => {
-                showNotification(message);
-            });
-        }
-        
-        // Select a tool
-        function selectTool(toolName) {
-            // If already selected, don't do anything
-            if (currentTool === toolName && toolName !== 'text') return;
-            
-            // Deselect all tools
-            tools.forEach(t => t.classList.remove('active'));
-            
-            // Find and select the new tool
-            const newTool = Array.from(tools).find(t => t.dataset.tool === toolName);
-            if (newTool) {
-                newTool.classList.add('active');
-                currentTool = toolName;
-                
-                // Handle special tools
-                if (toolName === 'undo') {
-                    undo();
-                    selectTool('pencil');
-                } else if (toolName === 'redo') {
-                    redo();
-                    selectTool('pencil');
-                } else if (toolName === 'clear') {
-                    clearBoard();
-                    selectTool('pencil');
-                } else if (toolName === 'text') {
-                    startTextInput();
-                }
-            }
-        }
-        
-        // Start text input
-        function startTextInput() {
-            isTextInputActive = true;
-            const text = prompt('Enter your text:');
-            
-            if (text) {
-                const action = {
-                    tool: 'text',
-                    color: currentColor,
-                    x: lastX,
-                    y: lastY,
-                    text: text,
-                    size: currentLineWidth,
-                    userId: getUserId()
-                };
-                
-                // Add to history
-                addToHistory(action);
-                
-                // Send to server
-                socket.emit('draw', action);
-                
-                // Draw the text
-                drawAction(action);
-                
-                hasUnsavedChanges = true;
-            }
-            
-            isTextInputActive = false;
-            selectTool('pencil');
-        }
-        
-        // Drawing functions
-        function startDrawing(e) {
-            if (currentTool === 'undo' || currentTool === 'redo' || currentTool === 'clear' || isTextInputActive) return;
-            
-            isDrawing = true;
-            startX = e.offsetX;
-            startY = e.offsetY;
-            lastX = e.offsetX;
-            lastY = e.offsetY;
-            
-            // Start a new path for freehand drawing
-            if (currentTool === 'pencil' || currentTool === 'eraser') {
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-            }
-            
-            // Send cursor position to other users
-            socket.emit('cursorMove', { 
-                x: e.offsetX, 
-                y: e.offsetY, 
-                userId: getUserId() 
-            });
-        }
-        
-        function draw(e) {
-            const x = e.offsetX;
-            const y = e.offsetY;
-            
-            // Always send cursor position
-            socket.emit('cursorMove', { 
-                x, 
-                y, 
-                userId: getUserId() 
-            });
-            
-            if (!isDrawing) return;
-            
-            lastX = x;
-            lastY = y;
-            
-            switch (currentTool) {
-                case 'pencil':
-                    ctx.strokeStyle = currentColor;
-                    ctx.lineTo(x, y);
-                    ctx.stroke();
-                    
-                    // Send drawing data to server
-                    socket.emit('draw', { 
-                        tool: currentTool,
-                        color: currentColor,
-                        x1: lastX,
-                        y1: lastY,
-                        x2: x,
-                        y2: y,
-                        lineWidth: currentLineWidth,
-                        userId: getUserId()
-                    });
-                    
-                    hasUnsavedChanges = true;
-                    break;
-                    
-                case 'eraser':
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.lineTo(x, y);
-                    ctx.stroke();
-                    
-                    // Send drawing data to server
-                    socket.emit('draw', { 
-                        tool: currentTool,
-                        color: '#ffffff',
-                        x1: lastX,
-                        y1: lastY,
-                        x2: x,
-                        y2: y,
-                        lineWidth: currentLineWidth,
-                        userId: getUserId()
-                    });
-                    
-                    hasUnsavedChanges = true;
-                    break;
-                    
-                case 'line':
-                case 'rectangle':
-                case 'circle':
-                    // For shapes, we'll just show a preview and handle the final drawing in stopDrawing
-                    drawShapePreview(startX, startY, x, y, currentTool);
-                    break;
-            }
-        }
-        
-        function drawShapePreview(x1, y1, x2, y2, shapeType) {
-            // Clear the preview
-            shapePreview.innerHTML = '';
-            
-            // Create a div for the preview
-            const preview = document.createElement('div');
-            preview.style.position = 'absolute';
-            preview.style.border = `${currentLineWidth}px solid ${currentColor}`;
-            preview.style.backgroundColor = shapeType === 'rectangle' ? `${currentColor}20` : 'transparent';
-            
-            switch (shapeType) {
-                case 'line':
-                    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    const angle = Math.atan2(y2 - y1, x2 - x1);
-                    preview.style.width = `${length}px`;
-                    preview.style.height = '0';
-                    preview.style.borderBottom = `${currentLineWidth}px solid ${currentColor}`;
-                    preview.style.transformOrigin = '0 0';
-                    preview.style.transform = `rotate(${angle}rad)`;
-                    preview.style.left = `${x1}px`;
-                    preview.style.top = `${y1}px`;
-                    break;
-                    
-                case 'rectangle':
-                    preview.style.left = `${Math.min(x1, x2)}px`;
-                    preview.style.top = `${Math.min(y1, y2)}px`;
-                    preview.style.width = `${Math.abs(x2 - x1)}px`;
-                    preview.style.height = `${Math.abs(y2 - y1)}px`;
-                    break;
-                    
-                case 'circle':
-                    const radius = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    preview.style.width = `${radius * 2}px`;
-                    preview.style.height = `${radius * 2}px`;
-                    preview.style.borderRadius = '50%';
-                    preview.style.left = `${x1 - radius}px`;
-                    preview.style.top = `${y1 - radius}px`;
-                    break;
-            }
-            
-            shapePreview.appendChild(preview);
-        }
-        
-        function handleClick(e) {
-            if (currentTool === 'text') {
-                lastX = e.offsetX;
-                lastY = e.offsetY;
-                startTextInput();
-            }
-        }
-        
-        function stopDrawing(e) {
-            if (!isDrawing || currentTool === 'text') return;
-            
-            const x = e.offsetX;
-            const y = e.offsetY;
-            
-            // Clear the preview
-            shapePreview.innerHTML = '';
-            
-            // For shapes, complete the drawing and add to history
-            if (currentTool === 'line' || currentTool === 'rectangle' || currentTool === 'circle') {
-                const shape = {
-                    tool: currentTool,
-                    color: currentColor,
-                    x1: startX,
-                    y1: startY,
-                    x2: x,
-                    y2: y,
-                    lineWidth: currentLineWidth,
-                    userId: getUserId()
-                };
-                
-                // Add to history
-                addToHistory(shape);
-                
-                // Send to server
-                socket.emit('draw', shape);
-                
-                // Draw the shape
-                drawAction(shape);
-                
-                hasUnsavedChanges = true;
-            } else if (currentTool === 'pencil' || currentTool === 'eraser') {
-                // For pencil/eraser, the path is already drawn
-                ctx.closePath();
-            }
-            
-            isDrawing = false;
-        }
-        
-        // History functions
-        function addToHistory(action) {
-            // If we're not at the end of history, discard future actions
-            if (historyPointer < drawingHistory.length - 1) {
-                drawingHistory = drawingHistory.slice(0, historyPointer + 1);
-            }
-            
-            drawingHistory.push(action);
-            historyPointer = drawingHistory.length - 1;
-        }
-        
-        function undo() {
-            if (historyPointer >= 0) {
-                historyPointer--;
-                redrawWhiteboard();
-                socket.emit('undo', { userId: getUserId() });
-                hasUnsavedChanges = true;
-            }
-        }
-        
-        function redo() {
-            if (historyPointer < drawingHistory.length - 1) {
-                historyPointer++;
-                redrawWhiteboard();
-                socket.emit('redo', { userId: getUserId() });
-                hasUnsavedChanges = true;
-            }
-        }
-        
-        function clearBoard() {
-            if (confirm('Are you sure you want to clear the board? This cannot be undone.')) {
-                drawingHistory = [];
-                historyPointer = -1;
-                redrawWhiteboard();
-                socket.emit('clear', { userId: getUserId() });
-                hasUnsavedChanges = true;
-            }
-        }
-        
-        function redrawWhiteboard() {
-            // Clear canvas
-            ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
-            
-            // Redraw all actions up to history pointer
-            for (let i = 0; i <= historyPointer; i++) {
-                const action = drawingHistory[i];
-                drawAction(action, false);
-            }
-        }
-        
-        function drawAction(action, addToHistoryFlag = true) {
-            ctx.strokeStyle = action.color;
-            ctx.fillStyle = action.color;
-            ctx.lineWidth = action.lineWidth || 3;
-            
-            switch (action.tool) {
-                case 'pencil':
-                case 'eraser':
-                    ctx.beginPath();
-                    ctx.moveTo(action.x1, action.y1);
-                    ctx.lineTo(action.x2, action.y2);
-                    ctx.stroke();
-                    break;
-                    
-                case 'line':
-                    ctx.beginPath();
-                    ctx.moveTo(action.x1, action.y1);
-                    ctx.lineTo(action.x2, action.y2);
-                    ctx.stroke();
-                    break;
-                    
-                case 'rectangle':
-                    ctx.beginPath();
-                    const rectWidth = action.x2 - action.x1;
-                    const rectHeight = action.y2 - action.y1;
-                    ctx.rect(action.x1, action.y1, rectWidth, rectHeight);
-                    ctx.stroke();
-                    break;
-                    
-                case 'circle':
-                    ctx.beginPath();
-                    const radius = Math.sqrt(Math.pow(action.x2 - action.x1, 2) + Math.pow(action.y2 - action.y1, 2));
-                    ctx.arc(action.x1, action.y1, radius, 0, Math.PI * 2);
-                    ctx.stroke();
-                    break;
-                    
-                case 'text':
-                    ctx.font = `${action.size * 5}px Arial`;
-                    ctx.fillText(action.text, action.x, action.y);
-                    break;
-            }
-            
-            if (addToHistoryFlag) {
-                addToHistory(action);
-            }
-        }
-        
-        // Media functions
-        async function toggleMic() {
-            try {
-                if (!localStream) {
-                    localStream = await navigator.mediaDevices.getUserMedia({ 
-                        audio: true, 
-                        video: isVideoOn 
-                    });
-                    
-                    if (isVideoOn) {
-                        localVideo.srcObject = localStream;
-                        localVideoPlaceholder.style.display = 'none';
-                        localVideo.style.display = 'block';
-                    }
-                }
-                
-                const audioTracks = localStream.getAudioTracks();
-                audioTracks.forEach(track => {
-                    track.enabled = !track.enabled;
-                });
-                
-                isMicOn = !isMicOn;
-                micBtn.classList.toggle('off', !isMicOn);
-                micBtn.querySelector('i').className = isMicOn ? 'fas fa-microphone' : 'fas fa-microphone-slash';
-                
-                showNotification(isMicOn ? 'Microphone enabled' : 'Microphone muted');
-                
-                // Update WebRTC connection if it exists
-                if (peerConnection) {
-                    setupPeerConnection();
-                }
-            } catch (err) {
-                console.error('Error accessing microphone:', err);
-                showNotification('Could not access microphone');
-                isMicOn = false;
-                micBtn.classList.add('off');
-                micBtn.querySelector('i').className = 'fas fa-microphone-slash';
-            }
-        }
-        
-        async function toggleVideo() {
-            try {
-                if (!localStream) {
-                    localStream = await navigator.mediaDevices.getUserMedia({ 
-                        video: true, 
-                        audio: isMicOn 
-                    });
-                    
-                    localVideo.srcObject = localStream;
-                    localVideoPlaceholder.style.display = 'none';
-                    localVideo.style.display = 'block';
-                    isVideoOn = true;
-                    videoBtn.classList.remove('off');
-                    videoBtn.querySelector('i').className = 'fas fa-video';
-                    showNotification('Video enabled');
-                    
-                    // Start WebRTC connection
-                    setupPeerConnection();
-                } else {
-                    const videoTracks = localStream.getVideoTracks();
-                    videoTracks.forEach(track => {
-                        track.enabled = !track.enabled;
-                    });
-                    
-                    isVideoOn = !isVideoOn;
-                    videoBtn.classList.toggle('off', !isVideoOn);
-                    videoBtn.querySelector('i').className = isVideoOn ? 'fas fa-video' : 'fas fa-video-slash';
-                    localVideoPlaceholder.style.display = isVideoOn ? 'none' : 'flex';
-                    localVideo.style.display = isVideoOn ? 'block' : 'none';
-                    showNotification(isVideoOn ? 'Video enabled' : 'Video disabled');
-                    
-                    // Update WebRTC connection if it exists
-                    if (peerConnection) {
-                        setupPeerConnection();
-                    }
-                }
-            } catch (err) {
-                console.error('Error accessing camera:', err);
-                showNotification('Could not access camera');
-                isVideoOn = false;
-                videoBtn.classList.add('off');
-                videoBtn.querySelector('i').className = 'fas fa-video-slash';
-                localVideoPlaceholder.style.display = 'flex';
-                localVideo.style.display = 'none';
-            }
-        }
-        
-        function setupPeerConnection() {
-            if (peerConnection) {
-                peerConnection.close();
-            }
-            
-            peerConnection = new RTCPeerConnection(configuration);
-            
-            // Add local stream to connection
-            if (localStream) {
-                localStream.getTracks().forEach(track => {
-                    peerConnection.addTrack(track, localStream);
-                });
-            }
-            
-            // Listen for ICE candidates
-            peerConnection.onicecandidate = (event) => {
-                if (event.candidate) {
-                    socket.emit('iceCandidate', { 
-                        candidate: event.candidate, 
-                        boardId: getBoardId(), 
-                        userId: getUserId() 
-                    });
-                }
-            };
-            
-            // Listen for remote stream
-            peerConnection.ontrack = (event) => {
-                remoteVideo.srcObject = event.streams[0];
-                remoteVideoPlaceholder.style.display = 'none';
-                remoteVideo.style.display = 'block';
-                setRemoteStream(event.streams[0]);
-            };
-            
-            // Create and send offer
-            peerConnection.createOffer()
-                .then(offer => peerConnection.setLocalDescription(offer))
-                .then(() => {
-                    socket.emit('offer', { 
-                        offer: peerConnection.localDescription, 
-                        boardId: getBoardId(), 
-                        userId: getUserId() 
-                    });
-                })
-                .catch(err => {
-                    console.error('Error creating offer:', err);
-                });
-        }
-        
-        // User management
-        function updateUserList() {
-            userList.innerHTML = '';
-            let count = 0;
-            
-            Object.values(users).forEach(user => {
-                if (user.userId === getUserId()) return;
-                
-                count++;
-                
-                const userItem = document.createElement('div');
-                userItem.className = 'user-item';
-                
-                const userColor = document.createElement('div');
-                userColor.className = 'user-color';
-                userColor.style.backgroundColor = user.userColor;
-                
-                const userName = document.createElement('div');
-                userName.className = 'user-name';
-                userName.textContent = user.userName;
-                
-                const userRole = document.createElement('div');
-                userRole.className = 'user-role';
-                userRole.textContent = user.isHost ? 'Host' : 'Participant';
-                
-                userItem.appendChild(userColor);
-                userItem.appendChild(userName);
-                userItem.appendChild(userRole);
-                userList.appendChild(userItem);
-            });
-            
-            participantCount.textContent = count;
-        }
-        
-        // More menu functions
-        function toggleMoreMenu() {
-            const isOpen = dropdownContent.style.display === 'block';
-            dropdownContent.style.display = isOpen ? 'none' : 'block';
-            
-            // Close when clicking outside
-            if (!isOpen) {
-                setTimeout(() => {
-                    document.addEventListener('click', closeMoreMenuOnClickOutside);
-                }, 0);
-            } else {
-                document.removeEventListener('click', closeMoreMenuOnClickOutside);
-            }
-        }
-        
-        function closeMoreMenuOnClickOutside(e) {
-            if (!dropdownContent.contains(e.target) && !moreBtn.contains(e.target)) {
-                dropdownContent.style.display = 'none';
-                document.removeEventListener('click', closeMoreMenuOnClickOutside);
-            }
-        }
-        
-        function showInviteModal() {
-            inviteLink.value = `${window.location.origin}${window.location.pathname}?board=${getBoardId()}`;
-            boardCode.textContent = getBoardId();
-            inviteModal.style.display = 'flex';
-            dropdownContent.style.display = 'none';
-        }
-        
-        function copyInviteLinkToClipboard() {
-            navigator.clipboard.writeText(inviteLink.value).then(() => {
-                showNotification('Invite link copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy invite link:', err);
-                showNotification('Failed to copy invite link');
-            });
-        }
-        
-        function showParticipantsModal() {
-            participantsList.innerHTML = '';
-            waitingParticipants.innerHTML = '';
-            
-            // Add current participants
-            Object.values(users).forEach(user => {
-                const participantItem = document.createElement('div');
-                participantItem.className = 'user-item';
-                
-                const userColor = document.createElement('div');
-                userColor.className = 'user-color';
-                userColor.style.backgroundColor = user.userColor;
-                
-                const userName = document.createElement('div');
-                userName.className = 'user-name';
-                userName.textContent = user.userName;
-                
-                const userRole = document.createElement('div');
-                userRole.className = 'user-role';
-                userRole.textContent = user.isHost ? 'Host' : 'Participant';
-                
-                participantItem.appendChild(userColor);
-                participantItem.appendChild(userName);
-                participantItem.appendChild(userRole);
-                participantsList.appendChild(participantItem);
-            });
-            
-            // Add waiting participants if host
-            if (isHost && waitingUsers.length > 0) {
-                waitingList.style.display = 'block';
-                
-                waitingUsers.forEach(user => {
-                    const waitingItem = document.createElement('div');
-                    waitingItem.className = 'user-item';
-                    
-                    const userColor = document.createElement('div');
-                    userColor.className = 'user-color';
-                    userColor.style.backgroundColor = user.userColor;
-                    
-                    const userName = document.createElement('div');
-                    userName.className = 'user-name';
-                    userName.textContent = user.userName;
-                    
-                    const approveBtn = document.createElement('button');
-                    approveBtn.className = 'board-btn';
-                    approveBtn.innerHTML = '<i class="fas fa-check"></i>';
-                    approveBtn.addEventListener('click', () => {
-                        socket.emit('approveUser', { 
-                            boardId: getBoardId(), 
-                            userId: user.userId 
-                        });
-                    });
-                    
-                    const rejectBtn = document.createElement('button');
-                    rejectBtn.className = 'board-btn';
-                    rejectBtn.innerHTML = '<i class="fas fa-times"></i>';
-                    rejectBtn.addEventListener('click', () => {
-                        socket.emit('rejectUser', { 
-                            boardId: getBoardId(), 
-                            userId: user.userId 
-                        });
-                    });
-                    
-                    waitingItem.appendChild(userColor);
-                    waitingItem.appendChild(userName);
-                    waitingItem.appendChild(approveBtn);
-                    waitingItem.appendChild(rejectBtn);
-                    waitingParticipants.appendChild(waitingItem);
-                });
-            } else {
-                waitingList.style.display = 'none';
-            }
-            
-            participantsModal.style.display = 'flex';
-            dropdownContent.style.display = 'none';
-        }
-        
-        function showExportModal() {
-            exportModal.style.display = 'flex';
-            dropdownContent.style.display = 'none';
-        }
-        
-        function exportAsPdf() {
-            // In a real app, this would use a library like jsPDF
-            showNotification('Export as PDF is not implemented in this demo');
-            exportModal.style.display = 'none';
-        }
-        
-        function exportAsPng() {
-            const dataUrl = whiteboard.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.download = `whiteboard-${getBoardId()}.png`;
-            link.href = dataUrl;
-            link.click();
-            showNotification('Exported as PNG');
-            exportModal.style.display = 'none';
-        }
-        
-        function exportAsJpg() {
-            const dataUrl = whiteboard.toDataURL('image/jpeg');
-            const link = document.createElement('a');
-            link.download = `whiteboard-${getBoardId()}.jpg`;
-            link.href = dataUrl;
-            link.click();
-            showNotification('Exported as JPG');
-            exportModal.style.display = 'none';
-        }
-        
-        function showSettingsModal() {
-            userNameSetting.value = getUserName();
-            userColorSetting.value = getUserColor();
-            approvalSetting.checked = requiresApproval;
-            settingsModal.style.display = 'flex';
-            dropdownContent.style.display = 'none';
-        }
-        
-        function saveUserSettings() {
-            setUserName(userNameSetting.value);
-            setUserColor(userColorSetting.value);
-            requiresApproval = approvalSetting.checked;
-            
-            // Update on server if host
-            if (isHost) {
-                socket.emit('updateBoardSettings', { 
-                    boardId: getBoardId(), 
-                    requiresApproval: requiresApproval 
-                });
-            }
-            
-            showNotification('Settings saved');
-            settingsModal.style.display = 'none';
-        }
-        
-        // Virtual background functions
-        function selectBackground(bg) {
-            virtualBackground = bg;
-            
-            // Remove selected class from all options
-            backgroundOptions.forEach(option => {
-                option.classList.remove('selected');
-            });
-            
-            // Add selected class to chosen option
-            const selectedOption = document.querySelector(`.background-option[data-bg="${bg}"]`);
-            if (selectedOption) {
-                selectedOption.classList.add('selected');
-            }
-            
-            // In a real app, we would apply the virtual background here
-            // This would require more complex WebRTC processing
-            showNotification(`Background set to ${bg === 'none' ? 'none' : bg}`);
-        }
-        
-        // Pinning functions
-        function pinElement(element, title) {
-            pinnedTitle.textContent = title;
-            pinnedContent.innerHTML = '';
-            
-            if (element === 'whiteboard') {
-                // Clone the whiteboard canvas
-                const clone = whiteboard.cloneNode();
-                const cloneCtx = clone.getContext('2d');
-                cloneCtx.drawImage(whiteboard, 0, 0);
-                pinnedContent.appendChild(clone);
-            } else if (element === 'localVideo') {
-                // Clone the local video
-                const clone = localVideo.cloneNode();
-                clone.srcObject = localVideo.srcObject;
-                pinnedContent.appendChild(clone);
-            } else if (element === 'remoteVideo') {
-                // Clone the remote video
-                const clone = remoteVideo.cloneNode();
-                clone.srcObject = remoteVideo.srcObject;
-                pinnedContent.appendChild(clone);
-            }
-            
-            pinnedElement.style.display = 'flex';
-            setPinnedElement(element);
-        }
-        
-        // Save functions
-        function showSavePrompt() {
-            savePrompt.style.display = 'flex';
-        }
-        
-        function saveCurrentBoard() {
-            // In a real app, this would save to a database or local storage
-            hasUnsavedChanges = false;
-            showNotification('Board saved');
-            savePrompt.style.display = 'none';
-        }
-        
-        // Notification functions
-        function showNotification(message) {
-            notification.textContent = message;
-            notification.style.display = 'block';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
-        }
-        
-        // Getters for state
-        function getUserId() {
-            return userId;
-        }
-        
-        function getUserName() {
-            return userName;
-        }
-        
-        function getUserColor() {
-            return userColor;
-        }
-        
-        function getBoardId() {
-            return boardId;
-        }
-        
-        // Setters for state
-        function setUserId(id) {
-            userId = id;
-        }
-        
-        function setUserName(name) {
-            userName = name;
-            boardIdElement.textContent = boardId;
-        }
-        
-        function setUserColor(color) {
-            userColor = color;
-        }
-        
-        function setBoardId(id) {
-            boardId = id;
-            boardIdElement.textContent = id;
-        }
-        
-        function setRemoteStream(stream) {
-            remoteStream = stream;
-        }
-        
-        // Initialize the application
-        init();
+        });
     </script>
 </body>
 </html>
