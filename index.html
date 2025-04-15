@@ -3,279 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A modern website template with responsive design">
-    <title>Modern Website</title>
+    <title>Simple Whiteboard</title>
     <style>
-        /* CSS Reset & Base Styles */
-        :root {
-            --primary: #2563eb;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --gray: #94a3b8;
-        }
-        
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            overflow: hidden;
+            background-color: #f0f0f0;
         }
         
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            line-height: 1.6;
-            color: var(--dark);
-            background-color: var(--light);
-        }
-        
-        /* Layout */
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        
-        /* Header */
-        header {
+        #whiteboard {
+            display: block;
             background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            cursor: crosshair;
         }
         
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-        
-        .nav-links a {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-        
-        /* Hero Section */
-        .hero {
-            padding: 4rem 0;
-            text-align: center;
-        }
-        
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--gray);
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-        
-        .btn {
-            display: inline-block;
-            background-color: var(--primary);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            font-weight: 600;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        /* Features Section */
-        .features {
-            padding: 4rem 0;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        
-        .feature-card {
+        .toolbar {
+            position: fixed;
+            top: 10px;
+            left: 10px;
             background: white;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
-        /* Footer */
-        footer {
-            background-color: var(--dark);
-            color: white;
-            padding: 3rem 0;
-            margin-top: 3rem;
+        .tool {
+            padding: 8px;
+            margin: 2px;
+            border: none;
+            background: #eee;
+            border-radius: 3px;
+            cursor: pointer;
         }
         
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-        }
-        
-        .footer-column h3 {
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 0.5rem;
-        }
-        
-        .footer-links a {
-            color: var(--gray);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-links a:hover {
+        .tool.active {
+            background: #4CAF50;
             color: white;
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none; /* Replace with hamburger menu in real projects */
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
+        .color-picker {
+            width: 30px;
+            height: 30px;
+            border: none;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+        
+        .size-slider {
+            width: 100px;
+            vertical-align: middle;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <nav>
-                <a href="#" class="logo">BrandName</a>
-                <div class="nav-links">
-                    <a href="#">Home</a>
-                    <a href="#">Features</a>
-                    <a href="#">Pricing</a>
-                    <a href="#">About</a>
-                    <a href="#">Contact</a>
-                </div>
-            </nav>
-        </div>
-    </header>
+    <canvas id="whiteboard"></canvas>
+    
+    <div class="toolbar">
+        <button class="tool active" data-tool="pencil">Pencil</button>
+        <button class="tool" data-tool="line">Line</button>
+        <button class="tool" data-tool="rectangle">Rectangle</button>
+        <button class="tool" data-tool="circle">Circle</button>
+        <button class="tool" data-tool="eraser">Eraser</button>
+        <br>
+        <input type="color" class="color-picker" value="#000000">
+        <input type="range" class="size-slider" min="1" max="20" value="3">
+        <button class="tool" data-tool="clear">Clear</button>
+    </div>
 
-    <!-- Main Content -->
-    <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
-                <h1>Build Amazing Websites</h1>
-                <p>A complete solution for your next project with modern technologies and best practices.</p>
-                <a href="#" class="btn">Get Started</a>
-            </div>
-        </section>
-
-        <!-- Features Section -->
-        <section class="features">
-            <div class="container">
-                <h2 class="section-title">Why Choose Us</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <h3>Fast Performance</h3>
-                        <p>Optimized code and modern techniques ensure your site loads in milliseconds.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Responsive Design</h3>
-                        <p>Looks perfect on all devices from smartphones to desktops.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Easy Customization</h3>
-                        <p>Clean code structure makes customization simple.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>Company</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Blog</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Product</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Features</a></li>
-                        <li><a href="#">Pricing</a></li>
-                        <li><a href="#">Documentation</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Legal</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Privacy</a></li>
-                        <li><a href="#">Terms</a></li>
-                        <li><a href="#">Cookies</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JavaScript (can be moved to separate file) -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Website loaded successfully!');
-            
-            // Example interactive element
-            const buttons = document.querySelectorAll('.btn');
-            buttons.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    alert('Button clicked! Implement your functionality here.');
-                });
+        // Get canvas and context
+        const canvas = document.getElementById('whiteboard');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas size
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        // Drawing state
+        let currentTool = 'pencil';
+        let currentColor = '#000000';
+        let currentSize = 3;
+        let isDrawing = false;
+        let startX, startY;
+        
+        // Tool selection
+        const tools = document.querySelectorAll('.tool');
+        tools.forEach(tool => {
+            tool.addEventListener('click', () => {
+                tools.forEach(t => t.classList.remove('active'));
+                tool.classList.add('active');
+                currentTool = tool.dataset.tool;
+                
+                if (currentTool === 'clear') {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    tool.classList.remove('active');
+                    document.querySelector('[data-tool="pencil"]').classList.add('active');
+                    currentTool = 'pencil';
+                }
             });
         });
+        
+        // Color picker
+        document.querySelector('.color-picker').addEventListener('input', (e) => {
+            currentColor = e.target.value;
+        });
+        
+        // Size slider
+        document.querySelector('.size-slider').addEventListener('input', (e) => {
+            currentSize = parseInt(e.target.value);
+        });
+        
+        // Drawing functions
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            
+            if (currentTool === 'pencil' || currentTool === 'eraser') {
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = currentTool === 'eraser' ? 'white' : currentColor;
+                ctx.lineWidth = currentSize;
+            }
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            switch (currentTool) {
+                case 'pencil':
+                case 'eraser':
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    break;
+                    
+                case 'line':
+                    redrawCanvas();
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(x, y);
+                    ctx.strokeStyle = currentColor;
+                    ctx.lineWidth = currentSize;
+                    ctx.stroke();
+                    break;
+                    
+                case 'rectangle':
+                    redrawCanvas();
+                    ctx.beginPath();
+                    ctx.rect(startX, startY, x - startX, y - startY);
+                    ctx.strokeStyle = currentColor;
+                    ctx.lineWidth = currentSize;
+                    ctx.stroke();
+                    break;
+                    
+                case 'circle':
+                    redrawCanvas();
+                    const radius = Math.sqrt(Math.pow(x - startX, 2) + Math.pow(y - startY, 2);
+                    ctx.beginPath();
+                    ctx.arc(startX, startY, radius, 0, Math.PI * 2);
+                    ctx.strokeStyle = currentColor;
+                    ctx.lineWidth = currentSize;
+                    ctx.stroke();
+                    break;
+            }
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        // Redraw canvas (for shape previews)
+        function redrawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // In a real app, you would redraw all existing elements here
+        }
     </script>
 </body>
 </html>
