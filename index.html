@@ -68,7 +68,6 @@
         .logo-img {
             height: 36px;
             width: auto;
-            transition: var(--transition);
         }
 
         .logo-text {
@@ -80,22 +79,6 @@
             color: transparent;
             position: relative;
             overflow: hidden;
-        }
-
-        .logo-text::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--white), #e0e7ff);
-            transform: translateX(-100%);
-            transition: var(--transition);
-        }
-
-        .logo-container:hover .logo-text::after {
-            transform: translateX(0);
         }
 
         .header-controls {
@@ -135,7 +118,6 @@
             gap: 12px;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
             z-index: 10;
-            transition: var(--transition);
         }
 
         .tool-group {
@@ -158,7 +140,6 @@
             justify-content: center;
             cursor: pointer;
             color: var(--dark);
-            transition: var(--transition);
             position: relative;
             background-color: transparent;
             border: none;
@@ -167,7 +148,6 @@
         .tool:hover {
             background-color: rgba(79, 70, 229, 0.1);
             color: var(--primary);
-            transform: translateY(-2px);
         }
 
         .tool.active {
@@ -189,7 +169,6 @@
             white-space: nowrap;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.2s;
             margin-left: 12px;
             z-index: 100;
         }
@@ -224,7 +203,6 @@
             cursor: pointer;
             padding: 0;
             background: none;
-            transition: var(--transition);
             overflow: hidden;
         }
 
@@ -251,11 +229,9 @@
             border-radius: 50%;
             background: var(--primary);
             cursor: pointer;
-            transition: var(--transition);
         }
 
         .line-width-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
             background: var(--primary-dark);
         }
 
@@ -285,7 +261,6 @@
             flex-direction: column;
             background-color: var(--white);
             box-shadow: -2px 0 10px rgba(0, 0, 0, 0.05);
-            transition: width 0.3s ease;
             z-index: 10;
             border-left: 1px solid rgba(0, 0, 0, 0.05);
         }
@@ -368,7 +343,6 @@
             justify-content: center;
             gap: 8px;
             font-weight: 500;
-            transition: var(--transition);
         }
 
         .media-btn:hover {
@@ -392,11 +366,9 @@
             align-items: center;
             padding: 8px 12px;
             border-radius: var(--radius-sm);
-            transition: var(--transition);
-        }
-
-        .user-item:hover {
-            background-color: rgba(0, 0, 0, 0.02);
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .user-color {
@@ -454,7 +426,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: var(--transition);
         }
 
         .board-btn:hover {
@@ -485,13 +456,11 @@
             border-radius: 8px 0 0 8px;
             cursor: pointer;
             z-index: 20;
-            transition: var(--transition);
             border: none;
         }
 
         .toggle-panel:hover {
             background-color: var(--primary-dark);
-            width: 28px;
         }
 
         /* Panel Collapsed State */
@@ -499,10 +468,6 @@
             width: 0;
             overflow: hidden;
             border-left: none;
-        }
-
-        .panel-collapsed .toggle-panel {
-            right: -24px;
         }
 
         /* Notifications */
@@ -520,12 +485,6 @@
             max-width: 80%;
             text-align: center;
             box-shadow: var(--shadow-lg);
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
         /* Loading Screen */
@@ -574,7 +533,6 @@
             z-index: 100;
             border: 2px solid var(--white);
             box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-            transition: transform 0.1s ease;
         }
 
         .cursor-name {
@@ -611,12 +569,7 @@
             cursor: pointer;
             font-size: 1.2rem;
             padding: 8px;
-            transition: var(--transition);
             border-radius: var(--radius-sm);
-        }
-
-        .more-btn:hover {
-            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .dropdown-content {
@@ -640,7 +593,6 @@
             padding: 10px 16px;
             text-align: left;
             cursor: pointer;
-            transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -698,7 +650,6 @@
             border-radius: var(--radius-sm);
             font-size: 1rem;
             margin-bottom: 16px;
-            transition: var(--transition);
         }
 
         .lobby-input:focus {
@@ -717,7 +668,6 @@
             font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
-            transition: var(--transition);
         }
 
         .lobby-btn:hover {
@@ -781,17 +731,6 @@
             }
         }
 
-        /* Animation for tool selection */
-        @keyframes toolPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .tool.selected {
-            animation: toolPulse 0.5s ease;
-        }
-
         /* Export Options Modal */
         .export-modal {
             position: fixed;
@@ -837,7 +776,6 @@
             color: var(--white);
             font-weight: 500;
             cursor: pointer;
-            transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -883,11 +821,6 @@
             overflow: hidden;
             cursor: pointer;
             border: 2px solid transparent;
-            transition: var(--transition);
-        }
-
-        .background-option:hover {
-            transform: scale(1.05);
         }
 
         .background-option.selected {
@@ -988,7 +921,6 @@
             border: none;
             font-weight: 500;
             cursor: pointer;
-            transition: var(--transition);
         }
 
         .save-btn.primary {
@@ -1189,7 +1121,7 @@
         <!-- Footer -->
         <div class="footer">
             <div class="board-info">
-                <span>Made By Ritesh Rathod</span>
+                <span>Real-time collaboration with WebRTC & Socket.io</span>
             </div>
             <div class="board-actions">
                 <button class="board-btn" id="copyBoardId">
@@ -1523,12 +1455,6 @@
                     if (isTextInputActive) return;
                     const toolName = tool.dataset.tool;
                     selectTool(toolName);
-                    
-                    // Add selection animation
-                    tool.classList.add('selected');
-                    setTimeout(() => {
-                        tool.classList.remove('selected');
-                    }, 500);
                 });
             });
             
@@ -1578,16 +1504,6 @@
                 if (toolShortcuts[e.key.toLowerCase()]) {
                     const toolName = toolShortcuts[e.key.toLowerCase()];
                     selectTool(toolName);
-                    
-                    // Find and animate the tool button
-                    const toolButton = document.querySelector(`.tool[data-tool="${toolName}"]`);
-                    if (toolButton) {
-                        toolButton.classList.add('selected');
-                        setTimeout(() => {
-                            toolButton.classList.remove('selected');
-                        }, 500);
-                    }
-                    
                     e.preventDefault();
                 }
                 
