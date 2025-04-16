@@ -41,24 +41,6 @@
             overflow: hidden;
         }
         
-        /* Logo Animation */
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        @keyframes logoGlow {
-            0% { filter: drop-shadow(0 0 5px rgba(67, 97, 238, 0.5)); }
-            50% { filter: drop-shadow(0 0 15px rgba(67, 97, 238, 0.8)); }
-            100% { filter: drop-shadow(0 0 5px rgba(67, 97, 238, 0.5)); }
-        }
-        
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
         /* Layout */
         .container {
             display: flex;
@@ -89,19 +71,12 @@
             height: 36px;
             width: auto;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-            transition: all 0.5s ease;
-            animation: logoFloat 3s ease-in-out infinite, logoGlow 4s ease infinite;
         }
         
         .logo-text {
             font-size: 1.5rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            background-size: 200% 200%;
-            animation: gradientFlow 8s ease infinite;
+            color: var(--primary-color);
             letter-spacing: -0.5px;
             position: relative;
         }
@@ -116,7 +91,6 @@
             color: white;
             padding: 2px 6px;
             border-radius: 4px;
-            animation: logoFloat 3s ease-in-out infinite;
         }
         
         .header-controls {
@@ -136,12 +110,6 @@
             gap: 8px;
             color: var(--white);
             box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
-            transition: var(--transition);
-        }
-        
-        .user-count:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
         }
         
         .more-menu {
@@ -157,28 +125,6 @@
             padding: 8px;
             border-radius: 50%;
             transition: var(--transition);
-            position: relative;
-        }
-        
-        .more-btn:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-            transform: rotate(90deg);
-        }
-        
-        .more-btn .dot {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background-color: var(--accent-color);
-            border-radius: 50%;
-            top: 4px;
-            right: 4px;
-            opacity: 0;
-            transition: var(--transition);
-        }
-        
-        .more-btn.has-notification .dot {
-            opacity: 1;
         }
         
         .dropdown-menu {
@@ -192,7 +138,6 @@
             min-width: 200px;
             z-index: 1000;
             display: none;
-            animation: fadeIn 0.2s ease-out;
             backdrop-filter: blur(10px);
             background-color: rgba(255, 255, 255, 0.9);
         }
@@ -209,21 +154,10 @@
             cursor: pointer;
             transition: var(--transition);
             font-size: 0.9rem;
-            position: relative;
         }
         
         .dropdown-item:hover {
             background-color: rgba(0, 0, 0, 0.05);
-        }
-        
-        .dropdown-item .badge {
-            position: absolute;
-            right: 12px;
-            background-color: var(--accent-color);
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
         }
         
         .dropdown-divider {
@@ -271,7 +205,6 @@
         
         .tool:hover {
             background-color: rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
         }
         
         .tool.active {
@@ -370,10 +303,6 @@
             transition: var(--transition);
         }
         
-        .line-width-slider:hover {
-            background: #dee2e6;
-        }
-        
         .line-width-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -384,11 +313,6 @@
             cursor: pointer;
             transition: var(--transition);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .line-width-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            background: var(--secondary-color);
         }
         
         .whiteboard-container {
@@ -463,17 +387,6 @@
             background-color: var(--primary-color);
         }
         
-        .panel-tab .badge {
-            position: absolute;
-            top: 4px;
-            right: 8px;
-            background-color: var(--accent-color);
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-        }
-        
         .panel-content {
             flex: 1;
             overflow-y: auto;
@@ -481,11 +394,14 @@
         }
         
         .panel-content.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
         }
         
         .user-list-container {
             padding: 16px;
+            flex: 1;
+            overflow-y: auto;
         }
         
         .user-list-title {
@@ -572,20 +488,11 @@
             transition: var(--transition);
         }
         
-        .user-control:hover {
-            color: var(--primary-color);
-            transform: scale(1.1);
-        }
-        
-        .media-container {
-            padding: 16px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        
         .media-controls {
             display: flex;
             gap: 10px;
             margin-bottom: 16px;
+            padding: 0 16px;
         }
         
         .media-btn {
@@ -605,26 +512,16 @@
             box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
         }
         
-        .media-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
-        }
-        
         .media-btn.off {
             background-color: var(--accent-color);
             box-shadow: 0 2px 8px rgba(247, 37, 133, 0.3);
-        }
-        
-        .media-btn.off:hover {
-            box-shadow: 0 4px 12px rgba(247, 37, 133, 0.4);
         }
         
         .video-container {
             background-color: #000;
             border-radius: var(--border-radius);
             overflow: hidden;
-            margin-bottom: 16px;
+            margin: 0 16px 16px;
             position: relative;
             min-height: 180px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -675,36 +572,9 @@
             font-size: 0.8rem;
         }
         
-        .video-controls {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            display: flex;
-            gap: 8px;
-        }
-        
-        .video-control {
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .video-control:hover {
-            background-color: rgba(0, 0, 0, 0.7);
-            transform: scale(1.1);
-        }
-        
         .chat-container {
             padding: 16px;
-            height: calc(100% - 60px);
+            height: 100%;
             display: flex;
             flex-direction: column;
         }
@@ -758,6 +628,7 @@
         .chat-input-container {
             display: flex;
             gap: 8px;
+            margin-top: auto;
         }
         
         .chat-input {
@@ -772,12 +643,6 @@
             transition: var(--transition);
         }
         
-        .chat-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
-        }
-        
         .chat-send {
             width: 40px;
             height: 40px;
@@ -790,11 +655,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        .chat-send:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
         }
         
         .footer {
@@ -815,96 +675,37 @@
             gap: 10px;
         }
         
-        .board-actions {
+        .footer-actions {
             display: flex;
             gap: 10px;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
         }
         
-        .board-btn {
-            padding: 6px 12px;
+        .footer-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             background-color: rgba(0, 0, 0, 0.05);
-            color: var(--dark-color);
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            color: var(--dark-color);
         }
         
-        .board-btn:hover {
-            background-color: rgba(0, 0, 0, 0.1);
-            transform: translateY(-1px);
-        }
-        
-        .board-btn.primary {
+        .footer-btn:hover {
             background-color: var(--primary-color);
             color: white;
-            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+            transform: scale(1.1);
         }
         
-        .board-btn.primary:hover {
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
-        }
-        
-        #boardId {
-            font-family: monospace;
-            background-color: rgba(0, 0, 0, 0.05);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-        
-        .whiteboard-pages {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
+        .footer-btn.active {
+            background-color: var(--primary-color);
             color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 10;
-        }
-        
-        .page-control {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        
-        .page-count {
-            font-size: 0.9rem;
-        }
-        
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.9);
-            color: var(--white);
-            padding: 12px 24px;
-            border-radius: var(--border-radius);
-            z-index: 1000;
-            display: none;
-            max-width: 80%;
-            text-align: center;
-            box-shadow: var(--shadow);
-            animation: fadeIn 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
         
         .toggle-panel {
@@ -924,11 +725,6 @@
             z-index: 20;
             transition: var(--transition);
             box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .toggle-panel:hover {
-            width: 28px;
-            background-color: var(--secondary-color);
         }
         
         .panel-collapsed .right-panel {
@@ -974,20 +770,6 @@
             }
         }
         
-        /* Drawing tools specific styles */
-        .line-width-control {
-            margin-top: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .line-width-label {
-            color: var(--dark-color);
-            font-size: 0.7rem;
-        }
-        
         /* Loading animation */
         .loading {
             position: fixed;
@@ -1023,38 +805,6 @@
         
         @keyframes spin {
             to { transform: rotate(360deg); }
-        }
-        
-        /* Shape preview styles */
-        .shape-preview {
-            position: absolute;
-            pointer-events: none;
-            z-index: 90;
-        }
-        
-        /* Tool selection animation */
-        @keyframes toolPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        
-        .tool.selected {
-            animation: toolPulse 0.5s ease;
-        }
-        
-        /* Improved cursor styles */
-        .cursor-name {
-            position: absolute;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
-            font-size: 12px;
-            text-shadow: 0 0 2px black;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 500;
         }
         
         /* Modal styles */
@@ -1116,12 +866,6 @@
             color: var(--dark-color);
             cursor: pointer;
             font-size: 1.2rem;
-            transition: var(--transition);
-        }
-        
-        .modal-close:hover {
-            color: var(--accent-color);
-            transform: rotate(90deg);
         }
         
         .modal-body {
@@ -1157,12 +901,6 @@
             transition: var(--transition);
         }
         
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
-        }
-        
         .btn {
             padding: 10px 16px;
             border-radius: var(--border-radius);
@@ -1179,20 +917,9 @@
             box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
         }
         
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
-            transform: translateY(-1px);
-        }
-        
         .btn-secondary {
             background-color: rgba(0, 0, 0, 0.05);
             color: var(--dark-color);
-        }
-        
-        .btn-secondary:hover {
-            background-color: rgba(0, 0, 0, 0.1);
-            transform: translateY(-1px);
         }
         
         .invite-link {
@@ -1210,20 +937,6 @@
             border: none;
             padding: 0 8px;
             font-size: 0.9rem;
-        }
-        
-        .invite-link button {
-            background: none;
-            border: none;
-            color: var(--primary-color);
-            cursor: pointer;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-        
-        .invite-link button:hover {
-            color: var(--secondary-color);
-            transform: scale(1.1);
         }
         
         /* Lobby styles */
@@ -1279,97 +992,6 @@
             font-weight: 500;
         }
         
-        /* Background options */
-        .background-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 16px;
-        }
-        
-        .background-option {
-            height: 80px;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            cursor: pointer;
-            position: relative;
-            transition: var(--transition);
-        }
-        
-        .background-option:hover {
-            transform: scale(1.05);
-        }
-        
-        .background-option img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .background-option.active::after {
-            content: '\f00c';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 20px;
-            height: 20px;
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-        }
-        
-        /* Pinned content */
-        .pinned-content {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 500;
-            max-width: 80%;
-            max-height: 80vh;
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            display: none;
-        }
-        
-        .pinned-content.show {
-            display: block;
-        }
-        
-        .pinned-header {
-            padding: 12px 16px;
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .pinned-title {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        
-        .pinned-close {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        
-        .pinned-body {
-            padding: 16px;
-        }
-        
         /* Confirmation dialog */
         .confirmation-dialog {
             text-align: center;
@@ -1387,67 +1009,75 @@
             margin-bottom: 16px;
         }
         
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.2);
-        }
-        
         /* Whiteboard background options */
-        .whiteboard-bg-options {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
+        .bg-options-btn {
+            position: relative;
         }
         
-        .whiteboard-bg {
-            width: 40px;
-            height: 40px;
+        .bg-options-menu {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 8px;
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            z-index: 100;
+        }
+        
+        .bg-options-menu.show {
+            display: grid;
+        }
+        
+        .bg-option {
+            width: 30px;
+            height: 30px;
             border-radius: 4px;
             cursor: pointer;
             border: 2px solid transparent;
-            transition: var(--transition);
         }
         
-        .whiteboard-bg:hover {
-            transform: scale(1.05);
+        .bg-option:hover {
+            transform: scale(1.1);
         }
         
-        .whiteboard-bg.active {
+        .bg-option.active {
             border-color: var(--primary-color);
         }
         
-        .whiteboard-bg.white {
-            background-color: var(--white);
+        .bg-option.white {
+            background-color: white;
         }
         
-        .whiteboard-bg.black {
-            background-color: var(--black);
+        .bg-option.black {
+            background-color: black;
         }
         
-        .whiteboard-bg.green {
-            background-color: #e6f7e6;
+        .bg-option.gray {
+            background-color: #f0f0f0;
         }
         
-        .whiteboard-bg.blue {
-            background-color: #e6f0f7;
+        .bg-option.grid {
+            background-color: white;
+            background-image: 
+                linear-gradient(#e9ecef 1px, transparent 1px),
+                linear-gradient(90deg, #e9ecef 1px, transparent 1px);
+            background-size: 20px 20px;
         }
         
-        /* Floating image controls */
+        .bg-option.dots {
+            background-color: white;
+            background-image: 
+                radial-gradient(#e9ecef 1px, transparent 1px),
+                radial-gradient(#e9ecef 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        
+        /* Floating elements */
         .floating-image {
             position: absolute;
             cursor: move;
@@ -1479,22 +1109,6 @@
             color: var(--dark-color);
         }
         
-        .image-control:hover {
-            color: var(--primary-color);
-        }
-
-        /* Leave session image */
-        .leave-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 10000;
-            display: none;
-        }
-
         /* Text element */
         .text-element {
             position: absolute;
@@ -1508,144 +1122,27 @@
             min-width: 50px;
             min-height: 20px;
         }
-
+        
         .text-element:hover {
             border-color: var(--primary-color);
         }
-
-        /* Sticky note */
-        .sticky-note {
-            position: absolute;
-            cursor: move;
-            z-index: 50;
-            padding: 10px;
-            border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            resize: both;
-            overflow: hidden;
-            min-width: 100px;
-            min-height: 100px;
+        
+        /* Name modal */
+        .name-modal {
+            text-align: center;
         }
-
-        /* Footer buttons */
-        .footer-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            color: var(--dark-color);
-        }
-
-        .footer-btn:hover {
-            background-color: var(--primary-color);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .footer-btn.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .footer-btn .badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--accent-color);
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-        }
-
-        /* Reaction buttons */
-        .reaction-btn {
-            position: relative;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            color: var(--dark-color);
-        }
-
-        .reaction-btn:hover {
-            background-color: var(--primary-color);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .reaction-menu {
-            position: absolute;
-            bottom: 50px;
-            right: 0;
-            background-color: white;
+        
+        .name-input {
+            width: 100%;
+            padding: 12px;
+            margin: 16px 0;
+            border: 1px solid #ddd;
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 8px;
-            display: none;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            z-index: 100;
-        }
-
-        .reaction-menu.show {
-            display: grid;
-        }
-
-        .reaction-option {
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .reaction-option:hover {
-            transform: scale(1.2);
-        }
-
-        /* Raise hand indicator */
-        .raise-hand {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--accent-color);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            z-index: 10;
-        }
-
-        /* Screen share indicator */
-        .screen-share {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            z-index: 10;
+            font-size: 1rem;
         }
     </style>
 </head>
 <body>
-    <img src="https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg" class="leave-image" id="leaveImage">
-    
     <div class="container">
         <div class="header">
             <div class="logo-container">
@@ -1660,31 +1157,20 @@
                 <div class="more-menu">
                     <button class="more-btn" id="moreBtn">
                         <i class="fas fa-ellipsis-v"></i>
-                        <span class="dot"></span>
                     </button>
                     <div class="dropdown-menu" id="dropdownMenu">
                         <div class="dropdown-item" id="inviteOption">
                             <i class="fas fa-user-plus"></i>
                             <span>Invite People</span>
                         </div>
-                        <div class="dropdown-item" id="participantsOption">
-                            <i class="fas fa-users"></i>
-                            <span>Participants</span>
-                            <span class="badge" id="participantsBadge">0</span>
-                        </div>
-                        <div class="dropdown-item" id="chatOption">
-                            <i class="fas fa-comment"></i>
-                            <span>Chat</span>
-                            <span class="badge" id="chatBadge">0</span>
-                        </div>
                         <div class="dropdown-divider"></div>
-                        <div class="dropdown-item" id="settingsOption">
-                            <i class="fas fa-cog"></i>
-                            <span>Settings</span>
-                        </div>
                         <div class="dropdown-item" id="exportOption">
                             <i class="fas fa-download"></i>
                             <span>Export</span>
+                        </div>
+                        <div class="dropdown-item" id="settingsOption">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
                         </div>
                         <div class="dropdown-divider"></div>
                         <div class="dropdown-item" id="leaveOption">
@@ -1744,10 +1230,6 @@
                     <i class="fas fa-image"></i>
                     <span class="tool-tip">Insert Image</span>
                 </div>
-                <div class="tool" data-tool="sticky">
-                    <i class="fas fa-sticky-note"></i>
-                    <span class="tool-tip">Sticky Note</span>
-                </div>
                 <div class="tool-divider"></div>
                 <div class="color-picker-container">
                     <div class="color-picker-label">Color</div>
@@ -1762,29 +1244,21 @@
                     <input type="color" class="color-picker" id="fillPicker" value="#00000000">
                 </div>
                 <div class="tool-divider"></div>
-                <div class="whiteboard-bg-options">
-                    <div class="whiteboard-bg white active" data-bg="white"></div>
-                    <div class="whiteboard-bg black" data-bg="black"></div>
-                    <div class="whiteboard-bg green" data-bg="green"></div>
-                    <div class="whiteboard-bg blue" data-bg="blue"></div>
+                <div class="tool bg-options-btn" id="bgOptionsBtn">
+                    <i class="fas fa-paint-roller"></i>
+                    <span class="tool-tip">Board Color</span>
+                    <div class="bg-options-menu" id="bgOptionsMenu">
+                        <div class="bg-option white active" data-bg="white"></div>
+                        <div class="bg-option black" data-bg="black"></div>
+                        <div class="bg-option gray" data-bg="gray"></div>
+                        <div class="bg-option grid" data-bg="grid"></div>
+                        <div class="bg-option dots" data-bg="dots"></div>
+                    </div>
                 </div>
             </div>
             
             <div class="whiteboard-container">
                 <canvas id="whiteboard"></canvas>
-                <div id="shapePreview" class="shape-preview"></div>
-                <div class="whiteboard-pages">
-                    <button class="page-control" id="prevPage">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <span class="page-count" id="pageCount">1/1</span>
-                    <button class="page-control" id="nextPage">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                    <button class="page-control" id="addPage">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
             </div>
             
             <div class="toggle-panel" id="togglePanel">
@@ -1795,69 +1269,27 @@
                 <div class="panel-tabs">
                     <div class="panel-tab active" data-tab="participants">
                         <i class="fas fa-users"></i> Participants
-                        <span class="badge" id="participantsTabBadge">0</span>
                     </div>
                     <div class="panel-tab" data-tab="chat">
                         <i class="fas fa-comment"></i> Chat
-                        <span class="badge" id="chatTabBadge">0</span>
                     </div>
                 </div>
                 
                 <div class="panel-content active" data-content="participants">
+                    <div class="media-controls">
+                        <button id="micBtn" class="media-btn">
+                            <i class="fas fa-microphone"></i>
+                            <span>Mic</span>
+                        </button>
+                        <button id="videoBtn" class="media-btn">
+                            <i class="fas fa-video"></i>
+                            <span>Video</span>
+                        </button>
+                    </div>
+                    
                     <div class="user-list-container">
                         <div id="userList">
                             <!-- Users will be added here dynamically -->
-                        </div>
-                    </div>
-                    <div class="media-container">
-                        <div class="media-controls">
-                            <button id="micBtn" class="media-btn">
-                                <i class="fas fa-microphone"></i>
-                                <span>Mic</span>
-                            </button>
-                            <button id="videoBtn" class="media-btn">
-                                <i class="fas fa-video"></i>
-                                <span>Video</span>
-                            </button>
-                            <button id="screenShareBtn" class="media-btn">
-                                <i class="fas fa-desktop"></i>
-                                <span>Share</span>
-                            </button>
-                            <button id="recordBtn" class="media-btn">
-                                <i class="fas fa-circle"></i>
-                                <span>Record</span>
-                            </button>
-                        </div>
-                        
-                        <div class="video-container">
-                            <video id="localVideo" autoplay muted playsinline></video>
-                            <div class="video-label" id="localVideoLabel">You</div>
-                            <div class="video-controls">
-                                <button class="video-control" id="pinLocal">
-                                    <i class="fas fa-thumbtack"></i>
-                                </button>
-                                <button class="video-control" id="backgroundLocal">
-                                    <i class="fas fa-image"></i>
-                                </button>
-                            </div>
-                            <div class="video-placeholder">
-                                <i class="fas fa-user"></i>
-                                <div class="video-placeholder-text" id="localVideoPlaceholderText">Your video will appear here</div>
-                            </div>
-                        </div>
-                        
-                        <div class="video-container">
-                            <video id="remoteVideo" autoplay playsinline></video>
-                            <div class="video-label" id="remoteVideoLabel">Participant</div>
-                            <div class="video-controls">
-                                <button class="video-control" id="pinRemote">
-                                    <i class="fas fa-thumbtack"></i>
-                                </button>
-                            </div>
-                            <div class="video-placeholder">
-                                <i class="fas fa-users"></i>
-                                <div class="video-placeholder-text" id="remoteVideoPlaceholderText">Other participant's video will appear here</div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1882,7 +1314,7 @@
             <div class="footer-info">
                 <span>Made by Ritesh Rathod</span>
             </div>
-            <div class="board-actions">
+            <div class="footer-actions">
                 <button class="footer-btn" id="micFooterBtn" title="Microphone">
                     <i class="fas fa-microphone"></i>
                 </button>
@@ -1891,37 +1323,12 @@
                 </button>
                 <button class="footer-btn" id="participantsFooterBtn" title="Participants">
                     <i class="fas fa-users"></i>
-                    <span class="badge" id="participantsFooterBadge">0</span>
                 </button>
-                <button class="footer-btn" id="screenShareFooterBtn" title="Share Screen">
-                    <i class="fas fa-desktop"></i>
-                </button>
-                <button class="footer-btn" id="recordFooterBtn" title="Record">
-                    <i class="fas fa-circle"></i>
-                </button>
-                <button class="footer-btn" id="raiseHandBtn" title="Raise Hand">
-                    <i class="fas fa-hand-paper"></i>
-                </button>
-                <div style="position: relative;">
-                    <button class="footer-btn" id="reactionBtn" title="Reactions">
-                        <i class="fas fa-smile"></i>
-                    </button>
-                    <div class="reaction-menu" id="reactionMenu">
-                        <div class="reaction-option">👍</div>
-                        <div class="reaction-option">👎</div>
-                        <div class="reaction-option">👏</div>
-                        <div class="reaction-option">😂</div>
-                        <div class="reaction-option">😍</div>
-                        <div class="reaction-option">😮</div>
-                        <div class="reaction-option">😢</div>
-                        <div class="reaction-option">🙏</div>
-                    </div>
-                </div>
                 <button class="footer-btn" id="chatFooterBtn" title="Chat">
                     <i class="fas fa-comment"></i>
-                    <span class="badge" id="chatFooterBadge">0</span>
                 </button>
             </div>
+            <div></div> <!-- Empty div for flex spacing -->
         </div>
     </div>
     
@@ -1948,19 +1355,6 @@
                     <label class="form-label">Or share this code</label>
                     <input type="text" class="form-control" id="inviteCodeInput" readonly>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Session Settings</label>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" id="requireApproval" checked>
-                            <span>Require approval to join</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" id="allowDrawing" checked>
-                            <span>Allow participants to draw</span>
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="inviteModalCancel">Cancel</button>
@@ -1978,13 +1372,6 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Select Pages</label>
-                    <select class="form-control" id="exportPages">
-                        <option value="current">Current Page Only</option>
-                        <option value="all">All Pages</option>
-                    </select>
-                </div>
                 <div class="export-options">
                     <div class="export-option" id="exportPNG">
                         <i class="fas fa-file-image"></i>
@@ -2022,41 +1409,6 @@
                 <div class="form-group">
                     <label class="form-label">Your Name</label>
                     <input type="text" class="form-control" id="userNameInput">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Video Background</label>
-                    <div class="background-options">
-                        <div class="background-option active" data-bg="none">
-                            <div style="width:100%;height:100%;background:#333;display:flex;align-items:center;justify-content:center;color:white;">
-                                <i class="fas fa-times"></i>
-                            </div>
-                        </div>
-                        <div class="background-option" data-bg="blur">
-                            <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Blur">
-                        </div>
-                        <div class="background-option" data-bg="office">
-                            <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Office">
-                        </div>
-                        <div class="background-option" data-bg="nature">
-                            <img src="https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Nature">
-                        </div>
-                        <div class="background-option" data-bg="abstract">
-                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Abstract">
-                        </div>
-                        <div class="background-option" data-bg="custom">
-                            <div style="width:100%;height:100%;background:#eee;display:flex;align-items:center;justify-content:center;">
-                                <i class="fas fa-plus"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Whiteboard Grid</label>
-                    <select class="form-control" id="gridStyle">
-                        <option value="dots">Dots</option>
-                        <option value="lines" selected>Lines</option>
-                        <option value="none">None</option>
-                    </select>
                 </div>
             </div>
             <div class="modal-footer">
@@ -2121,16 +1473,6 @@
                     <label class="form-label">Or upload from device</label>
                     <input type="file" class="form-control" id="imageUpload" accept="image/*">
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Preview</label>
-                    <div style="border: 1px dashed #ccc; padding: 10px; text-align: center; min-height: 100px;">
-                        <img id="imagePreview" style="max-width: 100%; max-height: 200px; display: none;">
-                        <div id="imagePlaceholder" style="color: #666;">
-                            <i class="fas fa-image" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                            <div>Image preview will appear here</div>
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="imageModalCancel">Cancel</button>
@@ -2139,51 +1481,19 @@
         </div>
     </div>
     
-    <div class="modal" id="stickyModal">
+    <div class="modal show" id="nameModal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">Add Sticky Note</div>
-                <button class="modal-close" id="stickyModalClose">
-                    <i class="fas fa-times"></i>
-                </button>
+                <div class="modal-title">Enter Your Name</div>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Note Content</label>
-                    <textarea class="form-control" id="stickyContent" rows="4"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Color</label>
-                    <div style="display: flex; gap: 10px;">
-                        <div class="color-option" data-color="#ffeb3b" style="background-color: #ffeb3b; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
-                        <div class="color-option" data-color="#ff9800" style="background-color: #ff9800; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
-                        <div class="color-option" data-color="#f44336" style="background-color: #f44336; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
-                        <div class="color-option" data-color="#4caf50" style="background-color: #4caf50; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
-                        <div class="color-option" data-color="#2196f3" style="background-color: #2196f3; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
-                        <div class="color-option" data-color="#9c27b0" style="background-color: #9c27b0; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
-                    </div>
-                </div>
+            <div class="modal-body name-modal">
+                <input type="text" class="name-input" id="nameInput" placeholder="Your name" autofocus>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="stickyModalCancel">Cancel</button>
-                <button class="btn btn-primary" id="stickyModalAdd">Add Note</button>
+                <button class="btn btn-primary" id="nameModalSubmit">Continue</button>
             </div>
         </div>
     </div>
-    
-    <div class="pinned-content" id="pinnedContent">
-        <div class="pinned-header">
-            <div class="pinned-title" id="pinnedTitle">Pinned Content</div>
-            <button class="pinned-close" id="pinnedClose">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="pinned-body" id="pinnedBody">
-            <!-- Pinned content will be inserted here -->
-        </div>
-    </div>
-    
-    <div class="notification" id="notification"></div>
     
     <div class="loading" id="loading">
         <div class="spinner"></div>
@@ -2200,27 +1510,20 @@
         const lineWidthSlider = document.getElementById('lineWidth');
         const userList = document.getElementById('userList');
         const userCount = document.getElementById('userCount');
-        const boardIdElement = document.getElementById('boardId');
         const notification = document.getElementById('notification');
         const micBtn = document.getElementById('micBtn');
         const videoBtn = document.getElementById('videoBtn');
-        const screenShareBtn = document.getElementById('screenShareBtn');
-        const recordBtn = document.getElementById('recordBtn');
         const localVideo = document.getElementById('localVideo');
         const remoteVideo = document.getElementById('remoteVideo');
         const remoteVideoLabel = document.getElementById('remoteVideoLabel');
         const localVideoLabel = document.getElementById('localVideoLabel');
         const localVideoPlaceholder = localVideo.nextElementSibling;
         const remoteVideoPlaceholder = remoteVideo.nextElementSibling;
-        const localVideoPlaceholderText = document.getElementById('localVideoPlaceholderText');
-        const remoteVideoPlaceholderText = document.getElementById('remoteVideoPlaceholderText');
         const togglePanelBtn = document.getElementById('togglePanel');
         const loadingScreen = document.getElementById('loading');
         const loadingText = loadingScreen.querySelector('.loading-text');
-        const shapePreview = document.getElementById('shapePreview');
         const moreBtn = document.getElementById('moreBtn');
         const dropdownMenu = document.getElementById('dropdownMenu');
-        const leaveImage = document.getElementById('leaveImage');
         
         // Panel tabs
         const panelTabs = document.querySelectorAll('.panel-tab');
@@ -2231,14 +1534,10 @@
         const chatInput = document.getElementById('chatInput');
         const chatSend = document.getElementById('chatSend');
         
-        // Page controls
-        const prevPage = document.getElementById('prevPage');
-        const nextPage = document.getElementById('nextPage');
-        const addPage = document.getElementById('addPage');
-        const pageCount = document.getElementById('pageCount');
-        
         // Whiteboard background options
-        const whiteboardBgs = document.querySelectorAll('.whiteboard-bg');
+        const bgOptionsBtn = document.getElementById('bgOptionsBtn');
+        const bgOptionsMenu = document.getElementById('bgOptionsMenu');
+        const bgOptions = document.querySelectorAll('.bg-option');
         
         // Modal elements
         const inviteModal = document.getElementById('inviteModal');
@@ -2248,8 +1547,6 @@
         const inviteLinkInput = document.getElementById('inviteLinkInput');
         const inviteCodeInput = document.getElementById('inviteCodeInput');
         const copyInviteLink = document.getElementById('copyInviteLink');
-        const requireApproval = document.getElementById('requireApproval');
-        const allowDrawing = document.getElementById('allowDrawing');
         
         const exportModal = document.getElementById('exportModal');
         const exportModalClose = document.getElementById('exportModalClose');
@@ -2258,14 +1555,12 @@
         const exportJPG = document.getElementById('exportJPG');
         const exportPDF = document.getElementById('exportPDF');
         const exportSVG = document.getElementById('exportSVG');
-        const exportPages = document.getElementById('exportPages');
         
         const settingsModal = document.getElementById('settingsModal');
         const settingsModalClose = document.getElementById('settingsModalClose');
         const settingsModalCancel = document.getElementById('settingsModalCancel');
         const settingsModalSave = document.getElementById('settingsModalSave');
         const userNameInput = document.getElementById('userNameInput');
-        const gridStyle = document.getElementById('gridStyle');
         
         const lobbyModal = document.getElementById('lobbyModal');
         const cancelJoin = document.getElementById('cancelJoin');
@@ -2275,57 +1570,28 @@
         const confirmCancel = document.getElementById('confirmCancel');
         const confirmAction = document.getElementById('confirmAction');
         
-        const pinnedContent = document.getElementById('pinnedContent');
-        const pinnedClose = document.getElementById('pinnedClose');
-        const pinnedTitle = document.getElementById('pinnedTitle');
-        const pinnedBody = document.getElementById('pinnedBody');
-        
-        const pinLocal = document.getElementById('pinLocal');
-        const pinRemote = document.getElementById('pinRemote');
-        const backgroundLocal = document.getElementById('backgroundLocal');
-        
         const imageModal = document.getElementById('imageModal');
         const imageModalClose = document.getElementById('imageModalClose');
         const imageModalCancel = document.getElementById('imageModalCancel');
         const imageModalInsert = document.getElementById('imageModalInsert');
         const imageUrl = document.getElementById('imageUrl');
         const imageUpload = document.getElementById('imageUpload');
-        const imagePreview = document.getElementById('imagePreview');
-        const imagePlaceholder = document.getElementById('imagePlaceholder');
         
-        const stickyModal = document.getElementById('stickyModal');
-        const stickyModalClose = document.getElementById('stickyModalClose');
-        const stickyModalCancel = document.getElementById('stickyModalCancel');
-        const stickyModalAdd = document.getElementById('stickyModalAdd');
-        const stickyContent = document.getElementById('stickyContent');
-        const stickyColorOptions = document.querySelectorAll('.color-option');
+        const nameModal = document.getElementById('nameModal');
+        const nameInput = document.getElementById('nameInput');
+        const nameModalSubmit = document.getElementById('nameModalSubmit');
         
         // Footer buttons
         const micFooterBtn = document.getElementById('micFooterBtn');
         const videoFooterBtn = document.getElementById('videoFooterBtn');
         const participantsFooterBtn = document.getElementById('participantsFooterBtn');
-        const screenShareFooterBtn = document.getElementById('screenShareFooterBtn');
-        const recordFooterBtn = document.getElementById('recordFooterBtn');
-        const raiseHandBtn = document.getElementById('raiseHandBtn');
-        const reactionBtn = document.getElementById('reactionBtn');
         const chatFooterBtn = document.getElementById('chatFooterBtn');
-        const participantsFooterBadge = document.getElementById('participantsFooterBadge');
-        const chatFooterBadge = document.getElementById('chatFooterBadge');
-        const reactionMenu = document.getElementById('reactionMenu');
         
         // Menu options
         const inviteOption = document.getElementById('inviteOption');
-        const participantsOption = document.getElementById('participantsOption');
-        const chatOption = document.getElementById('chatOption');
-        const settingsOption = document.getElementById('settingsOption');
         const exportOption = document.getElementById('exportOption');
+        const settingsOption = document.getElementById('settingsOption');
         const leaveOption = document.getElementById('leaveOption');
-        
-        // Badges
-        const participantsBadge = document.getElementById('participantsBadge');
-        const chatBadge = document.getElementById('chatBadge');
-        const participantsTabBadge = document.getElementById('participantsTabBadge');
-        const chatTabBadge = document.getElementById('chatTabBadge');
         
         // Whiteboard state
         let currentTool = 'pencil';
@@ -2346,22 +1612,11 @@
         let savedState = null;
         let floatingImages = [];
         let floatingTexts = [];
-        let floatingStickies = [];
         let activeFloatingElement = null;
-        
-        // Multi-page support
-        let pages = [];
-        let currentPageIndex = 0;
         
         // Session state
         let isHost = false;
         let waitingForApproval = false;
-        let requireApprovalSetting = true;
-        let allowDrawingSetting = true;
-        
-        // Chat state
-        let chatMessagesCount = 0;
-        let unreadChatMessages = 0;
         
         // Media state
         let localStream = null;
@@ -2369,10 +1624,6 @@
         let peerConnection = null;
         let isMicOn = false;
         let isVideoOn = false;
-        let isScreenSharing = false;
-        let isRecording = false;
-        let isHandRaised = false;
-        let currentBackground = 'none';
         const configuration = {
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
@@ -2381,23 +1632,11 @@
             ]
         };
         
-        // Keyboard shortcuts
-        const toolShortcuts = {
-            'p': 'pencil',
-            'l': 'line',
-            'r': 'rectangle',
-            'c': 'circle',
-            'a': 'arrow',
-            'e': 'eraser',
-            't': 'text'
-        };
-        
         // Socket.io connection
         const socket = io();
         let boardId = '';
         let userId = generateUserId();
-        let userName = `User-${userId.substring(0, 4)}`;
-        let userColor = generateRandomColor();
+        let userName = '';
         
         // Initialize whiteboard
         function initWhiteboard() {
@@ -2416,55 +1655,11 @@
             tempCanvas.width = whiteboard.width;
             tempCanvas.height = whiteboard.height;
             
-            // Initialize pages
-            pages = [{
-                drawings: [],
-                historyPointer: -1,
-                floatingImages: [],
-                floatingTexts: [],
-                floatingStickies: []
-            }];
-            updatePageControls();
-            
-            // Load board if ID exists in URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlBoardId = urlParams.get('board');
-            
-            if (urlBoardId) {
-                showLoading('Joining board...');
-                socket.emit('joinBoard', { 
-                    boardId: urlBoardId, 
-                    userId, 
-                    userName, 
-                    userColor 
-                });
-            } else {
-                showLoading('Creating new board...');
-                isHost = true;
-                boardId = generateBoardId();
-                socket.emit('createBoard', { 
-                    boardId,
-                    userId, 
-                    userName, 
-                    userColor,
-                    requireApproval: requireApprovalSetting,
-                    allowDrawing: allowDrawingSetting
-                });
-            }
-            
-            // Hide loading screen after connection is established
-            setTimeout(() => {
-                hideLoading();
-            }, 2000);
-            
             // Initialize chat
             initChat();
             
             // Add beforeunload event listener
             window.addEventListener('beforeunload', handleBeforeUnload);
-            
-            // Update video placeholder text with user name
-            localVideoPlaceholderText.textContent = `${userName}'s video will appear here`;
         }
         
         function generateBoardId() {
@@ -2489,11 +1684,6 @@
             return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
         }
         
-        // Generate a random color
-        function generateRandomColor() {
-            return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
-        }
-        
         // Resize canvas to fit container
         function resizeCanvas() {
             const container = whiteboard.parentElement;
@@ -2513,10 +1703,6 @@
             
             floatingTexts.forEach(text => {
                 text.style.maxWidth = `${container.offsetWidth * 0.5}px`;
-            });
-            
-            floatingStickies.forEach(sticky => {
-                sticky.style.maxWidth = `${container.offsetWidth * 0.5}px`;
             });
         }
         
@@ -2539,7 +1725,6 @@
                 const chatMessage = {
                     senderId: userId,
                     senderName: userName,
-                    senderColor: userColor,
                     content: message,
                     timestamp: new Date().toISOString()
                 };
@@ -2562,7 +1747,6 @@
             const senderElement = document.createElement('span');
             senderElement.className = 'chat-message-sender';
             senderElement.textContent = message.senderName;
-            senderElement.style.color = isSelf ? 'white' : message.senderColor;
             
             const timeElement = document.createElement('span');
             timeElement.className = 'chat-message-time';
@@ -2580,23 +1764,6 @@
             
             chatMessages.appendChild(messageElement);
             chatMessages.scrollTop = chatMessages.scrollHeight;
-            
-            // Update chat badges
-            if (!isSelf) {
-                chatMessagesCount++;
-                if (!document.querySelector('.panel-tab[data-tab="chat"]').classList.contains('active')) {
-                    unreadChatMessages++;
-                    updateChatBadges();
-                    moreBtn.classList.add('has-notification');
-                }
-            }
-        }
-        
-        // Update chat badges
-        function updateChatBadges() {
-            chatBadge.textContent = unreadChatMessages > 0 ? unreadChatMessages : '';
-            chatTabBadge.textContent = unreadChatMessages > 0 ? unreadChatMessages : '';
-            chatFooterBadge.textContent = unreadChatMessages > 0 ? unreadChatMessages : '';
         }
         
         // Event Listeners
@@ -2608,12 +1775,6 @@
                 
                 const toolName = tool.dataset.tool;
                 selectTool(toolName);
-                
-                // Add selection animation
-                tool.classList.add('selected');
-                setTimeout(() => {
-                    tool.classList.remove('selected');
-                }, 500);
             });
         });
         
@@ -2658,129 +1819,65 @@
                     content.classList.remove('active');
                     if (content.dataset.content === tabName) {
                         content.classList.add('active');
-                        
-                        // Reset badge if it's the chat tab
-                        if (tabName === 'chat' && unreadChatMessages > 0) {
-                            unreadChatMessages = 0;
-                            updateChatBadges();
-                            moreBtn.classList.remove('has-notification');
-                        }
                     }
                 });
             });
         });
         
         // Whiteboard background selection
-        whiteboardBgs.forEach(bg => {
-            bg.addEventListener('click', () => {
-                whiteboardBgs.forEach(b => b.classList.remove('active'));
-                bg.classList.add('active');
+        bgOptionsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            bgOptionsMenu.classList.toggle('show');
+        });
+        
+        bgOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                bgOptions.forEach(o => o.classList.remove('active'));
+                option.classList.add('active');
                 
-                const bgColor = bg.dataset.bg;
-                switch (bgColor) {
+                const container = document.querySelector('.whiteboard-container');
+                const bgType = option.dataset.bg;
+                
+                switch (bgType) {
                     case 'white':
-                        document.querySelector('.whiteboard-container').style.backgroundColor = 'white';
+                        container.style.backgroundColor = 'white';
+                        container.style.backgroundImage = `
+                            linear-gradient(#e9ecef 1px, transparent 1px),
+                            linear-gradient(90deg, #e9ecef 1px, transparent 1px)`;
+                        container.style.backgroundSize = '20px 20px';
                         break;
                     case 'black':
-                        document.querySelector('.whiteboard-container').style.backgroundColor = 'black';
+                        container.style.backgroundColor = 'black';
+                        container.style.backgroundImage = 'none';
                         break;
-                    case 'green':
-                        document.querySelector('.whiteboard-container').style.backgroundColor = '#e6f7e6';
+                    case 'gray':
+                        container.style.backgroundColor = '#f0f0f0';
+                        container.style.backgroundImage = 'none';
                         break;
-                    case 'blue':
-                        document.querySelector('.whiteboard-container').style.backgroundColor = '#e6f0f7';
+                    case 'grid':
+                        container.style.backgroundColor = 'white';
+                        container.style.backgroundImage = `
+                            linear-gradient(#e9ecef 1px, transparent 1px),
+                            linear-gradient(90deg, #e9ecef 1px, transparent 1px)`;
+                        container.style.backgroundSize = '20px 20px';
+                        break;
+                    case 'dots':
+                        container.style.backgroundColor = 'white';
+                        container.style.backgroundImage = `
+                            radial-gradient(#e9ecef 1px, transparent 1px),
+                            radial-gradient(#e9ecef 1px, transparent 1px)`;
+                        container.style.backgroundSize = '20px 20px';
+                        container.style.backgroundPosition = '0 0, 10px 10px';
                         break;
                 }
+                
+                bgOptionsMenu.classList.remove('show');
             });
         });
         
-        // Page controls
-        prevPage.addEventListener('click', () => {
-            if (currentPageIndex > 0) {
-                saveCurrentPage();
-                currentPageIndex--;
-                loadPage(currentPageIndex);
-                updatePageControls();
-            }
+        document.addEventListener('click', () => {
+            bgOptionsMenu.classList.remove('show');
         });
-        
-        nextPage.addEventListener('click', () => {
-            if (currentPageIndex < pages.length - 1) {
-                saveCurrentPage();
-                currentPageIndex++;
-                loadPage(currentPageIndex);
-                updatePageControls();
-            }
-        });
-        
-        addPage.addEventListener('click', () => {
-            saveCurrentPage();
-            pages.push({
-                drawings: [],
-                historyPointer: -1,
-                floatingImages: [],
-                floatingTexts: [],
-                floatingStickies: []
-            });
-            currentPageIndex = pages.length - 1;
-            loadPage(currentPageIndex);
-            updatePageControls();
-        });
-        
-        function updatePageControls() {
-            pageCount.textContent = `${currentPageIndex + 1}/${pages.length}`;
-            prevPage.disabled = currentPageIndex === 0;
-            nextPage.disabled = currentPageIndex === pages.length - 1;
-        }
-        
-        function saveCurrentPage() {
-            pages[currentPageIndex] = {
-                drawings: [...drawingHistory],
-                historyPointer: historyPointer,
-                floatingImages: [...floatingImages],
-                floatingTexts: [...floatingTexts],
-                floatingStickies: [...floatingStickies]
-            };
-        }
-        
-        function loadPage(index) {
-            // Remove all floating elements
-            floatingImages.forEach(img => img.remove());
-            floatingImages = [];
-            
-            floatingTexts.forEach(text => text.remove());
-            floatingTexts = [];
-            
-            floatingStickies.forEach(sticky => sticky.remove());
-            floatingStickies = [];
-            
-            // Load drawings
-            drawingHistory = [...pages[index].drawings];
-            historyPointer = pages[index].historyPointer;
-            
-            // Load floating images
-            if (pages[index].floatingImages) {
-                pages[index].floatingImages.forEach(imgData => {
-                    createFloatingImage(imgData.src, imgData.x, imgData.y, imgData.width, imgData.height);
-                });
-            }
-            
-            // Load floating texts
-            if (pages[index].floatingTexts) {
-                pages[index].floatingTexts.forEach(textData => {
-                    createFloatingText(textData.text, textData.x, textData.y, textData.width, textData.height, textData.color, textData.size);
-                });
-            }
-            
-            // Load floating stickies
-            if (pages[index].floatingStickies) {
-                pages[index].floatingStickies.forEach(stickyData => {
-                    createFloatingSticky(stickyData.text, stickyData.x, stickyData.y, stickyData.width, stickyData.height, stickyData.color);
-                });
-            }
-            
-            redrawWhiteboard();
-        }
         
         // Select a tool
         function selectTool(toolName) {
@@ -2810,8 +1907,6 @@
                     startTextInput();
                 } else if (toolName === 'image') {
                     showModal(imageModal);
-                } else if (toolName === 'sticky') {
-                    showModal(stickyModal);
                 }
             }
         }
@@ -2914,99 +2009,11 @@
             }
         }
         
-        function drawShapePreview(x1, y1, x2, y2, shapeType) {
-            // Clear the preview
-            shapePreview.innerHTML = '';
-            
-            // Create a div for the preview
-            const preview = document.createElement('div');
-            preview.style.position = 'absolute';
-            preview.style.border = `${currentLineWidth}px solid ${currentColor}`;
-            preview.style.backgroundColor = shapeType === 'rectangle' ? currentFill : 'transparent';
-            
-            switch (shapeType) {
-                case 'line':
-                    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    const angle = Math.atan2(y2 - y1, x2 - x1);
-                    
-                    preview.style.width = `${length}px`;
-                    preview.style.height = '0';
-                    preview.style.borderBottom = `${currentLineWidth}px solid ${currentColor}`;
-                    preview.style.transformOrigin = '0 0';
-                    preview.style.transform = `rotate(${angle}rad)`;
-                    preview.style.left = `${x1}px`;
-                    preview.style.top = `${y1}px`;
-                    break;
-                    
-                case 'rectangle':
-                    preview.style.left = `${Math.min(x1, x2)}px`;
-                    preview.style.top = `${Math.min(y1, y2)}px`;
-                    preview.style.width = `${Math.abs(x2 - x1)}px`;
-                    preview.style.height = `${Math.abs(y2 - y1)}px`;
-                    break;
-                    
-                case 'circle':
-                    const radius = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    preview.style.width = `${radius * 2}px`;
-                    preview.style.height = `${radius * 2}px`;
-                    preview.style.borderRadius = '50%';
-                    preview.style.left = `${x1 - radius}px`;
-                    preview.style.top = `${y1 - radius}px`;
-                    break;
-                    
-                case 'arrow':
-                    const arrowLength = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                    const arrowAngle = Math.atan2(y2 - y1, x2 - x1);
-                    
-                    // Create arrow line
-                    const arrowLine = document.createElement('div');
-                    arrowLine.style.position = 'absolute';
-                    arrowLine.style.width = `${arrowLength}px`;
-                    arrowLine.style.height = '0';
-                    arrowLine.style.borderBottom = `${currentLineWidth}px solid ${currentColor}`;
-                    arrowLine.style.transformOrigin = '0 0';
-                    arrowLine.style.transform = `rotate(${arrowAngle}rad)`;
-                    arrowLine.style.left = `${x1}px`;
-                    arrowLine.style.top = `${y1}px`;
-                    shapePreview.appendChild(arrowLine);
-                    
-                    // Create arrow head
-                    const arrowHead = document.createElement('div');
-                    arrowHead.style.position = 'absolute';
-                    arrowHead.style.width = '0';
-                    arrowHead.style.height = '0';
-                    arrowHead.style.borderLeft = `${currentLineWidth * 2}px solid transparent`;
-                    arrowHead.style.borderRight = `${currentLineWidth * 2}px solid transparent`;
-                    arrowHead.style.borderBottom = `${currentLineWidth * 3}px solid ${currentColor}`;
-                    arrowHead.style.transformOrigin = 'center';
-                    arrowHead.style.transform = `rotate(${arrowAngle}rad)`;
-                    arrowHead.style.left = `${x2}px`;
-                    arrowHead.style.top = `${y2}px`;
-                    shapePreview.appendChild(arrowHead);
-                    break;
-            }
-            
-            if (shapeType !== 'arrow') {
-                shapePreview.appendChild(preview);
-            }
-        }
-        
-        function handleClick(e) {
-            if (currentTool === 'text') {
-                lastX = e.offsetX;
-                lastY = e.offsetY;
-                startTextInput();
-            }
-        }
-        
         function stopDrawing(e) {
             if (!isDrawing || currentTool === 'text') return;
             
             const x = e.offsetX;
             const y = e.offsetY;
-            
-            // Clear the preview
-            shapePreview.innerHTML = '';
             
             // For shapes, complete the drawing and add to history
             if (currentTool === 'line' || currentTool === 'rectangle' || currentTool === 'circle' || currentTool === 'arrow') {
@@ -3036,6 +2043,14 @@
             }
             
             isDrawing = false;
+        }
+        
+        function handleClick(e) {
+            if (currentTool === 'text') {
+                lastX = e.offsetX;
+                lastY = e.offsetY;
+                startTextInput();
+            }
         }
         
         // History functions
@@ -3076,9 +2091,6 @@
                 
                 floatingTexts.forEach(text => text.remove());
                 floatingTexts = [];
-                
-                floatingStickies.forEach(sticky => sticky.remove());
-                floatingStickies = [];
                 
                 redrawWhiteboard();
                 socket.emit('clear', { userId });
@@ -3168,24 +2180,6 @@
                     };
                     img.src = action.src;
                     break;
-                    
-                case 'sticky':
-                    ctx.fillStyle = action.bgColor;
-                    ctx.strokeStyle = action.borderColor;
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.rect(action.x, action.y, action.width, action.height);
-                    ctx.fill();
-                    ctx.stroke();
-                    
-                    ctx.fillStyle = action.textColor;
-                    ctx.font = '14px Arial';
-                    const lines = action.text.split('\n');
-                    const lineHeight = 18;
-                    lines.forEach((line, i) => {
-                        ctx.fillText(line, action.x + 10, action.y + 20 + (i * lineHeight));
-                    });
-                    break;
             }
             
             if (addToHistoryFlag) {
@@ -3214,7 +2208,6 @@
                 e.stopPropagation();
                 img.remove();
                 floatingImages = floatingImages.filter(i => i !== img);
-                saveCurrentPage();
             };
             
             controls.appendChild(deleteBtn);
@@ -3226,9 +2219,6 @@
             // Add to whiteboard container
             whiteboard.parentElement.appendChild(img);
             floatingImages.push(img);
-            
-            // Save to current page
-            saveCurrentPage();
             
             return img;
         }
@@ -3257,7 +2247,6 @@
                 e.stopPropagation();
                 textElement.remove();
                 floatingTexts = floatingTexts.filter(t => t !== textElement);
-                saveCurrentPage();
             };
             
             controls.appendChild(deleteBtn);
@@ -3268,66 +2257,14 @@
             
             // Update on edit
             textElement.addEventListener('input', () => {
-                saveCurrentPage();
+                // You might want to save the state here
             });
             
             // Add to whiteboard container
             whiteboard.parentElement.appendChild(textElement);
             floatingTexts.push(textElement);
             
-            // Save to current page
-            saveCurrentPage();
-            
             return textElement;
-        }
-        
-        // Create floating sticky note
-        function createFloatingSticky(text, x, y, width = 200, height = 150, color = '#ffeb3b') {
-            const sticky = document.createElement('div');
-            sticky.className = 'sticky-note';
-            sticky.style.left = `${x}px`;
-            sticky.style.top = `${y}px`;
-            sticky.style.width = `${width}px`;
-            sticky.style.height = `${height}px`;
-            sticky.style.backgroundColor = color;
-            
-            // Add content
-            sticky.contentEditable = true;
-            sticky.textContent = text;
-            
-            // Add controls
-            const controls = document.createElement('div');
-            controls.className = 'image-controls';
-            
-            const deleteBtn = document.createElement('div');
-            deleteBtn.className = 'image-control';
-            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
-            deleteBtn.onclick = (e) => {
-                e.stopPropagation();
-                sticky.remove();
-                floatingStickies = floatingStickies.filter(s => s !== sticky);
-                saveCurrentPage();
-            };
-            
-            controls.appendChild(deleteBtn);
-            sticky.appendChild(controls);
-            
-            // Make draggable and resizable
-            makeDraggable(sticky);
-            
-            // Update on edit
-            sticky.addEventListener('input', () => {
-                saveCurrentPage();
-            });
-            
-            // Add to whiteboard container
-            whiteboard.parentElement.appendChild(sticky);
-            floatingStickies.push(sticky);
-            
-            // Save to current page
-            saveCurrentPage();
-            
-            return sticky;
         }
         
         // Make element draggable and resizable
@@ -3378,9 +2315,6 @@
                 
                 // Reset z-index
                 element.style.zIndex = '50';
-                
-                // Save position
-                saveCurrentPage();
             }
         }
         
@@ -3467,96 +2401,6 @@
             }
         }
         
-        async function toggleScreenShare() {
-            try {
-                if (!isScreenSharing) {
-                    const screenStream = await navigator.mediaDevices.getDisplayMedia({ 
-                        video: true,
-                        audio: false
-                    });
-                    
-                    // Replace video track in local stream
-                    const videoTrack = screenStream.getVideoTracks()[0];
-                    const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
-                    
-                    if (sender) {
-                        sender.replaceTrack(videoTrack);
-                    }
-                    
-                    // Update UI
-                    localVideo.srcObject = screenStream;
-                    isScreenSharing = true;
-                    screenShareBtn.classList.add('off');
-                    screenShareFooterBtn.classList.add('active');
-                    showNotification('Screen sharing started');
-                    
-                    // Handle when screen sharing is stopped
-                    videoTrack.onended = () => {
-                        toggleScreenShare();
-                    };
-                } else {
-                    // Restore camera stream
-                    const stream = await navigator.mediaDevices.getUserMedia({ 
-                        video: true,
-                        audio: isMicOn 
-                    });
-                    
-                    const videoTrack = stream.getVideoTracks()[0];
-                    const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
-                    
-                    if (sender) {
-                        sender.replaceTrack(videoTrack);
-                    }
-                    
-                    // Update UI
-                    localVideo.srcObject = stream;
-                    isScreenSharing = false;
-                    screenShareBtn.classList.remove('off');
-                    screenShareFooterBtn.classList.remove('active');
-                    showNotification('Screen sharing stopped');
-                }
-            } catch (err) {
-                console.error('Error sharing screen:', err);
-                showNotification('Could not share screen');
-            }
-        }
-        
-        function toggleRecording() {
-            isRecording = !isRecording;
-            recordBtn.classList.toggle('off', !isRecording);
-            recordFooterBtn.classList.toggle('active', isRecording);
-            showNotification(isRecording ? 'Recording started' : 'Recording stopped');
-        }
-        
-        function toggleRaiseHand() {
-            isHandRaised = !isHandRaised;
-            raiseHandBtn.classList.toggle('active', isHandRaised);
-            
-            if (isHandRaised) {
-                const handIndicator = document.createElement('div');
-                handIndicator.className = 'raise-hand';
-                handIndicator.textContent = `${userName} raised hand`;
-                userList.appendChild(handIndicator);
-                
-                setTimeout(() => {
-                    handIndicator.remove();
-                }, 3000);
-            }
-            
-            socket.emit('raiseHand', { userId, isHandRaised });
-            showNotification(isHandRaised ? 'Hand raised' : 'Hand lowered');
-        }
-        
-        function showReactionsMenu() {
-            reactionMenu.classList.toggle('show');
-        }
-        
-        function sendReaction(reaction) {
-            socket.emit('sendReaction', { userId, reaction });
-            reactionMenu.classList.remove('show');
-            showNotification(`Sent ${reaction} reaction`);
-        }
-        
         function setupPeerConnection() {
             if (peerConnection) {
                 peerConnection.close();
@@ -3597,7 +2441,6 @@
                 const remoteUserId = Object.keys(users).find(id => id !== userId);
                 if (remoteUserId) {
                     remoteVideoLabel.textContent = users[remoteUserId]?.userName || 'Participant';
-                    remoteVideoPlaceholderText.textContent = `${users[remoteUserId]?.userName || 'Participant'}'s video will appear here`;
                 }
             };
             
@@ -3680,21 +2523,11 @@
                 showModal(lobbyModal);
             } else {
                 // Load existing drawings
-                pages = data.pages || [];
-                currentPageIndex = data.currentPageIndex || 0;
-                
-                if (pages.length === 0) {
-                    pages = [{
-                        drawings: [],
-                        historyPointer: -1,
-                        floatingImages: [],
-                        floatingTexts: [],
-                        floatingStickies: []
-                    }];
+                if (data.drawings) {
+                    drawingHistory = data.drawings;
+                    historyPointer = drawingHistory.length - 1;
+                    redrawWhiteboard();
                 }
-                
-                loadPage(currentPageIndex);
-                updatePageControls();
                 
                 // Try to load saved state
                 loadBoardState();
@@ -3714,21 +2547,11 @@
         });
         
         socket.on('boardData', (data) => {
-            pages = data.pages || [];
-            currentPageIndex = data.currentPageIndex || 0;
-            
-            if (pages.length === 0) {
-                pages = [{
-                    drawings: [],
-                    historyPointer: -1,
-                    floatingImages: [],
-                    floatingTexts: [],
-                    floatingStickies: []
-                }];
+            if (data.drawings) {
+                drawingHistory = data.drawings;
+                historyPointer = drawingHistory.length - 1;
+                redrawWhiteboard();
             }
-            
-            loadPage(currentPageIndex);
-            updatePageControls();
             
             // Try to load saved state
             loadBoardState();
@@ -3762,10 +2585,6 @@
             const userName = users[userId]?.userName || 'A user';
             delete users[userId];
             
-            // Remove cursor
-            const cursor = document.getElementById(`cursor-${userId}`);
-            if (cursor) cursor.remove();
-            
             updateUserList();
             showNotification(`${userName} left the board`);
             
@@ -3783,7 +2602,6 @@
             const userId = data.userId;
             const x = data.x;
             const y = data.y;
-            const color = users[userId]?.userColor || '#000000';
             const name = users[userId]?.userName || 'User';
             
             let cursor = document.getElementById(`cursor-${userId}`);
@@ -3792,14 +2610,6 @@
                 cursor = document.createElement('div');
                 cursor.id = `cursor-${userId}`;
                 cursor.className = 'cursor';
-                cursor.style.backgroundColor = color;
-                
-                // Add user name to cursor
-                const userName = document.createElement('div');
-                userName.className = 'cursor-name';
-                userName.textContent = name;
-                userName.style.color = color;
-                cursor.appendChild(userName);
                 
                 whiteboard.parentElement.appendChild(cursor);
             }
@@ -3837,35 +2647,15 @@
             floatingTexts.forEach(text => text.remove());
             floatingTexts = [];
             
-            floatingStickies.forEach(sticky => sticky.remove());
-            floatingStickies = [];
-            
             redrawWhiteboard();
         });
         
         socket.on('userCount', (count) => {
             userCount.textContent = count;
-            participantsBadge.textContent = count > 1 ? count - 1 : '';
-            participantsTabBadge.textContent = count > 1 ? count - 1 : '';
-            participantsFooterBadge.textContent = count > 1 ? count - 1 : '';
         });
         
         socket.on('chatMessage', (message) => {
             addChatMessage(message, message.senderId === userId);
-        });
-        
-        socket.on('raiseHand', (data) => {
-            if (data.userId !== userId) {
-                const userName = users[data.userId]?.userName || 'A participant';
-                showNotification(data.isHandRaised ? `${userName} raised hand` : `${userName} lowered hand`);
-            }
-        });
-        
-        socket.on('sendReaction', (data) => {
-            if (data.userId !== userId) {
-                const userName = users[data.userId]?.userName || 'A participant';
-                showNotification(`${userName} reacted with ${data.reaction}`);
-            }
         });
         
         // WebRTC events
@@ -3914,27 +2704,51 @@
         function updateUserList() {
             userList.innerHTML = '';
             
+            // Sort users alphabetically, but put host first
+            const sortedUsers = Object.values(users).sort((a, b) => {
+                if (a.userId === userId) return -1;
+                if (b.userId === userId) return 1;
+                return a.userName.localeCompare(b.userName);
+            });
+            
             // Add current user first (if host)
-            if (isHost) {
+            if (isHost || sortedUsers.length === 0) {
                 const userItem = document.createElement('div');
                 userItem.className = 'user-item host';
                 
                 const userAvatar = document.createElement('div');
                 userAvatar.className = 'user-avatar';
-                userAvatar.style.backgroundColor = userColor;
                 userAvatar.textContent = userName.substring(0, 1).toUpperCase();
                 
                 const userNameEl = document.createElement('div');
                 userNameEl.className = 'user-name';
                 userNameEl.textContent = userName;
                 
+                const editNameBtn = document.createElement('button');
+                editNameBtn.className = 'user-control';
+                editNameBtn.innerHTML = '<i class="fas fa-edit"></i>';
+                editNameBtn.title = 'Change name';
+                editNameBtn.onclick = () => {
+                    const newName = prompt('Enter your new name:', userName);
+                    if (newName && newName.trim() !== '') {
+                        userName = newName.trim();
+                        userNameEl.textContent = userName;
+                        socket.emit('updateUser', { 
+                            userId, 
+                            userName, 
+                            boardId 
+                        });
+                    }
+                };
+                
                 userItem.appendChild(userAvatar);
                 userItem.appendChild(userNameEl);
+                userItem.appendChild(editNameBtn);
                 userList.appendChild(userItem);
             }
             
             // Add other users
-            Object.values(users).forEach(user => {
+            sortedUsers.forEach(user => {
                 if (user.userId === userId) return;
                 
                 const userItem = document.createElement('div');
@@ -3943,7 +2757,6 @@
                 
                 const userAvatar = document.createElement('div');
                 userAvatar.className = 'user-avatar';
-                userAvatar.style.backgroundColor = user.userColor;
                 userAvatar.textContent = user.userName.substring(0, 1).toUpperCase();
                 
                 const userNameEl = document.createElement('div');
@@ -3972,62 +2785,17 @@
         }
         
         function showNotification(message) {
-            notification.textContent = message;
-            notification.style.display = 'block';
-            
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
+            // In a real app, you would show a notification
+            console.log(message);
         }
         
-        // Pin content
-        function pinContent(content, title) {
-            pinnedBody.innerHTML = '';
-            pinnedBody.appendChild(content.cloneNode(true));
-            pinnedTitle.textContent = title;
-            pinnedContent.classList.add('show');
+        function loadBoardState() {
+            // In a real app, you would load saved state
         }
         
         // Event listeners for modals and buttons
         inviteOption.addEventListener('click', () => {
             showModal(inviteModal);
-            dropdownMenu.classList.remove('show');
-        });
-        
-        participantsOption.addEventListener('click', () => {
-            document.querySelector('.container').classList.remove('panel-collapsed');
-            const icon = togglePanelBtn.querySelector('i');
-            icon.classList.remove('fa-chevron-right');
-            icon.classList.add('fa-chevron-left');
-            
-            // Switch to participants tab
-            panelTabs.forEach(t => t.classList.remove('active'));
-            document.querySelector('.panel-tab[data-tab="participants"]').classList.add('active');
-            
-            panelContents.forEach(c => c.classList.remove('active'));
-            document.querySelector('.panel-content[data-content="participants"]').classList.add('active');
-            
-            dropdownMenu.classList.remove('show');
-        });
-        
-        chatOption.addEventListener('click', () => {
-            document.querySelector('.container').classList.remove('panel-collapsed');
-            const icon = togglePanelBtn.querySelector('i');
-            icon.classList.remove('fa-chevron-right');
-            icon.classList.add('fa-chevron-left');
-            
-            // Switch to chat tab
-            panelTabs.forEach(t => t.classList.remove('active'));
-            document.querySelector('.panel-tab[data-tab="chat"]').classList.add('active');
-            
-            panelContents.forEach(c => c.classList.remove('active'));
-            document.querySelector('.panel-content[data-content="chat"]').classList.add('active');
-            
-            // Reset unread messages
-            unreadChatMessages = 0;
-            updateChatBadges();
-            moreBtn.classList.remove('has-notification');
-            
             dropdownMenu.classList.remove('show');
         });
         
@@ -4044,13 +2812,7 @@
         
         leaveOption.addEventListener('click', () => {
             showConfirmation('Are you sure you want to leave this session?', () => {
-                // Show leave image
-                leaveImage.style.display = 'block';
-                
-                // Redirect after a delay
-                setTimeout(() => {
-                    window.location.href = window.location.origin;
-                }, 2000);
+                window.location.href = window.location.origin;
             });
             dropdownMenu.classList.remove('show');
         });
@@ -4062,23 +2824,10 @@
         settingsModalClose.addEventListener('click', () => hideModal(settingsModal));
         settingsModalCancel.addEventListener('click', () => hideModal(settingsModal));
         confirmCancel.addEventListener('click', () => hideModal(confirmationModal));
-        pinnedClose.addEventListener('click', () => pinnedContent.classList.remove('show'));
         imageModalClose.addEventListener('click', () => hideModal(imageModal));
         imageModalCancel.addEventListener('click', () => hideModal(imageModal));
-        stickyModalClose.addEventListener('click', () => hideModal(stickyModal));
-        stickyModalCancel.addEventListener('click', () => hideModal(stickyModal));
         
         inviteModalSend.addEventListener('click', () => {
-            requireApprovalSetting = requireApproval.checked;
-            allowDrawingSetting = allowDrawing.checked;
-            
-            // Update settings on server
-            socket.emit('updateBoardSettings', {
-                boardId,
-                requireApproval: requireApprovalSetting,
-                allowDrawing: allowDrawingSetting
-            });
-            
             showNotification('Invites sent!');
             hideModal(inviteModal);
         });
@@ -4099,57 +2848,13 @@
                     boardId 
                 });
                 
-                // Update video placeholder text
-                localVideoPlaceholderText.textContent = `${userName}'s video will appear here`;
-                
                 showNotification('Name updated');
             }
-            
-            // Update grid style
-            const gridValue = gridStyle.value;
-            updateGridStyle(gridValue);
             
             hideModal(settingsModal);
         });
         
-        function updateGridStyle(style) {
-            const container = document.querySelector('.whiteboard-container');
-            switch (style) {
-                case 'dots':
-                    container.style.backgroundImage = `
-                        radial-gradient(#e9ecef 1px, transparent 1px),
-                        radial-gradient(#e9ecef 1px, transparent 1px)
-                    `;
-                    container.style.backgroundSize = '20px 20px';
-                    container.style.backgroundPosition = '0 0, 10px 10px';
-                    break;
-                case 'lines':
-                    container.style.backgroundImage = `
-                        linear-gradient(#e9ecef 1px, transparent 1px),
-                        linear-gradient(90deg, #e9ecef 1px, transparent 1px)
-                    `;
-                    container.style.backgroundSize = '20px 20px';
-                    break;
-                case 'none':
-                    container.style.backgroundImage = 'none';
-                    break;
-            }
-        }
-        
         // Image insertion
-        imageUpload.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    imagePreview.src = event.target.result;
-                    imagePreview.style.display = 'block';
-                    imagePlaceholder.style.display = 'none';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        
         imageModalInsert.addEventListener('click', () => {
             let imageSrc = imageUrl.value.trim();
             
@@ -4183,7 +2888,7 @@
             const img = new Image();
             img.onload = function() {
                 // Create floating image
-                const floatingImg = createFloatingImage(
+                createFloatingImage(
                     src, 
                     whiteboard.width / 2 - 100, 
                     whiteboard.height / 2 - 100,
@@ -4191,85 +2896,30 @@
                     this.width > 300 ? (300 / this.width) * this.height : this.height
                 );
                 
-                // Send to server
-                socket.emit('addFloatingImage', {
-                    src,
-                    x: floatingImg.offsetLeft,
-                    y: floatingImg.offsetTop,
-                    width: floatingImg.offsetWidth,
-                    height: floatingImg.offsetHeight,
-                    boardId,
-                    userId
-                });
-                
                 hideModal(imageModal);
                 imageUrl.value = '';
                 imageUpload.value = '';
-                imagePreview.src = '';
-                imagePreview.style.display = 'none';
-                imagePlaceholder.style.display = 'flex';
             };
             img.src = src;
         }
         
-        // Handle floating images from server
-        socket.on('addFloatingImage', (data) => {
-            if (data.userId !== userId) {
-                createFloatingImage(data.src, data.x, data.y, data.width, data.height);
-            }
-        });
-        
-        // Sticky note insertion
-        stickyColorOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                stickyColorOptions.forEach(opt => opt.style.border = 'none');
-                option.style.border = '2px solid var(--primary-color)';
-            });
-        });
-        
-        stickyModalAdd.addEventListener('click', () => {
-            const content = stickyContent.value.trim();
-            if (content) {
-                const selectedColor = document.querySelector('.color-option[style*="border: 2px solid var(--primary-color)"]') || 
-                                      document.querySelector('.color-option');
-                
-                createFloatingSticky(content, lastX, lastY, 200, 150, selectedColor.dataset.color);
-                
-                hideModal(stickyModal);
-                stickyContent.value = '';
-            } else {
-                showNotification('Please enter some content for the sticky note');
-            }
-        });
-        
         // Export functions
         exportPNG.addEventListener('click', () => {
-            const exportCurrent = exportPages.value === 'current';
-            if (exportCurrent) {
-                const dataURL = whiteboard.toDataURL('image/png');
-                const link = document.createElement('a');
-                link.download = `whiteboard-${boardId}-page-${currentPageIndex + 1}.png`;
-                link.href = dataURL;
-                link.click();
-            } else {
-                // Export all pages (would need more complex implementation)
-                showNotification('Exporting all pages as PNG coming soon!');
-            }
+            const dataURL = whiteboard.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = `whiteboard-${boardId}.png`;
+            link.href = dataURL;
+            link.click();
             hideModal(exportModal);
             showNotification('Exported as PNG');
         });
         
         exportJPG.addEventListener('click', () => {
-            const exportCurrent = exportPages.value === 'current';
-            if (exportCurrent) {
-                const dataURL = whiteboard.toDataURL('image/jpeg', 0.9);
-                const link = document.createElement('a');
-                link.download = `whiteboard-${boardId}-page-${currentPageIndex + 1}.jpg`;
-                link.href = dataURL;
-                link.click();
-            } else {
-                showNotification('Exporting all pages as JPG coming soon!');
-            }
+            const dataURL = whiteboard.toDataURL('image/jpeg', 0.9);
+            const link = document.createElement('a');
+            link.download = `whiteboard-${boardId}.jpg`;
+            link.href = dataURL;
+            link.click();
             hideModal(exportModal);
             showNotification('Exported as JPG');
         });
@@ -4284,27 +2934,9 @@
             showNotification('SVG export coming soon!');
         });
         
-        // Pin video
-        pinLocal.addEventListener('click', () => {
-            pinContent(localVideo, 'Your Video');
-        });
-        
-        pinRemote.addEventListener('click', () => {
-            pinContent(remoteVideo, `${remoteVideoLabel.textContent}'s Video`);
-        });
-        
-        // Background options
-        backgroundLocal.addEventListener('click', () => {
-            showNotification('Background options coming soon!');
-        });
-        
         // Media button event listeners
         micBtn.addEventListener('click', toggleMic);
         videoBtn.addEventListener('click', toggleVideo);
-        screenShareBtn.addEventListener('click', toggleScreenShare);
-        recordBtn.addEventListener('click', toggleRecording);
-        raiseHandBtn.addEventListener('click', toggleRaiseHand);
-        reactionBtn.addEventListener('click', showReactionsMenu);
         
         // Footer button event listeners
         micFooterBtn.addEventListener('click', toggleMic);
@@ -4322,8 +2954,6 @@
             panelContents.forEach(c => c.classList.remove('active'));
             document.querySelector('.panel-content[data-content="participants"]').classList.add('active');
         });
-        screenShareFooterBtn.addEventListener('click', toggleScreenShare);
-        recordFooterBtn.addEventListener('click', toggleRecording);
         chatFooterBtn.addEventListener('click', () => {
             document.querySelector('.container').classList.remove('panel-collapsed');
             const icon = togglePanelBtn.querySelector('i');
@@ -4336,18 +2966,44 @@
             
             panelContents.forEach(c => c.classList.remove('active'));
             document.querySelector('.panel-content[data-content="chat"]').classList.add('active');
-            
-            // Reset unread messages
-            unreadChatMessages = 0;
-            updateChatBadges();
-            moreBtn.classList.remove('has-notification');
         });
         
-        // Reaction menu event listeners
-        document.querySelectorAll('.reaction-option').forEach(option => {
-            option.addEventListener('click', () => {
-                sendReaction(option.textContent);
-            });
+        // Name modal
+        nameModalSubmit.addEventListener('click', () => {
+            const name = nameInput.value.trim();
+            if (name) {
+                userName = name;
+                hideModal(nameModal);
+                
+                // Load board if ID exists in URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlBoardId = urlParams.get('board');
+                
+                if (urlBoardId) {
+                    showLoading('Joining board...');
+                    socket.emit('joinBoard', { 
+                        boardId: urlBoardId, 
+                        userId, 
+                        userName 
+                    });
+                } else {
+                    showLoading('Creating new board...');
+                    isHost = true;
+                    boardId = generateBoardId();
+                    socket.emit('createBoard', { 
+                        boardId,
+                        userId, 
+                        userName 
+                    });
+                }
+                
+                // Hide loading screen after connection is established
+                setTimeout(() => {
+                    hideLoading();
+                }, 2000);
+            } else {
+                alert('Please enter your name');
+            }
         });
         
         // Initialize
