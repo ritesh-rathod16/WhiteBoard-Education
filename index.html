@@ -1494,6 +1494,153 @@
             z-index: 10000;
             display: none;
         }
+
+        /* Text element */
+        .text-element {
+            position: absolute;
+            cursor: move;
+            z-index: 50;
+            padding: 8px;
+            border: 1px dashed rgba(0, 0, 0, 0.2);
+            background-color: rgba(255, 255, 255, 0.8);
+            resize: both;
+            overflow: hidden;
+            min-width: 50px;
+            min-height: 20px;
+        }
+
+        .text-element:hover {
+            border-color: var(--primary-color);
+        }
+
+        /* Sticky note */
+        .sticky-note {
+            position: absolute;
+            cursor: move;
+            z-index: 50;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            resize: both;
+            overflow: hidden;
+            min-width: 100px;
+            min-height: 100px;
+        }
+
+        /* Footer buttons */
+        .footer-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            color: var(--dark-color);
+        }
+
+        .footer-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .footer-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .footer-btn .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* Reaction buttons */
+        .reaction-btn {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            color: var(--dark-color);
+        }
+
+        .reaction-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .reaction-menu {
+            position: absolute;
+            bottom: 50px;
+            right: 0;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 8px;
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .reaction-menu.show {
+            display: grid;
+        }
+
+        .reaction-option {
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .reaction-option:hover {
+            transform: scale(1.2);
+        }
+
+        /* Raise hand indicator */
+        .raise-hand {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--accent-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            z-index: 10;
+        }
+
+        /* Screen share indicator */
+        .screen-share {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
@@ -1553,40 +1700,40 @@
             <div class="toolbar">
                 <div class="tool active" data-tool="pencil">
                     <i class="fas fa-pencil-alt"></i>
-                    <span class="tool-tip">Pencil (P)</span>
+                    <span class="tool-tip">Pencil</span>
                 </div>
                 <div class="tool" data-tool="line">
                     <i class="fas fa-slash"></i>
-                    <span class="tool-tip">Line (L)</span>
+                    <span class="tool-tip">Line</span>
                 </div>
                 <div class="tool" data-tool="rectangle">
                     <i class="far fa-square"></i>
-                    <span class="tool-tip">Rectangle (R)</span>
+                    <span class="tool-tip">Rectangle</span>
                 </div>
                 <div class="tool" data-tool="circle">
                     <i class="far fa-circle"></i>
-                    <span class="tool-tip">Circle (C)</span>
+                    <span class="tool-tip">Circle</span>
                 </div>
                 <div class="tool" data-tool="arrow">
                     <i class="fas fa-arrow-right"></i>
-                    <span class="tool-tip">Arrow (A)</span>
+                    <span class="tool-tip">Arrow</span>
                 </div>
                 <div class="tool" data-tool="text">
                     <i class="fas fa-font"></i>
-                    <span class="tool-tip">Text (T)</span>
+                    <span class="tool-tip">Text</span>
                 </div>
                 <div class="tool" data-tool="eraser">
                     <i class="fas fa-eraser"></i>
-                    <span class="tool-tip">Eraser (E)</span>
+                    <span class="tool-tip">Eraser</span>
                 </div>
                 <div class="tool-divider"></div>
                 <div class="tool" data-tool="undo">
                     <i class="fas fa-undo"></i>
-                    <span class="tool-tip">Undo (Ctrl+Z)</span>
+                    <span class="tool-tip">Undo</span>
                 </div>
                 <div class="tool" data-tool="redo">
                     <i class="fas fa-redo"></i>
-                    <span class="tool-tip">Redo (Ctrl+Y)</span>
+                    <span class="tool-tip">Redo</span>
                 </div>
                 <div class="tool" data-tool="clear">
                     <i class="fas fa-trash-alt"></i>
@@ -1672,11 +1819,19 @@
                                 <i class="fas fa-video"></i>
                                 <span>Video</span>
                             </button>
+                            <button id="screenShareBtn" class="media-btn">
+                                <i class="fas fa-desktop"></i>
+                                <span>Share</span>
+                            </button>
+                            <button id="recordBtn" class="media-btn">
+                                <i class="fas fa-circle"></i>
+                                <span>Record</span>
+                            </button>
                         </div>
                         
                         <div class="video-container">
                             <video id="localVideo" autoplay muted playsinline></video>
-                            <div class="video-label">You</div>
+                            <div class="video-label" id="localVideoLabel">You</div>
                             <div class="video-controls">
                                 <button class="video-control" id="pinLocal">
                                     <i class="fas fa-thumbtack"></i>
@@ -1687,7 +1842,7 @@
                             </div>
                             <div class="video-placeholder">
                                 <i class="fas fa-user"></i>
-                                <div class="video-placeholder-text">Your video will appear here</div>
+                                <div class="video-placeholder-text" id="localVideoPlaceholderText">Your video will appear here</div>
                             </div>
                         </div>
                         
@@ -1701,7 +1856,7 @@
                             </div>
                             <div class="video-placeholder">
                                 <i class="fas fa-users"></i>
-                                <div class="video-placeholder-text">Other participant's video will appear here</div>
+                                <div class="video-placeholder-text" id="remoteVideoPlaceholderText">Other participant's video will appear here</div>
                             </div>
                         </div>
                     </div>
@@ -1728,12 +1883,43 @@
                 <span>Made by Ritesh Rathod</span>
             </div>
             <div class="board-actions">
-                <button class="board-btn" id="copyBoardId">
-                    <i class="fas fa-copy"></i> Copy Board ID
+                <button class="footer-btn" id="micFooterBtn" title="Microphone">
+                    <i class="fas fa-microphone"></i>
                 </button>
-                <span id="boardId">Loading...</span>
-                <button class="board-btn primary" id="saveBoard">
-                    <i class="fas fa-save"></i> Save
+                <button class="footer-btn" id="videoFooterBtn" title="Video">
+                    <i class="fas fa-video"></i>
+                </button>
+                <button class="footer-btn" id="participantsFooterBtn" title="Participants">
+                    <i class="fas fa-users"></i>
+                    <span class="badge" id="participantsFooterBadge">0</span>
+                </button>
+                <button class="footer-btn" id="screenShareFooterBtn" title="Share Screen">
+                    <i class="fas fa-desktop"></i>
+                </button>
+                <button class="footer-btn" id="recordFooterBtn" title="Record">
+                    <i class="fas fa-circle"></i>
+                </button>
+                <button class="footer-btn" id="raiseHandBtn" title="Raise Hand">
+                    <i class="fas fa-hand-paper"></i>
+                </button>
+                <div style="position: relative;">
+                    <button class="footer-btn" id="reactionBtn" title="Reactions">
+                        <i class="fas fa-smile"></i>
+                    </button>
+                    <div class="reaction-menu" id="reactionMenu">
+                        <div class="reaction-option">👍</div>
+                        <div class="reaction-option">👎</div>
+                        <div class="reaction-option">👏</div>
+                        <div class="reaction-option">😂</div>
+                        <div class="reaction-option">😍</div>
+                        <div class="reaction-option">😮</div>
+                        <div class="reaction-option">😢</div>
+                        <div class="reaction-option">🙏</div>
+                    </div>
+                </div>
+                <button class="footer-btn" id="chatFooterBtn" title="Chat">
+                    <i class="fas fa-comment"></i>
+                    <span class="badge" id="chatFooterBadge">0</span>
                 </button>
             </div>
         </div>
@@ -2015,16 +2201,19 @@
         const userList = document.getElementById('userList');
         const userCount = document.getElementById('userCount');
         const boardIdElement = document.getElementById('boardId');
-        const copyBoardIdBtn = document.getElementById('copyBoardId');
-        const saveBoardBtn = document.getElementById('saveBoard');
         const notification = document.getElementById('notification');
         const micBtn = document.getElementById('micBtn');
         const videoBtn = document.getElementById('videoBtn');
+        const screenShareBtn = document.getElementById('screenShareBtn');
+        const recordBtn = document.getElementById('recordBtn');
         const localVideo = document.getElementById('localVideo');
         const remoteVideo = document.getElementById('remoteVideo');
         const remoteVideoLabel = document.getElementById('remoteVideoLabel');
+        const localVideoLabel = document.getElementById('localVideoLabel');
         const localVideoPlaceholder = localVideo.nextElementSibling;
         const remoteVideoPlaceholder = remoteVideo.nextElementSibling;
+        const localVideoPlaceholderText = document.getElementById('localVideoPlaceholderText');
+        const remoteVideoPlaceholderText = document.getElementById('remoteVideoPlaceholderText');
         const togglePanelBtn = document.getElementById('togglePanel');
         const loadingScreen = document.getElementById('loading');
         const loadingText = loadingScreen.querySelector('.loading-text');
@@ -2111,6 +2300,19 @@
         const stickyContent = document.getElementById('stickyContent');
         const stickyColorOptions = document.querySelectorAll('.color-option');
         
+        // Footer buttons
+        const micFooterBtn = document.getElementById('micFooterBtn');
+        const videoFooterBtn = document.getElementById('videoFooterBtn');
+        const participantsFooterBtn = document.getElementById('participantsFooterBtn');
+        const screenShareFooterBtn = document.getElementById('screenShareFooterBtn');
+        const recordFooterBtn = document.getElementById('recordFooterBtn');
+        const raiseHandBtn = document.getElementById('raiseHandBtn');
+        const reactionBtn = document.getElementById('reactionBtn');
+        const chatFooterBtn = document.getElementById('chatFooterBtn');
+        const participantsFooterBadge = document.getElementById('participantsFooterBadge');
+        const chatFooterBadge = document.getElementById('chatFooterBadge');
+        const reactionMenu = document.getElementById('reactionMenu');
+        
         // Menu options
         const inviteOption = document.getElementById('inviteOption');
         const participantsOption = document.getElementById('participantsOption');
@@ -2143,7 +2345,9 @@
         let tempCtx = tempCanvas.getContext('2d');
         let savedState = null;
         let floatingImages = [];
-        let activeFloatingImage = null;
+        let floatingTexts = [];
+        let floatingStickies = [];
+        let activeFloatingElement = null;
         
         // Multi-page support
         let pages = [];
@@ -2161,9 +2365,13 @@
         
         // Media state
         let localStream = null;
+        let remoteStream = null;
         let peerConnection = null;
         let isMicOn = false;
         let isVideoOn = false;
+        let isScreenSharing = false;
+        let isRecording = false;
+        let isHandRaised = false;
         let currentBackground = 'none';
         const configuration = {
             iceServers: [
@@ -2212,7 +2420,9 @@
             pages = [{
                 drawings: [],
                 historyPointer: -1,
-                floatingImages: []
+                floatingImages: [],
+                floatingTexts: [],
+                floatingStickies: []
             }];
             updatePageControls();
             
@@ -2252,6 +2462,9 @@
             
             // Add beforeunload event listener
             window.addEventListener('beforeunload', handleBeforeUnload);
+            
+            // Update video placeholder text with user name
+            localVideoPlaceholderText.textContent = `${userName}'s video will appear here`;
         }
         
         function generateBoardId() {
@@ -2292,10 +2505,18 @@
             // Redraw everything after resize
             redrawWhiteboard();
             
-            // Reposition floating images
+            // Reposition floating elements
             floatingImages.forEach(img => {
                 img.style.maxWidth = `${container.offsetWidth * 0.5}px`;
                 img.style.maxHeight = `${container.offsetHeight * 0.5}px`;
+            });
+            
+            floatingTexts.forEach(text => {
+                text.style.maxWidth = `${container.offsetWidth * 0.5}px`;
+            });
+            
+            floatingStickies.forEach(sticky => {
+                sticky.style.maxWidth = `${container.offsetWidth * 0.5}px`;
             });
         }
         
@@ -2375,6 +2596,7 @@
         function updateChatBadges() {
             chatBadge.textContent = unreadChatMessages > 0 ? unreadChatMessages : '';
             chatTabBadge.textContent = unreadChatMessages > 0 ? unreadChatMessages : '';
+            chatFooterBadge.textContent = unreadChatMessages > 0 ? unreadChatMessages : '';
         }
         
         // Event Listeners
@@ -2408,19 +2630,6 @@
             currentLineWidth = parseInt(e.target.value);
             ctx.lineWidth = currentLineWidth;
             ctx.font = `${currentLineWidth * 5}px Arial`;
-        });
-        
-        copyBoardIdBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(boardId).then(() => {
-                showNotification('Board ID copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy board ID:', err);
-                showNotification('Failed to copy Board ID');
-            });
-        });
-        
-        saveBoardBtn.addEventListener('click', () => {
-            saveBoardState();
         });
         
         togglePanelBtn.addEventListener('click', () => {
@@ -2459,54 +2668,6 @@
                     }
                 });
             });
-        });
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (textInputActive) return;
-            
-            // Tool shortcuts
-            if (toolShortcuts[e.key.toLowerCase()] && !e.ctrlKey && !e.metaKey) {
-                const toolName = toolShortcuts[e.key.toLowerCase()];
-                selectTool(toolName);
-                
-                // Find and animate the tool button
-                const toolButton = document.querySelector(`.tool[data-tool="${toolName}"]`);
-                if (toolButton) {
-                    toolButton.classList.add('selected');
-                    setTimeout(() => {
-                        toolButton.classList.remove('selected');
-                    }, 500);
-                }
-                
-                e.preventDefault();
-            }
-            
-            // Undo/Redo shortcuts
-            if (e.ctrlKey || e.metaKey) {
-                if (e.key === 'z') {
-                    undo();
-                    e.preventDefault();
-                } else if (e.key === 'y') {
-                    redo();
-                    e.preventDefault();
-                } else if (e.key === 's') {
-                    saveBoardState();
-                    e.preventDefault();
-                }
-            }
-        });
-        
-        // More menu
-        moreBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('show');
-        });
-        
-        document.addEventListener('click', (e) => {
-            if (!moreBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                dropdownMenu.classList.remove('show');
-            }
         });
         
         // Whiteboard background selection
@@ -2557,7 +2718,9 @@
             pages.push({
                 drawings: [],
                 historyPointer: -1,
-                floatingImages: []
+                floatingImages: [],
+                floatingTexts: [],
+                floatingStickies: []
             });
             currentPageIndex = pages.length - 1;
             loadPage(currentPageIndex);
@@ -2574,14 +2737,22 @@
             pages[currentPageIndex] = {
                 drawings: [...drawingHistory],
                 historyPointer: historyPointer,
-                floatingImages: [...floatingImages]
+                floatingImages: [...floatingImages],
+                floatingTexts: [...floatingTexts],
+                floatingStickies: [...floatingStickies]
             };
         }
         
         function loadPage(index) {
-            // Remove all floating images
+            // Remove all floating elements
             floatingImages.forEach(img => img.remove());
             floatingImages = [];
+            
+            floatingTexts.forEach(text => text.remove());
+            floatingTexts = [];
+            
+            floatingStickies.forEach(sticky => sticky.remove());
+            floatingStickies = [];
             
             // Load drawings
             drawingHistory = [...pages[index].drawings];
@@ -2591,6 +2762,20 @@
             if (pages[index].floatingImages) {
                 pages[index].floatingImages.forEach(imgData => {
                     createFloatingImage(imgData.src, imgData.x, imgData.y, imgData.width, imgData.height);
+                });
+            }
+            
+            // Load floating texts
+            if (pages[index].floatingTexts) {
+                pages[index].floatingTexts.forEach(textData => {
+                    createFloatingText(textData.text, textData.x, textData.y, textData.width, textData.height, textData.color, textData.size);
+                });
+            }
+            
+            // Load floating stickies
+            if (pages[index].floatingStickies) {
+                pages[index].floatingStickies.forEach(stickyData => {
+                    createFloatingSticky(stickyData.text, stickyData.x, stickyData.y, stickyData.width, stickyData.height, stickyData.color);
                 });
             }
             
@@ -2637,24 +2822,7 @@
             const text = prompt('Enter your text:');
             
             if (text) {
-                const action = {
-                    tool: 'text',
-                    color: currentColor,
-                    x: lastX,
-                    y: lastY,
-                    text: text,
-                    size: currentLineWidth,
-                    userId
-                };
-                
-                // Add to history
-                addToHistory(action);
-                
-                // Send to server
-                socket.emit('draw', action);
-                
-                // Draw the text
-                drawAction(action);
+                createFloatingText(text, lastX, lastY, 200, 50, currentColor, currentLineWidth * 5);
             }
             
             textInputActive = false;
@@ -2901,6 +3069,17 @@
             showConfirmation('Are you sure you want to clear the board? This cannot be undone.', () => {
                 drawingHistory = [];
                 historyPointer = -1;
+                
+                // Remove all floating elements
+                floatingImages.forEach(img => img.remove());
+                floatingImages = [];
+                
+                floatingTexts.forEach(text => text.remove());
+                floatingTexts = [];
+                
+                floatingStickies.forEach(sticky => sticky.remove());
+                floatingStickies = [];
+                
                 redrawWhiteboard();
                 socket.emit('clear', { userId });
             });
@@ -2977,7 +3156,7 @@
                     break;
                     
                 case 'text':
-                    ctx.font = `${action.size * 5}px Arial`;
+                    ctx.font = `${action.size}px Arial`;
                     ctx.fillStyle = action.color;
                     ctx.fillText(action.text, action.x, action.y);
                     break;
@@ -3014,55 +3193,6 @@
             }
         }
         
-        // Save board state
-        function saveBoardState() {
-            // Save current page
-            saveCurrentPage();
-            
-            // Save to localStorage
-            savedState = {
-                pages: pages,
-                currentPageIndex: currentPageIndex
-            };
-            
-            localStorage.setItem(`whiteboard-${boardId}`, JSON.stringify(savedState));
-            showNotification('Board state saved locally');
-            
-            // Optionally save to server
-            socket.emit('saveBoard', {
-                boardId,
-                pages,
-                currentPageIndex,
-                userId
-            });
-        }
-        
-        // Load board state
-        function loadBoardState() {
-            const saved = localStorage.getItem(`whiteboard-${boardId}`);
-            if (saved) {
-                try {
-                    const state = JSON.parse(saved);
-                    pages = state.pages || [];
-                    currentPageIndex = state.currentPageIndex || 0;
-                    
-                    if (pages.length === 0) {
-                        pages = [{
-                            drawings: [],
-                            historyPointer: -1,
-                            floatingImages: []
-                        }];
-                    }
-                    
-                    loadPage(currentPageIndex);
-                    updatePageControls();
-                    showNotification('Previous session restored');
-                } catch (e) {
-                    console.error('Error loading saved state:', e);
-                }
-            }
-        }
-        
         // Create floating image
         function createFloatingImage(src, x, y, width = 200, height = 200) {
             const img = document.createElement('img');
@@ -3090,7 +3220,7 @@
             controls.appendChild(deleteBtn);
             img.appendChild(controls);
             
-            // Make draggable
+            // Make draggable and resizable
             makeDraggable(img);
             
             // Add to whiteboard container
@@ -3103,7 +3233,104 @@
             return img;
         }
         
-        // Make element draggable
+        // Create floating text
+        function createFloatingText(text, x, y, width = 200, height = 50, color = '#000000', size = 16) {
+            const textElement = document.createElement('div');
+            textElement.className = 'text-element';
+            textElement.style.left = `${x}px`;
+            textElement.style.top = `${y}px`;
+            textElement.style.width = `${width}px`;
+            textElement.style.height = `${height}px`;
+            textElement.style.color = color;
+            textElement.style.fontSize = `${size}px`;
+            textElement.contentEditable = true;
+            textElement.textContent = text;
+            
+            // Add controls
+            const controls = document.createElement('div');
+            controls.className = 'image-controls';
+            
+            const deleteBtn = document.createElement('div');
+            deleteBtn.className = 'image-control';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                textElement.remove();
+                floatingTexts = floatingTexts.filter(t => t !== textElement);
+                saveCurrentPage();
+            };
+            
+            controls.appendChild(deleteBtn);
+            textElement.appendChild(controls);
+            
+            // Make draggable and resizable
+            makeDraggable(textElement);
+            
+            // Update on edit
+            textElement.addEventListener('input', () => {
+                saveCurrentPage();
+            });
+            
+            // Add to whiteboard container
+            whiteboard.parentElement.appendChild(textElement);
+            floatingTexts.push(textElement);
+            
+            // Save to current page
+            saveCurrentPage();
+            
+            return textElement;
+        }
+        
+        // Create floating sticky note
+        function createFloatingSticky(text, x, y, width = 200, height = 150, color = '#ffeb3b') {
+            const sticky = document.createElement('div');
+            sticky.className = 'sticky-note';
+            sticky.style.left = `${x}px`;
+            sticky.style.top = `${y}px`;
+            sticky.style.width = `${width}px`;
+            sticky.style.height = `${height}px`;
+            sticky.style.backgroundColor = color;
+            
+            // Add content
+            sticky.contentEditable = true;
+            sticky.textContent = text;
+            
+            // Add controls
+            const controls = document.createElement('div');
+            controls.className = 'image-controls';
+            
+            const deleteBtn = document.createElement('div');
+            deleteBtn.className = 'image-control';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                sticky.remove();
+                floatingStickies = floatingStickies.filter(s => s !== sticky);
+                saveCurrentPage();
+            };
+            
+            controls.appendChild(deleteBtn);
+            sticky.appendChild(controls);
+            
+            // Make draggable and resizable
+            makeDraggable(sticky);
+            
+            // Update on edit
+            sticky.addEventListener('input', () => {
+                saveCurrentPage();
+            });
+            
+            // Add to whiteboard container
+            whiteboard.parentElement.appendChild(sticky);
+            floatingStickies.push(sticky);
+            
+            // Save to current page
+            saveCurrentPage();
+            
+            return sticky;
+        }
+        
+        // Make element draggable and resizable
         function makeDraggable(element) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             
@@ -3124,8 +3351,8 @@
                 // Bring to front
                 element.style.zIndex = '100';
                 
-                // Set as active image
-                activeFloatingImage = element;
+                // Set as active element
+                activeFloatingElement = element;
             }
             
             function elementDrag(e) {
@@ -3177,6 +3404,7 @@
                 isMicOn = !isMicOn;
                 micBtn.classList.toggle('off', !isMicOn);
                 micBtn.querySelector('i').className = isMicOn ? 'fas fa-microphone' : 'fas fa-microphone-slash';
+                micFooterBtn.classList.toggle('active', isMicOn);
                 showNotification(isMicOn ? 'Microphone enabled' : 'Microphone muted');
                 
                 // Update WebRTC connection if it exists
@@ -3189,6 +3417,7 @@
                 isMicOn = false;
                 micBtn.classList.add('off');
                 micBtn.querySelector('i').className = 'fas fa-microphone-slash';
+                micFooterBtn.classList.remove('active');
             }
         }
         
@@ -3202,6 +3431,7 @@
                     isVideoOn = true;
                     videoBtn.classList.remove('off');
                     videoBtn.querySelector('i').className = 'fas fa-video';
+                    videoFooterBtn.classList.add('active');
                     showNotification('Video enabled');
                     
                     // Start WebRTC connection
@@ -3215,6 +3445,7 @@
                     isVideoOn = !isVideoOn;
                     videoBtn.classList.toggle('off', !isVideoOn);
                     videoBtn.querySelector('i').className = isVideoOn ? 'fas fa-video' : 'fas fa-video-slash';
+                    videoFooterBtn.classList.toggle('active', isVideoOn);
                     localVideoPlaceholder.style.display = isVideoOn ? 'none' : 'flex';
                     localVideo.style.display = isVideoOn ? 'block' : 'none';
                     showNotification(isVideoOn ? 'Video enabled' : 'Video disabled');
@@ -3230,9 +3461,100 @@
                 isVideoOn = false;
                 videoBtn.classList.add('off');
                 videoBtn.querySelector('i').className = 'fas fa-video-slash';
+                videoFooterBtn.classList.remove('active');
                 localVideoPlaceholder.style.display = 'flex';
                 localVideo.style.display = 'none';
             }
+        }
+        
+        async function toggleScreenShare() {
+            try {
+                if (!isScreenSharing) {
+                    const screenStream = await navigator.mediaDevices.getDisplayMedia({ 
+                        video: true,
+                        audio: false
+                    });
+                    
+                    // Replace video track in local stream
+                    const videoTrack = screenStream.getVideoTracks()[0];
+                    const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+                    
+                    if (sender) {
+                        sender.replaceTrack(videoTrack);
+                    }
+                    
+                    // Update UI
+                    localVideo.srcObject = screenStream;
+                    isScreenSharing = true;
+                    screenShareBtn.classList.add('off');
+                    screenShareFooterBtn.classList.add('active');
+                    showNotification('Screen sharing started');
+                    
+                    // Handle when screen sharing is stopped
+                    videoTrack.onended = () => {
+                        toggleScreenShare();
+                    };
+                } else {
+                    // Restore camera stream
+                    const stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: true,
+                        audio: isMicOn 
+                    });
+                    
+                    const videoTrack = stream.getVideoTracks()[0];
+                    const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+                    
+                    if (sender) {
+                        sender.replaceTrack(videoTrack);
+                    }
+                    
+                    // Update UI
+                    localVideo.srcObject = stream;
+                    isScreenSharing = false;
+                    screenShareBtn.classList.remove('off');
+                    screenShareFooterBtn.classList.remove('active');
+                    showNotification('Screen sharing stopped');
+                }
+            } catch (err) {
+                console.error('Error sharing screen:', err);
+                showNotification('Could not share screen');
+            }
+        }
+        
+        function toggleRecording() {
+            isRecording = !isRecording;
+            recordBtn.classList.toggle('off', !isRecording);
+            recordFooterBtn.classList.toggle('active', isRecording);
+            showNotification(isRecording ? 'Recording started' : 'Recording stopped');
+        }
+        
+        function toggleRaiseHand() {
+            isHandRaised = !isHandRaised;
+            raiseHandBtn.classList.toggle('active', isHandRaised);
+            
+            if (isHandRaised) {
+                const handIndicator = document.createElement('div');
+                handIndicator.className = 'raise-hand';
+                handIndicator.textContent = `${userName} raised hand`;
+                userList.appendChild(handIndicator);
+                
+                setTimeout(() => {
+                    handIndicator.remove();
+                }, 3000);
+            }
+            
+            socket.emit('raiseHand', { userId, isHandRaised });
+            showNotification(isHandRaised ? 'Hand raised' : 'Hand lowered');
+        }
+        
+        function showReactionsMenu() {
+            reactionMenu.classList.toggle('show');
+        }
+        
+        function sendReaction(reaction) {
+            socket.emit('sendReaction', { userId, reaction });
+            reactionMenu.classList.remove('show');
+            showNotification(`Sent ${reaction} reaction`);
         }
         
         function setupPeerConnection() {
@@ -3262,7 +3584,12 @@
             
             // Listen for remote stream
             peerConnection.ontrack = (event) => {
-                remoteVideo.srcObject = event.streams[0];
+                if (!remoteStream) {
+                    remoteStream = new MediaStream();
+                }
+                
+                remoteStream.addTrack(event.track);
+                remoteVideo.srcObject = remoteStream;
                 remoteVideoPlaceholder.style.display = 'none';
                 remoteVideo.style.display = 'block';
                 
@@ -3270,6 +3597,7 @@
                 const remoteUserId = Object.keys(users).find(id => id !== userId);
                 if (remoteUserId) {
                     remoteVideoLabel.textContent = users[remoteUserId]?.userName || 'Participant';
+                    remoteVideoPlaceholderText.textContent = `${users[remoteUserId]?.userName || 'Participant'}'s video will appear here`;
                 }
             };
             
@@ -3321,7 +3649,6 @@
         // Socket.io event handlers
         socket.on('boardCreated', (data) => {
             boardId = data.boardId;
-            boardIdElement.textContent = data.boardId;
             isHost = true;
             
             // Update URL with board ID
@@ -3342,7 +3669,6 @@
         
         socket.on('boardJoined', (data) => {
             boardId = data.boardId;
-            boardIdElement.textContent = data.boardId;
             
             // Update invite link
             inviteLinkInput.value = window.location.href;
@@ -3361,7 +3687,9 @@
                     pages = [{
                         drawings: [],
                         historyPointer: -1,
-                        floatingImages: []
+                        floatingImages: [],
+                        floatingTexts: [],
+                        floatingStickies: []
                     }];
                 }
                 
@@ -3393,7 +3721,9 @@
                 pages = [{
                     drawings: [],
                     historyPointer: -1,
-                    floatingImages: []
+                    floatingImages: [],
+                    floatingTexts: [],
+                    floatingStickies: []
                 }];
             }
             
@@ -3499,6 +3829,17 @@
         socket.on('clear', () => {
             drawingHistory = [];
             historyPointer = -1;
+            
+            // Remove all floating elements
+            floatingImages.forEach(img => img.remove());
+            floatingImages = [];
+            
+            floatingTexts.forEach(text => text.remove());
+            floatingTexts = [];
+            
+            floatingStickies.forEach(sticky => sticky.remove());
+            floatingStickies = [];
+            
             redrawWhiteboard();
         });
         
@@ -3506,10 +3847,25 @@
             userCount.textContent = count;
             participantsBadge.textContent = count > 1 ? count - 1 : '';
             participantsTabBadge.textContent = count > 1 ? count - 1 : '';
+            participantsFooterBadge.textContent = count > 1 ? count - 1 : '';
         });
         
         socket.on('chatMessage', (message) => {
             addChatMessage(message, message.senderId === userId);
+        });
+        
+        socket.on('raiseHand', (data) => {
+            if (data.userId !== userId) {
+                const userName = users[data.userId]?.userName || 'A participant';
+                showNotification(data.isHandRaised ? `${userName} raised hand` : `${userName} lowered hand`);
+            }
+        });
+        
+        socket.on('sendReaction', (data) => {
+            if (data.userId !== userId) {
+                const userName = users[data.userId]?.userName || 'A participant';
+                showNotification(`${userName} reacted with ${data.reaction}`);
+            }
         });
         
         // WebRTC events
@@ -3742,6 +4098,10 @@
                     userName, 
                     boardId 
                 });
+                
+                // Update video placeholder text
+                localVideoPlaceholderText.textContent = `${userName}'s video will appear here`;
+                
                 showNotification('Name updated');
             }
             
@@ -3873,27 +4233,7 @@
                 const selectedColor = document.querySelector('.color-option[style*="border: 2px solid var(--primary-color)"]') || 
                                       document.querySelector('.color-option');
                 
-                const action = {
-                    tool: 'sticky',
-                    text: content,
-                    x: lastX,
-                    y: lastY,
-                    width: 200,
-                    height: 150,
-                    bgColor: selectedColor.dataset.color,
-                    borderColor: '#000000',
-                    textColor: '#000000',
-                    userId
-                };
-                
-                // Add to history
-                addToHistory(action);
-                
-                // Send to server
-                socket.emit('draw', action);
-                
-                // Draw the sticky note
-                drawAction(action);
+                createFloatingSticky(content, lastX, lastY, 200, 150, selectedColor.dataset.color);
                 
                 hideModal(stickyModal);
                 stickyContent.value = '';
@@ -3961,6 +4301,54 @@
         // Media button event listeners
         micBtn.addEventListener('click', toggleMic);
         videoBtn.addEventListener('click', toggleVideo);
+        screenShareBtn.addEventListener('click', toggleScreenShare);
+        recordBtn.addEventListener('click', toggleRecording);
+        raiseHandBtn.addEventListener('click', toggleRaiseHand);
+        reactionBtn.addEventListener('click', showReactionsMenu);
+        
+        // Footer button event listeners
+        micFooterBtn.addEventListener('click', toggleMic);
+        videoFooterBtn.addEventListener('click', toggleVideo);
+        participantsFooterBtn.addEventListener('click', () => {
+            document.querySelector('.container').classList.remove('panel-collapsed');
+            const icon = togglePanelBtn.querySelector('i');
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-left');
+            
+            // Switch to participants tab
+            panelTabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.panel-tab[data-tab="participants"]').classList.add('active');
+            
+            panelContents.forEach(c => c.classList.remove('active'));
+            document.querySelector('.panel-content[data-content="participants"]').classList.add('active');
+        });
+        screenShareFooterBtn.addEventListener('click', toggleScreenShare);
+        recordFooterBtn.addEventListener('click', toggleRecording);
+        chatFooterBtn.addEventListener('click', () => {
+            document.querySelector('.container').classList.remove('panel-collapsed');
+            const icon = togglePanelBtn.querySelector('i');
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-left');
+            
+            // Switch to chat tab
+            panelTabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.panel-tab[data-tab="chat"]').classList.add('active');
+            
+            panelContents.forEach(c => c.classList.remove('active'));
+            document.querySelector('.panel-content[data-content="chat"]').classList.add('active');
+            
+            // Reset unread messages
+            unreadChatMessages = 0;
+            updateChatBadges();
+            moreBtn.classList.remove('has-notification');
+        });
+        
+        // Reaction menu event listeners
+        document.querySelectorAll('.reaction-option').forEach(option => {
+            option.addEventListener('click', () => {
+                sendReaction(option.textContent);
+            });
+        });
         
         // Initialize
         initWhiteboard();
