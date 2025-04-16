@@ -1454,6 +1454,8 @@
             z-index: 50;
             border: 2px dashed rgba(0, 0, 0, 0.2);
             transition: border 0.2s;
+            resize: both;
+            overflow: hidden;
         }
         
         .floating-image:hover {
@@ -1480,9 +1482,23 @@
         .image-control:hover {
             color: var(--primary-color);
         }
+
+        /* Leave session image */
+        .leave-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 10000;
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <img src="https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg" class="leave-image" id="leaveImage">
+    
     <div class="container">
         <div class="header">
             <div class="logo-container">
@@ -2015,6 +2031,7 @@
         const shapePreview = document.getElementById('shapePreview');
         const moreBtn = document.getElementById('moreBtn');
         const dropdownMenu = document.getElementById('dropdownMenu');
+        const leaveImage = document.getElementById('leaveImage');
         
         // Panel tabs
         const panelTabs = document.querySelectorAll('.panel-tab');
@@ -2125,6 +2142,8 @@
         let tempCanvas = document.createElement('canvas');
         let tempCtx = tempCanvas.getContext('2d');
         let savedState = null;
+        let floatingImages = [];
+        let activeFloatingImage = null;
         
         // Multi-page support
         let pages = [];
@@ -2192,7 +2211,8 @@
             // Initialize pages
             pages = [{
                 drawings: [],
-                historyPointer: -1
+                historyPointer: -1,
+                floatingImages: []
             }];
             updatePageControls();
             
@@ -2211,7 +2231,9 @@
             } else {
                 showLoading('Creating new board...');
                 isHost = true;
+                boardId = generateBoardId();
                 socket.emit('createBoard', { 
+                    boardId,
                     userId, 
                     userName, 
                     userColor,
@@ -2230,6 +2252,15 @@
             
             // Add beforeunload event listener
             window.addEventListener('beforeunload', handleBeforeUnload);
+        }
+        
+        function generateBoardId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 8; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
         }
         
         function handleBeforeUnload(e) {
@@ -2260,6 +2291,12 @@
             
             // Redraw everything after resize
             redrawWhiteboard();
+            
+            // Reposition floating images
+            floatingImages.forEach(img => {
+                img.style.maxWidth = `${container.offsetWidth * 0.5}px`;
+                img.style.maxHeight = `${container.offsetHeight * 0.5}px`;
+            });
         }
         
         // Initialize chat functionality
@@ -2429,7 +2466,7 @@
             if (textInputActive) return;
             
             // Tool shortcuts
-            if (toolShortcuts[e.key.toLowerCase()]) {
+            if (toolShortcuts[e.key.toLowerCase()] && !e.ctrlKey && !e.metaKey) {
                 const toolName = toolShortcuts[e.key.toLowerCase()];
                 selectTool(toolName);
                 
@@ -2519,7 +2556,8 @@
             saveCurrentPage();
             pages.push({
                 drawings: [],
-                historyPointer: -1
+                historyPointer: -1,
+                floatingImages: []
             });
             currentPageIndex = pages.length - 1;
             loadPage(currentPageIndex);
@@ -2535,13 +2573,27 @@
         function saveCurrentPage() {
             pages[currentPageIndex] = {
                 drawings: [...drawingHistory],
-                historyPointer: historyPointer
+                historyPointer: historyPointer,
+                floatingImages: [...floatingImages]
             };
         }
         
         function loadPage(index) {
+            // Remove all floating images
+            floatingImages.forEach(img => img.remove());
+            floatingImages = [];
+            
+            // Load drawings
             drawingHistory = [...pages[index].drawings];
             historyPointer = pages[index].historyPointer;
+            
+            // Load floating images
+            if (pages[index].floatingImages) {
+                pages[index].floatingImages.forEach(imgData => {
+                    createFloatingImage(imgData.src, imgData.x, imgData.y, imgData.width, imgData.height);
+                });
+            }
+            
             redrawWhiteboard();
         }
         
@@ -2997,7 +3049,8 @@
                     if (pages.length === 0) {
                         pages = [{
                             drawings: [],
-                            historyPointer: -1
+                            historyPointer: -1,
+                            floatingImages: []
                         }];
                     }
                     
@@ -3007,6 +3060,100 @@
                 } catch (e) {
                     console.error('Error loading saved state:', e);
                 }
+            }
+        }
+        
+        // Create floating image
+        function createFloatingImage(src, x, y, width = 200, height = 200) {
+            const img = document.createElement('img');
+            img.src = src;
+            img.className = 'floating-image';
+            img.style.left = `${x}px`;
+            img.style.top = `${y}px`;
+            img.style.width = `${width}px`;
+            img.style.height = `${height}px`;
+            
+            // Add controls
+            const controls = document.createElement('div');
+            controls.className = 'image-controls';
+            
+            const deleteBtn = document.createElement('div');
+            deleteBtn.className = 'image-control';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                img.remove();
+                floatingImages = floatingImages.filter(i => i !== img);
+                saveCurrentPage();
+            };
+            
+            controls.appendChild(deleteBtn);
+            img.appendChild(controls);
+            
+            // Make draggable
+            makeDraggable(img);
+            
+            // Add to whiteboard container
+            whiteboard.parentElement.appendChild(img);
+            floatingImages.push(img);
+            
+            // Save to current page
+            saveCurrentPage();
+            
+            return img;
+        }
+        
+        // Make element draggable
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+            element.onmousedown = dragMouseDown;
+            
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Get the mouse cursor position at startup
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+                
+                // Bring to front
+                element.style.zIndex = '100';
+                
+                // Set as active image
+                activeFloatingImage = element;
+            }
+            
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Calculate the new cursor position
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                
+                // Set the element's new position
+                element.style.top = (element.offsetTop - pos2) + 'px';
+                element.style.left = (element.offsetLeft - pos1) + 'px';
+            }
+            
+            function closeDragElement() {
+                // Stop moving when mouse button is released
+                document.onmouseup = null;
+                document.onmousemove = null;
+                
+                // Reset z-index
+                element.style.zIndex = '50';
+                
+                // Save position
+                saveCurrentPage();
             }
         }
         
@@ -3213,7 +3360,8 @@
                 if (pages.length === 0) {
                     pages = [{
                         drawings: [],
-                        historyPointer: -1
+                        historyPointer: -1,
+                        floatingImages: []
                     }];
                 }
                 
@@ -3244,7 +3392,8 @@
             if (pages.length === 0) {
                 pages = [{
                     drawings: [],
-                    historyPointer: -1
+                    historyPointer: -1,
+                    floatingImages: []
                 }];
             }
             
@@ -3539,7 +3688,13 @@
         
         leaveOption.addEventListener('click', () => {
             showConfirmation('Are you sure you want to leave this session?', () => {
-                window.location.href = window.location.origin;
+                // Show leave image
+                leaveImage.style.display = 'block';
+                
+                // Redirect after a delay
+                setTimeout(() => {
+                    window.location.href = window.location.origin;
+                }, 2000);
             });
             dropdownMenu.classList.remove('show');
         });
@@ -3667,24 +3822,25 @@
         function insertImage(src) {
             const img = new Image();
             img.onload = function() {
-                const action = {
-                    tool: 'image',
-                    src: src,
-                    x: lastX,
-                    y: lastY,
-                    width: this.width > 300 ? 300 : this.width,
-                    height: this.width > 300 ? (300 / this.width) * this.height : this.height,
-                    userId
-                };
-                
-                // Add to history
-                addToHistory(action);
+                // Create floating image
+                const floatingImg = createFloatingImage(
+                    src, 
+                    whiteboard.width / 2 - 100, 
+                    whiteboard.height / 2 - 100,
+                    this.width > 300 ? 300 : this.width,
+                    this.width > 300 ? (300 / this.width) * this.height : this.height
+                );
                 
                 // Send to server
-                socket.emit('draw', action);
-                
-                // Draw the image
-                drawAction(action);
+                socket.emit('addFloatingImage', {
+                    src,
+                    x: floatingImg.offsetLeft,
+                    y: floatingImg.offsetTop,
+                    width: floatingImg.offsetWidth,
+                    height: floatingImg.offsetHeight,
+                    boardId,
+                    userId
+                });
                 
                 hideModal(imageModal);
                 imageUrl.value = '';
@@ -3695,6 +3851,13 @@
             };
             img.src = src;
         }
+        
+        // Handle floating images from server
+        socket.on('addFloatingImage', (data) => {
+            if (data.userId !== userId) {
+                createFloatingImage(data.src, data.x, data.y, data.width, data.height);
+            }
+        });
         
         // Sticky note insertion
         stickyColorOptions.forEach(option => {
