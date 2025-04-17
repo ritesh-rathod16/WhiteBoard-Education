@@ -455,14 +455,17 @@
             flex: 1;
             overflow-y: auto;
             display: none;
+            position: relative;
         }
         
         .panel-content.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
         }
         
         .user-list-container {
             padding: 16px;
+            flex: 1;
         }
         
         .user-list-title {
@@ -681,7 +684,7 @@
         
         .chat-container {
             padding: 16px;
-            height: calc(100% - 60px);
+            height: 100%;
             display: flex;
             flex-direction: column;
         }
@@ -735,6 +738,7 @@
         .chat-input-container {
             display: flex;
             gap: 8px;
+            margin-top: auto;
         }
         
         .chat-input {
@@ -795,6 +799,7 @@
         .board-actions {
             display: flex;
             gap: 10px;
+            margin: 0 auto;
         }
         
         .board-btn {
@@ -1739,10 +1744,6 @@
                                 <i class="fas fa-video"></i>
                                 <span>Video</span>
                             </button>
-                            <button id="screenShareBtn" class="media-btn">
-                                <i class="fas fa-desktop"></i>
-                                <span>Share Screen</span>
-                            </button>
                         </div>
                         
                         <div class="video-container">
@@ -1751,9 +1752,6 @@
                             <div class="video-controls">
                                 <button class="video-control" id="pinLocal">
                                     <i class="fas fa-thumbtack"></i>
-                                </button>
-                                <button class="video-control" id="backgroundLocal">
-                                    <i class="fas fa-image"></i>
                                 </button>
                             </div>
                             <div class="video-placeholder">
@@ -1808,20 +1806,8 @@
                 <button class="footer-btn" id="participantsFooterBtn" title="Participants">
                     <i class="fas fa-users"></i>
                 </button>
-                <button class="footer-btn" id="screenShareFooterBtn" title="Share Screen">
-                    <i class="fas fa-desktop"></i>
-                </button>
-                <button class="footer-btn" id="recordFooterBtn" title="Record">
-                    <i class="fas fa-circle"></i>
-                </button>
-                <button class="footer-btn" id="raiseHandFooterBtn" title="Raise Hand">
-                    <i class="fas fa-hand-paper"></i>
-                </button>
-                <button class="footer-btn" id="reactionFooterBtn" title="Reactions">
-                    <i class="fas fa-smile"></i>
-                </button>
-                <button class="footer-btn" id="chatFooterBtn" title="Chat">
-                    <i class="fas fa-comment"></i>
+                <button class="footer-btn" id="moreOptionsBtn" title="More options">
+                    <i class="fas fa-ellipsis-h"></i>
                 </button>
             </div>
         </div>
@@ -1835,6 +1821,30 @@
         <div class="reaction-btn">😂</div>
         <div class="reaction-btn">😍</div>
         <div class="reaction-btn">😮</div>
+    </div>
+    
+    <!-- More options menu -->
+    <div class="dropdown-menu" id="moreOptionsMenu" style="bottom: 60px; right: 20px; top: auto; left: auto;">
+        <div class="dropdown-item" id="chatFooterOption">
+            <i class="fas fa-comment"></i>
+            <span>Chat</span>
+        </div>
+        <div class="dropdown-item" id="screenShareFooterOption">
+            <i class="fas fa-desktop"></i>
+            <span>Share Screen</span>
+        </div>
+        <div class="dropdown-item" id="recordFooterOption">
+            <i class="fas fa-circle"></i>
+            <span>Record</span>
+        </div>
+        <div class="dropdown-item" id="raiseHandFooterOption">
+            <i class="fas fa-hand-paper"></i>
+            <span>Raise Hand</span>
+        </div>
+        <div class="dropdown-item" id="reactionFooterOption">
+            <i class="fas fa-smile"></i>
+            <span>Reactions</span>
+        </div>
     </div>
     
     <!-- Modals -->
@@ -2132,7 +2142,6 @@
         const notification = document.getElementById('notification');
         const micBtn = document.getElementById('micBtn');
         const videoBtn = document.getElementById('videoBtn');
-        const screenShareBtn = document.getElementById('screenShareBtn');
         const localVideo = document.getElementById('localVideo');
         const remoteVideo = document.getElementById('remoteVideo');
         const remoteVideoLabel = document.getElementById('remoteVideoLabel');
@@ -2149,16 +2158,13 @@
         const dropdownMenu = document.getElementById('dropdownMenu');
         const leaveImage = document.getElementById('leaveImage');
         const reactionMenu = document.getElementById('reactionMenu');
+        const moreOptionsBtn = document.getElementById('moreOptionsBtn');
+        const moreOptionsMenu = document.getElementById('moreOptionsMenu');
         
         // Footer buttons
         const micFooterBtn = document.getElementById('micFooterBtn');
         const videoFooterBtn = document.getElementById('videoFooterBtn');
         const participantsFooterBtn = document.getElementById('participantsFooterBtn');
-        const screenShareFooterBtn = document.getElementById('screenShareFooterBtn');
-        const recordFooterBtn = document.getElementById('recordFooterBtn');
-        const raiseHandFooterBtn = document.getElementById('raiseHandFooterBtn');
-        const reactionFooterBtn = document.getElementById('reactionFooterBtn');
-        const chatFooterBtn = document.getElementById('chatFooterBtn');
         
         // Panel tabs
         const panelTabs = document.querySelectorAll('.panel-tab');
@@ -2220,7 +2226,6 @@
         
         const pinLocal = document.getElementById('pinLocal');
         const pinRemote = document.getElementById('pinRemote');
-        const backgroundLocal = document.getElementById('backgroundLocal');
         
         const imageModal = document.getElementById('imageModal');
         const imageModalClose = document.getElementById('imageModalClose');
@@ -2245,6 +2250,13 @@
         const settingsOption = document.getElementById('settingsOption');
         const exportOption = document.getElementById('exportOption');
         const leaveOption = document.getElementById('leaveOption');
+        
+        // Footer menu options
+        const chatFooterOption = document.getElementById('chatFooterOption');
+        const screenShareFooterOption = document.getElementById('screenShareFooterOption');
+        const recordFooterOption = document.getElementById('recordFooterOption');
+        const raiseHandFooterOption = document.getElementById('raiseHandFooterOption');
+        const reactionFooterOption = document.getElementById('reactionFooterOption');
         
         // Badges
         const participantsBadge = document.getElementById('participantsBadge');
@@ -2372,6 +2384,12 @@
             
             // Update video placeholder text with username
             localVideoPlaceholderText.textContent = `${userName}'s video will appear here`;
+            
+            // Automatically start video
+            setTimeout(() => {
+                toggleVideo();
+                toggleMic();
+            }, 1000);
         }
         
         function generateBoardId() {
@@ -2582,9 +2600,19 @@
             dropdownMenu.classList.toggle('show');
         });
         
+        // More options menu
+        moreOptionsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            moreOptionsMenu.classList.toggle('show');
+        });
+        
         document.addEventListener('click', (e) => {
             if (!moreBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
                 dropdownMenu.classList.remove('show');
+            }
+            
+            if (!moreOptionsBtn.contains(e.target) && !moreOptionsMenu.contains(e.target)) {
+                moreOptionsMenu.classList.remove('show');
             }
         });
         
@@ -2773,17 +2801,6 @@
             
             // Make draggable and resizable
             makeDraggable(textElement);
-            
-            // Add double click to edit
-            textElement.addEventListener('dblclick', (e) => {
-                e.stopPropagation();
-                textElement.focus();
-            });
-            
-            // Save on blur
-            textElement.addEventListener('blur', () => {
-                saveCurrentPage();
-            });
             
             // Add to whiteboard container
             whiteboard.parentElement.appendChild(textElement);
@@ -3470,10 +3487,6 @@
                     localVideo.srcObject = new MediaStream([videoTrack]);
                     
                     isScreenSharing = true;
-                    screenShareBtn.classList.add('off');
-                    screenShareBtn.querySelector('i').className = 'fas fa-stop';
-                    screenShareBtn.querySelector('span').textContent = 'Stop Sharing';
-                    screenShareFooterBtn.classList.add('active');
                     showNotification('Screen sharing started');
                     
                     // Handle when user stops sharing
@@ -3498,10 +3511,6 @@
                     localVideo.srcObject = new MediaStream([videoTrack]);
                     
                     isScreenSharing = false;
-                    screenShareBtn.classList.remove('off');
-                    screenShareBtn.querySelector('i').className = 'fas fa-desktop';
-                    screenShareBtn.querySelector('span').textContent = 'Share Screen';
-                    screenShareFooterBtn.classList.remove('active');
                     showNotification('Screen sharing stopped');
                 }
             } catch (err) {
@@ -3512,13 +3521,11 @@
         
         function toggleRecord() {
             isRecording = !isRecording;
-            recordFooterBtn.classList.toggle('active', isRecording);
             showNotification(isRecording ? 'Recording started' : 'Recording stopped');
         }
         
         function toggleRaiseHand() {
             isHandRaised = !isHandRaised;
-            raiseHandFooterBtn.classList.toggle('active', isHandRaised);
             socket.emit('raiseHand', { userId, isHandRaised });
             showNotification(isHandRaised ? 'Hand raised' : 'Hand lowered');
         }
@@ -3918,10 +3925,12 @@
                 userList.appendChild(userItem);
             }
             
+            // Sort other users alphabetically
+            const otherUsers = Object.values(users).filter(user => user.userId !== userId);
+            otherUsers.sort((a, b) => a.userName.localeCompare(b.userName));
+            
             // Add other users
-            Object.values(users).forEach(user => {
-                if (user.userId === userId) return;
-                
+            otherUsers.forEach(user => {
                 const userItem = document.createElement('div');
                 userItem.className = 'user-item';
                 if (isHost) userItem.classList.add('host');
@@ -4038,6 +4047,48 @@
                 }, 2000);
             });
             dropdownMenu.classList.remove('show');
+        });
+        
+        // Footer menu options
+        chatFooterOption.addEventListener('click', () => {
+            document.querySelector('.container').classList.remove('panel-collapsed');
+            const icon = togglePanelBtn.querySelector('i');
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-left');
+            
+            // Switch to chat tab
+            panelTabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.panel-tab[data-tab="chat"]').classList.add('active');
+            
+            panelContents.forEach(c => c.classList.remove('active'));
+            document.querySelector('.panel-content[data-content="chat"]').classList.add('active');
+            
+            // Reset unread messages
+            unreadChatMessages = 0;
+            updateChatBadges();
+            moreBtn.classList.remove('has-notification');
+            
+            moreOptionsMenu.classList.remove('show');
+        });
+        
+        screenShareFooterOption.addEventListener('click', () => {
+            toggleScreenShare();
+            moreOptionsMenu.classList.remove('show');
+        });
+        
+        recordFooterOption.addEventListener('click', () => {
+            toggleRecord();
+            moreOptionsMenu.classList.remove('show');
+        });
+        
+        raiseHandFooterOption.addEventListener('click', () => {
+            toggleRaiseHand();
+            moreOptionsMenu.classList.remove('show');
+        });
+        
+        reactionFooterOption.addEventListener('click', () => {
+            toggleReactionMenu();
+            moreOptionsMenu.classList.remove('show');
         });
         
         inviteModalClose.addEventListener('click', () => hideModal(inviteModal));
@@ -4310,15 +4361,9 @@
             pinContent(remoteVideo, `${remoteVideoLabel.textContent}'s Video`);
         });
         
-        // Background options
-        backgroundLocal.addEventListener('click', () => {
-            showNotification('Background options coming soon!');
-        });
-        
         // Media button event listeners
         micBtn.addEventListener('click', toggleMic);
         videoBtn.addEventListener('click', toggleVideo);
-        screenShareBtn.addEventListener('click', toggleScreenShare);
         
         // Footer button event listeners
         micFooterBtn.addEventListener('click', toggleMic);
@@ -4336,28 +4381,6 @@
             panelContents.forEach(c => c.classList.remove('active'));
             document.querySelector('.panel-content[data-content="participants"]').classList.add('active');
         });
-        screenShareFooterBtn.addEventListener('click', toggleScreenShare);
-        recordFooterBtn.addEventListener('click', toggleRecord);
-        raiseHandFooterBtn.addEventListener('click', toggleRaiseHand);
-        reactionFooterBtn.addEventListener('click', toggleReactionMenu);
-        chatFooterBtn.addEventListener('click', () => {
-            document.querySelector('.container').classList.remove('panel-collapsed');
-            const icon = togglePanelBtn.querySelector('i');
-            icon.classList.remove('fa-chevron-right');
-            icon.classList.add('fa-chevron-left');
-            
-            // Switch to chat tab
-            panelTabs.forEach(t => t.classList.remove('active'));
-            document.querySelector('.panel-tab[data-tab="chat"]').classList.add('active');
-            
-            panelContents.forEach(c => c.classList.remove('active'));
-            document.querySelector('.panel-content[data-content="chat"]').classList.add('active');
-            
-            // Reset unread messages
-            unreadChatMessages = 0;
-            updateChatBadges();
-            moreBtn.classList.remove('has-notification');
-        });
         
         // Reaction button event listeners
         document.querySelectorAll('.reaction-btn').forEach(btn => {
@@ -4368,7 +4391,7 @@
         
         // Close reaction menu when clicking outside
         document.addEventListener('click', (e) => {
-            if (!reactionFooterBtn.contains(e.target) && !reactionMenu.contains(e.target)) {
+            if (!reactionFooterOption.contains(e.target) && !reactionMenu.contains(e.target)) {
                 reactionMenu.classList.remove('show');
             }
         });
