@@ -1,7 +1,9 @@
-<meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhiteBoard Pro - Next-Gen Collaborative Whiteboard</title>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <title>WhiteBoard Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -73,7 +75,6 @@
             align-items: center;
             box-shadow: var(--shadow);
             z-index: 100;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
         
         .logo-container {
@@ -83,37 +84,18 @@
         }
         
         .logo-img {
-            height: 36px;
-            width: auto;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-            transition: all 0.5s ease;
-            animation: logoFloat 3s ease-in-out infinite, logoGlow 4s ease infinite;
+            height: 32px;
+            animation: logoFloat 3s ease-in-out infinite, logoGlow 4s ease-in-out infinite;
         }
         
         .logo-text {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            background-size: 200% 200%;
-            animation: gradientFlow 8s ease infinite;
             letter-spacing: -0.5px;
-            position: relative;
-        }
-        
-        .logo-text::after {
-            content: "PRO";
-            position: absolute;
-            top: -8px;
-            right: -25px;
-            font-size: 0.7rem;
-            background: var(--accent-color);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            animation: logoFloat 3s ease-in-out infinite;
         }
         
         .header-controls {
@@ -125,9 +107,7 @@
         .user-count {
             background-color: var(--primary-color);
             padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
+            border-radius: var(--border-radius);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -1451,6 +1431,8 @@
             z-index: 50;
             border: 2px dashed rgba(0, 0, 0, 0.2);
             transition: border 0.2s;
+            resize: both;
+            overflow: hidden;
         }
         
         .floating-image:hover {
@@ -1477,9 +1459,113 @@
         .image-control:hover {
             color: var(--primary-color);
         }
+
+        /* Text element */
+        .text-element {
+            position: absolute;
+            cursor: move;
+            z-index: 50;
+            padding: 8px;
+            resize: both;
+            overflow: hidden;
+            min-width: 50px;
+            min-height: 20px;
+            outline: none;
+            border: 1px dashed rgba(0, 0, 0, 0.2);
+        }
+        
+        .text-element:hover {
+            border-color: var(--primary-color);
+        }
+        
+        /* Sticky note */
+        .sticky-note {
+            position: absolute;
+            cursor: move;
+            z-index: 50;
+            padding: 10px;
+            resize: both;
+            overflow: hidden;
+            min-width: 100px;
+            min-height: 100px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sticky-note-content {
+            width: 100%;
+            height: 100%;
+            outline: none;
+            resize: none;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+        }
+        
+        /* Leave session image */
+        .leave-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 10000;
+            display: none;
+        }
+        
+        /* Footer buttons */
+        .footer-btn {
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .footer-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .footer-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Reaction menu */
+        .reaction-menu {
+            position: absolute;
+            bottom: 60px;
+            right: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 8px;
+            display: none;
+            z-index: 100;
+        }
+        
+        .reaction-menu.show {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .reaction-btn {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .reaction-btn:hover {
+            transform: scale(1.2);
+        }
     </style>
 </head>
 <body>
+    <img src="https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg" class="leave-image" id="leaveImage">
+    
     <div class="container">
         <div class="header">
             <div class="logo-container">
@@ -1534,31 +1620,31 @@
             <div class="toolbar">
                 <div class="tool active" data-tool="pencil">
                     <i class="fas fa-pencil-alt"></i>
-                    <span class="tool-tip">Pencil (P)</span>
+                    <span class="tool-tip">Pencil</span>
                 </div>
                 <div class="tool" data-tool="line">
                     <i class="fas fa-slash"></i>
-                    <span class="tool-tip">Line (L)</span>
+                    <span class="tool-tip">Line</span>
                 </div>
                 <div class="tool" data-tool="rectangle">
                     <i class="far fa-square"></i>
-                    <span class="tool-tip">Rectangle (R)</span>
+                    <span class="tool-tip">Rectangle</span>
                 </div>
                 <div class="tool" data-tool="circle">
                     <i class="far fa-circle"></i>
-                    <span class="tool-tip">Circle (C)</span>
+                    <span class="tool-tip">Circle</span>
                 </div>
                 <div class="tool" data-tool="arrow">
                     <i class="fas fa-arrow-right"></i>
-                    <span class="tool-tip">Arrow (A)</span>
+                    <span class="tool-tip">Arrow</span>
                 </div>
                 <div class="tool" data-tool="text">
                     <i class="fas fa-font"></i>
-                    <span class="tool-tip">Text (T)</span>
+                    <span class="tool-tip">Text</span>
                 </div>
                 <div class="tool" data-tool="eraser">
                     <i class="fas fa-eraser"></i>
-                    <span class="tool-tip">Eraser (E)</span>
+                    <span class="tool-tip">Eraser</span>
                 </div>
                 <div class="tool-divider"></div>
                 <div class="tool" data-tool="undo">
@@ -1653,11 +1739,15 @@
                                 <i class="fas fa-video"></i>
                                 <span>Video</span>
                             </button>
+                            <button id="screenShareBtn" class="media-btn">
+                                <i class="fas fa-desktop"></i>
+                                <span>Share Screen</span>
+                            </button>
                         </div>
                         
                         <div class="video-container">
                             <video id="localVideo" autoplay muted playsinline></video>
-                            <div class="video-label">You</div>
+                            <div class="video-label" id="localVideoLabel">You</div>
                             <div class="video-controls">
                                 <button class="video-control" id="pinLocal">
                                     <i class="fas fa-thumbtack"></i>
@@ -1668,7 +1758,7 @@
                             </div>
                             <div class="video-placeholder">
                                 <i class="fas fa-user"></i>
-                                <div class="video-placeholder-text">Your video will appear here</div>
+                                <div class="video-placeholder-text" id="localVideoPlaceholderText">Your video will appear here</div>
                             </div>
                         </div>
                         
@@ -1682,7 +1772,7 @@
                             </div>
                             <div class="video-placeholder">
                                 <i class="fas fa-users"></i>
-                                <div class="video-placeholder-text">Other participant's video will appear here</div>
+                                <div class="video-placeholder-text" id="remoteVideoPlaceholderText">Other participant's video will appear here</div>
                             </div>
                         </div>
                     </div>
@@ -1709,15 +1799,42 @@
                 <span>Made by Ritesh Rathod</span>
             </div>
             <div class="board-actions">
-                <button class="board-btn" id="copyBoardId">
-                    <i class="fas fa-copy"></i> Copy Board ID
+                <button class="footer-btn" id="micFooterBtn" title="Microphone">
+                    <i class="fas fa-microphone"></i>
                 </button>
-                <span id="boardId">Loading...</span>
-                <button class="board-btn primary" id="saveBoard">
-                    <i class="fas fa-save"></i> Save
+                <button class="footer-btn" id="videoFooterBtn" title="Video">
+                    <i class="fas fa-video"></i>
+                </button>
+                <button class="footer-btn" id="participantsFooterBtn" title="Participants">
+                    <i class="fas fa-users"></i>
+                </button>
+                <button class="footer-btn" id="screenShareFooterBtn" title="Share Screen">
+                    <i class="fas fa-desktop"></i>
+                </button>
+                <button class="footer-btn" id="recordFooterBtn" title="Record">
+                    <i class="fas fa-circle"></i>
+                </button>
+                <button class="footer-btn" id="raiseHandFooterBtn" title="Raise Hand">
+                    <i class="fas fa-hand-paper"></i>
+                </button>
+                <button class="footer-btn" id="reactionFooterBtn" title="Reactions">
+                    <i class="fas fa-smile"></i>
+                </button>
+                <button class="footer-btn" id="chatFooterBtn" title="Chat">
+                    <i class="fas fa-comment"></i>
                 </button>
             </div>
         </div>
+    </div>
+    
+    <!-- Reaction menu -->
+    <div class="reaction-menu" id="reactionMenu">
+        <div class="reaction-btn">👍</div>
+        <div class="reaction-btn">👎</div>
+        <div class="reaction-btn">👏</div>
+        <div class="reaction-btn">😂</div>
+        <div class="reaction-btn">😍</div>
+        <div class="reaction-btn">😮</div>
     </div>
     
     <!-- Modals -->
@@ -1985,6 +2102,7 @@
         <div class="loading-text">Connecting to board...</div>
     </div>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <script>
         // DOM Elements
         const whiteboard = document.getElementById('whiteboard');
@@ -1996,22 +2114,36 @@
         const userList = document.getElementById('userList');
         const userCount = document.getElementById('userCount');
         const boardIdElement = document.getElementById('boardId');
-        const copyBoardIdBtn = document.getElementById('copyBoardId');
-        const saveBoardBtn = document.getElementById('saveBoard');
         const notification = document.getElementById('notification');
         const micBtn = document.getElementById('micBtn');
         const videoBtn = document.getElementById('videoBtn');
+        const screenShareBtn = document.getElementById('screenShareBtn');
         const localVideo = document.getElementById('localVideo');
         const remoteVideo = document.getElementById('remoteVideo');
         const remoteVideoLabel = document.getElementById('remoteVideoLabel');
+        const localVideoLabel = document.getElementById('localVideoLabel');
         const localVideoPlaceholder = localVideo.nextElementSibling;
         const remoteVideoPlaceholder = remoteVideo.nextElementSibling;
+        const localVideoPlaceholderText = document.getElementById('localVideoPlaceholderText');
+        const remoteVideoPlaceholderText = document.getElementById('remoteVideoPlaceholderText');
         const togglePanelBtn = document.getElementById('togglePanel');
         const loadingScreen = document.getElementById('loading');
         const loadingText = loadingScreen.querySelector('.loading-text');
         const shapePreview = document.getElementById('shapePreview');
         const moreBtn = document.getElementById('moreBtn');
         const dropdownMenu = document.getElementById('dropdownMenu');
+        const leaveImage = document.getElementById('leaveImage');
+        const reactionMenu = document.getElementById('reactionMenu');
+        
+        // Footer buttons
+        const micFooterBtn = document.getElementById('micFooterBtn');
+        const videoFooterBtn = document.getElementById('videoFooterBtn');
+        const participantsFooterBtn = document.getElementById('participantsFooterBtn');
+        const screenShareFooterBtn = document.getElementById('screenShareFooterBtn');
+        const recordFooterBtn = document.getElementById('recordFooterBtn');
+        const raiseHandFooterBtn = document.getElementById('raiseHandFooterBtn');
+        const reactionFooterBtn = document.getElementById('reactionFooterBtn');
+        const chatFooterBtn = document.getElementById('chatFooterBtn');
         
         // Panel tabs
         const panelTabs = document.querySelectorAll('.panel-tab');
@@ -2122,6 +2254,10 @@
         let tempCanvas = document.createElement('canvas');
         let tempCtx = tempCanvas.getContext('2d');
         let savedState = null;
+        let floatingImages = [];
+        let floatingTexts = [];
+        let stickyNotes = [];
+        let activeFloatingElement = null;
         
         // Multi-page support
         let pages = [];
@@ -2139,9 +2275,13 @@
         
         // Media state
         let localStream = null;
+        let remoteStream = null;
         let peerConnection = null;
         let isMicOn = false;
         let isVideoOn = false;
+        let isScreenSharing = false;
+        let isRecording = false;
+        let isHandRaised = false;
         let currentBackground = 'none';
         const configuration = {
             iceServers: [
@@ -2150,24 +2290,6 @@
                 { urls: 'stun:stun2.l.google.com:19302' }
             ]
         };
-        
-        // Keyboard shortcuts
-        const toolShortcuts = {
-            'p': 'pencil',
-            'l': 'line',
-            'r': 'rectangle',
-            'c': 'circle',
-            'a': 'arrow',
-            'e': 'eraser',
-            't': 'text'
-        };
-        
-        // Socket.io connection
-        const socket = io();
-        let boardId = '';
-        let userId = generateUserId();
-        let userName = `User-${userId.substring(0, 4)}`;
-        let userColor = generateRandomColor();
         
         // Initialize whiteboard
         function initWhiteboard() {
@@ -2189,7 +2311,10 @@
             // Initialize pages
             pages = [{
                 drawings: [],
-                historyPointer: -1
+                historyPointer: -1,
+                floatingImages: [],
+                floatingTexts: [],
+                stickyNotes: []
             }];
             updatePageControls();
             
@@ -2208,7 +2333,9 @@
             } else {
                 showLoading('Creating new board...');
                 isHost = true;
+                boardId = generateBoardId();
                 socket.emit('createBoard', { 
+                    boardId,
                     userId, 
                     userName, 
                     userColor,
@@ -2227,6 +2354,18 @@
             
             // Add beforeunload event listener
             window.addEventListener('beforeunload', handleBeforeUnload);
+            
+            // Update video placeholder text with username
+            localVideoPlaceholderText.textContent = `${userName}'s video will appear here`;
+        }
+        
+        function generateBoardId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 8; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
         }
         
         function handleBeforeUnload(e) {
@@ -2257,6 +2396,20 @@
             
             // Redraw everything after resize
             redrawWhiteboard();
+            
+            // Reposition floating elements
+            floatingImages.forEach(img => {
+                img.style.maxWidth = `${container.offsetWidth * 0.5}px`;
+                img.style.maxHeight = `${container.offsetHeight * 0.5}px`;
+            });
+            
+            floatingTexts.forEach(text => {
+                text.style.maxWidth = `${container.offsetWidth * 0.5}px`;
+            });
+            
+            stickyNotes.forEach(note => {
+                note.style.maxWidth = `${container.offsetWidth * 0.5}px`;
+            });
         }
         
         // Initialize chat functionality
@@ -2370,19 +2523,6 @@
             ctx.font = `${currentLineWidth * 5}px Arial`;
         });
         
-        copyBoardIdBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(boardId).then(() => {
-                showNotification('Board ID copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy board ID:', err);
-                showNotification('Failed to copy Board ID');
-            });
-        });
-        
-        saveBoardBtn.addEventListener('click', () => {
-            saveBoardState();
-        });
-        
         togglePanelBtn.addEventListener('click', () => {
             document.querySelector('.container').classList.toggle('panel-collapsed');
             const icon = togglePanelBtn.querySelector('i');
@@ -2419,42 +2559,6 @@
                     }
                 });
             });
-        });
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (textInputActive) return;
-            
-            // Tool shortcuts
-            if (toolShortcuts[e.key.toLowerCase()]) {
-                const toolName = toolShortcuts[e.key.toLowerCase()];
-                selectTool(toolName);
-                
-                // Find and animate the tool button
-                const toolButton = document.querySelector(`.tool[data-tool="${toolName}"]`);
-                if (toolButton) {
-                    toolButton.classList.add('selected');
-                    setTimeout(() => {
-                        toolButton.classList.remove('selected');
-                    }, 500);
-                }
-                
-                e.preventDefault();
-            }
-            
-            // Undo/Redo shortcuts
-            if (e.ctrlKey || e.metaKey) {
-                if (e.key === 'z') {
-                    undo();
-                    e.preventDefault();
-                } else if (e.key === 'y') {
-                    redo();
-                    e.preventDefault();
-                } else if (e.key === 's') {
-                    saveBoardState();
-                    e.preventDefault();
-                }
-            }
         });
         
         // More menu
@@ -2516,7 +2620,10 @@
             saveCurrentPage();
             pages.push({
                 drawings: [],
-                historyPointer: -1
+                historyPointer: -1,
+                floatingImages: [],
+                floatingTexts: [],
+                stickyNotes: []
             });
             currentPageIndex = pages.length - 1;
             loadPage(currentPageIndex);
@@ -2532,13 +2639,49 @@
         function saveCurrentPage() {
             pages[currentPageIndex] = {
                 drawings: [...drawingHistory],
-                historyPointer: historyPointer
+                historyPointer: historyPointer,
+                floatingImages: [...floatingImages],
+                floatingTexts: [...floatingTexts],
+                stickyNotes: [...stickyNotes]
             };
         }
         
         function loadPage(index) {
+            // Remove all floating elements
+            floatingImages.forEach(img => img.remove());
+            floatingImages = [];
+            
+            floatingTexts.forEach(text => text.remove());
+            floatingTexts = [];
+            
+            stickyNotes.forEach(note => note.remove());
+            stickyNotes = [];
+            
+            // Load drawings
             drawingHistory = [...pages[index].drawings];
             historyPointer = pages[index].historyPointer;
+            
+            // Load floating images
+            if (pages[index].floatingImages) {
+                pages[index].floatingImages.forEach(imgData => {
+                    createFloatingImage(imgData.src, imgData.x, imgData.y, imgData.width, imgData.height);
+                });
+            }
+            
+            // Load floating texts
+            if (pages[index].floatingTexts) {
+                pages[index].floatingTexts.forEach(textData => {
+                    createFloatingText(textData.text, textData.x, textData.y, textData.width, textData.height, textData.color, textData.size);
+                });
+            }
+            
+            // Load sticky notes
+            if (pages[index].stickyNotes) {
+                pages[index].stickyNotes.forEach(noteData => {
+                    createStickyNote(noteData.text, noteData.x, noteData.y, noteData.width, noteData.height, noteData.bgColor);
+                });
+            }
+            
             redrawWhiteboard();
         }
         
@@ -2578,32 +2721,113 @@
         
         // Start text input
         function startTextInput() {
-            textInputActive = true;
-            const text = prompt('Enter your text:');
+            lastX = whiteboard.width / 2;
+            lastY = whiteboard.height / 2;
+            createFloatingText('Double click to edit', lastX, lastY, 200, 50, currentColor, currentLineWidth * 5);
+        }
+        
+        // Create floating text element
+        function createFloatingText(text, x, y, width = 200, height = 50, color = '#000000', size = 16) {
+            const textElement = document.createElement('div');
+            textElement.className = 'text-element';
+            textElement.contentEditable = true;
+            textElement.textContent = text;
+            textElement.style.color = color;
+            textElement.style.fontSize = `${size}px`;
+            textElement.style.left = `${x}px`;
+            textElement.style.top = `${y}px`;
+            textElement.style.width = `${width}px`;
+            textElement.style.height = `${height}px`;
             
-            if (text) {
-                const action = {
-                    tool: 'text',
-                    color: currentColor,
-                    x: lastX,
-                    y: lastY,
-                    text: text,
-                    size: currentLineWidth,
-                    userId
-                };
-                
-                // Add to history
-                addToHistory(action);
-                
-                // Send to server
-                socket.emit('draw', action);
-                
-                // Draw the text
-                drawAction(action);
-            }
+            // Add controls
+            const controls = document.createElement('div');
+            controls.className = 'image-controls';
             
-            textInputActive = false;
-            selectTool('pencil');
+            const deleteBtn = document.createElement('div');
+            deleteBtn.className = 'image-control';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                textElement.remove();
+                floatingTexts = floatingTexts.filter(t => t !== textElement);
+                saveCurrentPage();
+            };
+            
+            controls.appendChild(deleteBtn);
+            textElement.appendChild(controls);
+            
+            // Make draggable and resizable
+            makeDraggable(textElement);
+            
+            // Add double click to edit
+            textElement.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                textElement.focus();
+            });
+            
+            // Save on blur
+            textElement.addEventListener('blur', () => {
+                saveCurrentPage();
+            });
+            
+            // Add to whiteboard container
+            whiteboard.parentElement.appendChild(textElement);
+            floatingTexts.push(textElement);
+            
+            // Save to current page
+            saveCurrentPage();
+            
+            return textElement;
+        }
+        
+        // Create sticky note
+        function createStickyNote(text, x, y, width = 200, height = 150, bgColor = '#ffeb3b') {
+            const note = document.createElement('div');
+            note.className = 'sticky-note';
+            note.style.backgroundColor = bgColor;
+            note.style.left = `${x}px`;
+            note.style.top = `${y}px`;
+            note.style.width = `${width}px`;
+            note.style.height = `${height}px`;
+            
+            const content = document.createElement('textarea');
+            content.className = 'sticky-note-content';
+            content.value = text;
+            
+            // Add controls
+            const controls = document.createElement('div');
+            controls.className = 'image-controls';
+            
+            const deleteBtn = document.createElement('div');
+            deleteBtn.className = 'image-control';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                note.remove();
+                stickyNotes = stickyNotes.filter(n => n !== note);
+                saveCurrentPage();
+            };
+            
+            controls.appendChild(deleteBtn);
+            note.appendChild(controls);
+            note.appendChild(content);
+            
+            // Make draggable and resizable
+            makeDraggable(note);
+            
+            // Save on change
+            content.addEventListener('input', () => {
+                saveCurrentPage();
+            });
+            
+            // Add to whiteboard container
+            whiteboard.parentElement.appendChild(note);
+            stickyNotes.push(note);
+            
+            // Save to current page
+            saveCurrentPage();
+            
+            return note;
         }
         
         // Drawing functions
@@ -2611,7 +2835,6 @@
         whiteboard.addEventListener('mousemove', draw);
         whiteboard.addEventListener('mouseup', stopDrawing);
         whiteboard.addEventListener('mouseout', stopDrawing);
-        whiteboard.addEventListener('click', handleClick);
         
         function startDrawing(e) {
             if (currentTool === 'undo' || currentTool === 'redo' || currentTool === 'clear' || textInputActive) return;
@@ -2768,14 +2991,6 @@
             }
         }
         
-        function handleClick(e) {
-            if (currentTool === 'text') {
-                lastX = e.offsetX;
-                lastY = e.offsetY;
-                startTextInput();
-            }
-        }
-        
         function stopDrawing(e) {
             if (!isDrawing || currentTool === 'text') return;
             
@@ -2846,6 +3061,17 @@
             showConfirmation('Are you sure you want to clear the board? This cannot be undone.', () => {
                 drawingHistory = [];
                 historyPointer = -1;
+                
+                // Remove all floating elements
+                floatingImages.forEach(img => img.remove());
+                floatingImages = [];
+                
+                floatingTexts.forEach(text => text.remove());
+                floatingTexts = [];
+                
+                stickyNotes.forEach(note => note.remove());
+                stickyNotes = [];
+                
                 redrawWhiteboard();
                 socket.emit('clear', { userId });
             });
@@ -2994,7 +3220,10 @@
                     if (pages.length === 0) {
                         pages = [{
                             drawings: [],
-                            historyPointer: -1
+                            historyPointer: -1,
+                            floatingImages: [],
+                            floatingTexts: [],
+                            stickyNotes: []
                         }];
                     }
                     
@@ -3004,6 +3233,122 @@
                 } catch (e) {
                     console.error('Error loading saved state:', e);
                 }
+            }
+        }
+        
+        // Create floating image
+        function createFloatingImage(src, x, y, width = 200, height = 200) {
+            const img = document.createElement('img');
+            img.src = src;
+            img.className = 'floating-image';
+            img.style.left = `${x}px`;
+            img.style.top = `${y}px`;
+            img.style.width = `${width}px`;
+            img.style.height = `${height}px`;
+            
+            // Add controls
+            const controls = document.createElement('div');
+            controls.className = 'image-controls';
+            
+            const deleteBtn = document.createElement('div');
+            deleteBtn.className = 'image-control';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                img.remove();
+                floatingImages = floatingImages.filter(i => i !== img);
+                saveCurrentPage();
+            };
+            
+            controls.appendChild(deleteBtn);
+            img.appendChild(controls);
+            
+            // Make draggable and resizable
+            makeDraggable(img);
+            
+            // Add to whiteboard container
+            whiteboard.parentElement.appendChild(img);
+            floatingImages.push(img);
+            
+            // Save to current page
+            saveCurrentPage();
+            
+            return img;
+        }
+        
+        // Make element draggable and resizable
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            let isResizing = false;
+            
+            element.onmousedown = dragMouseDown;
+            
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Check if we're resizing (clicked on the bottom-right corner)
+                const rect = element.getBoundingClientRect();
+                const cornerSize = 20;
+                const inCorner = 
+                    e.clientX >= rect.right - cornerSize && 
+                    e.clientY >= rect.bottom - cornerSize;
+                
+                if (inCorner) {
+                    isResizing = true;
+                } else {
+                    isResizing = false;
+                    // Get the mouse cursor position at startup
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                }
+                
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+                
+                // Bring to front
+                element.style.zIndex = '100';
+                
+                // Set as active element
+                activeFloatingElement = element;
+            }
+            
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (isResizing) {
+                    // Resize the element
+                    const width = e.clientX - element.offsetLeft;
+                    const height = e.clientY - element.offsetTop;
+                    
+                    element.style.width = `${width}px`;
+                    element.style.height = `${height}px`;
+                } else {
+                    // Calculate the new cursor position
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    
+                    // Set the element's new position
+                    element.style.top = (element.offsetTop - pos2) + 'px';
+                    element.style.left = (element.offsetLeft - pos1) + 'px';
+                }
+            }
+            
+            function closeDragElement() {
+                // Stop moving when mouse button is released
+                document.onmouseup = null;
+                document.onmousemove = null;
+                
+                // Reset z-index
+                element.style.zIndex = '50';
+                
+                // Save position and size
+                saveCurrentPage();
             }
         }
         
@@ -3027,6 +3372,7 @@
                 isMicOn = !isMicOn;
                 micBtn.classList.toggle('off', !isMicOn);
                 micBtn.querySelector('i').className = isMicOn ? 'fas fa-microphone' : 'fas fa-microphone-slash';
+                micFooterBtn.classList.toggle('active', isMicOn);
                 showNotification(isMicOn ? 'Microphone enabled' : 'Microphone muted');
                 
                 // Update WebRTC connection if it exists
@@ -3039,6 +3385,7 @@
                 isMicOn = false;
                 micBtn.classList.add('off');
                 micBtn.querySelector('i').className = 'fas fa-microphone-slash';
+                micFooterBtn.classList.remove('active');
             }
         }
         
@@ -3052,6 +3399,7 @@
                     isVideoOn = true;
                     videoBtn.classList.remove('off');
                     videoBtn.querySelector('i').className = 'fas fa-video';
+                    videoFooterBtn.classList.add('active');
                     showNotification('Video enabled');
                     
                     // Start WebRTC connection
@@ -3065,6 +3413,7 @@
                     isVideoOn = !isVideoOn;
                     videoBtn.classList.toggle('off', !isVideoOn);
                     videoBtn.querySelector('i').className = isVideoOn ? 'fas fa-video' : 'fas fa-video-slash';
+                    videoFooterBtn.classList.toggle('active', isVideoOn);
                     localVideoPlaceholder.style.display = isVideoOn ? 'none' : 'flex';
                     localVideo.style.display = isVideoOn ? 'block' : 'none';
                     showNotification(isVideoOn ? 'Video enabled' : 'Video disabled');
@@ -3080,9 +3429,92 @@
                 isVideoOn = false;
                 videoBtn.classList.add('off');
                 videoBtn.querySelector('i').className = 'fas fa-video-slash';
+                videoFooterBtn.classList.remove('active');
                 localVideoPlaceholder.style.display = 'flex';
                 localVideo.style.display = 'none';
             }
+        }
+        
+        async function toggleScreenShare() {
+            try {
+                if (!isScreenSharing) {
+                    const screenStream = await navigator.mediaDevices.getDisplayMedia({ 
+                        video: true,
+                        audio: false
+                    });
+                    
+                    // Replace video track in local stream
+                    const videoTrack = screenStream.getVideoTracks()[0];
+                    const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+                    
+                    if (sender) {
+                        sender.replaceTrack(videoTrack);
+                    }
+                    
+                    // Update local video display
+                    localVideo.srcObject = new MediaStream([videoTrack]);
+                    
+                    isScreenSharing = true;
+                    screenShareBtn.classList.add('off');
+                    screenShareBtn.querySelector('i').className = 'fas fa-stop';
+                    screenShareBtn.querySelector('span').textContent = 'Stop Sharing';
+                    screenShareFooterBtn.classList.add('active');
+                    showNotification('Screen sharing started');
+                    
+                    // Handle when user stops sharing
+                    videoTrack.onended = () => {
+                        toggleScreenShare();
+                    };
+                } else {
+                    // Restore camera stream
+                    const cameraStream = await navigator.mediaDevices.getUserMedia({ 
+                        video: true,
+                        audio: isMicOn
+                    });
+                    
+                    const videoTrack = cameraStream.getVideoTracks()[0];
+                    const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+                    
+                    if (sender) {
+                        sender.replaceTrack(videoTrack);
+                    }
+                    
+                    // Update local video display
+                    localVideo.srcObject = new MediaStream([videoTrack]);
+                    
+                    isScreenSharing = false;
+                    screenShareBtn.classList.remove('off');
+                    screenShareBtn.querySelector('i').className = 'fas fa-desktop';
+                    screenShareBtn.querySelector('span').textContent = 'Share Screen';
+                    screenShareFooterBtn.classList.remove('active');
+                    showNotification('Screen sharing stopped');
+                }
+            } catch (err) {
+                console.error('Error sharing screen:', err);
+                showNotification('Could not share screen');
+            }
+        }
+        
+        function toggleRecord() {
+            isRecording = !isRecording;
+            recordFooterBtn.classList.toggle('active', isRecording);
+            showNotification(isRecording ? 'Recording started' : 'Recording stopped');
+        }
+        
+        function toggleRaiseHand() {
+            isHandRaised = !isHandRaised;
+            raiseHandFooterBtn.classList.toggle('active', isHandRaised);
+            socket.emit('raiseHand', { userId, isHandRaised });
+            showNotification(isHandRaised ? 'Hand raised' : 'Hand lowered');
+        }
+        
+        function toggleReactionMenu() {
+            reactionMenu.classList.toggle('show');
+        }
+        
+        function sendReaction(reaction) {
+            socket.emit('reaction', { userId, reaction });
+            reactionMenu.classList.remove('show');
         }
         
         function setupPeerConnection() {
@@ -3112,7 +3544,12 @@
             
             // Listen for remote stream
             peerConnection.ontrack = (event) => {
-                remoteVideo.srcObject = event.streams[0];
+                if (!remoteStream) {
+                    remoteStream = new MediaStream();
+                    remoteVideo.srcObject = remoteStream;
+                }
+                
+                remoteStream.addTrack(event.track);
                 remoteVideoPlaceholder.style.display = 'none';
                 remoteVideo.style.display = 'block';
                 
@@ -3120,6 +3557,7 @@
                 const remoteUserId = Object.keys(users).find(id => id !== userId);
                 if (remoteUserId) {
                     remoteVideoLabel.textContent = users[remoteUserId]?.userName || 'Participant';
+                    remoteVideoPlaceholderText.textContent = `${users[remoteUserId]?.userName || 'Participant'}'s video will appear here`;
                 }
             };
             
@@ -3171,8 +3609,6 @@
         // Socket.io event handlers
         socket.on('boardCreated', (data) => {
             boardId = data.boardId;
-            boardIdElement.textContent = data.boardId;
-            isHost = true;
             
             // Update URL with board ID
             const url = new URL(window.location.href);
@@ -3192,7 +3628,6 @@
         
         socket.on('boardJoined', (data) => {
             boardId = data.boardId;
-            boardIdElement.textContent = data.boardId;
             
             // Update invite link
             inviteLinkInput.value = window.location.href;
@@ -3210,7 +3645,10 @@
                 if (pages.length === 0) {
                     pages = [{
                         drawings: [],
-                        historyPointer: -1
+                        historyPointer: -1,
+                        floatingImages: [],
+                        floatingTexts: [],
+                        stickyNotes: []
                     }];
                 }
                 
@@ -3241,15 +3679,15 @@
             if (pages.length === 0) {
                 pages = [{
                     drawings: [],
-                    historyPointer: -1
+                    historyPointer: -1,
+                    floatingImages: [],
+                    floatingTexts: [],
+                    stickyNotes: []
                 }];
             }
             
             loadPage(currentPageIndex);
             updatePageControls();
-            
-            // Try to load saved state
-            loadBoardState();
         });
         
         socket.on('userJoined', (user) => {
@@ -3291,6 +3729,7 @@
             if (Object.keys(users).length <= 1 && peerConnection) {
                 peerConnection.close();
                 peerConnection = null;
+                remoteStream = null;
                 remoteVideo.srcObject = null;
                 remoteVideo.style.display = 'none';
                 remoteVideoPlaceholder.style.display = 'flex';
@@ -3347,6 +3786,17 @@
         socket.on('clear', () => {
             drawingHistory = [];
             historyPointer = -1;
+            
+            // Remove all floating elements
+            floatingImages.forEach(img => img.remove());
+            floatingImages = [];
+            
+            floatingTexts.forEach(text => text.remove());
+            floatingTexts = [];
+            
+            stickyNotes.forEach(note => note.remove());
+            stickyNotes = [];
+            
             redrawWhiteboard();
         });
         
@@ -3358,6 +3808,20 @@
         
         socket.on('chatMessage', (message) => {
             addChatMessage(message, message.senderId === userId);
+        });
+        
+        socket.on('raiseHand', (data) => {
+            const user = users[data.userId];
+            if (user) {
+                showNotification(`${user.userName} ${data.isHandRaised ? 'raised' : 'lowered'} their hand`);
+            }
+        });
+        
+        socket.on('reaction', (data) => {
+            const user = users[data.userId];
+            if (user) {
+                showNotification(`${user.userName} reacted with ${data.reaction}`);
+            }
         });
         
         // WebRTC events
@@ -3536,7 +4000,13 @@
         
         leaveOption.addEventListener('click', () => {
             showConfirmation('Are you sure you want to leave this session?', () => {
-                window.location.href = window.location.origin;
+                // Show leave image
+                leaveImage.style.display = 'block';
+                
+                // Redirect after a delay
+                setTimeout(() => {
+                    window.location.href = window.location.origin;
+                }, 2000);
             });
             dropdownMenu.classList.remove('show');
         });
@@ -3585,6 +4055,9 @@
                     boardId 
                 });
                 showNotification('Name updated');
+                
+                // Update local video placeholder text
+                localVideoPlaceholderText.textContent = `${userName}'s video will appear here`;
             }
             
             // Update grid style
@@ -3664,24 +4137,25 @@
         function insertImage(src) {
             const img = new Image();
             img.onload = function() {
-                const action = {
-                    tool: 'image',
-                    src: src,
-                    x: lastX,
-                    y: lastY,
-                    width: this.width > 300 ? 300 : this.width,
-                    height: this.width > 300 ? (300 / this.width) * this.height : this.height,
-                    userId
-                };
-                
-                // Add to history
-                addToHistory(action);
+                // Create floating image
+                const floatingImg = createFloatingImage(
+                    src, 
+                    whiteboard.width / 2 - 100, 
+                    whiteboard.height / 2 - 100,
+                    this.width > 300 ? 300 : this.width,
+                    this.width > 300 ? (300 / this.width) * this.height : this.height
+                );
                 
                 // Send to server
-                socket.emit('draw', action);
-                
-                // Draw the image
-                drawAction(action);
+                socket.emit('addFloatingImage', {
+                    src,
+                    x: floatingImg.offsetLeft,
+                    y: floatingImg.offsetTop,
+                    width: floatingImg.offsetWidth,
+                    height: floatingImg.offsetHeight,
+                    boardId,
+                    userId
+                });
                 
                 hideModal(imageModal);
                 imageUrl.value = '';
@@ -3692,6 +4166,13 @@
             };
             img.src = src;
         }
+        
+        // Handle floating images from server
+        socket.on('addFloatingImage', (data) => {
+            if (data.userId !== userId) {
+                createFloatingImage(data.src, data.x, data.y, data.width, data.height);
+            }
+        });
         
         // Sticky note insertion
         stickyColorOptions.forEach(option => {
@@ -3707,32 +4188,45 @@
                 const selectedColor = document.querySelector('.color-option[style*="border: 2px solid var(--primary-color)"]') || 
                                       document.querySelector('.color-option');
                 
-                const action = {
-                    tool: 'sticky',
-                    text: content,
-                    x: lastX,
-                    y: lastY,
-                    width: 200,
-                    height: 150,
-                    bgColor: selectedColor.dataset.color,
-                    borderColor: '#000000',
-                    textColor: '#000000',
-                    userId
-                };
-                
-                // Add to history
-                addToHistory(action);
+                const note = createStickyNote(
+                    content,
+                    whiteboard.width / 2 - 100,
+                    whiteboard.height / 2 - 75,
+                    200,
+                    150,
+                    selectedColor.dataset.color
+                );
                 
                 // Send to server
-                socket.emit('draw', action);
-                
-                // Draw the sticky note
-                drawAction(action);
+                socket.emit('addStickyNote', {
+                    text: content,
+                    x: note.offsetLeft,
+                    y: note.offsetTop,
+                    width: note.offsetWidth,
+                    height: note.offsetHeight,
+                    bgColor: selectedColor.dataset.color,
+                    boardId,
+                    userId
+                });
                 
                 hideModal(stickyModal);
                 stickyContent.value = '';
             } else {
                 showNotification('Please enter some content for the sticky note');
+            }
+        });
+        
+        // Handle sticky notes from server
+        socket.on('addStickyNote', (data) => {
+            if (data.userId !== userId) {
+                createStickyNote(
+                    data.text,
+                    data.x,
+                    data.y,
+                    data.width,
+                    data.height,
+                    data.bgColor
+                );
             }
         });
         
@@ -3795,9 +4289,63 @@
         // Media button event listeners
         micBtn.addEventListener('click', toggleMic);
         videoBtn.addEventListener('click', toggleVideo);
+        screenShareBtn.addEventListener('click', toggleScreenShare);
         
+        // Footer button event listeners
+        micFooterBtn.addEventListener('click', toggleMic);
+        videoFooterBtn.addEventListener('click', toggleVideo);
+        participantsFooterBtn.addEventListener('click', () => {
+            document.querySelector('.container').classList.remove('panel-collapsed');
+            const icon = togglePanelBtn.querySelector('i');
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-left');
+            
+            // Switch to participants tab
+            panelTabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.panel-tab[data-tab="participants"]').classList.add('active');
+            
+            panelContents.forEach(c => c.classList.remove('active'));
+            document.querySelector('.panel-content[data-content="participants"]').classList.add('active');
+        });
+        screenShareFooterBtn.addEventListener('click', toggleScreenShare);
+        recordFooterBtn.addEventListener('click', toggleRecord);
+        raiseHandFooterBtn.addEventListener('click', toggleRaiseHand);
+        reactionFooterBtn.addEventListener('click', toggleReactionMenu);
+        chatFooterBtn.addEventListener('click', () => {
+            document.querySelector('.container').classList.remove('panel-collapsed');
+            const icon = togglePanelBtn.querySelector('i');
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-left');
+            
+            // Switch to chat tab
+            panelTabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.panel-tab[data-tab="chat"]').classList.add('active');
+            
+            panelContents.forEach(c => c.classList.remove('active'));
+            document.querySelector('.panel-content[data-content="chat"]').classList.add('active');
+            
+            // Reset unread messages
+            unreadChatMessages = 0;
+            updateChatBadges();
+            moreBtn.classList.remove('has-notification');
+        });
         
-
-everything should be resizeable, movable, can we cant use keyboard for p,e,t,r,c, etc. stop using them, image insert not working.. it should also be resizeable, movable, + fix VDO not working + every session should have a different meeting code 
-+ when people leave the session add the image after clicking leave https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg + add option for delete + resizable + vdo not working + show the users name instead of Your video will appear here + image inserted should be resizable + Text should be movable,resizable and adjustable  + remove shortcuts from keyboard like E,R,T,C,etc +Sticky Note should be movable,resizable and adjustable + Video Background not working + the graphical lines can not be eraser + when delete whole board image inserted should also be deleted + add proper colors for whiteboard + remove this Copy Board ID
-Loading... instead add option of mic, vdo , participants, sharescreen , chat ,  reccord, raise hand , reactions.
+        // Reaction button event listeners
+        document.querySelectorAll('.reaction-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                sendReaction(btn.textContent);
+            });
+        });
+        
+        // Close reaction menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!reactionFooterBtn.contains(e.target) && !reactionMenu.contains(e.target)) {
+                reactionMenu.classList.remove('show');
+            }
+        });
+        
+        // Initialize
+        initWhiteboard();
+    </script>
+</body>
+</html>
