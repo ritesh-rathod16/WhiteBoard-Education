@@ -3,652 +3,3804 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhiteBoard Pro</title>
+    <title>WhiteBoard Pro - Next-Gen Collaborative Whiteboard</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #f72585;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --text-color: #2b2d42;
+            --white: #ffffff;
+            --black: #000000;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius: 12px;
+            --sidebar-width: 80px;
+            --panel-width: 320px;
+            --header-height: 60px;
+            --footer-height: 50px;
+        }
+        
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-color);
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Logo Animation */
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes logoGlow {
+            0% { filter: drop-shadow(0 0 5px rgba(67, 97, 238, 0.5)); }
+            50% { filter: drop-shadow(0 0 15px rgba(67, 97, 238, 0.8)); }
+            100% { filter: drop-shadow(0 0 5px rgba(67, 97, 238, 0.5)); }
+        }
+        
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Layout */
+        .container {
             display: flex;
             flex-direction: column;
             height: 100vh;
         }
         
         .header {
-            background-color: #2c3e50;
+            background-color: var(--white);
+            color: var(--dark-color);
+            padding: 12px 24px;
+            height: var(--header-height);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-img {
+            height: 36px;
+            width: auto;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            transition: all 0.5s ease;
+            animation: logoFloat 3s ease-in-out infinite, logoGlow 4s ease infinite;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: gradientFlow 8s ease infinite;
+            letter-spacing: -0.5px;
+            position: relative;
+        }
+        
+        .logo-text::after {
+            content: "PRO";
+            position: absolute;
+            top: -8px;
+            right: -25px;
+            font-size: 0.7rem;
+            background: var(--accent-color);
             color: white;
-            padding: 10px 20px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .user-count {
+            background-color: var(--primary-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--white);
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+            transition: var(--transition);
+        }
+        
+        .user-count:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
+        }
+        
+        .more-menu {
+            position: relative;
+        }
+        
+        .more-btn {
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .more-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: rotate(90deg);
+        }
+        
+        .more-btn .dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            top: 4px;
+            right: 4px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .more-btn.has-notification .dot {
+            opacity: 1;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 8px 0;
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+            animation: fadeIn 0.2s ease-out;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .dropdown-menu.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            position: relative;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .dropdown-item .badge {
+            position: absolute;
+            right: 12px;
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background-color: rgba(0, 0, 0, 0.1);
+            margin: 8px 0;
+        }
+        
+        .main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            height: calc(100vh - var(--header-height) - var(--footer-height));
+        }
+        
+        .toolbar {
+            width: var(--sidebar-width);
+            background-color: var(--white);
+            padding: 16px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            overflow-y: auto;
+        }
+        
+        .tool {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--dark-color);
+            transition: var(--transition);
+            position: relative;
+            background-color: transparent;
+            border: none;
+        }
+        
+        .tool:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .tool.active {
+            background-color: var(--primary-color);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+        
+        .tool i {
+            font-size: 1.2rem;
+        }
+        
+        .tool-tip {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--dark-color);
+            color: var(--white);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            margin-left: 12px;
+            z-index: 100;
+        }
+        
+        .tool:hover .tool-tip {
+            opacity: 1;
+        }
+        
+        .tool-divider {
+            width: 60%;
+            height: 1px;
+            background-color: rgba(0, 0, 0, 0.1);
+            margin: 8px 0;
+        }
+        
+        .color-picker-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .color-picker-label {
+            color: var(--dark-color);
+            font-size: 0.7rem;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        
+        .color-picker {
+            width: 36px;
+            height: 36px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+            transition: var(--transition);
+            overflow: hidden;
+        }
+        
+        .color-picker:hover {
+            transform: scale(1.1);
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .line-width-control {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .line-width-label {
+            color: var(--dark-color);
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .line-width-slider {
+            width: 80%;
+            cursor: pointer;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #e9ecef;
+            outline: none;
+            transition: var(--transition);
+        }
+        
+        .line-width-slider:hover {
+            background: #dee2e6;
+        }
+        
+        .line-width-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .line-width-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: var(--secondary-color);
+        }
+        
+        .whiteboard-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--white);
+            background-image: 
+                linear-gradient(#e9ecef 1px, transparent 1px),
+                linear-gradient(90deg, #e9ecef 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        #whiteboard {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: crosshair;
+        }
+        
+        .cursor {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            border: 2px solid var(--white);
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+            transition: transform 0.1s ease;
+        }
+        
+        .right-panel {
+            width: var(--panel-width);
+            display: flex;
+            flex-direction: column;
+            background-color: var(--white);
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.05);
+            transition: width 0.3s ease;
+            z-index: 10;
+            border-left: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .panel-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--dark-color);
+            position: relative;
+        }
+        
+        .panel-tab.active {
+            color: var(--primary-color);
+        }
+        
+        .panel-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .panel-tab .badge {
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+        
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .panel-content.active {
+            display: block;
+        }
+        
+        .user-list-container {
+            padding: 16px;
+        }
+        
+        .user-list-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+        
+        .user-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            transition: background-color 0.2s;
+            position: relative;
+        }
+        
+        .user-item.host::after {
+            content: 'Host';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .user-item:hover {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            position: relative;
+        }
+        
+        .user-avatar::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #38b000;
+            border: 2px solid white;
+        }
+        
+        .user-name {
+            flex: 1;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .user-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .user-control {
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .user-control:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        
+        .media-container {
+            padding: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .media-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .media-btn {
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            flex: 1;
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+        }
+        
+        .media-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
+        }
+        
+        .media-btn.off {
+            background-color: var(--accent-color);
+            box-shadow: 0 2px 8px rgba(247, 37, 133, 0.3);
+        }
+        
+        .media-btn.off:hover {
+            box-shadow: 0 4px 12px rgba(247, 37, 133, 0.4);
+        }
+        
+        .video-container {
+            background-color: #000;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 16px;
+            position: relative;
+            min-height: 180px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        #localVideo, #remoteVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            background-color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .video-placeholder i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .video-placeholder-text {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .video-label {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .video-controls {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .video-control {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .video-control:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+        
+        .chat-container {
+            padding: 16px;
+            height: calc(100% - 60px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 16px;
+        }
+        
+        .chat-message {
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            background-color: rgba(0, 0, 0, 0.03);
+            max-width: 80%;
+        }
+        
+        .chat-message.self {
+            margin-left: auto;
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .chat-message.other {
+            margin-right: auto;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-message-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+        
+        .chat-message-sender {
+            font-weight: 600;
+        }
+        
+        .chat-message-time {
+            opacity: 0.7;
+        }
+        
+        .chat-message-content {
+            word-wrap: break-word;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            resize: none;
+            height: 40px;
+            max-height: 120px;
+            transition: var(--transition);
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+        
+        .chat-send {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chat-send:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            background-color: var(--white);
+            color: var(--dark-color);
+            padding: 12px 24px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            height: var(--footer-height);
+        }
+        
+        .footer-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .board-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .board-btn {
+            padding: 6px 12px;
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--dark-color);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .board-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .board-btn.primary {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+        }
+        
+        .board-btn.primary:hover {
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
+        }
+        
+        #boardId {
+            font-family: monospace;
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .whiteboard-pages {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+        }
+        
+        .page-control {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .page-count {
+            font-size: 0.9rem;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            z-index: 1000;
+            display: none;
+            max-width: 80%;
+            text-align: center;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        
+        .toggle-panel {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--primary-color);
+            color: var(--white);
+            width: 24px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px 0 0 8px;
+            cursor: pointer;
+            z-index: 20;
+            transition: var(--transition);
+            box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toggle-panel:hover {
+            width: 28px;
+            background-color: var(--secondary-color);
+        }
+        
+        .panel-collapsed .right-panel {
+            width: 0;
+            overflow: hidden;
+        }
+        
+        .panel-collapsed .toggle-panel {
+            right: -24px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .toolbar {
+                width: 60px;
+            }
+            
+            .right-panel {
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                background-color: var(--white);
+                z-index: 50;
+                width: 280px;
+            }
+            
+            .panel-collapsed .right-panel {
+                width: 0;
+            }
+            
+            .header {
+                padding: 10px 16px;
+            }
+            
+            .logo-text {
+                font-size: 1.2rem;
+            }
+            
+            .user-count {
+                padding: 4px 12px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* Drawing tools specific styles */
+        .line-width-control {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .line-width-label {
+            color: var(--dark-color);
+            font-size: 0.7rem;
+        }
+        
+        /* Loading animation */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        .loading-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Shape preview styles */
+        .shape-preview {
+            position: absolute;
+            pointer-events: none;
+            z-index: 90;
+        }
+        
+        /* Tool selection animation */
+        @keyframes toolPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .tool.selected {
+            animation: toolPulse 0.5s ease;
+        }
+        
+        /* Improved cursor styles */
+        .cursor-name {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 12px;
+            text-shadow: 0 0 2px black;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-content {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .main-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
         }
         
-        .sidebar {
-            width: 250px;
-            background-color: #34495e;
-            color: white;
-            padding: 15px;
-            overflow-y: auto;
-        }
-        
-        .whiteboard-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #ecf0f1;
-        }
-        
-        .toolbar {
-            background-color: #3498db;
-            padding: 10px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .tool-btn {
-            background-color: #2980b9;
-            color: white;
+        .modal-close {
+            background: none;
             border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
+            color: var(--dark-color);
             cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            color: var(--accent-color);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 16px;
+        }
+        
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
-            align-items: center;
-            gap: 5px;
+            justify-content: flex-end;
+            gap: 10px;
         }
         
-        .tool-btn:hover {
-            background-color: #1a6ea0;
+        .form-group {
+            margin-bottom: 16px;
         }
         
-        .tool-btn.active {
-            background-color: #16a085;
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--dark-color);
         }
         
-        .whiteboard {
-            flex: 1;
-            background-color: white;
-            position: relative;
-            overflow: hidden;
-            cursor: crosshair;
-        }
-        
-        .participants {
-            margin-top: 20px;
-        }
-        
-        .participant {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .participant-video {
+        .form-control {
             width: 100%;
-            background-color: #2c3e50;
-            aspect-ratio: 16/9;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+            padding: 10px 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
         }
         
-        .footer {
-            background-color: #2c3e50;
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
             color: white;
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--dark-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .invite-link {
+            display: flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: var(--border-radius);
             padding: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .invite-link input {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 0 8px;
+            font-size: 0.9rem;
+        }
+        
+        .invite-link button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .invite-link button:hover {
+            color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+        
+        /* Lobby styles */
+        .lobby-container {
+            padding: 16px;
             text-align: center;
         }
         
-        .color-picker {
+        .lobby-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+        }
+        
+        .lobby-text {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            color: var(--dark-color);
+        }
+        
+        /* Export options */
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .export-option {
             display: flex;
-            gap: 5px;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            border-radius: var(--border-radius);
+            background-color: rgba(0, 0, 0, 0.03);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .export-option:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .export-option i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+        
+        .export-option span {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* Background options */
+        .background-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .background-option {
+            height: 80px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .background-option:hover {
+            transform: scale(1.05);
+        }
+        
+        .background-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .background-option.active::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        
+        /* Pinned content */
+        .pinned-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 500;
+            max-width: 80%;
+            max-height: 80vh;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+        
+        .pinned-content.show {
+            display: block;
+        }
+        
+        .pinned-header {
+            padding: 12px 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
         }
         
-        .color-option {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
+        .pinned-title {
+            font-size: 0.9rem;
+            font-weight: 500;
         }
         
-        .color-option.selected {
-            border-color: white;
-        }
-        
-        .sticky-note {
-            position: absolute;
-            min-width: 150px;
-            min-height: 100px;
-            background-color: #f9f3a1;
-            padding: 10px;
-            resize: both;
-            overflow: hidden;
-            cursor: move;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        
-        .sticky-note textarea {
-            width: 100%;
-            height: 100%;
+        .pinned-close {
+            background: none;
             border: none;
-            background: transparent;
-            resize: none;
-            outline: none;
-            font-family: inherit;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
         }
         
-        .draggable-image {
-            position: absolute;
-            cursor: move;
-            resize: both;
-            overflow: hidden;
+        .pinned-body {
+            padding: 16px;
         }
         
-        .draggable-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+        /* Confirmation dialog */
+        .confirmation-dialog {
+            text-align: center;
+            padding: 16px;
         }
         
-        .resize-handle {
-            width: 10px;
-            height: 10px;
-            background-color: #3498db;
-            position: absolute;
-            right: 0;
-            bottom: 0;
-            cursor: nwse-resize;
+        .confirmation-icon {
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 16px;
         }
         
-        .video-controls {
+        .confirmation-text {
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Whiteboard background options */
+        .whiteboard-bg-options {
             display: flex;
             gap: 10px;
-            padding: 10px;
-            background-color: #2c3e50;
-            justify-content: center;
+            margin-top: 10px;
         }
         
-        .emoji-picker {
+        .whiteboard-bg {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+        
+        .whiteboard-bg:hover {
+            transform: scale(1.05);
+        }
+        
+        .whiteboard-bg.active {
+            border-color: var(--primary-color);
+        }
+        
+        .whiteboard-bg.white {
+            background-color: var(--white);
+        }
+        
+        .whiteboard-bg.black {
+            background-color: var(--black);
+        }
+        
+        .whiteboard-bg.green {
+            background-color: #e6f7e6;
+        }
+        
+        .whiteboard-bg.blue {
+            background-color: #e6f0f7;
+        }
+        
+        /* Floating image controls */
+        .floating-image {
             position: absolute;
-            background: white;
-            border: 1px solid #ccc;
-            padding: 10px;
-            z-index: 1000;
-            display: none;
+            cursor: move;
+            z-index: 50;
+            border: 2px dashed rgba(0, 0, 0, 0.2);
+            transition: border 0.2s;
+        }
+        
+        .floating-image:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .image-controls {
+            position: absolute;
+            top: -30px;
+            right: 0;
+            background-color: var(--white);
+            border-radius: 4px;
+            box-shadow: var(--shadow);
+            display: flex;
+            z-index: 60;
+        }
+        
+        .image-control {
+            padding: 4px;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+        
+        .image-control:hover {
+            color: var(--primary-color);
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>WhiteBoard Pro</h1>
-        <div id="user-name">User-Z4m</div>
-    </div>
-    
-    <div class="main-container">
-        <div class="sidebar">
-            <h2>Participants</h2>
-            <div class="participant">
-                <strong>Mile</strong>
-                <div class="participant-actions">
-                    <button class="tool-btn">Video</button>
-                    <button class="tool-btn">Share</button>
-                    <button class="tool-btn">Record</button>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Pro Logo" class="logo-img">
+                <div class="logo-text">WhiteBoard Pro</div>
+            </div>
+            <div class="header-controls">
+                <div class="user-count">
+                    <i class="fas fa-users"></i>
+                    <span id="userCount">0</span>
                 </div>
-            </div>
-            
-            <div class="participant-video" id="local-video">
-                User-Z4m's video
-            </div>
-            
-            <div class="participant-video" id="remote-video">
-                Other participant's video
-            </div>
-            
-            <div class="participants" id="participants-list">
-                <!-- Participants will be added here -->
+                <div class="more-menu">
+                    <button class="more-btn" id="moreBtn">
+                        <i class="fas fa-ellipsis-v"></i>
+                        <span class="dot"></span>
+                    </button>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-item" id="inviteOption">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Invite People</span>
+                        </div>
+                        <div class="dropdown-item" id="participantsOption">
+                            <i class="fas fa-users"></i>
+                            <span>Participants</span>
+                            <span class="badge" id="participantsBadge">0</span>
+                        </div>
+                        <div class="dropdown-item" id="chatOption">
+                            <i class="fas fa-comment"></i>
+                            <span>Chat</span>
+                            <span class="badge" id="chatBadge">0</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" id="settingsOption">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </div>
+                        <div class="dropdown-item" id="exportOption">
+                            <i class="fas fa-download"></i>
+                            <span>Export</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" id="leaveOption">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Leave Session</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div class="whiteboard-container">
+        <div class="main">
             <div class="toolbar">
-                <button class="tool-btn" data-tool="select">Select</button>
-                <button class="tool-btn" data-tool="pen">Pen</button>
-                <button class="tool-btn" data-tool="eraser">Eraser</button>
-                <button class="tool-btn" data-tool="text">Text</button>
-                <button class="tool-btn" data-tool="sticky-note">Sticky Note</button>
-                <button class="tool-btn" data-tool="shape">Shape</button>
-                <button class="tool-btn" data-tool="line">Line</button>
-                
-                <div class="color-picker">
-                    <div class="color-option selected" style="background-color: #000000;" data-color="#000000"></div>
-                    <div class="color-option" style="background-color: #e74c3c;" data-color="#e74c3c"></div>
-                    <div class="color-option" style="background-color: #3498db;" data-color="#3498db"></div>
-                    <div class="color-option" style="background-color: #2ecc71;" data-color="#2ecc71"></div>
-                    <div class="color-option" style="background-color: #f1c40f;" data-color="#f1c40f"></div>
-                    <div class="color-option" style="background-color: #9b59b6;" data-color="#9b59b6"></div>
-                    <div class="color-option" style="background-color: #ffffff; border: 1px solid #ccc;" data-color="#ffffff"></div>
+                <div class="tool active" data-tool="pencil">
+                    <i class="fas fa-pencil-alt"></i>
+                    <span class="tool-tip">Pencil (P)</span>
+                </div>
+                <div class="tool" data-tool="line">
+                    <i class="fas fa-slash"></i>
+                    <span class="tool-tip">Line (L)</span>
+                </div>
+                <div class="tool" data-tool="rectangle">
+                    <i class="far fa-square"></i>
+                    <span class="tool-tip">Rectangle (R)</span>
+                </div>
+                <div class="tool" data-tool="circle">
+                    <i class="far fa-circle"></i>
+                    <span class="tool-tip">Circle (C)</span>
+                </div>
+                <div class="tool" data-tool="arrow">
+                    <i class="fas fa-arrow-right"></i>
+                    <span class="tool-tip">Arrow (A)</span>
+                </div>
+                <div class="tool" data-tool="text">
+                    <i class="fas fa-font"></i>
+                    <span class="tool-tip">Text (T)</span>
+                </div>
+                <div class="tool" data-tool="eraser">
+                    <i class="fas fa-eraser"></i>
+                    <span class="tool-tip">Eraser (E)</span>
+                </div>
+                <div class="tool-divider"></div>
+                <div class="tool" data-tool="undo">
+                    <i class="fas fa-undo"></i>
+                    <span class="tool-tip">Undo (Ctrl+Z)</span>
+                </div>
+                <div class="tool" data-tool="redo">
+                    <i class="fas fa-redo"></i>
+                    <span class="tool-tip">Redo (Ctrl+Y)</span>
+                </div>
+                <div class="tool" data-tool="clear">
+                    <i class="fas fa-trash-alt"></i>
+                    <span class="tool-tip">Clear Board</span>
+                </div>
+                <div class="tool-divider"></div>
+                <div class="tool" data-tool="image">
+                    <i class="fas fa-image"></i>
+                    <span class="tool-tip">Insert Image</span>
+                </div>
+                <div class="tool" data-tool="sticky">
+                    <i class="fas fa-sticky-note"></i>
+                    <span class="tool-tip">Sticky Note</span>
+                </div>
+                <div class="tool-divider"></div>
+                <div class="color-picker-container">
+                    <div class="color-picker-label">Color</div>
+                    <input type="color" class="color-picker" id="colorPicker" value="#000000">
+                </div>
+                <div class="line-width-control">
+                    <div class="line-width-label">Size</div>
+                    <input type="range" class="line-width-slider" id="lineWidth" min="1" max="20" value="3">
+                </div>
+                <div class="color-picker-container">
+                    <div class="color-picker-label">Fill</div>
+                    <input type="color" class="color-picker" id="fillPicker" value="#00000000">
+                </div>
+                <div class="tool-divider"></div>
+                <div class="whiteboard-bg-options">
+                    <div class="whiteboard-bg white active" data-bg="white"></div>
+                    <div class="whiteboard-bg black" data-bg="black"></div>
+                    <div class="whiteboard-bg green" data-bg="green"></div>
+                    <div class="whiteboard-bg blue" data-bg="blue"></div>
+                </div>
+            </div>
+            
+            <div class="whiteboard-container">
+                <canvas id="whiteboard"></canvas>
+                <div id="shapePreview" class="shape-preview"></div>
+                <div class="whiteboard-pages">
+                    <button class="page-control" id="prevPage">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="page-count" id="pageCount">1/1</span>
+                    <button class="page-control" id="nextPage">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button class="page-control" id="addPage">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="toggle-panel" id="togglePanel">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            
+            <div class="right-panel">
+                <div class="panel-tabs">
+                    <div class="panel-tab active" data-tab="participants">
+                        <i class="fas fa-users"></i> Participants
+                        <span class="badge" id="participantsTabBadge">0</span>
+                    </div>
+                    <div class="panel-tab" data-tab="chat">
+                        <i class="fas fa-comment"></i> Chat
+                        <span class="badge" id="chatTabBadge">0</span>
+                    </div>
                 </div>
                 
-                <input type="range" id="brush-size" min="1" max="50" value="3">
-                <button class="tool-btn" id="clear-board">Clear Board</button>
-                <button class="tool-btn" id="insert-image">Insert Image</button>
-                <input type="file" id="image-upload" accept="image/*" style="display: none;">
+                <div class="panel-content active" data-content="participants">
+                    <div class="user-list-container">
+                        <div id="userList">
+                            <!-- Users will be added here dynamically -->
+                        </div>
+                    </div>
+                    <div class="media-container">
+                        <div class="media-controls">
+                            <button id="micBtn" class="media-btn">
+                                <i class="fas fa-microphone"></i>
+                                <span>Mic</span>
+                            </button>
+                            <button id="videoBtn" class="media-btn">
+                                <i class="fas fa-video"></i>
+                                <span>Video</span>
+                            </button>
+                        </div>
+                        
+                        <div class="video-container">
+                            <video id="localVideo" autoplay muted playsinline></video>
+                            <div class="video-label">You</div>
+                            <div class="video-controls">
+                                <button class="video-control" id="pinLocal">
+                                    <i class="fas fa-thumbtack"></i>
+                                </button>
+                                <button class="video-control" id="backgroundLocal">
+                                    <i class="fas fa-image"></i>
+                                </button>
+                            </div>
+                            <div class="video-placeholder">
+                                <i class="fas fa-user"></i>
+                                <div class="video-placeholder-text">Your video will appear here</div>
+                            </div>
+                        </div>
+                        
+                        <div class="video-container">
+                            <video id="remoteVideo" autoplay playsinline></video>
+                            <div class="video-label" id="remoteVideoLabel">Participant</div>
+                            <div class="video-controls">
+                                <button class="video-control" id="pinRemote">
+                                    <i class="fas fa-thumbtack"></i>
+                                </button>
+                            </div>
+                            <div class="video-placeholder">
+                                <i class="fas fa-users"></i>
+                                <div class="video-placeholder-text">Other participant's video will appear here</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-content" data-content="chat">
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <!-- Chat messages will appear here -->
+                        </div>
+                        <div class="chat-input-container">
+                            <textarea class="chat-input" id="chatInput" placeholder="Type a message..."></textarea>
+                            <button class="chat-send" id="chatSend">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="whiteboard" id="whiteboard"></div>
-            
-            <div class="video-controls">
-                <button class="tool-btn" id="toggle-mic">Mic</button>
-                <button class="tool-btn" id="toggle-video">Video</button>
-                <button class="tool-btn" id="share-screen">Share Screen</button>
-                <button class="tool-btn" id="toggle-chat">Chat</button>
-                <button class="tool-btn" id="start-record">Record</button>
-                <button class="tool-btn" id="raise-hand">✋ Raise Hand</button>
-                <button class="tool-btn" id="show-reactions">Reactions</button>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-info">
+                <span>Made by Ritesh Rathod</span>
             </div>
-            
-            <div class="emoji-picker" id="emoji-picker">
-                <!-- Emojis will be added here -->
+            <div class="board-actions">
+                <button class="board-btn" id="copyBoardId">
+                    <i class="fas fa-copy"></i> Copy Board ID
+                </button>
+                <span id="boardId">Loading...</span>
+                <button class="board-btn primary" id="saveBoard">
+                    <i class="fas fa-save"></i> Save
+                </button>
             </div>
         </div>
     </div>
     
-    <div class="footer">
-        <p>Mode by Ritech Railroad</p>
+    <!-- Modals -->
+    <div class="modal" id="inviteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Invite Participants</div>
+                <button class="modal-close" id="inviteModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Invite Link</label>
+                    <div class="invite-link">
+                        <input type="text" id="inviteLinkInput" readonly>
+                        <button id="copyInviteLink">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Or share this code</label>
+                    <input type="text" class="form-control" id="inviteCodeInput" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Session Settings</label>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="requireApproval" checked>
+                            <span>Require approval to join</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="allowDrawing" checked>
+                            <span>Allow participants to draw</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="inviteModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="inviteModalSend">Send Invites</button>
+            </div>
+        </div>
     </div>
-
+    
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Export Whiteboard</div>
+                <button class="modal-close" id="exportModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Select Pages</label>
+                    <select class="form-control" id="exportPages">
+                        <option value="current">Current Page Only</option>
+                        <option value="all">All Pages</option>
+                    </select>
+                </div>
+                <div class="export-options">
+                    <div class="export-option" id="exportPNG">
+                        <i class="fas fa-file-image"></i>
+                        <span>PNG Image</span>
+                    </div>
+                    <div class="export-option" id="exportJPG">
+                        <i class="fas fa-file-image"></i>
+                        <span>JPG Image</span>
+                    </div>
+                    <div class="export-option" id="exportPDF">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>PDF Document</span>
+                    </div>
+                    <div class="export-option" id="exportSVG">
+                        <i class="fas fa-file-code"></i>
+                        <span>SVG Vector</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="exportModalCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Settings</div>
+                <button class="modal-close" id="settingsModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Your Name</label>
+                    <input type="text" class="form-control" id="userNameInput">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Video Background</label>
+                    <div class="background-options">
+                        <div class="background-option active" data-bg="none">
+                            <div style="width:100%;height:100%;background:#333;display:flex;align-items:center;justify-content:center;color:white;">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        <div class="background-option" data-bg="blur">
+                            <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Blur">
+                        </div>
+                        <div class="background-option" data-bg="office">
+                            <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Office">
+                        </div>
+                        <div class="background-option" data-bg="nature">
+                            <img src="https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Nature">
+                        </div>
+                        <div class="background-option" data-bg="abstract">
+                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Abstract">
+                        </div>
+                        <div class="background-option" data-bg="custom">
+                            <div style="width:100%;height:100%;background:#eee;display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Whiteboard Grid</label>
+                    <select class="form-control" id="gridStyle">
+                        <option value="dots">Dots</option>
+                        <option value="lines" selected>Lines</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="settingsModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="settingsModalSave">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="lobbyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Waiting for Approval</div>
+            </div>
+            <div class="modal-body">
+                <div class="lobby-container">
+                    <div class="lobby-icon">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="lobby-text">
+                        You're in the waiting room. The host will let you in shortly.
+                    </div>
+                    <button class="btn btn-secondary" id="cancelJoin">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="confirmation-dialog">
+                    <div class="confirmation-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="confirmation-text" id="confirmationText">
+                        Are you sure you want to leave this session?
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button class="btn btn-secondary" id="confirmCancel">Cancel</button>
+                        <button class="btn btn-primary" id="confirmAction">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Insert Image</div>
+                <button class="modal-close" id="imageModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="text" class="form-control" id="imageUrl" placeholder="https://example.com/image.jpg">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Or upload from device</label>
+                    <input type="file" class="form-control" id="imageUpload" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Preview</label>
+                    <div style="border: 1px dashed #ccc; padding: 10px; text-align: center; min-height: 100px;">
+                        <img id="imagePreview" style="max-width: 100%; max-height: 200px; display: none;">
+                        <div id="imagePlaceholder" style="color: #666;">
+                            <i class="fas fa-image" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                            <div>Image preview will appear here</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="imageModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="imageModalInsert">Insert Image</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="stickyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Add Sticky Note</div>
+                <button class="modal-close" id="stickyModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Note Content</label>
+                    <textarea class="form-control" id="stickyContent" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Color</label>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="color-option" data-color="#ffeb3b" style="background-color: #ffeb3b; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        <div class="color-option" data-color="#ff9800" style="background-color: #ff9800; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        <div class="color-option" data-color="#f44336" style="background-color: #f44336; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        <div class="color-option" data-color="#4caf50" style="background-color: #4caf50; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        <div class="color-option" data-color="#2196f3" style="background-color: #2196f3; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        <div class="color-option" data-color="#9c27b0" style="background-color: #9c27b0; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="stickyModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="stickyModalAdd">Add Note</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="pinned-content" id="pinnedContent">
+        <div class="pinned-header">
+            <div class="pinned-title" id="pinnedTitle">Pinned Content</div>
+            <button class="pinned-close" id="pinnedClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="pinned-body" id="pinnedBody">
+            <!-- Pinned content will be inserted here -->
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+    
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Connecting to board...</div>
+    </div>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const whiteboard = document.getElementById('whiteboard');
-            const toolButtons = document.querySelectorAll('[data-tool]');
-            const colorOptions = document.querySelectorAll('.color-option');
-            const brushSize = document.getElementById('brush-size');
-            const clearBoard = document.getElementById('clear-board');
-            const insertImage = document.getElementById('insert-image');
-            const imageUpload = document.getElementById('image-upload');
-            const toggleMic = document.getElementById('toggle-mic');
-            const toggleVideo = document.getElementById('toggle-video');
-            const shareScreen = document.getElementById('share-screen');
-            const toggleChat = document.getElementById('toggle-chat');
-            const startRecord = document.getElementById('start-record');
-            const raiseHand = document.getElementById('raise-hand');
-            const showReactions = document.getElementById('show-reactions');
-            const emojiPicker = document.getElementById('emoji-picker');
+        // DOM Elements
+        const whiteboard = document.getElementById('whiteboard');
+        const ctx = whiteboard.getContext('2d');
+        const tools = document.querySelectorAll('.tool');
+        const colorPicker = document.getElementById('colorPicker');
+        const fillPicker = document.getElementById('fillPicker');
+        const lineWidthSlider = document.getElementById('lineWidth');
+        const userList = document.getElementById('userList');
+        const userCount = document.getElementById('userCount');
+        const boardIdElement = document.getElementById('boardId');
+        const copyBoardIdBtn = document.getElementById('copyBoardId');
+        const saveBoardBtn = document.getElementById('saveBoard');
+        const notification = document.getElementById('notification');
+        const micBtn = document.getElementById('micBtn');
+        const videoBtn = document.getElementById('videoBtn');
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const remoteVideoLabel = document.getElementById('remoteVideoLabel');
+        const localVideoPlaceholder = localVideo.nextElementSibling;
+        const remoteVideoPlaceholder = remoteVideo.nextElementSibling;
+        const togglePanelBtn = document.getElementById('togglePanel');
+        const loadingScreen = document.getElementById('loading');
+        const loadingText = loadingScreen.querySelector('.loading-text');
+        const shapePreview = document.getElementById('shapePreview');
+        const moreBtn = document.getElementById('moreBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        
+        // Panel tabs
+        const panelTabs = document.querySelectorAll('.panel-tab');
+        const panelContents = document.querySelectorAll('.panel-content');
+        
+        // Chat elements
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatSend = document.getElementById('chatSend');
+        
+        // Page controls
+        const prevPage = document.getElementById('prevPage');
+        const nextPage = document.getElementById('nextPage');
+        const addPage = document.getElementById('addPage');
+        const pageCount = document.getElementById('pageCount');
+        
+        // Whiteboard background options
+        const whiteboardBgs = document.querySelectorAll('.whiteboard-bg');
+        
+        // Modal elements
+        const inviteModal = document.getElementById('inviteModal');
+        const inviteModalClose = document.getElementById('inviteModalClose');
+        const inviteModalCancel = document.getElementById('inviteModalCancel');
+        const inviteModalSend = document.getElementById('inviteModalSend');
+        const inviteLinkInput = document.getElementById('inviteLinkInput');
+        const inviteCodeInput = document.getElementById('inviteCodeInput');
+        const copyInviteLink = document.getElementById('copyInviteLink');
+        const requireApproval = document.getElementById('requireApproval');
+        const allowDrawing = document.getElementById('allowDrawing');
+        
+        const exportModal = document.getElementById('exportModal');
+        const exportModalClose = document.getElementById('exportModalClose');
+        const exportModalCancel = document.getElementById('exportModalCancel');
+        const exportPNG = document.getElementById('exportPNG');
+        const exportJPG = document.getElementById('exportJPG');
+        const exportPDF = document.getElementById('exportPDF');
+        const exportSVG = document.getElementById('exportSVG');
+        const exportPages = document.getElementById('exportPages');
+        
+        const settingsModal = document.getElementById('settingsModal');
+        const settingsModalClose = document.getElementById('settingsModalClose');
+        const settingsModalCancel = document.getElementById('settingsModalCancel');
+        const settingsModalSave = document.getElementById('settingsModalSave');
+        const userNameInput = document.getElementById('userNameInput');
+        const gridStyle = document.getElementById('gridStyle');
+        
+        const lobbyModal = document.getElementById('lobbyModal');
+        const cancelJoin = document.getElementById('cancelJoin');
+        
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmationText = document.getElementById('confirmationText');
+        const confirmCancel = document.getElementById('confirmCancel');
+        const confirmAction = document.getElementById('confirmAction');
+        
+        const pinnedContent = document.getElementById('pinnedContent');
+        const pinnedClose = document.getElementById('pinnedClose');
+        const pinnedTitle = document.getElementById('pinnedTitle');
+        const pinnedBody = document.getElementById('pinnedBody');
+        
+        const pinLocal = document.getElementById('pinLocal');
+        const pinRemote = document.getElementById('pinRemote');
+        const backgroundLocal = document.getElementById('backgroundLocal');
+        
+        const imageModal = document.getElementById('imageModal');
+        const imageModalClose = document.getElementById('imageModalClose');
+        const imageModalCancel = document.getElementById('imageModalCancel');
+        const imageModalInsert = document.getElementById('imageModalInsert');
+        const imageUrl = document.getElementById('imageUrl');
+        const imageUpload = document.getElementById('imageUpload');
+        const imagePreview = document.getElementById('imagePreview');
+        const imagePlaceholder = document.getElementById('imagePlaceholder');
+        
+        const stickyModal = document.getElementById('stickyModal');
+        const stickyModalClose = document.getElementById('stickyModalClose');
+        const stickyModalCancel = document.getElementById('stickyModalCancel');
+        const stickyModalAdd = document.getElementById('stickyModalAdd');
+        const stickyContent = document.getElementById('stickyContent');
+        const stickyColorOptions = document.querySelectorAll('.color-option');
+        
+        // Menu options
+        const inviteOption = document.getElementById('inviteOption');
+        const participantsOption = document.getElementById('participantsOption');
+        const chatOption = document.getElementById('chatOption');
+        const settingsOption = document.getElementById('settingsOption');
+        const exportOption = document.getElementById('exportOption');
+        const leaveOption = document.getElementById('leaveOption');
+        
+        // Badges
+        const participantsBadge = document.getElementById('participantsBadge');
+        const chatBadge = document.getElementById('chatBadge');
+        const participantsTabBadge = document.getElementById('participantsTabBadge');
+        const chatTabBadge = document.getElementById('chatTabBadge');
+        
+        // Whiteboard state
+        let currentTool = 'pencil';
+        let currentColor = '#000000';
+        let currentFill = 'transparent';
+        let currentLineWidth = 3;
+        let isDrawing = false;
+        let startX = 0;
+        let startY = 0;
+        let lastX = 0;
+        let lastY = 0;
+        let drawingHistory = [];
+        let historyPointer = -1;
+        let users = {};
+        let textInputActive = false;
+        let tempCanvas = document.createElement('canvas');
+        let tempCtx = tempCanvas.getContext('2d');
+        let savedState = null;
+        
+        // Multi-page support
+        let pages = [];
+        let currentPageIndex = 0;
+        
+        // Session state
+        let isHost = false;
+        let waitingForApproval = false;
+        let requireApprovalSetting = true;
+        let allowDrawingSetting = true;
+        
+        // Chat state
+        let chatMessagesCount = 0;
+        let unreadChatMessages = 0;
+        
+        // Media state
+        let localStream = null;
+        let peerConnection = null;
+        let isMicOn = false;
+        let isVideoOn = false;
+        let currentBackground = 'none';
+        const configuration = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' }
+            ]
+        };
+        
+        // Keyboard shortcuts
+        const toolShortcuts = {
+            'p': 'pencil',
+            'l': 'line',
+            'r': 'rectangle',
+            'c': 'circle',
+            'a': 'arrow',
+            'e': 'eraser',
+            't': 'text'
+        };
+        
+        // Socket.io connection
+        const socket = io();
+        let boardId = '';
+        let userId = generateUserId();
+        let userName = `User-${userId.substring(0, 4)}`;
+        let userColor = generateRandomColor();
+        
+        // Initialize whiteboard
+        function initWhiteboard() {
+            // Set canvas size
+            resizeCanvas();
             
-            let currentTool = 'pen';
-            let currentColor = '#000000';
-            let isDrawing = false;
-            let lastX = 0;
-            let lastY = 0;
-            let drawings = [];
-            let currentDrawing = null;
-            let selectedElement = null;
-            let offsetX, offsetY;
+            // Set initial styles
+            ctx.strokeStyle = currentColor;
+            ctx.fillStyle = currentFill;
+            ctx.lineWidth = currentLineWidth;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.font = `${currentLineWidth * 5}px Arial`;
             
-            // Initialize whiteboard with a nice background color
-            whiteboard.style.backgroundColor = '#f9f9f9';
+            // Initialize temp canvas
+            tempCanvas.width = whiteboard.width;
+            tempCanvas.height = whiteboard.height;
             
-            // Set up tools
-            toolButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    toolButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    currentTool = this.dataset.tool;
-                    
-                    // Change cursor based on tool
-                    switch(currentTool) {
-                        case 'pen':
-                            whiteboard.style.cursor = 'crosshair';
-                            break;
-                        case 'eraser':
-                            whiteboard.style.cursor = 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\'><circle cx=\'12\' cy=\'12\' r=\'10\' fill=\'none\' stroke=\'black\' stroke-width=\'2\'/></svg>") 12 12, auto';
-                            break;
-                        case 'select':
-                            whiteboard.style.cursor = 'default';
-                            break;
-                        case 'text':
-                            whiteboard.style.cursor = 'text';
-                            break;
-                        default:
-                            whiteboard.style.cursor = 'crosshair';
+            // Initialize pages
+            pages = [{
+                drawings: [],
+                historyPointer: -1
+            }];
+            updatePageControls();
+            
+            // Load board if ID exists in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlBoardId = urlParams.get('board');
+            
+            if (urlBoardId) {
+                showLoading('Joining board...');
+                socket.emit('joinBoard', { 
+                    boardId: urlBoardId, 
+                    userId, 
+                    userName, 
+                    userColor 
+                });
+            } else {
+                showLoading('Creating new board...');
+                isHost = true;
+                socket.emit('createBoard', { 
+                    userId, 
+                    userName, 
+                    userColor,
+                    requireApproval: requireApprovalSetting,
+                    allowDrawing: allowDrawingSetting
+                });
+            }
+            
+            // Hide loading screen after connection is established
+            setTimeout(() => {
+                hideLoading();
+            }, 2000);
+            
+            // Initialize chat
+            initChat();
+            
+            // Add beforeunload event listener
+            window.addEventListener('beforeunload', handleBeforeUnload);
+        }
+        
+        function handleBeforeUnload(e) {
+            if (drawingHistory.length > 0) {
+                e.preventDefault();
+                e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+                return e.returnValue;
+            }
+        }
+        
+        // Generate a unique user ID
+        function generateUserId() {
+            return Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+        }
+        
+        // Generate a random color
+        function generateRandomColor() {
+            return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
+        }
+        
+        // Resize canvas to fit container
+        function resizeCanvas() {
+            const container = whiteboard.parentElement;
+            whiteboard.width = container.offsetWidth;
+            whiteboard.height = container.offsetHeight;
+            tempCanvas.width = container.offsetWidth;
+            tempCanvas.height = container.offsetHeight;
+            
+            // Redraw everything after resize
+            redrawWhiteboard();
+        }
+        
+        // Initialize chat functionality
+        function initChat() {
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendChatMessage();
+                }
+            });
+            
+            chatSend.addEventListener('click', sendChatMessage);
+        }
+        
+        // Send chat message
+        function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                const chatMessage = {
+                    senderId: userId,
+                    senderName: userName,
+                    senderColor: userColor,
+                    content: message,
+                    timestamp: new Date().toISOString()
+                };
+                
+                socket.emit('chatMessage', chatMessage);
+                addChatMessage(chatMessage, true);
+                chatInput.value = '';
+                chatInput.style.height = '40px';
+            }
+        }
+        
+        // Add chat message to UI
+        function addChatMessage(message, isSelf = false) {
+            const messageElement = document.createElement('div');
+            messageElement.className = `chat-message ${isSelf ? 'self' : 'other'}`;
+            
+            const messageHeader = document.createElement('div');
+            messageHeader.className = 'chat-message-header';
+            
+            const senderElement = document.createElement('span');
+            senderElement.className = 'chat-message-sender';
+            senderElement.textContent = message.senderName;
+            senderElement.style.color = isSelf ? 'white' : message.senderColor;
+            
+            const timeElement = document.createElement('span');
+            timeElement.className = 'chat-message-time';
+            timeElement.textContent = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageHeader.appendChild(senderElement);
+            messageHeader.appendChild(timeElement);
+            
+            const contentElement = document.createElement('div');
+            contentElement.className = 'chat-message-content';
+            contentElement.textContent = message.content;
+            
+            messageElement.appendChild(messageHeader);
+            messageElement.appendChild(contentElement);
+            
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Update chat badges
+            if (!isSelf) {
+                chatMessagesCount++;
+                if (!document.querySelector('.panel-tab[data-tab="chat"]').classList.contains('active')) {
+                    unreadChatMessages++;
+                    updateChatBadges();
+                    moreBtn.classList.add('has-notification');
+                }
+            }
+        }
+        
+        // Update chat badges
+        function updateChatBadges() {
+            chatBadge.textContent = unreadChatMessages > 0 ? unreadChatMessages : '';
+            chatTabBadge.textContent = unreadChatMessages > 0 ? unreadChatMessages : '';
+        }
+        
+        // Event Listeners
+        window.addEventListener('resize', resizeCanvas);
+        
+        tools.forEach(tool => {
+            tool.addEventListener('click', () => {
+                if (textInputActive) return;
+                
+                const toolName = tool.dataset.tool;
+                selectTool(toolName);
+                
+                // Add selection animation
+                tool.classList.add('selected');
+                setTimeout(() => {
+                    tool.classList.remove('selected');
+                }, 500);
+            });
+        });
+        
+        colorPicker.addEventListener('input', (e) => {
+            currentColor = e.target.value;
+            ctx.strokeStyle = currentColor;
+        });
+        
+        fillPicker.addEventListener('input', (e) => {
+            currentFill = e.target.value;
+        });
+        
+        lineWidthSlider.addEventListener('input', (e) => {
+            currentLineWidth = parseInt(e.target.value);
+            ctx.lineWidth = currentLineWidth;
+            ctx.font = `${currentLineWidth * 5}px Arial`;
+        });
+        
+        copyBoardIdBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(boardId).then(() => {
+                showNotification('Board ID copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy board ID:', err);
+                showNotification('Failed to copy Board ID');
+            });
+        });
+        
+        saveBoardBtn.addEventListener('click', () => {
+            saveBoardState();
+        });
+        
+        togglePanelBtn.addEventListener('click', () => {
+            document.querySelector('.container').classList.toggle('panel-collapsed');
+            const icon = togglePanelBtn.querySelector('i');
+            if (document.querySelector('.container').classList.contains('panel-collapsed')) {
+                icon.classList.remove('fa-chevron-left');
+                icon.classList.add('fa-chevron-right');
+            } else {
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-left');
+            }
+        });
+        
+        // Panel tab switching
+        panelTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                
+                // Set active tab
+                panelTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                panelContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.dataset.content === tabName) {
+                        content.classList.add('active');
+                        
+                        // Reset badge if it's the chat tab
+                        if (tabName === 'chat' && unreadChatMessages > 0) {
+                            unreadChatMessages = 0;
+                            updateChatBadges();
+                            moreBtn.classList.remove('has-notification');
+                        }
                     }
                 });
             });
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (textInputActive) return;
             
-            // Set up color picker
-            colorOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    colorOptions.forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                    currentColor = this.dataset.color;
-                });
-            });
-            
-            // Drawing functionality
-            whiteboard.addEventListener('mousedown', startDrawing);
-            whiteboard.addEventListener('mousemove', draw);
-            whiteboard.addEventListener('mouseup', stopDrawing);
-            whiteboard.addEventListener('mouseleave', stopDrawing);
-            
-            function startDrawing(e) {
-                if (currentTool === 'select') return;
+            // Tool shortcuts
+            if (toolShortcuts[e.key.toLowerCase()]) {
+                const toolName = toolShortcuts[e.key.toLowerCase()];
+                selectTool(toolName);
                 
-                isDrawing = true;
+                // Find and animate the tool button
+                const toolButton = document.querySelector(`.tool[data-tool="${toolName}"]`);
+                if (toolButton) {
+                    toolButton.classList.add('selected');
+                    setTimeout(() => {
+                        toolButton.classList.remove('selected');
+                    }, 500);
+                }
+                
+                e.preventDefault();
+            }
+            
+            // Undo/Redo shortcuts
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z') {
+                    undo();
+                    e.preventDefault();
+                } else if (e.key === 'y') {
+                    redo();
+                    e.preventDefault();
+                } else if (e.key === 's') {
+                    saveBoardState();
+                    e.preventDefault();
+                }
+            }
+        });
+        
+        // More menu
+        moreBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!moreBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+        
+        // Whiteboard background selection
+        whiteboardBgs.forEach(bg => {
+            bg.addEventListener('click', () => {
+                whiteboardBgs.forEach(b => b.classList.remove('active'));
+                bg.classList.add('active');
+                
+                const bgColor = bg.dataset.bg;
+                switch (bgColor) {
+                    case 'white':
+                        document.querySelector('.whiteboard-container').style.backgroundColor = 'white';
+                        break;
+                    case 'black':
+                        document.querySelector('.whiteboard-container').style.backgroundColor = 'black';
+                        break;
+                    case 'green':
+                        document.querySelector('.whiteboard-container').style.backgroundColor = '#e6f7e6';
+                        break;
+                    case 'blue':
+                        document.querySelector('.whiteboard-container').style.backgroundColor = '#e6f0f7';
+                        break;
+                }
+            });
+        });
+        
+        // Page controls
+        prevPage.addEventListener('click', () => {
+            if (currentPageIndex > 0) {
+                saveCurrentPage();
+                currentPageIndex--;
+                loadPage(currentPageIndex);
+                updatePageControls();
+            }
+        });
+        
+        nextPage.addEventListener('click', () => {
+            if (currentPageIndex < pages.length - 1) {
+                saveCurrentPage();
+                currentPageIndex++;
+                loadPage(currentPageIndex);
+                updatePageControls();
+            }
+        });
+        
+        addPage.addEventListener('click', () => {
+            saveCurrentPage();
+            pages.push({
+                drawings: [],
+                historyPointer: -1
+            });
+            currentPageIndex = pages.length - 1;
+            loadPage(currentPageIndex);
+            updatePageControls();
+        });
+        
+        function updatePageControls() {
+            pageCount.textContent = `${currentPageIndex + 1}/${pages.length}`;
+            prevPage.disabled = currentPageIndex === 0;
+            nextPage.disabled = currentPageIndex === pages.length - 1;
+        }
+        
+        function saveCurrentPage() {
+            pages[currentPageIndex] = {
+                drawings: [...drawingHistory],
+                historyPointer: historyPointer
+            };
+        }
+        
+        function loadPage(index) {
+            drawingHistory = [...pages[index].drawings];
+            historyPointer = pages[index].historyPointer;
+            redrawWhiteboard();
+        }
+        
+        // Select a tool
+        function selectTool(toolName) {
+            // If already selected, don't do anything
+            if (currentTool === toolName && toolName !== 'text') return;
+            
+            // Deselect all tools
+            tools.forEach(t => t.classList.remove('active'));
+            
+            // Find and select the new tool
+            const newTool = Array.from(tools).find(t => t.dataset.tool === toolName);
+            if (newTool) {
+                newTool.classList.add('active');
+                currentTool = toolName;
+                
+                // Handle special tools
+                if (toolName === 'undo') {
+                    undo();
+                    selectTool('pencil');
+                } else if (toolName === 'redo') {
+                    redo();
+                    selectTool('pencil');
+                } else if (toolName === 'clear') {
+                    clearBoard();
+                    selectTool('pencil');
+                } else if (toolName === 'text') {
+                    startTextInput();
+                } else if (toolName === 'image') {
+                    showModal(imageModal);
+                } else if (toolName === 'sticky') {
+                    showModal(stickyModal);
+                }
+            }
+        }
+        
+        // Start text input
+        function startTextInput() {
+            textInputActive = true;
+            const text = prompt('Enter your text:');
+            
+            if (text) {
+                const action = {
+                    tool: 'text',
+                    color: currentColor,
+                    x: lastX,
+                    y: lastY,
+                    text: text,
+                    size: currentLineWidth,
+                    userId
+                };
+                
+                // Add to history
+                addToHistory(action);
+                
+                // Send to server
+                socket.emit('draw', action);
+                
+                // Draw the text
+                drawAction(action);
+            }
+            
+            textInputActive = false;
+            selectTool('pencil');
+        }
+        
+        // Drawing functions
+        whiteboard.addEventListener('mousedown', startDrawing);
+        whiteboard.addEventListener('mousemove', draw);
+        whiteboard.addEventListener('mouseup', stopDrawing);
+        whiteboard.addEventListener('mouseout', stopDrawing);
+        whiteboard.addEventListener('click', handleClick);
+        
+        function startDrawing(e) {
+            if (currentTool === 'undo' || currentTool === 'redo' || currentTool === 'clear' || textInputActive) return;
+            
+            isDrawing = true;
+            startX = e.offsetX;
+            startY = e.offsetY;
+            lastX = e.offsetX;
+            lastY = e.offsetY;
+            
+            // Start a new path for freehand drawing
+            if (currentTool === 'pencil' || currentTool === 'eraser') {
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+            }
+            
+            // Send cursor position to other users
+            socket.emit('cursorMove', { x: e.offsetX, y: e.offsetY, userId });
+        }
+        
+        function draw(e) {
+            const x = e.offsetX;
+            const y = e.offsetY;
+            
+            // Always send cursor position
+            socket.emit('cursorMove', { x, y, userId });
+            
+            if (!isDrawing) return;
+            
+            lastX = x;
+            lastY = y;
+            
+            switch (currentTool) {
+                case 'pencil':
+                    ctx.strokeStyle = currentColor;
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    
+                    // Send drawing data to server
+                    socket.emit('draw', {
+                        tool: currentTool,
+                        color: currentColor,
+                        x1: lastX,
+                        y1: lastY,
+                        x2: x,
+                        y2: y,
+                        lineWidth: currentLineWidth,
+                        userId
+                    });
+                    break;
+                    
+                case 'eraser':
+                    ctx.strokeStyle = document.querySelector('.whiteboard-container').style.backgroundColor || 'white';
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    
+                    // Send drawing data to server
+                    socket.emit('draw', {
+                        tool: currentTool,
+                        color: document.querySelector('.whiteboard-container').style.backgroundColor || 'white',
+                        x1: lastX,
+                        y1: lastY,
+                        x2: x,
+                        y2: y,
+                        lineWidth: currentLineWidth,
+                        userId
+                    });
+                    break;
+                    
+                case 'line':
+                case 'rectangle':
+                case 'circle':
+                case 'arrow':
+                    // For shapes, we'll just show a preview and handle the final drawing in stopDrawing
+                    drawShapePreview(startX, startY, x, y, currentTool);
+                    break;
+            }
+        }
+        
+        function drawShapePreview(x1, y1, x2, y2, shapeType) {
+            // Clear the preview
+            shapePreview.innerHTML = '';
+            
+            // Create a div for the preview
+            const preview = document.createElement('div');
+            preview.style.position = 'absolute';
+            preview.style.border = `${currentLineWidth}px solid ${currentColor}`;
+            preview.style.backgroundColor = shapeType === 'rectangle' ? currentFill : 'transparent';
+            
+            switch (shapeType) {
+                case 'line':
+                    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                    const angle = Math.atan2(y2 - y1, x2 - x1);
+                    
+                    preview.style.width = `${length}px`;
+                    preview.style.height = '0';
+                    preview.style.borderBottom = `${currentLineWidth}px solid ${currentColor}`;
+                    preview.style.transformOrigin = '0 0';
+                    preview.style.transform = `rotate(${angle}rad)`;
+                    preview.style.left = `${x1}px`;
+                    preview.style.top = `${y1}px`;
+                    break;
+                    
+                case 'rectangle':
+                    preview.style.left = `${Math.min(x1, x2)}px`;
+                    preview.style.top = `${Math.min(y1, y2)}px`;
+                    preview.style.width = `${Math.abs(x2 - x1)}px`;
+                    preview.style.height = `${Math.abs(y2 - y1)}px`;
+                    break;
+                    
+                case 'circle':
+                    const radius = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                    preview.style.width = `${radius * 2}px`;
+                    preview.style.height = `${radius * 2}px`;
+                    preview.style.borderRadius = '50%';
+                    preview.style.left = `${x1 - radius}px`;
+                    preview.style.top = `${y1 - radius}px`;
+                    break;
+                    
+                case 'arrow':
+                    const arrowLength = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                    const arrowAngle = Math.atan2(y2 - y1, x2 - x1);
+                    
+                    // Create arrow line
+                    const arrowLine = document.createElement('div');
+                    arrowLine.style.position = 'absolute';
+                    arrowLine.style.width = `${arrowLength}px`;
+                    arrowLine.style.height = '0';
+                    arrowLine.style.borderBottom = `${currentLineWidth}px solid ${currentColor}`;
+                    arrowLine.style.transformOrigin = '0 0';
+                    arrowLine.style.transform = `rotate(${arrowAngle}rad)`;
+                    arrowLine.style.left = `${x1}px`;
+                    arrowLine.style.top = `${y1}px`;
+                    shapePreview.appendChild(arrowLine);
+                    
+                    // Create arrow head
+                    const arrowHead = document.createElement('div');
+                    arrowHead.style.position = 'absolute';
+                    arrowHead.style.width = '0';
+                    arrowHead.style.height = '0';
+                    arrowHead.style.borderLeft = `${currentLineWidth * 2}px solid transparent`;
+                    arrowHead.style.borderRight = `${currentLineWidth * 2}px solid transparent`;
+                    arrowHead.style.borderBottom = `${currentLineWidth * 3}px solid ${currentColor}`;
+                    arrowHead.style.transformOrigin = 'center';
+                    arrowHead.style.transform = `rotate(${arrowAngle}rad)`;
+                    arrowHead.style.left = `${x2}px`;
+                    arrowHead.style.top = `${y2}px`;
+                    shapePreview.appendChild(arrowHead);
+                    break;
+            }
+            
+            if (shapeType !== 'arrow') {
+                shapePreview.appendChild(preview);
+            }
+        }
+        
+        function handleClick(e) {
+            if (currentTool === 'text') {
                 lastX = e.offsetX;
                 lastY = e.offsetY;
+                startTextInput();
+            }
+        }
+        
+        function stopDrawing(e) {
+            if (!isDrawing || currentTool === 'text') return;
+            
+            const x = e.offsetX;
+            const y = e.offsetY;
+            
+            // Clear the preview
+            shapePreview.innerHTML = '';
+            
+            // For shapes, complete the drawing and add to history
+            if (currentTool === 'line' || currentTool === 'rectangle' || currentTool === 'circle' || currentTool === 'arrow') {
+                const shape = {
+                    tool: currentTool,
+                    color: currentColor,
+                    fill: currentFill,
+                    x1: startX,
+                    y1: startY,
+                    x2: x,
+                    y2: y,
+                    lineWidth: currentLineWidth,
+                    userId
+                };
                 
-                if (currentTool === 'pen' || currentTool === 'eraser' || currentTool === 'line') {
-                    currentDrawing = document.createElement('div');
-                    currentDrawing.style.position = 'absolute';
-                    currentDrawing.style.left = lastX + 'px';
-                    currentDrawing.style.top = lastY + 'px';
-                    currentDrawing.style.width = '0';
-                    currentDrawing.style.height = '0';
-                    currentDrawing.style.pointerEvents = 'none';
-                    
-                    if (currentTool === 'pen') {
-                        currentDrawing.style.borderLeft = `${brushSize.value}px solid ${currentColor}`;
-                    } else if (currentTool === 'eraser') {
-                        currentDrawing.style.borderLeft = `${brushSize.value * 2}px solid #f9f9f9`;
-                    } else if (currentTool === 'line') {
-                        currentDrawing.style.borderTop = `2px solid ${currentColor}`;
-                    }
-                    
-                    whiteboard.appendChild(currentDrawing);
-                    drawings.push(currentDrawing);
-                } else if (currentTool === 'text') {
-                    const textElement = document.createElement('div');
-                    textElement.contentEditable = true;
-                    textElement.style.position = 'absolute';
-                    textElement.style.left = lastX + 'px';
-                    textElement.style.top = lastY + 'px';
-                    textElement.style.minWidth = '100px';
-                    textElement.style.minHeight = '20px';
-                    textElement.style.padding = '5px';
-                    textElement.style.outline = 'none';
-                    textElement.style.cursor = 'text';
-                    textElement.style.color = currentColor;
-                    textElement.style.fontSize = `${brushSize.value * 3}px`;
-                    
-                    // Make text element movable and resizable
-                    makeDraggable(textElement);
-                    makeResizable(textElement);
-                    
-                    whiteboard.appendChild(textElement);
-                    textElement.focus();
-                    drawings.push(textElement);
-                } else if (currentTool === 'sticky-note') {
-                    const stickyNote = document.createElement('div');
-                    stickyNote.className = 'sticky-note';
-                    stickyNote.style.left = lastX + 'px';
-                    stickyNote.style.top = lastY + 'px';
-                    
-                    const textarea = document.createElement('textarea');
-                    textarea.placeholder = 'Write your note here...';
-                    stickyNote.appendChild(textarea);
-                    
-                    // Make sticky note movable and resizable
-                    makeDraggable(stickyNote);
-                    
-                    whiteboard.appendChild(stickyNote);
-                    textarea.focus();
-                    drawings.push(stickyNote);
-                } else if (currentTool === 'shape') {
-                    const shape = document.createElement('div');
-                    shape.style.position = 'absolute';
-                    shape.style.left = lastX + 'px';
-                    shape.style.top = lastY + 'px';
-                    shape.style.width = '0';
-                    shape.style.height = '0';
-                    shape.style.backgroundColor = currentColor;
-                    shape.style.borderRadius = '0';
-                    
-                    whiteboard.appendChild(shape);
-                    currentDrawing = shape;
-                    drawings.push(shape);
-                }
-            }
-            
-            function draw(e) {
-                if (!isDrawing) return;
+                // Add to history
+                addToHistory(shape);
                 
-                const x = e.offsetX;
-                const y = e.offsetY;
+                // Send to server
+                socket.emit('draw', shape);
                 
-                if (currentTool === 'pen' || currentTool === 'eraser') {
-                    const line = document.createElement('div');
-                    line.style.position = 'absolute';
-                    line.style.left = lastX + 'px';
-                    line.style.top = lastY + 'px';
-                    line.style.width = Math.sqrt(Math.pow(x - lastX, 2) + Math.pow(y - lastY, 2)) + 'px';
-                    line.style.height = '0';
-                    line.style.transformOrigin = '0 0';
-                    line.style.transform = `rotate(${Math.atan2(y - lastY, x - lastX)}rad)`;
-                    line.style.pointerEvents = 'none';
-                    
-                    if (currentTool === 'pen') {
-                        line.style.borderBottom = `${brushSize.value}px solid ${currentColor}`;
-                    } else {
-                        line.style.borderBottom = `${brushSize.value * 2}px solid #f9f9f9`;
-                    }
-                    
-                    whiteboard.appendChild(line);
-                    drawings.push(line);
-                    
-                    lastX = x;
-                    lastY = y;
-                } else if (currentTool === 'line' && currentDrawing) {
-                    const length = Math.sqrt(Math.pow(x - lastX, 2) + Math.pow(y - lastY, 2));
-                    currentDrawing.style.width = length + 'px';
-                    currentDrawing.style.transform = `rotate(${Math.atan2(y - lastY, x - lastX)}rad)`;
-                } else if (currentTool === 'shape' && currentDrawing) {
-                    const width = x - lastX;
-                    const height = y - lastY;
-                    
-                    currentDrawing.style.width = Math.abs(width) + 'px';
-                    currentDrawing.style.height = Math.abs(height) + 'px';
-                    
-                    if (width < 0) {
-                        currentDrawing.style.left = x + 'px';
-                    }
-                    
-                    if (height < 0) {
-                        currentDrawing.style.top = y + 'px';
-                    }
-                }
+                // Draw the shape
+                drawAction(shape);
+            } else if (currentTool === 'pencil' || currentTool === 'eraser') {
+                // For pencil/eraser, the path is already drawn
+                ctx.closePath();
             }
             
-            function stopDrawing() {
-                isDrawing = false;
-                currentDrawing = null;
+            isDrawing = false;
+        }
+        
+        // History functions
+        function addToHistory(action) {
+            // If we're not at the end of history, discard future actions
+            if (historyPointer < drawingHistory.length - 1) {
+                drawingHistory = drawingHistory.slice(0, historyPointer + 1);
             }
             
-            // Make elements draggable
-            function makeDraggable(element) {
-                element.addEventListener('mousedown', function(e) {
-                    if (currentTool !== 'select') return;
-                    
-                    selectedElement = this;
-                    offsetX = e.clientX - this.getBoundingClientRect().left;
-                    offsetY = e.clientY - this.getBoundingClientRect().top;
-                    
-                    // Bring to front
-                    this.style.zIndex = drawings.length;
-                    
-                    e.preventDefault();
-                });
+            drawingHistory.push(action);
+            historyPointer = drawingHistory.length - 1;
+        }
+        
+        function undo() {
+            if (historyPointer >= 0) {
+                historyPointer--;
+                redrawWhiteboard();
+                socket.emit('undo', { userId });
             }
-            
-            // Make elements resizable
-            function makeResizable(element) {
-                const resizeHandle = document.createElement('div');
-                resizeHandle.className = 'resize-handle';
-                element.appendChild(resizeHandle);
-                
-                resizeHandle.addEventListener('mousedown', function(e) {
-                    e.stopPropagation();
-                    const startX = e.clientX;
-                    const startY = e.clientY;
-                    const startWidth = parseInt(document.defaultView.getComputedStyle(element).width, 10);
-                    const startHeight = parseInt(document.defaultView.getComputedStyle(element).height, 10);
-                    
-                    function doResize(e) {
-                        element.style.width = (startWidth + e.clientX - startX) + 'px';
-                        element.style.height = (startHeight + e.clientY - startY) + 'px';
-                    }
-                    
-                    function stopResize() {
-                        window.removeEventListener('mousemove', doResize, false);
-                        window.removeEventListener('mouseup', stopResize, false);
-                    }
-                    
-                    window.addEventListener('mousemove', doResize, false);
-                    window.addEventListener('mouseup', stopResize, false);
-                    
-                    e.preventDefault();
-                });
+        }
+        
+        function redo() {
+            if (historyPointer < drawingHistory.length - 1) {
+                historyPointer++;
+                redrawWhiteboard();
+                socket.emit('redo', { userId });
             }
+        }
+        
+        function clearBoard() {
+            showConfirmation('Are you sure you want to clear the board? This cannot be undone.', () => {
+                drawingHistory = [];
+                historyPointer = -1;
+                redrawWhiteboard();
+                socket.emit('clear', { userId });
+            });
+        }
+        
+        function redrawWhiteboard() {
+            // Clear canvas
+            ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
             
-            // Move elements
-            document.addEventListener('mousemove', function(e) {
-                if (selectedElement && currentTool === 'select') {
-                    const whiteboardRect = whiteboard.getBoundingClientRect();
-                    const x = e.clientX - whiteboardRect.left - offsetX;
-                    const y = e.clientY - whiteboardRect.top - offsetY;
+            // Redraw all actions up to history pointer
+            for (let i = 0; i <= historyPointer; i++) {
+                const action = drawingHistory[i];
+                drawAction(action, false);
+            }
+        }
+        
+        function drawAction(action, addToHistoryFlag = true) {
+            ctx.strokeStyle = action.color;
+            ctx.fillStyle = action.fill || 'transparent';
+            ctx.lineWidth = action.lineWidth || 3;
+            
+            switch (action.tool) {
+                case 'pencil':
+                case 'eraser':
+                    ctx.beginPath();
+                    ctx.moveTo(action.x1, action.y1);
+                    ctx.lineTo(action.x2, action.y2);
+                    ctx.stroke();
+                    break;
                     
-                    selectedElement.style.left = Math.max(0, Math.min(x, whiteboardRect.width - selectedElement.offsetWidth)) + 'px';
-                    selectedElement.style.top = Math.max(0, Math.min(y, whiteboardRect.height - selectedElement.offsetHeight)) + 'px';
-                }
-            });
-            
-            document.addEventListener('mouseup', function() {
-                selectedElement = null;
-            });
-            
-            // Clear board
-            clearBoard.addEventListener('click', function() {
-                if (confirm('Are you sure you want to clear the whiteboard?')) {
-                    drawings.forEach(drawing => {
-                        if (drawing.parentNode) {
-                            drawing.parentNode.removeChild(drawing);
-                        }
-                    });
-                    drawings = [];
-                }
-            });
-            
-            // Insert image
-            insertImage.addEventListener('click', function() {
-                imageUpload.click();
-            });
-            
-            imageUpload.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const img = new Image();
-                        img.onload = function() {
-                            const imgContainer = document.createElement('div');
-                            imgContainer.className = 'draggable-image';
-                            imgContainer.style.position = 'absolute';
-                            imgContainer.style.left = '50px';
-                            imgContainer.style.top = '50px';
-                            imgContainer.style.width = img.width + 'px';
-                            imgContainer.style.height = img.height + 'px';
-                            
-                            const imgElement = document.createElement('img');
-                            imgElement.src = event.target.result;
-                            imgContainer.appendChild(imgElement);
-                            
-                            // Make image draggable and resizable
-                            makeDraggable(imgContainer);
-                            makeResizable(imgContainer);
-                            
-                            whiteboard.appendChild(imgContainer);
-                            drawings.push(imgContainer);
-                        };
-                        img.src = event.target.result;
+                case 'line':
+                    ctx.beginPath();
+                    ctx.moveTo(action.x1, action.y1);
+                    ctx.lineTo(action.x2, action.y2);
+                    ctx.stroke();
+                    break;
+                    
+                case 'arrow':
+                    ctx.beginPath();
+                    ctx.moveTo(action.x1, action.y1);
+                    ctx.lineTo(action.x2, action.y2);
+                    ctx.stroke();
+                    
+                    // Draw arrow head
+                    const angle = Math.atan2(action.y2 - action.y1, action.x2 - action.x1);
+                    ctx.save();
+                    ctx.translate(action.x2, action.y2);
+                    ctx.rotate(angle);
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.lineTo(-10, -5);
+                    ctx.lineTo(-10, 5);
+                    ctx.closePath();
+                    ctx.fillStyle = action.color;
+                    ctx.fill();
+                    ctx.restore();
+                    break;
+                    
+                case 'rectangle':
+                    ctx.beginPath();
+                    const rectWidth = action.x2 - action.x1;
+                    const rectHeight = action.y2 - action.y1;
+                    ctx.rect(action.x1, action.y1, rectWidth, rectHeight);
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                    
+                case 'circle':
+                    ctx.beginPath();
+                    const radius = Math.sqrt(Math.pow(action.x2 - action.x1, 2) + Math.pow(action.y2 - action.y1, 2));
+                    ctx.arc(action.x1, action.y1, radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                    
+                case 'text':
+                    ctx.font = `${action.size * 5}px Arial`;
+                    ctx.fillStyle = action.color;
+                    ctx.fillText(action.text, action.x, action.y);
+                    break;
+                    
+                case 'image':
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.drawImage(img, action.x, action.y, action.width, action.height);
                     };
-                    reader.readAsDataURL(file);
-                }
-            });
-            
-            // Video controls
-            toggleMic.addEventListener('click', function() {
-                this.classList.toggle('active');
-                // Implement mic toggle functionality
-            });
-            
-            toggleVideo.addEventListener('click', function() {
-                this.classList.toggle('active');
-                // Implement video toggle functionality
-            });
-            
-            shareScreen.addEventListener('click', function() {
-                // Implement screen sharing functionality
-            });
-            
-            toggleChat.addEventListener('click', function() {
-                // Implement chat functionality
-            });
-            
-            startRecord.addEventListener('click', function() {
-                this.classList.toggle('active');
-                // Implement recording functionality
-            });
-            
-            raiseHand.addEventListener('click', function() {
-                // Implement raise hand functionality
-                alert('Hand raised! ✋');
-            });
-            
-            showReactions.addEventListener('click', function(e) {
-                // Show emoji picker
-                emojiPicker.style.display = 'block';
-                emojiPicker.style.left = e.clientX + 'px';
-                emojiPicker.style.top = e.clientY + 'px';
-                
-                // Add some emojis
-                emojiPicker.innerHTML = '';
-                const emojis = ['👍', '👎', '😊', '❤️', '😂', '😮', '😢', '👏'];
-                emojis.forEach(emoji => {
-                    const span = document.createElement('span');
-                    span.textContent = emoji;
-                    span.style.fontSize = '24px';
-                    span.style.cursor = 'pointer';
-                    span.style.margin = '5px';
-                    span.addEventListener('click', function() {
-                        // Add reaction
-                        alert(`You reacted with ${emoji}`);
-                        emojiPicker.style.display = 'none';
+                    img.src = action.src;
+                    break;
+                    
+                case 'sticky':
+                    ctx.fillStyle = action.bgColor;
+                    ctx.strokeStyle = action.borderColor;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.rect(action.x, action.y, action.width, action.height);
+                    ctx.fill();
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = action.textColor;
+                    ctx.font = '14px Arial';
+                    const lines = action.text.split('\n');
+                    const lineHeight = 18;
+                    lines.forEach((line, i) => {
+                        ctx.fillText(line, action.x + 10, action.y + 20 + (i * lineHeight));
                     });
-                    emojiPicker.appendChild(span);
-                });
-            });
+                    break;
+            }
             
-            // Close emoji picker when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!emojiPicker.contains(e.target) && e.target !== showReactions) {
-                    emojiPicker.style.display = 'none';
+            if (addToHistoryFlag) {
+                addToHistory(action);
+            }
+        }
+        
+        // Save board state
+        function saveBoardState() {
+            // Save current page
+            saveCurrentPage();
+            
+            // Save to localStorage
+            savedState = {
+                pages: pages,
+                currentPageIndex: currentPageIndex
+            };
+            
+            localStorage.setItem(`whiteboard-${boardId}`, JSON.stringify(savedState));
+            showNotification('Board state saved locally');
+            
+            // Optionally save to server
+            socket.emit('saveBoard', {
+                boardId,
+                pages,
+                currentPageIndex,
+                userId
+            });
+        }
+        
+        // Load board state
+        function loadBoardState() {
+            const saved = localStorage.getItem(`whiteboard-${boardId}`);
+            if (saved) {
+                try {
+                    const state = JSON.parse(saved);
+                    pages = state.pages || [];
+                    currentPageIndex = state.currentPageIndex || 0;
+                    
+                    if (pages.length === 0) {
+                        pages = [{
+                            drawings: [],
+                            historyPointer: -1
+                        }];
+                    }
+                    
+                    loadPage(currentPageIndex);
+                    updatePageControls();
+                    showNotification('Previous session restored');
+                } catch (e) {
+                    console.error('Error loading saved state:', e);
                 }
+            }
+        }
+        
+        // Media functions
+        async function toggleMic() {
+            try {
+                if (!localStream) {
+                    localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: isVideoOn });
+                    if (isVideoOn) {
+                        localVideo.srcObject = localStream;
+                        localVideoPlaceholder.style.display = 'none';
+                        localVideo.style.display = 'block';
+                    }
+                }
+                
+                const audioTracks = localStream.getAudioTracks();
+                audioTracks.forEach(track => {
+                    track.enabled = !track.enabled;
+                });
+                
+                isMicOn = !isMicOn;
+                micBtn.classList.toggle('off', !isMicOn);
+                micBtn.querySelector('i').className = isMicOn ? 'fas fa-microphone' : 'fas fa-microphone-slash';
+                showNotification(isMicOn ? 'Microphone enabled' : 'Microphone muted');
+                
+                // Update WebRTC connection if it exists
+                if (peerConnection) {
+                    setupPeerConnection();
+                }
+            } catch (err) {
+                console.error('Error accessing microphone:', err);
+                showNotification('Could not access microphone');
+                isMicOn = false;
+                micBtn.classList.add('off');
+                micBtn.querySelector('i').className = 'fas fa-microphone-slash';
+            }
+        }
+        
+        async function toggleVideo() {
+            try {
+                if (!localStream) {
+                    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: isMicOn });
+                    localVideo.srcObject = localStream;
+                    localVideoPlaceholder.style.display = 'none';
+                    localVideo.style.display = 'block';
+                    isVideoOn = true;
+                    videoBtn.classList.remove('off');
+                    videoBtn.querySelector('i').className = 'fas fa-video';
+                    showNotification('Video enabled');
+                    
+                    // Start WebRTC connection
+                    setupPeerConnection();
+                } else {
+                    const videoTracks = localStream.getVideoTracks();
+                    videoTracks.forEach(track => {
+                        track.enabled = !track.enabled;
+                    });
+                    
+                    isVideoOn = !isVideoOn;
+                    videoBtn.classList.toggle('off', !isVideoOn);
+                    videoBtn.querySelector('i').className = isVideoOn ? 'fas fa-video' : 'fas fa-video-slash';
+                    localVideoPlaceholder.style.display = isVideoOn ? 'none' : 'flex';
+                    localVideo.style.display = isVideoOn ? 'block' : 'none';
+                    showNotification(isVideoOn ? 'Video enabled' : 'Video disabled');
+                    
+                    // Update WebRTC connection if it exists
+                    if (peerConnection) {
+                        setupPeerConnection();
+                    }
+                }
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+                showNotification('Could not access camera');
+                isVideoOn = false;
+                videoBtn.classList.add('off');
+                videoBtn.querySelector('i').className = 'fas fa-video-slash';
+                localVideoPlaceholder.style.display = 'flex';
+                localVideo.style.display = 'none';
+            }
+        }
+        
+        function setupPeerConnection() {
+            if (peerConnection) {
+                peerConnection.close();
+            }
+            
+            peerConnection = new RTCPeerConnection(configuration);
+            
+            // Add local stream to connection
+            if (localStream) {
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                });
+            }
+            
+            // Listen for ICE candidates
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    socket.emit('iceCandidate', { 
+                        candidate: event.candidate,
+                        boardId,
+                        userId
+                    });
+                }
+            };
+            
+            // Listen for remote stream
+            peerConnection.ontrack = (event) => {
+                remoteVideo.srcObject = event.streams[0];
+                remoteVideoPlaceholder.style.display = 'none';
+                remoteVideo.style.display = 'block';
+                
+                // Update remote video label with participant name
+                const remoteUserId = Object.keys(users).find(id => id !== userId);
+                if (remoteUserId) {
+                    remoteVideoLabel.textContent = users[remoteUserId]?.userName || 'Participant';
+                }
+            };
+            
+            // Create and send offer
+            peerConnection.createOffer()
+                .then(offer => peerConnection.setLocalDescription(offer))
+                .then(() => {
+                    socket.emit('offer', {
+                        offer: peerConnection.localDescription,
+                        boardId,
+                        userId
+                    });
+                })
+                .catch(err => {
+                    console.error('Error creating offer:', err);
+                });
+        }
+        
+        // Modal functions
+        function showModal(modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function hideModal(modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        function showConfirmation(message, callback) {
+            confirmationText.textContent = message;
+            confirmAction.onclick = () => {
+                hideModal(confirmationModal);
+                callback();
+            };
+            showModal(confirmationModal);
+        }
+        
+        // Loading screen functions
+        function showLoading(message) {
+            loadingScreen.style.display = 'flex';
+            loadingText.textContent = message;
+        }
+        
+        function hideLoading() {
+            loadingScreen.style.display = 'none';
+        }
+        
+        // Socket.io event handlers
+        socket.on('boardCreated', (data) => {
+            boardId = data.boardId;
+            boardIdElement.textContent = data.boardId;
+            isHost = true;
+            
+            // Update URL with board ID
+            const url = new URL(window.location.href);
+            url.searchParams.set('board', data.boardId);
+            window.history.pushState({}, '', url);
+            
+            // Update invite link
+            inviteLinkInput.value = window.location.href;
+            inviteCodeInput.value = data.boardId;
+            
+            showNotification('New board created! Share the URL to collaborate.');
+            hideLoading();
+            
+            // Add host badge to user list
+            updateUserList();
+        });
+        
+        socket.on('boardJoined', (data) => {
+            boardId = data.boardId;
+            boardIdElement.textContent = data.boardId;
+            
+            // Update invite link
+            inviteLinkInput.value = window.location.href;
+            inviteCodeInput.value = data.boardId;
+            
+            // Check if we need to wait for approval
+            if (data.waitingForApproval) {
+                waitingForApproval = true;
+                showModal(lobbyModal);
+            } else {
+                // Load existing drawings
+                pages = data.pages || [];
+                currentPageIndex = data.currentPageIndex || 0;
+                
+                if (pages.length === 0) {
+                    pages = [{
+                        drawings: [],
+                        historyPointer: -1
+                    }];
+                }
+                
+                loadPage(currentPageIndex);
+                updatePageControls();
+                
+                // Try to load saved state
+                loadBoardState();
+            }
+            
+            showNotification(`Joined board ${data.boardId}`);
+            hideLoading();
+        });
+        
+        socket.on('userApproved', () => {
+            waitingForApproval = false;
+            hideModal(lobbyModal);
+            showNotification('You have been approved to join the board');
+            
+            // Load board data
+            socket.emit('getBoardData', { boardId, userId });
+        });
+        
+        socket.on('boardData', (data) => {
+            pages = data.pages || [];
+            currentPageIndex = data.currentPageIndex || 0;
+            
+            if (pages.length === 0) {
+                pages = [{
+                    drawings: [],
+                    historyPointer: -1
+                }];
+            }
+            
+            loadPage(currentPageIndex);
+            updatePageControls();
+            
+            // Try to load saved state
+            loadBoardState();
+        });
+        
+        socket.on('userJoined', (user) => {
+            users[user.userId] = user;
+            updateUserList();
+            
+            if (user.userId !== userId) {
+                showNotification(`${user.userName} joined the board`);
+                
+                // If we have media and a new user joins, set up connection
+                if (localStream && Object.keys(users).length === 2) {
+                    setupPeerConnection();
+                }
+            }
+        });
+        
+        socket.on('existingUsers', (existingUsers) => {
+            users = { ...users, ...existingUsers };
+            updateUserList();
+            
+            // If there are existing users and we have media, set up connection
+            if (localStream && Object.keys(existingUsers).length > 0) {
+                setupPeerConnection();
+            }
+        });
+        
+        socket.on('userLeft', (userId) => {
+            const userName = users[userId]?.userName || 'A user';
+            delete users[userId];
+            
+            // Remove cursor
+            const cursor = document.getElementById(`cursor-${userId}`);
+            if (cursor) cursor.remove();
+            
+            updateUserList();
+            showNotification(`${userName} left the board`);
+            
+            // Reset peer connection if no users left
+            if (Object.keys(users).length <= 1 && peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+                remoteVideo.srcObject = null;
+                remoteVideo.style.display = 'none';
+                remoteVideoPlaceholder.style.display = 'flex';
+            }
+        });
+        
+        socket.on('userCursor', (data) => {
+            const userId = data.userId;
+            const x = data.x;
+            const y = data.y;
+            const color = users[userId]?.userColor || '#000000';
+            const name = users[userId]?.userName || 'User';
+            
+            let cursor = document.getElementById(`cursor-${userId}`);
+            
+            if (!cursor) {
+                cursor = document.createElement('div');
+                cursor.id = `cursor-${userId}`;
+                cursor.className = 'cursor';
+                cursor.style.backgroundColor = color;
+                
+                // Add user name to cursor
+                const userName = document.createElement('div');
+                userName.className = 'cursor-name';
+                userName.textContent = name;
+                userName.style.color = color;
+                cursor.appendChild(userName);
+                
+                whiteboard.parentElement.appendChild(cursor);
+            }
+            
+            cursor.style.left = `${x}px`;
+            cursor.style.top = `${y}px`;
+        });
+        
+        socket.on('drawing', (action) => {
+            drawAction(action);
+        });
+        
+        socket.on('undo', () => {
+            if (historyPointer >= 0) {
+                historyPointer--;
+                redrawWhiteboard();
+            }
+        });
+        
+        socket.on('redo', () => {
+            if (historyPointer < drawingHistory.length - 1) {
+                historyPointer++;
+                redrawWhiteboard();
+            }
+        });
+        
+        socket.on('clear', () => {
+            drawingHistory = [];
+            historyPointer = -1;
+            redrawWhiteboard();
+        });
+        
+        socket.on('userCount', (count) => {
+            userCount.textContent = count;
+            participantsBadge.textContent = count > 1 ? count - 1 : '';
+            participantsTabBadge.textContent = count > 1 ? count - 1 : '';
+        });
+        
+        socket.on('chatMessage', (message) => {
+            addChatMessage(message, message.senderId === userId);
+        });
+        
+        // WebRTC events
+        socket.on('offer', async (data) => {
+            if (data.userId === userId) return;
+            
+            if (!peerConnection) {
+                setupPeerConnection();
+            }
+            
+            try {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+                
+                socket.emit('answer', {
+                    answer,
+                    boardId,
+                    userId,
+                    toUserId: data.userId
+                });
+            } catch (err) {
+                console.error('Error handling offer:', err);
+            }
+        });
+        
+        socket.on('answer', async (data) => {
+            if (data.userId === userId) return;
+            try {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+            } catch (err) {
+                console.error('Error handling answer:', err);
+            }
+        });
+        
+        socket.on('iceCandidate', async (data) => {
+            if (data.userId === userId) return;
+            try {
+                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+            } catch (err) {
+                console.error('Error adding ICE candidate:', err);
+            }
+        });
+        
+        // Helper functions
+        function updateUserList() {
+            userList.innerHTML = '';
+            
+            // Add current user first (if host)
+            if (isHost) {
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item host';
+                
+                const userAvatar = document.createElement('div');
+                userAvatar.className = 'user-avatar';
+                userAvatar.style.backgroundColor = userColor;
+                userAvatar.textContent = userName.substring(0, 1).toUpperCase();
+                
+                const userNameEl = document.createElement('div');
+                userNameEl.className = 'user-name';
+                userNameEl.textContent = userName;
+                
+                userItem.appendChild(userAvatar);
+                userItem.appendChild(userNameEl);
+                userList.appendChild(userItem);
+            }
+            
+            // Add other users
+            Object.values(users).forEach(user => {
+                if (user.userId === userId) return;
+                
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item';
+                if (isHost) userItem.classList.add('host');
+                
+                const userAvatar = document.createElement('div');
+                userAvatar.className = 'user-avatar';
+                userAvatar.style.backgroundColor = user.userColor;
+                userAvatar.textContent = user.userName.substring(0, 1).toUpperCase();
+                
+                const userNameEl = document.createElement('div');
+                userNameEl.className = 'user-name';
+                userNameEl.textContent = user.userName;
+                
+                const userControls = document.createElement('div');
+                userControls.className = 'user-controls';
+                
+                if (isHost) {
+                    const kickBtn = document.createElement('button');
+                    kickBtn.className = 'user-control';
+                    kickBtn.innerHTML = '<i class="fas fa-user-slash"></i>';
+                    kickBtn.title = 'Remove participant';
+                    kickBtn.onclick = () => {
+                        socket.emit('removeUser', { userId: user.userId, boardId });
+                    };
+                    userControls.appendChild(kickBtn);
+                }
+                
+                userItem.appendChild(userAvatar);
+                userItem.appendChild(userNameEl);
+                userItem.appendChild(userControls);
+                userList.appendChild(userItem);
+            });
+        }
+        
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Pin content
+        function pinContent(content, title) {
+            pinnedBody.innerHTML = '';
+            pinnedBody.appendChild(content.cloneNode(true));
+            pinnedTitle.textContent = title;
+            pinnedContent.classList.add('show');
+        }
+        
+        // Event listeners for modals and buttons
+        inviteOption.addEventListener('click', () => {
+            showModal(inviteModal);
+            dropdownMenu.classList.remove('show');
+        });
+        
+        participantsOption.addEventListener('click', () => {
+            document.querySelector('.container').classList.remove('panel-collapsed');
+            const icon = togglePanelBtn.querySelector('i');
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-left');
+            
+            // Switch to participants tab
+            panelTabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.panel-tab[data-tab="participants"]').classList.add('active');
+            
+            panelContents.forEach(c => c.classList.remove('active'));
+            document.querySelector('.panel-content[data-content="participants"]').classList.add('active');
+            
+            dropdownMenu.classList.remove('show');
+        });
+        
+        chatOption.addEventListener('click', () => {
+            document.querySelector('.container').classList.remove('panel-collapsed');
+            const icon = togglePanelBtn.querySelector('i');
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-left');
+            
+            // Switch to chat tab
+            panelTabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.panel-tab[data-tab="chat"]').classList.add('active');
+            
+            panelContents.forEach(c => c.classList.remove('active'));
+            document.querySelector('.panel-content[data-content="chat"]').classList.add('active');
+            
+            // Reset unread messages
+            unreadChatMessages = 0;
+            updateChatBadges();
+            moreBtn.classList.remove('has-notification');
+            
+            dropdownMenu.classList.remove('show');
+        });
+        
+        exportOption.addEventListener('click', () => {
+            showModal(exportModal);
+            dropdownMenu.classList.remove('show');
+        });
+        
+        settingsOption.addEventListener('click', () => {
+            userNameInput.value = userName;
+            showModal(settingsModal);
+            dropdownMenu.classList.remove('show');
+        });
+        
+        leaveOption.addEventListener('click', () => {
+            showConfirmation('Are you sure you want to leave this session?', () => {
+                window.location.href = window.location.origin;
+            });
+            dropdownMenu.classList.remove('show');
+        });
+        
+        inviteModalClose.addEventListener('click', () => hideModal(inviteModal));
+        inviteModalCancel.addEventListener('click', () => hideModal(inviteModal));
+        exportModalClose.addEventListener('click', () => hideModal(exportModal));
+        exportModalCancel.addEventListener('click', () => hideModal(exportModal));
+        settingsModalClose.addEventListener('click', () => hideModal(settingsModal));
+        settingsModalCancel.addEventListener('click', () => hideModal(settingsModal));
+        confirmCancel.addEventListener('click', () => hideModal(confirmationModal));
+        pinnedClose.addEventListener('click', () => pinnedContent.classList.remove('show'));
+        imageModalClose.addEventListener('click', () => hideModal(imageModal));
+        imageModalCancel.addEventListener('click', () => hideModal(imageModal));
+        stickyModalClose.addEventListener('click', () => hideModal(stickyModal));
+        stickyModalCancel.addEventListener('click', () => hideModal(stickyModal));
+        
+        inviteModalSend.addEventListener('click', () => {
+            requireApprovalSetting = requireApproval.checked;
+            allowDrawingSetting = allowDrawing.checked;
+            
+            // Update settings on server
+            socket.emit('updateBoardSettings', {
+                boardId,
+                requireApproval: requireApprovalSetting,
+                allowDrawing: allowDrawingSetting
             });
             
-            // Set initial active tool
-            document.querySelector('[data-tool="pen"]').classList.add('active');
+            showNotification('Invites sent!');
+            hideModal(inviteModal);
         });
+        
+        copyInviteLink.addEventListener('click', () => {
+            navigator.clipboard.writeText(inviteLinkInput.value).then(() => {
+                showNotification('Invite link copied to clipboard!');
+            });
+        });
+        
+        settingsModalSave.addEventListener('click', () => {
+            const newName = userNameInput.value.trim();
+            if (newName && newName !== userName) {
+                userName = newName;
+                socket.emit('updateUser', { 
+                    userId, 
+                    userName, 
+                    boardId 
+                });
+                showNotification('Name updated');
+            }
+            
+            // Update grid style
+            const gridValue = gridStyle.value;
+            updateGridStyle(gridValue);
+            
+            hideModal(settingsModal);
+        });
+        
+        function updateGridStyle(style) {
+            const container = document.querySelector('.whiteboard-container');
+            switch (style) {
+                case 'dots':
+                    container.style.backgroundImage = `
+                        radial-gradient(#e9ecef 1px, transparent 1px),
+                        radial-gradient(#e9ecef 1px, transparent 1px)
+                    `;
+                    container.style.backgroundSize = '20px 20px';
+                    container.style.backgroundPosition = '0 0, 10px 10px';
+                    break;
+                case 'lines':
+                    container.style.backgroundImage = `
+                        linear-gradient(#e9ecef 1px, transparent 1px),
+                        linear-gradient(90deg, #e9ecef 1px, transparent 1px)
+                    `;
+                    container.style.backgroundSize = '20px 20px';
+                    break;
+                case 'none':
+                    container.style.backgroundImage = 'none';
+                    break;
+            }
+        }
+        
+        // Image insertion
+        imageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    imagePreview.src = event.target.result;
+                    imagePreview.style.display = 'block';
+                    imagePlaceholder.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        imageModalInsert.addEventListener('click', () => {
+            let imageSrc = imageUrl.value.trim();
+            
+            if (imageUpload.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    insertImage(event.target.result);
+                };
+                reader.readAsDataURL(imageUpload.files[0]);
+            } else if (imageSrc) {
+                // Validate URL
+                if (!imageSrc.startsWith('http')) {
+                    imageSrc = 'https://' + imageSrc;
+                }
+                
+                // Test if image loads
+                const testImg = new Image();
+                testImg.onload = () => {
+                    insertImage(imageSrc);
+                };
+                testImg.onerror = () => {
+                    showNotification('Could not load image from URL');
+                };
+                testImg.src = imageSrc;
+            } else {
+                showNotification('Please provide an image URL or upload a file');
+            }
+        });
+        
+        function insertImage(src) {
+            const img = new Image();
+            img.onload = function() {
+                const action = {
+                    tool: 'image',
+                    src: src,
+                    x: lastX,
+                    y: lastY,
+                    width: this.width > 300 ? 300 : this.width,
+                    height: this.width > 300 ? (300 / this.width) * this.height : this.height,
+                    userId
+                };
+                
+                // Add to history
+                addToHistory(action);
+                
+                // Send to server
+                socket.emit('draw', action);
+                
+                // Draw the image
+                drawAction(action);
+                
+                hideModal(imageModal);
+                imageUrl.value = '';
+                imageUpload.value = '';
+                imagePreview.src = '';
+                imagePreview.style.display = 'none';
+                imagePlaceholder.style.display = 'flex';
+            };
+            img.src = src;
+        }
+        
+        // Sticky note insertion
+        stickyColorOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                stickyColorOptions.forEach(opt => opt.style.border = 'none');
+                option.style.border = '2px solid var(--primary-color)';
+            });
+        });
+        
+        stickyModalAdd.addEventListener('click', () => {
+            const content = stickyContent.value.trim();
+            if (content) {
+                const selectedColor = document.querySelector('.color-option[style*="border: 2px solid var(--primary-color)"]') || 
+                                      document.querySelector('.color-option');
+                
+                const action = {
+                    tool: 'sticky',
+                    text: content,
+                    x: lastX,
+                    y: lastY,
+                    width: 200,
+                    height: 150,
+                    bgColor: selectedColor.dataset.color,
+                    borderColor: '#000000',
+                    textColor: '#000000',
+                    userId
+                };
+                
+                // Add to history
+                addToHistory(action);
+                
+                // Send to server
+                socket.emit('draw', action);
+                
+                // Draw the sticky note
+                drawAction(action);
+                
+                hideModal(stickyModal);
+                stickyContent.value = '';
+            } else {
+                showNotification('Please enter some content for the sticky note');
+            }
+        });
+        
+        // Export functions
+        exportPNG.addEventListener('click', () => {
+            const exportCurrent = exportPages.value === 'current';
+            if (exportCurrent) {
+                const dataURL = whiteboard.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = `whiteboard-${boardId}-page-${currentPageIndex + 1}.png`;
+                link.href = dataURL;
+                link.click();
+            } else {
+                // Export all pages (would need more complex implementation)
+                showNotification('Exporting all pages as PNG coming soon!');
+            }
+            hideModal(exportModal);
+            showNotification('Exported as PNG');
+        });
+        
+        exportJPG.addEventListener('click', () => {
+            const exportCurrent = exportPages.value === 'current';
+            if (exportCurrent) {
+                const dataURL = whiteboard.toDataURL('image/jpeg', 0.9);
+                const link = document.createElement('a');
+                link.download = `whiteboard-${boardId}-page-${currentPageIndex + 1}.jpg`;
+                link.href = dataURL;
+                link.click();
+            } else {
+                showNotification('Exporting all pages as JPG coming soon!');
+            }
+            hideModal(exportModal);
+            showNotification('Exported as JPG');
+        });
+        
+        exportPDF.addEventListener('click', () => {
+            // In a real app, you would use a PDF library like jsPDF
+            showNotification('PDF export coming soon!');
+        });
+        
+        exportSVG.addEventListener('click', () => {
+            // In a real app, you would convert canvas to SVG
+            showNotification('SVG export coming soon!');
+        });
+        
+        // Pin video
+        pinLocal.addEventListener('click', () => {
+            pinContent(localVideo, 'Your Video');
+        });
+        
+        pinRemote.addEventListener('click', () => {
+            pinContent(remoteVideo, `${remoteVideoLabel.textContent}'s Video`);
+        });
+        
+        // Background options
+        backgroundLocal.addEventListener('click', () => {
+            showNotification('Background options coming soon!');
+        });
+        
+        // Media button event listeners
+        micBtn.addEventListener('click', toggleMic);
+        videoBtn.addEventListener('click', toggleVideo);
+        
+        // Initialize
+        initWhiteboard();
     </script>
 </body>
 </html>
