@@ -1,1855 +1,2503 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
-    const whiteboard = document.getElementById('whiteboard');
-    const ctx = whiteboard.getContext('2d');
-    const userCursors = document.getElementById('userCursors');
-    const colorPicker = document.getElementById('colorPicker');
-    const brushSize = document.getElementById('brushSize');
-    const clearBoard = document.getElementById('clearBoard');
-    const undoAction = document.getElementById('undoAction');
-    const redoAction = document.getElementById('redoAction');
-    const addSlide = document.getElementById('addSlide');
-    const prevSlide = document.getElementById('prevSlide');
-    const nextSlide = document.getElementById('nextSlide');
-    const slideCounter = document.getElementById('slideCounter');
-    const slidesThumbnails = document.getElementById('slidesThumbnails');
-    const saveBoard = document.getElementById('saveBoard');
-    const loadBoard = document.getElementById('loadBoard');
-    const exportBoard = document.getElementById('exportBoard');
-    const toolButtons = document.querySelectorAll('.tool-btn[data-tool]');
-    const localVideo = document.getElementById('localVideo');
-    const remoteVideos = document.getElementById('remoteVideos');
-    const toggleMic = document.getElementById('toggleMic');
-    const toggleVideo = document.getElementById('toggleVideo');
-    const toggleBackground = document.getElementById('toggleBackground');
-    const participantsList = document.getElementById('participantsList');
-    const participantCount = document.getElementById('participantCount');
-    const userCount = document.getElementById('userCount');
-    const chatPanel = document.getElementById('chatPanel');
-    const chatMessages = document.getElementById('chatMessages');
-    const chatInput = document.getElementById('chatInput');
-    const sendMessage = document.getElementById('sendMessage');
-    const closeChat = document.getElementById('closeChat');
-    const settingsPanel = document.getElementById('settingsPanel');
-    const closeSettings = document.getElementById('closeSettings');
-    const inviteModal = document.getElementById('inviteModal');
-    const meetingLink = document.getElementById('meetingLink');
-    const meetingId = document.getElementById('meetingId');
-    const copyLink = document.getElementById('copyLink');
-    const copyId = document.getElementById('copyId');
-    const closeInviteModal = document.getElementById('closeInviteModal');
-    const inviteButton = document.getElementById('inviteButton');
-    const moreOptions = document.getElementById('moreOptions');
-    const waitingRoomModal = document.getElementById('waitingRoomModal');
-    const leaveWaitingRoom = document.getElementById('leaveWaitingRoom');
-    const leaveMeetingModal = document.getElementById('leaveMeetingModal');
-    const confirmLeave = document.getElementById('confirmLeave');
-    const cancelLeave = document.getElementById('cancelLeave');
-    const leaveControl = document.getElementById('leaveControl');
-    const micControl = document.getElementById('micControl');
-    const videoControl = document.getElementById('videoControl');
-    const screenShareControl = document.getElementById('screenShareControl');
-    const raiseHand = document.getElementById('raiseHand');
-    const participantsControl = document.getElementById('participantsControl');
-    const moreControls = document.getElementById('moreControls');
-    const chatOption = document.getElementById('chatOption');
-    const screenShareOption = document.getElementById('screenShareOption');
-    const settingsOption = document.getElementById('settingsOption');
-    const recordOption = document.getElementById('recordOption');
-    const leaveOption = document.getElementById('leaveOption');
-
-    // Application State
-    let state = {
-        isDrawing: false,
-        currentTool: 'pencil',
-        color: '#000000',
-        brushSize: 5,
-        slides: [],
-        currentSlide: 0,
-        undoStack: [],
-        redoStack: [],
-        users: [],
-        localStream: null,
-        remoteStreams: {},
-        socket: null,
-        peerConnections: {},
-        dataChannel: null,
-        isHost: false,
-        isInWaitingRoom: true,
-        isMicOn: true,
-        isVideoOn: true,
-        isScreenSharing: false,
-        isHandRaised: false,
-        backgroundEffect: 'none',
-        whiteboardBackground: 'white',
-        autoSave: true,
-        showCursors: true
-    };
-
-    // Initialize the application
-    init();
-
-    function init() {
-        setupWhiteboard();
-        setupEventListeners();
-        setupSocketConnection();
-        checkPreviousSession();
-        showWaitingRoom();
-    }
-
-    function setupWhiteboard() {
-        // Set canvas size
-        resizeCanvas();
-        
-        // Create first slide
-        createNewSlide();
-        
-        // Set initial background
-        updateWhiteboardBackground();
-    }
-
-    function resizeCanvas() {
-        const container = whiteboard.parentElement;
-        whiteboard.width = container.clientWidth;
-        whiteboard.height = container.clientHeight;
-        
-        // Redraw current slide
-        if (state.slides.length > 0) {
-            redrawSlide(state.currentSlide);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiteBoard Education</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #f5f7ff;
+            --dark-color: #2c3e50;
+            --light-color: #ffffff;
+            --danger-color: #ff4757;
+            --success-color: #2ed573;
+            --warning-color: #ffa502;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
         }
-    }
 
-    function createNewSlide() {
-        const slide = {
-            id: Date.now(),
-            data: [],
-            thumbnail: null
-        };
-        
-        state.slides.push(slide);
-        state.currentSlide = state.slides.length - 1;
-        updateSlideCounter();
-        createSlideThumbnail(slide);
-        
-        // Clear undo/redo stacks for new slide
-        state.undoStack[state.currentSlide] = [];
-        state.redoStack[state.currentSlide] = [];
-        
-        // Clear canvas
-        clearCanvas();
-    }
-
-    function createSlideThumbnail(slide) {
-        const thumbnail = document.createElement('div');
-        thumbnail.className = 'slide-thumbnail';
-        thumbnail.innerHTML = `
-            <canvas></canvas>
-            <span class="slide-number">${state.slides.length}</span>
-        `;
-        
-        thumbnail.addEventListener('click', () => {
-            switchToSlide(state.slides.indexOf(slide));
-        });
-        
-        slidesThumbnails.appendChild(thumbnail);
-        updateThumbnail(slide, thumbnail);
-    }
-
-    function updateThumbnail(slide, thumbnailElement) {
-        const thumbnailCanvas = thumbnailElement.querySelector('canvas');
-        const thumbnailCtx = thumbnailCanvas.getContext('2d');
-        
-        // Set thumbnail size
-        thumbnailCanvas.width = 200;
-        thumbnailCanvas.height = 150;
-        
-        // Draw white background
-        thumbnailCtx.fillStyle = 'white';
-        thumbnailCtx.fillRect(0, 0, thumbnailCanvas.width, thumbnailCanvas.height);
-        
-        // Draw slide content
-        if (slide.data.length > 0) {
-            drawOnCanvas(thumbnailCtx, slide.data, 200 / whiteboard.width);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        // Update active state
-        thumbnailElement.classList.toggle('active', state.slides.indexOf(slide) === state.currentSlide);
-    }
 
-    function switchToSlide(index) {
-        if (index >= 0 && index < state.slides.length) {
-            state.currentSlide = index;
-            redrawSlide(index);
-            updateSlideCounter();
-            
-            // Update thumbnail active states
-            document.querySelectorAll('.slide-thumbnail').forEach((thumb, i) => {
-                thumb.classList.toggle('active', i === index);
-            });
-            
-            // Broadcast slide change
-            if (state.socket) {
-                state.socket.emit('slideChanged', index);
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f2f5;
+            color: var(--dark-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: var(--light-color);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--box-shadow);
+            z-index: 10;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            height: 40px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .app-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-count {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Whiteboard Area */
+        .whiteboard-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #f8f9fa;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .toolbar {
+            background-color: var(--light-color);
+            padding: 12px;
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid #e9ecef;
+            flex-wrap: wrap;
+            z-index: 5;
+        }
+
+        .tool-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding-right: 12px;
+            border-right: 1px solid #e9ecef;
+            margin-right: 12px;
+        }
+
+        .tool-group:last-child {
+            border-right: none;
+            margin-right: 0;
+        }
+
+        .tool-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+            background-color: var(--secondary-color);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--dark-color);
+            font-size: 16px;
+        }
+
+        .tool-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .tool-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .color-picker {
+            width: 30px;
+            height: 30px;
+            border: 2px solid #e9ecef;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .color-picker:hover {
+            transform: scale(1.1);
+        }
+
+        .brush-size {
+            width: 80px;
+            height: 30px;
+            border-radius: var(--border-radius);
+            border: 1px solid #e9ecef;
+            padding: 0 8px;
+        }
+
+        .whiteboard {
+            flex: 1;
+            background-color: white;
+            cursor: crosshair;
+            touch-action: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #whiteboard-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide-container {
+            background-color: var(--light-color);
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            border-top: 1px solid #e9ecef;
+            overflow-x: auto;
+        }
+
+        .slide-btn {
+            min-width: 80px;
+            height: 60px;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            font-size: 24px;
+            color: var(--dark-color);
+        }
+
+        .slide-btn:hover {
+            border-color: var(--primary-color);
+        }
+
+        .slide-btn.active {
+            border-color: var(--primary-color);
+            background-color: rgba(74, 107, 255, 0.1);
+        }
+
+        .add-slide {
+            background-color: transparent;
+            border: 2px dashed #adb5bd;
+            color: #adb5bd;
+        }
+
+        .add-slide:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* Right Panel */
+        .right-panel {
+            width: 350px;
+            background-color: var(--light-color);
+            border-left: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .panel-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            color: #6c757d;
+        }
+
+        .panel-tab.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .participants-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .participant {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .participant:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .participant-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .participant-name {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .participant-role {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .video-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .video-item {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background-color: #e9ecef;
+            aspect-ratio: 16/9;
+        }
+
+        .video-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            padding: 8px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .video-name {
+            flex: 1;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .video-controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            padding: 12px;
+            background-color: var(--light-color);
+            border-top: 1px solid #e9ecef;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--dark-color);
+        }
+
+        .control-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .control-btn.danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Bottom Controls */
+        .bottom-controls {
+            background-color: var(--light-color);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            border-top: 1px solid #e9ecef;
+            z-index: 5;
+        }
+
+        .control-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .control-icon i {
+            font-size: 20px;
+        }
+
+        .control-icon:hover {
+            background-color: #e0e5ff;
+        }
+
+        .control-icon.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .control-icon.danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .control-icon.danger:hover {
+            background-color: #ff6b81;
+        }
+
+        .control-label {
+            position: absolute;
+            bottom: -20px;
+            font-size: 10px;
+            color: #6c757d;
+            width: 100%;
+            text-align: center;
+        }
+
+        .more-menu {
+            position: relative;
+        }
+
+        .more-options {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 200px;
+            overflow: hidden;
+            display: none;
+            z-index: 10;
+        }
+
+        .more-menu.open .more-options {
+            display: block;
+        }
+
+        .option-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .option-item:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .option-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--box-shadow);
+            transform: translateY(-20px);
+            transition: var(--transition);
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .modal-body {
+            padding: 16px;
+        }
+
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a5bef;
+        }
+
+        .btn-secondary {
+            background-color: #e9ecef;
+            color: var(--dark-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #dee2e6;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #ff6b81;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Waiting Room */
+        .waiting-room {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .waiting-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+        }
+
+        .waiting-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .waiting-text {
+            color: #6c757d;
+            margin-bottom: 24px;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .right-panel {
+                position: absolute;
+                top: 0;
+                right: -100%;
+                bottom: 0;
+                width: 90%;
+                max-width: 400px;
+                z-index: 20;
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .right-panel.active {
+                right: 0;
+            }
+
+            .control-icon {
+                width: 42px;
+                height: 42px;
             }
         }
-    }
 
-    function redrawSlide(index) {
-        clearCanvas();
-        const slide = state.slides[index];
-        
-        if (slide && slide.data) {
-            drawOnCanvas(ctx, slide.data);
+        @media (max-width: 768px) {
+            .toolbar {
+                padding: 8px;
+                gap: 4px;
+            }
+
+            .tool-group {
+                padding-right: 8px;
+                margin-right: 8px;
+            }
+
+            .tool-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+
+            .bottom-controls {
+                padding: 8px 12px;
+                gap: 8px;
+            }
+
+            .control-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .control-label {
+                display: none;
+            }
         }
-    }
 
-    function drawOnCanvas(context, drawingData, scale = 1) {
-        drawingData.forEach(drawing => {
-            context.strokeStyle = drawing.color;
-            context.lineWidth = drawing.size * scale;
-            context.lineCap = 'round';
-            context.lineJoin = 'round';
-            
-            if (drawing.tool === 'pencil' || drawing.tool === 'line') {
-                context.beginPath();
-                context.moveTo(drawing.points[0].x * scale, drawing.points[0].y * scale);
+        /* Cursor styles */
+        .cursor {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor::after {
+            content: attr(data-initial);
+            position: absolute;
+            top: -25px;
+            left: -5px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            background-color: var(--cursor-color);
+            padding: 2px 6px;
+            border-radius: 10px;
+            white-space: nowrap;
+        }
+
+        /* Reaction styles */
+        .reaction {
+            position: absolute;
+            font-size: 24px;
+            pointer-events: none;
+            z-index: 90;
+            animation: floatUp 2s forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-container">
+            <img src="https://sigmawire.net/i/04/itNgcI.png" alt="WhiteBoard Education Logo" class="logo">
+            <span class="app-name">WhiteBoard Education</span>
+        </div>
+        <div class="user-info">
+            <div class="user-count">
+                <i class="fas fa-users"></i> <span id="user-count">1</span>
+            </div>
+            <div class="user-avatar" id="user-avatar">Y</div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Whiteboard Area -->
+        <div class="whiteboard-container">
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="tool-group">
+                    <button class="tool-btn active" id="pencil-tool" title="Pencil">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                    <button class="tool-btn" id="line-tool" title="Line">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="tool-btn" id="rectangle-tool" title="Rectangle">
+                        <i class="fas fa-square"></i>
+                    </button>
+                    <button class="tool-btn" id="circle-tool" title="Circle">
+                        <i class="fas fa-circle"></i>
+                    </button>
+                    <button class="tool-btn" id="text-tool" title="Text">
+                        <i class="fas fa-font"></i>
+                    </button>
+                    <button class="tool-btn" id="eraser-tool" title="Eraser">
+                        <i class="fas fa-eraser"></i>
+                    </button>
+                </div>
+
+                <div class="tool-group">
+                    <input type="color" class="color-picker" id="color-picker" value="#000000" title="Stroke Color">
+                    <input type="color" class="color-picker" id="fill-picker" value="#ffffff" title="Fill Color">
+                    <select class="brush-size" id="brush-size">
+                        <option value="1">1px</option>
+                        <option value="3" selected>3px</option>
+                        <option value="5">5px</option>
+                        <option value="8">8px</option>
+                        <option value="10">10px</option>
+                        <option value="15">15px</option>
+                    </select>
+                </div>
+
+                <div class="tool-group">
+                    <button class="tool-btn" id="clear-tool" title="Clear Canvas">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="tool-btn" id="undo-tool" title="Undo">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button class="tool-btn" id="redo-tool" title="Redo">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+
+                <div class="tool-group">
+                    <button class="tool-btn" id="save-tool" title="Save">
+                        <i class="fas fa-save"></i>
+                    </button>
+                    <button class="tool-btn" id="load-tool" title="Load">
+                        <i class="fas fa-folder-open"></i>
+                    </button>
+                    <button class="tool-btn" id="export-tool" title="Export">
+                        <i class="fas fa-file-export"></i>
+                    </button>
+                </div>
+
+                <div class="tool-group">
+                    <button class="tool-btn" id="grid-tool" title="Toggle Grid">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="tool-btn" id="background-tool" title="Change Background">
+                        <i class="fas fa-image"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Whiteboard Canvas -->
+            <div class="whiteboard">
+                <canvas id="whiteboard-canvas"></canvas>
+            </div>
+
+            <!-- Slide Navigation -->
+            <div class="slide-container">
+                <button class="slide-btn active">1</button>
+                <button class="slide-btn">2</button>
+                <button class="slide-btn">3</button>
+                <button class="slide-btn add-slide">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel" id="right-panel">
+            <div class="panel-tabs">
+                <div class="panel-tab active" data-tab="participants">
+                    <i class="fas fa-users"></i> Participants
+                </div>
+                <div class="panel-tab" data-tab="video">
+                    <i class="fas fa-video"></i> Video
+                </div>
+                <div class="panel-tab" data-tab="chat">
+                    <i class="fas fa-comments"></i> Chat
+                </div>
+            </div>
+
+            <div class="panel-content">
+                <!-- Participants Tab -->
+                <div class="tab-content active" id="participants-tab">
+                    <div class="participants-list" id="participants-list">
+                        <div class="participant">
+                            <div class="participant-avatar">Y</div>
+                            <div class="participant-name">You (Host)</div>
+                            <div class="participant-role">Host</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Tab -->
+                <div class="tab-content" id="video-tab">
+                    <div class="video-container">
+                        <div class="video-item">
+                            <video id="local-video" autoplay muted></video>
+                            <div class="video-info">
+                                <div class="video-name">You</div>
+                                <i class="fas fa-microphone"></i>
+                                <i class="fas fa-video"></i>
+                            </div>
+                        </div>
+                        <div id="remote-videos"></div>
+                    </div>
+                    <div class="video-controls">
+                        <button class="control-btn" id="toggle-video">
+                            <i class="fas fa-video"></i>
+                        </button>
+                        <button class="control-btn" id="toggle-mic">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button class="control-btn" id="screen-share">
+                            <i class="fas fa-desktop"></i>
+                        </button>
+                        <button class="control-btn danger" id="leave-call">
+                            <i class="fas fa-phone-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Tab -->
+                <div class="tab-content" id="chat-tab">
+                    <div class="chat-messages" id="chat-messages" style="height: 300px; overflow-y: auto; margin-bottom: 16px; border: 1px solid #e9ecef; border-radius: var(--border-radius); padding: 12px;"></div>
+                    <div class="chat-input" style="display: flex; gap: 8px;">
+                        <input type="text" id="chat-message" class="form-control" placeholder="Type a message...">
+                        <button class="btn btn-primary" id="send-message">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Controls -->
+    <div class="bottom-controls">
+        <div class="control-icon" id="mic-control" title="Microphone">
+            <i class="fas fa-microphone"></i>
+            <span class="control-label">Mic</span>
+        </div>
+        <div class="control-icon" id="video-control" title="Video">
+            <i class="fas fa-video"></i>
+            <span class="control-label">Video</span>
+        </div>
+        <div class="control-icon" id="screen-share-control" title="Share Screen">
+            <i class="fas fa-desktop"></i>
+            <span class="control-label">Share</span>
+        </div>
+        <div class="control-icon" id="participants-control" title="Participants">
+            <i class="fas fa-users"></i>
+            <span class="control-label">People</span>
+        </div>
+        <div class="control-icon" id="reactions-control" title="Reactions">
+            <i class="fas fa-smile"></i>
+            <span class="control-label">Reactions</span>
+        </div>
+        <div class="control-icon" id="raise-hand-control" title="Raise Hand">
+            <i class="fas fa-hand-paper"></i>
+            <span class="control-label">Hand</span>
+        </div>
+        <div class="control-icon more-menu" id="more-control" title="More">
+            <i class="fas fa-ellipsis-h"></i>
+            <span class="control-label">More</span>
+            <div class="more-options">
+                <div class="option-item" id="invite-option">
+                    <i class="fas fa-user-plus"></i> Invite
+                </div>
+                <div class="option-item" id="chat-option">
+                    <i class="fas fa-comment"></i> Chat
+                </div>
+                <div class="option-item" id="record-option">
+                    <i class="fas fa-circle"></i> Record
+                </div>
+                <div class="option-item" id="settings-option">
+                    <i class="fas fa-cog"></i> Settings
+                </div>
+            </div>
+        </div>
+        <div class="control-icon danger" id="leave-control" title="Leave">
+            <i class="fas fa-phone-slash"></i>
+            <span class="control-label">Leave</span>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Invite Modal -->
+    <div class="modal" id="invite-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Invite Participants</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Meeting Link</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" class="form-control" id="meeting-link" readonly>
+                        <button class="btn btn-primary" id="copy-link">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Meeting ID</label>
+                    <input type="text" class="form-control" id="meeting-id" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Passcode</label>
+                    <input type="text" class="form-control" id="meeting-passcode" readonly>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Modal -->
+    <div class="modal" id="save-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Save Whiteboard</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">File Name</label>
+                    <input type="text" class="form-control" id="save-filename" placeholder="whiteboard">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Format</label>
+                    <select class="form-control" id="save-format">
+                        <option value="png">PNG Image</option>
+                        <option value="jpg">JPG Image</option>
+                        <option value="pdf">PDF Document</option>
+                        <option value="json">WhiteBoard File (.wbf)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Cancel</button>
+                <button class="btn btn-primary" id="confirm-save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Modal -->
+    <div class="modal" id="load-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Load Whiteboard</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Select File</label>
+                    <input type="file" class="form-control" id="load-file" accept=".png,.jpg,.jpeg,.pdf,.wbf">
+                </div>
+                <div id="load-preview" style="text-align: center; margin-top: 16px; display: none;">
+                    <img id="load-preview-img" style="max-width: 100%; max-height: 200px; border: 1px solid #e9ecef;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Cancel</button>
+                <button class="btn btn-primary" id="confirm-load">Load</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Modal -->
+    <div class="modal" id="background-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Change Background</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Background Color</label>
+                    <input type="color" class="form-control" id="bg-color" value="#ffffff">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Background Image</label>
+                    <input type="file" class="form-control" id="bg-image" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Preset Backgrounds</label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <div class="bg-preset" style="background-color: #ffffff; height: 60px; border-radius: var(--border-radius); cursor: pointer;"></div>
+                        <div class="bg-preset" style="background-color: #f8f9fa; height: 60px; border-radius: var(--border-radius); cursor: pointer;"></div>
+                        <div class="bg-preset" style="background-color: #e9ecef; height: 60px; border-radius: var(--border-radius); cursor: pointer;"></div>
+                        <div class="bg-preset" style="background: url('https://example.com/office-bg.jpg') center/cover; height: 60px; border-radius: var(--border-radius); cursor: pointer;"></div>
+                        <div class="bg-preset" style="background: url('https://example.com/meeting-room.jpg') center/cover; height: 60px; border-radius: var(--border-radius); cursor: pointer;"></div>
+                        <div class="bg-preset" style="background: url('https://example.com/bedroom-bg.jpg') center/cover; height: 60px; border-radius: var(--border-radius); cursor: pointer;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Cancel</button>
+                <button class="btn btn-primary" id="confirm-bg">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settings-modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <div class="modal-title">Settings</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+                <div style="display: flex; gap: 16px;">
+                    <div style="width: 200px; border-right: 1px solid #e9ecef; padding-right: 16px;">
+                        <div class="settings-tab active" data-tab="general">General</div>
+                        <div class="settings-tab" data-tab="video">Video</div>
+                        <div class="settings-tab" data-tab="audio">Audio</div>
+                        <div class="settings-tab" data-tab="security">Security</div>
+                        <div class="settings-tab" data-tab="whiteboard">Whiteboard</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <!-- General Settings -->
+                        <div class="settings-content active" id="general-settings">
+                            <h3 style="margin-bottom: 16px;">General Settings</h3>
+                            <div class="form-group">
+                                <label class="form-label">Display Name</label>
+                                <input type="text" class="form-control" id="display-name" value="User">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Language</label>
+                                <select class="form-control" id="language">
+                                    <option value="en">English</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="fr">French</option>
+                                    <option value="de">German</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="auto-save" checked>
+                                    <label class="form-check-label" for="auto-save">Auto-save whiteboard</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Video Settings -->
+                        <div class="settings-content" id="video-settings">
+                            <h3 style="margin-bottom: 16px;">Video Settings</h3>
+                            <div class="form-group">
+                                <label class="form-label">Camera</label>
+                                <select class="form-control" id="camera-device">
+                                    <option value="default">Default Camera</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="hd-video" checked>
+                                    <label class="form-check-label" for="hd-video">HD Video</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="mirror-video">
+                                    <label class="form-check-label" for="mirror-video">Mirror my video</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="touch-up" checked>
+                                    <label class="form-check-label" for="touch-up">Touch up my appearance</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Virtual Background</label>
+                                <select class="form-control" id="virtual-bg">
+                                    <option value="none">None</option>
+                                    <option value="blur">Blur</option>
+                                    <option value="office">Office</option>
+                                    <option value="meeting-room">Meeting Room</option>
+                                    <option value="custom">Custom Image</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Audio Settings -->
+                        <div class="settings-content" id="audio-settings">
+                            <h3 style="margin-bottom: 16px;">Audio Settings</h3>
+                            <div class="form-group">
+                                <label class="form-label">Microphone</label>
+                                <select class="form-control" id="mic-device">
+                                    <option value="default">Default Microphone</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Speaker</label>
+                                <select class="form-control" id="speaker-device">
+                                    <option value="default">Default Speaker</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="auto-mic" checked>
+                                    <label class="form-check-label" for="auto-mic">Automatically adjust microphone volume</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="noise-suppression" checked>
+                                    <label class="form-check-label" for="noise-suppression">Suppress background noise</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Security Settings -->
+                        <div class="settings-content" id="security-settings">
+                            <h3 style="margin-bottom: 16px;">Security Settings</h3>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="waiting-room" checked>
+                                    <label class="form-check-label" for="waiting-room">Enable waiting room</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="require-passcode" checked>
+                                    <label class="form-check-label" for="require-passcode">Require meeting passcode</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="join-before-host">
+                                    <label class="form-check-label" for="join-before-host">Allow participants to join before host</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="screen-sharing" checked>
+                                    <label class="form-check-label" for="screen-sharing">Allow participant screen sharing</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="mute-on-entry">
+                                    <label class="form-check-label" for="mute-on-entry">Mute participants on entry</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Whiteboard Settings -->
+                        <div class="settings-content" id="whiteboard-settings">
+                            <h3 style="margin-bottom: 16px;">Whiteboard Settings</h3>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="show-grid">
+                                    <label class="form-check-label" for="show-grid">Show grid</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Default Stroke Color</label>
+                                <input type="color" class="form-control" id="default-stroke-color" value="#000000">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Default Fill Color</label>
+                                <input type="color" class="form-control" id="default-fill-color" value="#ffffff">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Default Brush Size</label>
+                                <select class="form-control" id="default-brush-size">
+                                    <option value="1">1px</option>
+                                    <option value="3" selected>3px</option>
+                                    <option value="5">5px</option>
+                                    <option value="8">8px</option>
+                                    <option value="10">10px</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Cancel</button>
+                <button class="btn btn-primary" id="save-settings">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reactions Modal -->
+    <div class="modal" id="reactions-modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <div class="modal-title">Reactions</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; text-align: center;">
+                <div class="reaction-btn" data-reaction="👍" style="font-size: 24px; cursor: pointer;">👍</div>
+                <div class="reaction-btn" data-reaction="👎" style="font-size: 24px; cursor: pointer;">👎</div>
+                <div class="reaction-btn" data-reaction="👏" style="font-size: 24px; cursor: pointer;">👏</div>
+                <div class="reaction-btn" data-reaction="🙌" style="font-size: 24px; cursor: pointer;">🙌</div>
+                <div class="reaction-btn" data-reaction="❤️" style="font-size: 24px; cursor: pointer;">❤️</div>
+                <div class="reaction-btn" data-reaction="😂" style="font-size: 24px; cursor: pointer;">😂</div>
+                <div class="reaction-btn" data-reaction="😮" style="font-size: 24px; cursor: pointer;">😮</div>
+                <div class="reaction-btn" data-reaction="😢" style="font-size: 24px; cursor: pointer;">😢</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Waiting Room -->
+    <div class="modal active" id="waiting-room-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="waiting-room">
+                <div class="waiting-icon pulse">
+                    <i class="fas fa-door-open"></i>
+                </div>
+                <div class="waiting-title">You're in the waiting room</div>
+                <div class="waiting-text">
+                    The meeting host will let you in soon. Please wait.
+                </div>
+                <button class="btn btn-danger" id="cancel-join">
+                    <i class="fas fa-times"></i> Cancel Join
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave Meeting Modal -->
+    <div class="modal" id="leave-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title">Leave Meeting</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to leave the meeting?</p>
+                <div class="form-group" style="margin-top: 16px;">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="save-before-leave" checked>
+                        <label class="form-check-label" for="save-before-leave">Save whiteboard before leaving</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Cancel</button>
+                <button class="btn btn-danger" id="confirm-leave">Leave</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- End Meeting Modal (Host Only) -->
+    <div class="modal" id="end-meeting-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title">End Meeting for All</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to end the meeting for all participants?</p>
+                <div class="form-group" style="margin-top: 16px;">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="save-before-end" checked>
+                        <label class="form-check-label" for="save-before-end">Save whiteboard before ending</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Cancel</button>
+                <button class="btn btn-danger" id="confirm-end">End Meeting</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirm-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title" id="confirm-title">Confirmation</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message">Are you sure you want to perform this action?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="confirm-cancel">Cancel</button>
+                <button class="btn btn-primary" id="confirm-ok">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cursors for other users -->
+    <div id="user-cursors"></div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const whiteboardCanvas = document.getElementById('whiteboard-canvas');
+            const ctx = whiteboardCanvas.getContext('2d');
+            const colorPicker = document.getElementById('color-picker');
+            const fillPicker = document.getElementById('fill-picker');
+            const brushSize = document.getElementById('brush-size');
+            const pencilTool = document.getElementById('pencil-tool');
+            const lineTool = document.getElementById('line-tool');
+            const rectangleTool = document.getElementById('rectangle-tool');
+            const circleTool = document.getElementById('circle-tool');
+            const textTool = document.getElementById('text-tool');
+            const eraserTool = document.getElementById('eraser-tool');
+            const clearTool = document.getElementById('clear-tool');
+            const undoTool = document.getElementById('undo-tool');
+            const redoTool = document.getElementById('redo-tool');
+            const saveTool = document.getElementById('save-tool');
+            const loadTool = document.getElementById('load-tool');
+            const exportTool = document.getElementById('export-tool');
+            const gridTool = document.getElementById('grid-tool');
+            const backgroundTool = document.getElementById('background-tool');
+            const slideButtons = document.querySelectorAll('.slide-btn');
+            const addSlideBtn = document.querySelector('.add-slide');
+            const rightPanel = document.getElementById('right-panel');
+            const panelTabs = document.querySelectorAll('.panel-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const participantsControl = document.getElementById('participants-control');
+            const micControl = document.getElementById('mic-control');
+            const videoControl = document.getElementById('video-control');
+            const screenShareControl = document.getElementById('screen-share-control');
+            const reactionsControl = document.getElementById('reactions-control');
+            const raiseHandControl = document.getElementById('raise-hand-control');
+            const moreControl = document.getElementById('more-control');
+            const leaveControl = document.getElementById('leave-control');
+            const inviteOption = document.getElementById('invite-option');
+            const chatOption = document.getElementById('chat-option');
+            const recordOption = document.getElementById('record-option');
+            const settingsOption = document.getElementById('settings-option');
+            const inviteModal = document.getElementById('invite-modal');
+            const saveModal = document.getElementById('save-modal');
+            const loadModal = document.getElementById('load-modal');
+            const backgroundModal = document.getElementById('background-modal');
+            const settingsModal = document.getElementById('settings-modal');
+            const reactionsModal = document.getElementById('reactions-modal');
+            const waitingRoomModal = document.getElementById('waiting-room-modal');
+            const leaveModal = document.getElementById('leave-modal');
+            const endMeetingModal = document.getElementById('end-meeting-modal');
+            const confirmModal = document.getElementById('confirm-modal');
+            const meetingLink = document.getElementById('meeting-link');
+            const copyLink = document.getElementById('copy-link');
+            const confirmSave = document.getElementById('confirm-save');
+            const confirmLoad = document.getElementById('confirm-load');
+            const confirmBg = document.getElementById('confirm-bg');
+            const saveSettings = document.getElementById('save-settings');
+            const cancelJoin = document.getElementById('cancel-join');
+            const confirmLeave = document.getElementById('confirm-leave');
+            const confirmEnd = document.getElementById('confirm-end');
+            const confirmCancel = document.getElementById('confirm-cancel');
+            const confirmOk = document.getElementById('confirm-ok');
+            const localVideo = document.getElementById('local-video');
+            const remoteVideos = document.getElementById('remote-videos');
+            const toggleVideo = document.getElementById('toggle-video');
+            const toggleMic = document.getElementById('toggle-mic');
+            const screenShare = document.getElementById('screen-share');
+            const leaveCall = document.getElementById('leave-call');
+            const participantsList = document.getElementById('participants-list');
+            const userCount = document.getElementById('user-count');
+            const userAvatar = document.getElementById('user-avatar');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatMessage = document.getElementById('chat-message');
+            const sendMessage = document.getElementById('send-message');
+            const displayNameInput = document.getElementById('display-name');
+            const bgColor = document.getElementById('bg-color');
+            const bgImage = document.getElementById('bg-image');
+            const bgPresets = document.querySelectorAll('.bg-preset');
+            const settingsTabs = document.querySelectorAll('.settings-tab');
+            const settingsContents = document.querySelectorAll('.settings-content');
+            const reactionBtns = document.querySelectorAll('.reaction-btn');
+            const saveBeforeLeave = document.getElementById('save-before-leave');
+            const saveBeforeEnd = document.getElementById('save-before-end');
+            const loadFile = document.getElementById('load-file');
+            const loadPreview = document.getElementById('load-preview');
+            const loadPreviewImg = document.getElementById('load-preview-img');
+            const saveFilename = document.getElementById('save-filename');
+            const saveFormat = document.getElementById('save-format');
+
+            // App State
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            let currentTool = 'pencil';
+            let currentColor = '#000000';
+            let currentFill = '#ffffff';
+            let currentSize = 3;
+            let slides = [];
+            let currentSlide = 0;
+            let drawingHistory = [[]];
+            let historyIndex = 0;
+            let isHost = true;
+            let isInMeeting = false;
+            let isVideoOn = false;
+            let isMicOn = false;
+            let isScreenSharing = false;
+            let isHandRaised = false;
+            let localStream = null;
+            let remoteStreams = {};
+            let peerConnections = {};
+            let socket = null;
+            let dataChannel = null;
+            let displayName = 'User';
+            let userId = generateId();
+            let meetingId = generateMeetingId();
+            let passcode = generatePasscode();
+            let userCursorColors = {};
+
+            // Initialize
+            resizeCanvas();
+            setupEventListeners();
+            initializeMeeting();
+
+            // Functions
+            function resizeCanvas() {
+                const container = whiteboardCanvas.parentElement;
+                whiteboardCanvas.width = container.offsetWidth;
+                whiteboardCanvas.height = container.offsetHeight;
+                redrawCanvas();
+            }
+
+            function redrawCanvas() {
+                if (slides[currentSlide]) {
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.clearRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                        ctx.drawImage(img, 0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                    };
+                    img.src = slides[currentSlide];
+                } else {
+                    ctx.clearRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                }
+            }
+
+            function setupEventListeners() {
+                // Window events
+                window.addEventListener('resize', resizeCanvas);
+                window.addEventListener('beforeunload', handleBeforeUnload);
+
+                // Canvas events
+                whiteboardCanvas.addEventListener('mousedown', startDrawing);
+                whiteboardCanvas.addEventListener('mousemove', draw);
+                whiteboardCanvas.addEventListener('mouseup', stopDrawing);
+                whiteboardCanvas.addEventListener('mouseout', stopDrawing);
+                whiteboardCanvas.addEventListener('touchstart', handleTouchStart);
+                whiteboardCanvas.addEventListener('touchmove', handleTouchMove);
+                whiteboardCanvas.addEventListener('touchend', handleTouchEnd);
+
+                // Tool events
+                pencilTool.addEventListener('click', () => setTool('pencil'));
+                lineTool.addEventListener('click', () => setTool('line'));
+                rectangleTool.addEventListener('click', () => setTool('rectangle'));
+                circleTool.addEventListener('click', () => setTool('circle'));
+                textTool.addEventListener('click', () => setTool('text'));
+                eraserTool.addEventListener('click', () => setTool('eraser'));
+                colorPicker.addEventListener('input', (e) => {
+                    currentColor = e.target.value;
+                    if (currentTool !== 'eraser') {
+                        ctx.strokeStyle = currentColor;
+                        ctx.fillStyle = currentFill;
+                    }
+                });
+                fillPicker.addEventListener('input', (e) => {
+                    currentFill = e.target.value;
+                    ctx.fillStyle = currentFill;
+                });
+                brushSize.addEventListener('change', (e) => {
+                    currentSize = parseInt(e.target.value);
+                    ctx.lineWidth = currentSize;
+                });
+
+                // Action events
+                clearTool.addEventListener('click', clearCanvas);
+                undoTool.addEventListener('click', undo);
+                redoTool.addEventListener('click', redo);
+                saveTool.addEventListener('click', showSaveModal);
+                loadTool.addEventListener('click', showLoadModal);
+                exportTool.addEventListener('click', exportCanvas);
+                gridTool.addEventListener('click', toggleGrid);
+                backgroundTool.addEventListener('click', showBackgroundModal);
+
+                // Slide events
+                slideButtons.forEach((btn, index) => {
+                    if (!btn.classList.contains('add-slide')) {
+                        btn.addEventListener('click', () => switchSlide(index));
+                    }
+                });
+                addSlideBtn.addEventListener('click', addSlide);
+
+                // Panel events
+                panelTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabName = tab.getAttribute('data-tab');
+                        switchTab(tabName);
+                    });
+                });
+                participantsControl.addEventListener('click', toggleParticipantsPanel);
+
+                // Control events
+                micControl.addEventListener('click', toggleMicState);
+                videoControl.addEventListener('click', toggleVideoState);
+                screenShareControl.addEventListener('click', toggleScreenShare);
+                reactionsControl.addEventListener('click', showReactionsModal);
+                raiseHandControl.addEventListener('click', toggleRaiseHand);
+                moreControl.addEventListener('click', toggleMoreMenu);
+                leaveControl.addEventListener('click', showLeaveModal);
+
+                // More menu events
+                inviteOption.addEventListener('click', showInviteModal);
+                chatOption.addEventListener('click', () => switchTab('chat'));
+                recordOption.addEventListener('click', toggleRecording);
+                settingsOption.addEventListener('click', showSettingsModal);
+
+                // Modal events
+                document.querySelectorAll('.modal-close').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const modal = btn.closest('.modal');
+                        closeModal(modal);
+                    });
+                });
+                copyLink.addEventListener('click', copyMeetingLink);
+                confirmSave.addEventListener('click', saveCanvas);
+                confirmLoad.addEventListener('click', loadCanvas);
+                confirmBg.addEventListener('click', changeBackground);
+                saveSettings.addEventListener('click', saveSettingsChanges);
+                cancelJoin.addEventListener('click', cancelJoinMeeting);
+                confirmLeave.addEventListener('click', leaveMeeting);
+                confirmEnd.addEventListener('click', endMeeting);
+                confirmCancel.addEventListener('click', closeConfirmModal);
+                confirmOk.addEventListener('click', confirmAction);
+
+                // Video call events
+                toggleVideo.addEventListener('click', toggleVideoState);
+                toggleMic.addEventListener('click', toggleMicState);
+                screenShare.addEventListener('click', toggleScreenShare);
+                leaveCall.addEventListener('click', showLeaveModal);
+
+                // Chat events
+                sendMessage.addEventListener('click', sendChatMessage);
+                chatMessage.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendChatMessage();
+                    }
+                });
+
+                // Background preset events
+                bgPresets.forEach(preset => {
+                    preset.addEventListener('click', () => {
+                        const style = window.getComputedStyle(preset);
+                        if (style.backgroundColor !== 'rgba(0, 0, 0, 0)') {
+                            bgColor.value = rgbToHex(style.backgroundColor);
+                        } else if (style.backgroundImage !== 'none') {
+                            // Handle image background
+                            const bgImage = style.backgroundImage
+                                .replace('url("', '')
+                                .replace('")', '');
+                            // For demo, we'll just set a color
+                            bgColor.value = '#f0f0f0';
+                        }
+                    });
+                });
+
+                // Settings tab events
+                settingsTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabName = tab.getAttribute('data-tab');
+                        switchSettingsTab(tabName);
+                    });
+                });
+
+                // Reaction events
+                reactionBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const reaction = btn.getAttribute('data-reaction');
+                        sendReaction(reaction);
+                        closeModal(reactionsModal);
+                    });
+                });
+
+                // Load file preview
+                loadFile.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file && file.type.match('image.*')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            loadPreview.style.display = 'block';
+                            loadPreviewImg.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        loadPreview.style.display = 'none';
+                    }
+                });
+            }
+
+            function initializeMeeting() {
+                // Generate random user avatar color and initial
+                const colors = ['#4a6bff', '#ff4757', '#2ed573', '#ffa502', '#7158e2'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                const initial = String.fromCharCode(65 + Math.floor(Math.random() * 26));
                 
-                for (let i = 1; i < drawing.points.length; i++) {
-                    context.lineTo(drawing.points[i].x * scale, drawing.points[i].y * scale);
+                userAvatar.style.backgroundColor = randomColor;
+                userAvatar.textContent = initial;
+                displayName = `User${Math.floor(1000 + Math.random() * 9000)}`;
+                displayNameInput.value = displayName;
+
+                // Set up meeting link
+                meetingLink.value = `${window.location.origin}${window.location.pathname}?meeting=${meetingId}`;
+                document.getElementById('meeting-id').value = meetingId;
+                document.getElementById('meeting-passcode').value = passcode;
+
+                // Initialize WebSocket connection
+                initializeSocket();
+
+                // Initialize WebRTC
+                if (isHost) {
+                    initializeMedia();
+                } else {
+                    // For participants, show waiting room
+                    showModal(waitingRoomModal);
+                }
+            }
+
+            function initializeSocket() {
+                // In a real app, you would connect to your Socket.io server
+                // socket = io('https://your-socket-server.com');
+                
+                // For demo purposes, we'll simulate socket behavior
+                console.log('Connecting to WebSocket server...');
+                
+                // Simulate connection
+                setTimeout(() => {
+                    console.log('WebSocket connected');
+                    isInMeeting = true;
+                    
+                    if (isHost) {
+                        // Host joins directly
+                        closeModal(waitingRoomModal);
+                        updateUserCount(1);
+                    } else {
+                        // Simulate waiting for host to admit
+                        console.log('Waiting for host to admit...');
+                    }
+                }, 1000);
+            }
+
+            function initializeMedia() {
+                // In a real app, you would get user media
+                // navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                //     .then(stream => {
+                //         localStream = stream;
+                //         localVideo.srcObject = stream;
+                //         isVideoOn = true;
+                //         isMicOn = true;
+                //         updateMediaControls();
+                //     })
+                //     .catch(err => {
+                //         console.error('Error accessing media devices:', err);
+                //     });
+                
+                // For demo, we'll simulate media
+                console.log('Initializing media devices...');
+                isVideoOn = true;
+                isMicOn = true;
+                updateMediaControls();
+            }
+
+            function setTool(tool) {
+                currentTool = tool;
+                
+                // Update active tool button
+                document.querySelectorAll('.tool-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                switch(tool) {
+                    case 'pencil':
+                        pencilTool.classList.add('active');
+                        ctx.globalCompositeOperation = 'source-over';
+                        ctx.strokeStyle = currentColor;
+                        break;
+                    case 'line':
+                        lineTool.classList.add('active');
+                        ctx.globalCompositeOperation = 'source-over';
+                        ctx.strokeStyle = currentColor;
+                        break;
+                    case 'rectangle':
+                        rectangleTool.classList.add('active');
+                        ctx.globalCompositeOperation = 'source-over';
+                        ctx.strokeStyle = currentColor;
+                        ctx.fillStyle = currentFill;
+                        break;
+                    case 'circle':
+                        circleTool.classList.add('active');
+                        ctx.globalCompositeOperation = 'source-over';
+                        ctx.strokeStyle = currentColor;
+                        ctx.fillStyle = currentFill;
+                        break;
+                    case 'text':
+                        textTool.classList.add('active');
+                        ctx.globalCompositeOperation = 'source-over';
+                        ctx.fillStyle = currentColor;
+                        break;
+                    case 'eraser':
+                        eraserTool.classList.add('active');
+                        ctx.globalCompositeOperation = 'destination-out';
+                        ctx.strokeStyle = 'rgba(0,0,0,1)';
+                        break;
+                }
+            }
+
+            function startDrawing(e) {
+                isDrawing = true;
+                [lastX, lastY] = getCoordinates(e);
+                
+                if (currentTool === 'text') {
+                    const text = prompt('Enter text:', '');
+                    if (text) {
+                        ctx.font = `${currentSize * 5}px Arial`;
+                        ctx.fillText(text, lastX, lastY);
+                        saveDrawingState();
+                    }
+                    isDrawing = false;
+                    return;
                 }
                 
-                context.stroke();
-            } else if (drawing.tool === 'rectangle') {
-                const start = drawing.points[0];
-                const end = drawing.points[1];
-                const width = end.x - start.x;
-                const height = end.y - start.y;
-                
-                context.beginPath();
-                context.rect(start.x * scale, start.y * scale, width * scale, height * scale);
-                context.stroke();
-            } else if (drawing.tool === 'circle') {
-                const start = drawing.points[0];
-                const end = drawing.points[1];
-                const radius = Math.sqrt(
-                    Math.pow(end.x - start.x, 2) + 
-                    Math.pow(end.y - start.y, 2)
-                );
-                
-                context.beginPath();
-                context.arc(start.x * scale, start.y * scale, radius * scale, 0, Math.PI * 2);
-                context.stroke();
-            } else if (drawing.tool === 'text') {
-                context.font = `${drawing.size * scale}px Arial`;
-                context.fillStyle = drawing.color;
-                context.fillText(drawing.text, drawing.points[0].x * scale, drawing.points[0].y * scale);
-            }
-        });
-    }
-
-    function clearCanvas() {
-        ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
-        
-        // Apply whiteboard background
-        updateWhiteboardBackground();
-    }
-
-    function updateWhiteboardBackground() {
-        switch (state.whiteboardBackground) {
-            case 'white':
-                ctx.fillStyle = 'white';
-                ctx.fillRect(0, 0, whiteboard.width, whiteboard.height);
-                break;
-            case 'black':
-                ctx.fillStyle = 'black';
-                ctx.fillRect(0, 0, whiteboard.width, whiteboard.height);
-                break;
-            case 'grid':
-                drawGridBackground('#f0f0f0', '#e0e0e0', 20);
-                break;
-            case 'dots':
-                drawDotBackground('#f0f0f0', '#e0e0e0', 20);
-                break;
-        }
-    }
-
-    function drawGridBackground(bgColor, gridColor, gridSize) {
-        // Fill background
-        ctx.fillStyle = bgColor;
-        ctx.fillRect(0, 0, whiteboard.width, whiteboard.height);
-        
-        // Draw grid
-        ctx.strokeStyle = gridColor;
-        ctx.lineWidth = 1;
-        
-        // Vertical lines
-        for (let x = 0; x <= whiteboard.width; x += gridSize) {
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, whiteboard.height);
-            ctx.stroke();
-        }
-        
-        // Horizontal lines
-        for (let y = 0; y <= whiteboard.height; y += gridSize) {
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(whiteboard.width, y);
-            ctx.stroke();
-        }
-    }
-
-    function drawDotBackground(bgColor, dotColor, gridSize) {
-        // Fill background
-        ctx.fillStyle = bgColor;
-        ctx.fillRect(0, 0, whiteboard.width, whiteboard.height);
-        
-        // Draw dots
-        ctx.fillStyle = dotColor;
-        
-        for (let x = gridSize; x < whiteboard.width; x += gridSize) {
-            for (let y = gridSize; y < whiteboard.height; y += gridSize) {
                 ctx.beginPath();
-                ctx.arc(x, y, 1, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.lineWidth = currentSize;
             }
-        }
-    }
 
-    function updateSlideCounter() {
-        slideCounter.textContent = `${state.currentSlide + 1}/${state.slides.length}`;
-    }
-
-    function saveDrawingState() {
-        if (!state.undoStack[state.currentSlide]) {
-            state.undoStack[state.currentSlide] = [];
-        }
-        
-        // Save current drawing data
-        const currentData = JSON.parse(JSON.stringify(state.slides[state.currentSlide].data));
-        state.undoStack[state.currentSlide].push(currentData);
-        
-        // Limit undo stack size
-        if (state.undoStack[state.currentSlide].length > 50) {
-            state.undoStack[state.currentSlide].shift();
-        }
-        
-        // Clear redo stack when new action is performed
-        state.redoStack[state.currentSlide] = [];
-    }
-
-    function undo() {
-        if (state.undoStack[state.currentSlide] && state.undoStack[state.currentSlide].length > 0) {
-            const undoneData = state.undoStack[state.currentSlide].pop();
-            
-            if (!state.redoStack[state.currentSlide]) {
-                state.redoStack[state.currentSlide] = [];
-            }
-            
-            // Save current state to redo stack
-            state.redoStack[state.currentSlide].push(JSON.parse(JSON.stringify(state.slides[state.currentSlide].data)));
-            
-            // Apply undone state
-            state.slides[state.currentSlide].data = undoneData;
-            redrawSlide(state.currentSlide);
-            
-            // Broadcast undo action
-            if (state.socket) {
-                state.socket.emit('drawingAction', {
-                    type: 'undo',
-                    slideIndex: state.currentSlide
-                });
-            }
-        }
-    }
-
-    function redo() {
-        if (state.redoStack[state.currentSlide] && state.redoStack[state.currentSlide].length > 0) {
-            const redoneData = state.redoStack[state.currentSlide].pop();
-            
-            // Save current state to undo stack
-            state.undoStack[state.currentSlide].push(JSON.parse(JSON.stringify(state.slides[state.currentSlide].data)));
-            
-            // Apply redone state
-            state.slides[state.currentSlide].data = redoneData;
-            redrawSlide(state.currentSlide);
-            
-            // Broadcast redo action
-            if (state.socket) {
-                state.socket.emit('drawingAction', {
-                    type: 'redo',
-                    slideIndex: state.currentSlide
-                });
-            }
-        }
-    }
-
-    function saveWhiteboard() {
-        const whiteboardData = {
-            slides: state.slides,
-            createdAt: new Date().toISOString()
-        };
-        
-        // Convert to JSON
-        const dataStr = JSON.stringify(whiteboardData);
-        
-        // Save to localStorage
-        localStorage.setItem('whiteboard-save', dataStr);
-        
-        // Option to download as file
-        const blob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `whiteboard-${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        showNotification('Whiteboard saved successfully!');
-    }
-
-    function loadWhiteboard() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json';
-        
-        input.onchange = e => {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = event => {
-                try {
-                    const data = JSON.parse(event.target.result);
-                    
-                    if (data.slides && Array.isArray(data.slides)) {
-                        // Clear current slides
-                        state.slides = [];
-                        state.currentSlide = 0;
-                        state.undoStack = [];
-                        state.redoStack = [];
-                        slidesThumbnails.innerHTML = '';
-                        
-                        // Load new slides
-                        data.slides.forEach(slide => {
-                            state.slides.push({
-                                id: slide.id || Date.now(),
-                                data: slide.data || [],
-                                thumbnail: null
-                            });
-                            
-                            // Create undo/redo stacks
-                            state.undoStack.push([]);
-                            state.redoStack.push([]);
-                            
-                            // Create thumbnail
-                            createSlideThumbnail(state.slides[state.slides.length - 1]);
-                        });
-                        
-                        // Switch to first slide
-                        if (state.slides.length > 0) {
-                            switchToSlide(0);
-                        } else {
-                            createNewSlide();
-                        }
-                        
-                        showNotification('Whiteboard loaded successfully!');
-                        
-                        // Broadcast load action to other users
-                        if (state.socket) {
-                            state.socket.emit('whiteboardLoaded', data.slides);
-                        }
-                    } else {
-                        showNotification('Invalid whiteboard file format', 'error');
-                    }
-                } catch (err) {
-                    console.error('Error loading whiteboard:', err);
-                    showNotification('Error loading whiteboard file', 'error');
-                }
-            };
-            
-            reader.readAsText(file);
-        };
-        
-        input.click();
-    }
-
-    function exportWhiteboard(format) {
-        // Create a temporary canvas for export
-        const exportCanvas = document.createElement('canvas');
-        exportCanvas.width = whiteboard.width;
-        exportCanvas.height = whiteboard.height;
-        const exportCtx = exportCanvas.getContext('2d');
-        
-        // Draw white background
-        exportCtx.fillStyle = 'white';
-        exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
-        
-        // Draw current slide content
-        if (state.slides[state.currentSlide] && state.slides[state.currentSlide].data) {
-            drawOnCanvas(exportCtx, state.slides[state.currentSlide].data);
-        }
-        
-        // Convert to requested format
-        let mimeType, extension;
-        switch (format) {
-            case 'png':
-                mimeType = 'image/png';
-                extension = 'png';
-                break;
-            case 'jpg':
-                mimeType = 'image/jpeg';
-                extension = 'jpg';
-                break;
-            case 'pdf':
-                // For PDF we'll use jsPDF library (would need to include it)
-                if (typeof jsPDF !== 'undefined') {
-                    const pdf = new jsPDF({
-                        orientation: 'landscape',
-                        unit: 'mm'
-                    });
-                    
-                    // Calculate dimensions to fit the PDF page
-                    const imgData = exportCanvas.toDataURL('image/jpeg', 1.0);
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = pdf.internal.pageSize.getHeight();
-                    const ratio = exportCanvas.width / exportCanvas.height;
-                    let width = pdfWidth;
-                    let height = width / ratio;
-                    
-                    if (height > pdfHeight) {
-                        height = pdfHeight;
-                        width = height * ratio;
-                    }
-                    
-                    pdf.addImage(imgData, 'JPEG', (pdfWidth - width) / 2, (pdfHeight - height) / 2, width, height);
-                    pdf.save(`whiteboard-${new Date().toISOString().split('T')[0]}.pdf`);
-                    showNotification('Whiteboard exported as PDF!');
-                } else {
-                    showNotification('PDF export requires jsPDF library', 'error');
-                }
-                return;
-            default:
-                mimeType = 'image/png';
-                extension = 'png';
-        }
-        
-        // For image formats
-        const dataUrl = exportCanvas.toDataURL(mimeType);
-        const a = document.createElement('a');
-        a.href = dataUrl;
-        a.download = `whiteboard-${new Date().toISOString().split('T')[0]}.${extension}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        
-        showNotification(`Whiteboard exported as ${format.toUpperCase()}!`);
-    }
-
-    function showNotification(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.classList.add('fade-out');
-            setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 300);
-        }, 3000);
-    }
-
-    function setupEventListeners() {
-        // Window events
-        window.addEventListener('resize', resizeCanvas);
-        window.addEventListener('beforeunload', handleBeforeUnload);
-        
-        // Whiteboard drawing events
-        whiteboard.addEventListener('mousedown', startDrawing);
-        whiteboard.addEventListener('mousemove', draw);
-        whiteboard.addEventListener('mouseup', stopDrawing);
-        whiteboard.addEventListener('mouseout', stopDrawing);
-        
-        whiteboard.addEventListener('touchstart', handleTouchStart);
-        whiteboard.addEventListener('touchmove', handleTouchMove);
-        whiteboard.addEventListener('touchend', handleTouchEnd);
-        
-        // Tool events
-        toolButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                setTool(button.dataset.tool);
-            });
-        });
-        
-        colorPicker.addEventListener('input', (e) => {
-            state.color = e.target.value;
-        });
-        
-        brushSize.addEventListener('input', (e) => {
-            state.brushSize = parseInt(e.target.value);
-        });
-        
-        clearBoard.addEventListener('click', () => {
-            if (confirm('Are you sure you want to clear the current slide?')) {
-                clearCurrentSlide();
-            }
-        });
-        
-        undoAction.addEventListener('click', undo);
-        redoAction.addEventListener('click', redo);
-        
-        // Slide management
-        addSlide.addEventListener('click', createNewSlide);
-        prevSlide.addEventListener('click', () => {
-            if (state.currentSlide > 0) {
-                switchToSlide(state.currentSlide - 1);
-            }
-        });
-        
-        nextSlide.addEventListener('click', () => {
-            if (state.currentSlide < state.slides.length - 1) {
-                switchToSlide(state.currentSlide + 1);
-            }
-        });
-        
-        // Save/Load/Export
-        saveBoard.addEventListener('click', saveWhiteboard);
-        loadBoard.addEventListener('click', loadWhiteboard);
-        exportBoard.addEventListener('click', () => {
-            // Show export options
-            const exportMenu = document.createElement('div');
-            exportMenu.className = 'export-menu';
-            exportMenu.innerHTML = `
-                <button data-format="png">PNG</button>
-                <button data-format="jpg">JPG</button>
-                <button data-format="pdf">PDF</button>
-            `;
-            
-            exportMenu.style.position = 'absolute';
-            exportMenu.style.bottom = '50px';
-            exportMenu.style.right = '10px';
-            exportMenu.style.backgroundColor = 'white';
-            exportMenu.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
-            exportMenu.style.borderRadius = '5px';
-            exportMenu.style.overflow = 'hidden';
-            exportMenu.style.zIndex = '100';
-            
-            exportMenu.querySelectorAll('button').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    exportWhiteboard(btn.dataset.format);
-                    document.body.removeChild(exportMenu);
-                });
-            });
-            
-            document.body.appendChild(exportMenu);
-            
-            // Close menu when clicking elsewhere
-            const closeMenu = (e) => {
-                if (!exportMenu.contains(e.target) {
-                    document.body.removeChild(exportMenu);
-                    document.removeEventListener('click', closeMenu);
-                }
-            };
-            
-            setTimeout(() => {
-                document.addEventListener('click', closeMenu);
-            }, 0);
-        });
-        
-        // Video controls
-        toggleMic.addEventListener('click', toggleMicrophone);
-        toggleVideo.addEventListener('click', toggleVideoStream);
-        toggleBackground.addEventListener('click', toggleVirtualBackground);
-        
-        // Bottom controls
-        micControl.addEventListener('click', toggleMicrophone);
-        videoControl.addEventListener('click', toggleVideoStream);
-        screenShareControl.addEventListener('click', toggleScreenSharing);
-        raiseHand.addEventListener('click', toggleRaiseHand);
-        participantsControl.addEventListener('click', toggleParticipantsPanel);
-        moreControls.addEventListener('click', showMoreControls);
-        leaveControl.addEventListener('click', showLeaveModal);
-        
-        // Chat controls
-        chatOption.addEventListener('click', toggleChatPanel);
-        closeChat.addEventListener('click', toggleChatPanel);
-        sendMessage.addEventListener('click', sendChatMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendChatMessage();
-            }
-        });
-        
-        // Settings controls
-        settingsOption.addEventListener('click', toggleSettingsPanel);
-        closeSettings.addEventListener('click', toggleSettingsPanel);
-        
-        // Invite controls
-        inviteButton.addEventListener('click', showInviteModal);
-        copyLink.addEventListener('click', copyMeetingLink);
-        copyId.addEventListener('click', copyMeetingId);
-        closeInviteModal.addEventListener('click', hideInviteModal);
-        
-        // Waiting room controls
-        leaveWaitingRoom.addEventListener('click', leaveWaitingRoom);
-        
-        // Leave meeting controls
-        leaveOption.addEventListener('click', showLeaveModal);
-        confirmLeave.addEventListener('click', leaveMeeting);
-        cancelLeave.addEventListener('click', hideLeaveModal);
-    }
-
-    function setTool(tool) {
-        state.currentTool = tool;
-        
-        // Update active state of tool buttons
-        toolButtons.forEach(button => {
-            button.classList.toggle('active', button.dataset.tool === tool);
-        });
-        
-        // Change cursor based on tool
-        switch (tool) {
-            case 'pencil':
-            case 'line':
-                whiteboard.style.cursor = 'crosshair';
-                break;
-            case 'rectangle':
-            case 'circle':
-                whiteboard.style.cursor = 'crosshair';
-                break;
-            case 'text':
-                whiteboard.style.cursor = 'text';
-                break;
-            case 'eraser':
-                whiteboard.style.cursor = 'url("eraser.cur"), auto';
-                break;
-            default:
-                whiteboard.style.cursor = 'default';
-        }
-    }
-
-    function startDrawing(e) {
-        if (state.currentTool === 'text') {
-            // For text tool, show a text input at the clicked position
-            showTextInput(e.clientX, e.clientY);
-            return;
-        }
-        
-        state.isDrawing = true;
-        
-        // Get position relative to canvas
-        const rect = whiteboard.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        // Start a new drawing
-        const newDrawing = {
-            tool: state.currentTool,
-            color: state.color,
-            size: state.brushSize,
-            points: [{ x, y }]
-        };
-        
-        // For shapes, we need exactly 2 points (start and end)
-        if (state.currentTool === 'rectangle' || state.currentTool === 'circle') {
-            newDrawing.points.push({ x, y });
-        }
-        
-        // Add to current slide's data
-        state.slides[state.currentSlide].data.push(newDrawing);
-        
-        // Save state for undo
-        saveDrawingState();
-        
-        // Broadcast drawing start
-        if (state.socket) {
-            state.socket.emit('drawingAction', {
-                type: 'start',
-                tool: state.currentTool,
-                color: state.color,
-                size: state.brushSize,
-                x,
-                y,
-                slideIndex: state.currentSlide
-            });
-        }
-    }
-
-    function draw(e) {
-        if (!state.isDrawing) {
-            // Update cursor position for other users
-            if (state.socket && state.showCursors) {
-                const rect = whiteboard.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+            function draw(e) {
+                if (!isDrawing) return;
                 
-                state.socket.emit('cursorMove', { x, y });
+                const [x, y] = getCoordinates(e);
+                
+                switch(currentTool) {
+                    case 'pencil':
+                    case 'eraser':
+                        ctx.lineTo(x, y);
+                        ctx.stroke();
+                        break;
+                    case 'line':
+                        // For line, we'll draw on mouse up
+                        break;
+                    case 'rectangle':
+                        // For rectangle, we'll draw on mouse up
+                        break;
+                    case 'circle':
+                        // For circle, we'll draw on mouse up
+                        break;
+                }
+                
+                lastX = x;
+                lastY = y;
             }
-            return;
-        }
-        
-        const rect = whiteboard.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        // Get current drawing
-        const currentDrawing = state.slides[state.currentSlide].data[state.slides[state.currentSlide].data.length - 1];
-        
-        // For shapes, update the end point
-        if (state.currentTool === 'rectangle' || state.currentTool === 'circle') {
-            currentDrawing.points[1] = { x, y };
-        } else {
-            // For pencil/line, add a new point
-            currentDrawing.points.push({ x, y });
-        }
-        
-        // Redraw canvas
-        redrawSlide(state.currentSlide);
-        
-        // Broadcast drawing update
-        if (state.socket) {
-            state.socket.emit('drawingAction', {
-                type: 'draw',
-                x,
-                y,
-                slideIndex: state.currentSlide
-            });
-        }
-    }
 
-    function stopDrawing() {
-        if (!state.isDrawing) return;
-        
-        state.isDrawing = false;
-        
-        // Broadcast drawing end
-        if (state.socket) {
-            state.socket.emit('drawingAction', {
-                type: 'end',
-                slideIndex: state.currentSlide
-            });
-        }
-        
-        // Update thumbnail
-        updateThumbnail(state.slides[state.currentSlide], 
-                       document.querySelectorAll('.slide-thumbnail')[state.currentSlide]);
-    }
-
-    function handleTouchStart(e) {
-        e.preventDefault();
-        if (e.touches.length === 1) {
-            const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousedown', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
-            whiteboard.dispatchEvent(mouseEvent);
-        }
-    }
-
-    function handleTouchMove(e) {
-        e.preventDefault();
-        if (e.touches.length === 1) {
-            const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousemove', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
-            whiteboard.dispatchEvent(mouseEvent);
-        }
-    }
-
-    function handleTouchEnd(e) {
-        e.preventDefault();
-        const mouseEvent = new MouseEvent('mouseup', {});
-        whiteboard.dispatchEvent(mouseEvent);
-    }
-
-    function showTextInput(x, y) {
-        const rect = whiteboard.getBoundingClientRect();
-        const canvasX = x - rect.left;
-        const canvasY = y - rect.top;
-        
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.style.position = 'absolute';
-        input.style.left = `${x}px`;
-        input.style.top = `${y}px`;
-        input.style.zIndex = '1000';
-        input.style.fontSize = `${state.brushSize}px`;
-        input.style.color = state.color;
-        input.style.background = 'transparent';
-        input.style.border = '1px dashed #999';
-        input.style.outline = 'none';
-        input.style.padding = '2px 5px';
-        
-        document.body.appendChild(input);
-        input.focus();
-        
-        input.addEventListener('blur', () => {
-            if (input.value.trim()) {
-                // Add text to drawing
-                const newDrawing = {
-                    tool: 'text',
-                    color: state.color,
-                    size: state.brushSize,
-                    text: input.value.trim(),
-                    points: [{ x: canvasX, y: canvasY }]
-                };
+            function stopDrawing(e) {
+                if (!isDrawing) return;
                 
-                state.slides[state.currentSlide].data.push(newDrawing);
-                redrawSlide(state.currentSlide);
+                const [x, y] = getCoordinates(e);
                 
-                // Save state for undo
+                switch(currentTool) {
+                    case 'line':
+                        ctx.beginPath();
+                        ctx.moveTo(lastX, lastY);
+                        ctx.lineTo(x, y);
+                        ctx.stroke();
+                        break;
+                    case 'rectangle':
+                        const width = x - lastX;
+                        const height = y - lastY;
+                        ctx.beginPath();
+                        ctx.rect(lastX, lastY, width, height);
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                    case 'circle':
+                        const radius = Math.sqrt(Math.pow(x - lastX, 2) + Math.pow(y - lastY, 2));
+                        ctx.beginPath();
+                        ctx.arc(lastX, lastY, radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                        break;
+                }
+                
+                isDrawing = false;
                 saveDrawingState();
+            }
+
+            function getCoordinates(e) {
+                let x, y;
                 
-                // Broadcast text addition
-                if (state.socket) {
-                    state.socket.emit('drawingAction', {
-                        type: 'text',
-                        color: state.color,
-                        size: state.brushSize,
-                        text: input.value.trim(),
-                        x: canvasX,
-                        y: canvasY,
-                        slideIndex: state.currentSlide
-                    });
-                }
-                
-                // Update thumbnail
-                updateThumbnail(state.slides[state.currentSlide], 
-                               document.querySelectorAll('.slide-thumbnail')[state.currentSlide]);
-            }
-            
-            document.body.removeChild(input);
-        });
-        
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                input.blur();
-            }
-        });
-    }
-
-    function clearCurrentSlide() {
-        state.slides[state.currentSlide].data = [];
-        clearCanvas();
-        
-        // Save state for undo
-        saveDrawingState();
-        
-        // Broadcast clear action
-        if (state.socket) {
-            state.socket.emit('drawingAction', {
-                type: 'clear',
-                slideIndex: state.currentSlide
-            });
-        }
-        
-        // Update thumbnail
-        updateThumbnail(state.slides[state.currentSlide], 
-                       document.querySelectorAll('.slide-thumbnail')[state.currentSlide]);
-    }
-
-    function setupSocketConnection() {
-        // Connect to Socket.io server
-        const socket = io('https://your-socket-server.com');
-        state.socket = socket;
-        
-        // Get meeting ID from URL or generate a new one
-        const urlParams = new URLSearchParams(window.location.search);
-        let meetingId = urlParams.get('meeting');
-        
-        if (!meetingId) {
-            meetingId = generateMeetingId();
-            window.history.replaceState({}, '', `?meeting=${meetingId}`);
-            state.isHost = true;
-        }
-        
-        // Set meeting link and ID
-        state.meetingId = meetingId;
-        meetingLink.value = window.location.href;
-        meetingId.value = meetingId;
-        
-        // Join meeting
-        socket.emit('joinMeeting', {
-            meetingId,
-            user: {
-                name: getUserName(),
-                id: getUserId()
-            }
-        });
-        
-        // Socket event listeners
-        socket.on('connect', () => {
-            console.log('Connected to socket server');
-        });
-        
-        socket.on('disconnect', () => {
-            console.log('Disconnected from socket server');
-        });
-        
-        socket.on('userJoined', (user) => {
-            addUser(user);
-            
-            // If host, approve or reject the user
-            if (state.isHost && state.isInWaitingRoom) {
-                // In a real app, you'd show a UI to approve/reject
-                // For demo, auto-approve
-                socket.emit('approveUser', { userId: user.id, approved: true });
-            }
-        });
-        
-        socket.on('userLeft', (userId) => {
-            removeUser(userId);
-            showNotification(`${getUserById(userId)?.name || 'A user'} has left the whiteboard`);
-        });
-        
-        socket.on('userApproved', (approved) => {
-            if (approved) {
-                state.isInWaitingRoom = false;
-                hideWaitingRoom();
-                setupVideoChat();
-            } else {
-                showNotification('Host has not approved your entry yet', 'error');
-            }
-        });
-        
-        socket.on('drawingAction', (data) => {
-            handleRemoteDrawing(data);
-        });
-        
-        socket.on('cursorMove', (data) => {
-            updateUserCursor(data.userId, data.x, data.y);
-        });
-        
-        socket.on('slideChanged', (slideIndex) => {
-            if (slideIndex !== state.currentSlide) {
-                switchToSlide(slideIndex);
-            }
-        });
-        
-        socket.on('whiteboardLoaded', (slides) => {
-            // Replace current slides with loaded ones
-            state.slides = slides.map(slide => ({
-                id: slide.id || Date.now(),
-                data: slide.data || [],
-                thumbnail: null
-            }));
-            
-            // Reset thumbnails
-            slidesThumbnails.innerHTML = '';
-            state.slides.forEach(slide => createSlideThumbnail(slide));
-            
-            // Switch to first slide
-            if (state.slides.length > 0) {
-                switchToSlide(0);
-            }
-            
-            showNotification('Whiteboard loaded by host');
-        });
-        
-        socket.on('chatMessage', (message) => {
-            addChatMessage(message);
-        });
-        
-        socket.on('userRaisedHand', (userId) => {
-            const user = getUserById(userId);
-            if (user) {
-                user.isHandRaised = true;
-                updateParticipantList();
-                showNotification(`${user.name} raised their hand`);
-            }
-        });
-        
-        socket.on('userLoweredHand', (userId) => {
-            const user = getUserById(userId);
-            if (user) {
-                user.isHandRaised = false;
-                updateParticipantList();
-            }
-        });
-    }
-
-    function generateMeetingId() {
-        return Math.random().toString(36).substring(2, 8).toUpperCase();
-    }
-
-    function getUserName() {
-        // In a real app, you'd get this from user input or auth system
-        return `User${Math.floor(Math.random() * 1000)}`;
-    }
-
-    function getUserId() {
-        // Generate a unique ID for the user
-        if (!localStorage.getItem('userId')) {
-            localStorage.setItem('userId', Math.random().toString(36).substring(2, 15));
-        }
-        return localStorage.getItem('userId');
-    }
-
-    function addUser(user) {
-        if (!state.users.some(u => u.id === user.id)) {
-            state.users.push({
-                ...user,
-                isHandRaised: false
-            });
-            
-            updateUserCount();
-            updateParticipantList();
-            
-            if (!state.isInWaitingRoom) {
-                showNotification(`${user.name} has joined the whiteboard`);
-            }
-        }
-    }
-
-    function removeUser(userId) {
-        state.users = state.users.filter(user => user.id !== userId);
-        updateUserCount();
-        updateParticipantList();
-        
-        // Remove remote video if exists
-        const videoContainer = document.getElementById(`remoteVideo-${userId}`);
-        if (videoContainer) {
-            videoContainer.remove();
-        }
-        
-        // Remove cursor if exists
-        const cursor = document.getElementById(`cursor-${userId}`);
-        if (cursor) {
-            cursor.remove();
-        }
-    }
-
-    function getUserById(userId) {
-        return state.users.find(user => user.id === userId);
-    }
-
-    function updateUserCount() {
-        userCount.textContent = state.users.length + 1; // +1 for local user
-        participantCount.textContent = state.users.length + 1;
-    }
-
-    function updateParticipantList() {
-        participantsList.innerHTML = '';
-        
-        // Add local user first
-        addParticipantItem({
-            id: getUserId(),
-            name: 'You (Me)',
-            isHandRaised: state.isHandRaised
-        }, true);
-        
-        // Add remote users
-        state.users.forEach(user => {
-            addParticipantItem(user, false);
-        });
-    }
-
-    function addParticipantItem(user, isLocal) {
-        const participant = document.createElement('div');
-        participant.className = 'participant-item';
-        participant.id = `participant-${user.id}`;
-        
-        const avatar = document.createElement('div');
-        avatar.className = 'participant-avatar';
-        avatar.textContent = user.name.charAt(0).toUpperCase();
-        
-        const name = document.createElement('div');
-        name.className = 'participant-name';
-        name.textContent = user.name;
-        
-        const status = document.createElement('div');
-        status.className = 'participant-status';
-        status.textContent = isLocal ? 'Me' : 'Connected';
-        
-        const controls = document.createElement('div');
-        controls.className = 'participant-controls';
-        
-        if (!isLocal && state.isHost) {
-            const muteBtn = document.createElement('button');
-            muteBtn.className = 'btn-icon';
-            muteBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
-            muteBtn.title = 'Mute';
-            controls.appendChild(muteBtn);
-            
-            const removeBtn = document.createElement('button');
-            removeBtn.className = 'btn-icon';
-            removeBtn.innerHTML = '<i class="fas fa-times"></i>';
-            removeBtn.title = 'Remove';
-            removeBtn.addEventListener('click', () => {
-                if (confirm(`Remove ${user.name} from the meeting?`)) {
-                    state.socket.emit('removeUser', user.id);
-                }
-            });
-            controls.appendChild(removeBtn);
-        }
-        
-        if (user.isHandRaised) {
-            const handIcon = document.createElement('span');
-            handIcon.className = 'raise-hand';
-            handIcon.innerHTML = '<i class="fas fa-hand-paper"></i>';
-            name.appendChild(handIcon);
-        }
-        
-        participant.appendChild(avatar);
-        participant.appendChild(name);
-        participant.appendChild(status);
-        participant.appendChild(controls);
-        
-        participantsList.appendChild(participant);
-    }
-
-    function handleRemoteDrawing(data) {
-        switch (data.type) {
-            case 'start':
-                // Start a new drawing
-                const newDrawing = {
-                    tool: data.tool,
-                    color: data.color,
-                    size: data.size,
-                    points: [{ x: data.x, y: data.y }]
-                };
-                
-                if (data.tool === 'rectangle' || data.tool === 'circle') {
-                    newDrawing.points.push({ x: data.x, y: data.y });
-                }
-                
-                state.slides[data.slideIndex].data.push(newDrawing);
-                break;
-                
-            case 'draw':
-                // Update current drawing
-                const currentDrawing = state.slides[data.slideIndex].data[state.slides[data.slideIndex].data.length - 1];
-                
-                if (currentDrawing.tool === 'rectangle' || currentDrawing.tool === 'circle') {
-                    currentDrawing.points[1] = { x: data.x, y: data.y };
+                if (e.type.includes('touch')) {
+                    const touch = e.touches[0] || e.changedTouches[0];
+                    const rect = whiteboardCanvas.getBoundingClientRect();
+                    x = touch.clientX - rect.left;
+                    y = touch.clientY - rect.top;
                 } else {
-                    currentDrawing.points.push({ x: data.x, y: data.y });
+                    const rect = whiteboardCanvas.getBoundingClientRect();
+                    x = e.clientX - rect.left;
+                    y = e.clientY - rect.top;
                 }
-                break;
                 
-            case 'end':
-                // No action needed for end
-                break;
+                return [x, y];
+            }
+
+            function handleTouchStart(e) {
+                e.preventDefault();
+                startDrawing(e);
+            }
+
+            function handleTouchMove(e) {
+                e.preventDefault();
+                draw(e);
+            }
+
+            function handleTouchEnd(e) {
+                e.preventDefault();
+                stopDrawing(e);
+            }
+
+            function clearCanvas() {
+                if (confirmAction('Are you sure you want to clear the canvas?')) {
+                    ctx.clearRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                    saveDrawingState();
+                }
+            }
+
+            function undo() {
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    redrawCanvas();
+                }
+            }
+
+            function redo() {
+                if (historyIndex < drawingHistory.length - 1) {
+                    historyIndex++;
+                    redrawCanvas();
+                }
+            }
+
+            function saveDrawingState() {
+                // In a real app, you would save the drawing state to the server
+                // For demo, we'll just save the canvas as an image
+                const imageData = whiteboardCanvas.toDataURL();
+                slides[currentSlide] = imageData;
                 
-            case 'text':
-                // Add text to drawing
-                const textDrawing = {
-                    tool: 'text',
-                    color: data.color,
-                    size: data.size,
-                    text: data.text,
-                    points: [{ x: data.x, y: data.y }]
+                // Add to history
+                if (historyIndex < drawingHistory.length - 1) {
+                    drawingHistory = drawingHistory.slice(0, historyIndex + 1);
+                }
+                drawingHistory.push(imageData);
+                historyIndex = drawingHistory.length - 1;
+            }
+
+            function showSaveModal() {
+                saveFilename.value = `whiteboard-${new Date().toISOString().slice(0, 10)}`;
+                showModal(saveModal);
+            }
+
+            function saveCanvas() {
+                const filename = saveFilename.value || 'whiteboard';
+                const format = saveFormat.value;
+                
+                let mimeType, extension;
+                switch(format) {
+                    case 'png':
+                        mimeType = 'image/png';
+                        extension = 'png';
+                        break;
+                    case 'jpg':
+                        mimeType = 'image/jpeg';
+                        extension = 'jpg';
+                        break;
+                    case 'pdf':
+                        // PDF would require a library like jsPDF
+                        showAlert('PDF export not implemented in demo');
+                        closeModal(saveModal);
+                        return;
+                    case 'json':
+                        // Save as custom whiteboard format
+                        const data = {
+                            slides: slides,
+                            timestamp: new Date().toISOString()
+                        };
+                        downloadFile(JSON.stringify(data), `${filename}.wbf`, 'application/json');
+                        closeModal(saveModal);
+                        return;
+                }
+                
+                const dataUrl = whiteboardCanvas.toDataURL(mimeType);
+                downloadFile(dataUrl, `${filename}.${extension}`, mimeType);
+                closeModal(saveModal);
+            }
+
+            function showLoadModal() {
+                showModal(loadModal);
+            }
+
+            function loadCanvas() {
+                const file = loadFile.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (file.name.endsWith('.wbf')) {
+                        // Load whiteboard file
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            slides = data.slides || [];
+                            if (slides.length > 0) {
+                                currentSlide = 0;
+                                updateSlideButtons();
+                                redrawCanvas();
+                            }
+                        } catch (err) {
+                            showAlert('Error loading whiteboard file');
+                        }
+                    } else if (file.type.match('image.*')) {
+                        // Load image file
+                        const img = new Image();
+                        img.onload = function() {
+                            ctx.clearRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                            ctx.drawImage(img, 0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                            saveDrawingState();
+                        };
+                        img.src = e.target.result;
+                    }
                 };
                 
-                state.slides[data.slideIndex].data.push(textDrawing);
-                break;
-                
-            case 'clear':
-                // Clear current slide
-                state.slides[data.slideIndex].data = [];
-                break;
-                
-            case 'undo':
-                // Undo last action
-                if (state.undoStack[data.slideIndex] && state.undoStack[data.slideIndex].length > 0) {
-                    const undoneData = state.undoStack[data.slideIndex].pop();
-                    state.redoStack[data.slideIndex].push(JSON.parse(JSON.stringify(state.slides[data.slideIndex].data)));
-                    state.slides[data.slideIndex].data = undoneData;
+                if (file.name.endsWith('.wbf')) {
+                    reader.readAsText(file);
+                } else {
+                    reader.readAsDataURL(file);
                 }
-                break;
                 
-            case 'redo':
-                // Redo last undone action
-                if (state.redoStack[data.slideIndex] && state.redoStack[data.slideIndex].length > 0) {
-                    const redoneData = state.redoStack[data.slideIndex].pop();
-                    state.undoStack[data.slideIndex].push(JSON.parse(JSON.stringify(state.slides[data.slideIndex].data)));
-                    state.slides[data.slideIndex].data = redoneData;
-                }
-                break;
-        }
-        
-        // Redraw slide if it's the current one
-        if (data.slideIndex === state.currentSlide) {
-            redrawSlide(state.currentSlide);
-        }
-        
-        // Update thumbnail
-        updateThumbnail(state.slides[data.slideIndex], 
-                       document.querySelectorAll('.slide-thumbnail')[data.slideIndex]);
-    }
+                closeModal(loadModal);
+            }
 
-    function updateUserCursor(userId, x, y) {
-        if (!state.showCursors) return;
-        
-        let cursor = document.getElementById(`cursor-${userId}`);
-        
-        if (!cursor) {
-            cursor = document.createElement('div');
-            cursor.id = `cursor-${userId}`;
-            cursor.className = 'user-cursor';
-            cursor.style.backgroundColor = getColorForUserId(userId);
-            cursor.setAttribute('data-name', getUserById(userId)?.name || 'Unknown');
-            userCursors.appendChild(cursor);
-        }
-        
-        cursor.style.left = `${x}px`;
-        cursor.style.top = `${y}px`;
-    }
-
-    function getColorForUserId(userId) {
-        // Generate a consistent color based on user ID
-        const hash = userId.split('').reduce((acc, char) => {
-            return char.charCodeAt(0) + ((acc << 5) - acc);
-        }, 0);
-        
-        const hue = Math.abs(hash) % 360;
-        return `hsl(${hue}, 80%, 60%)`;
-    }
-
-    function setupVideoChat() {
-        // Get user media
-        navigator.mediaDevices.getUserMedia({
-            audio: true,
-            video: true
-        }).then(stream => {
-            state.localStream = stream;
-            localVideo.srcObject = stream;
-            
-            // Setup WebRTC connections with other users
-            state.users.forEach(user => {
-                if (user.id !== getUserId()) {
-                    setupPeerConnection(user.id);
-                }
-            });
-        }).catch(err => {
-            console.error('Error accessing media devices:', err);
-            showNotification('Could not access camera/microphone', 'error');
-        });
-    }
-
-    function setupPeerConnection(userId) {
-        // Create RTCPeerConnection
-        const configuration = {
-            iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' }
-                // Add your TURN servers here if needed
-            ]
-        };
-        
-        const peerConnection = new RTCPeerConnection(configuration);
-        state.peerConnections[userId] = peerConnection;
-        
-        // Add local stream to connection
-        if (state.localStream) {
-            state.localStream.getTracks().forEach(track => {
-                peerConnection.addTrack(track, state.localStream);
-            });
-        }
-        
-        // Handle incoming tracks
-        peerConnection.ontrack = (event) => {
-            const remoteStream = event.streams[0];
-            state.remoteStreams[userId] = remoteStream;
-            
-            // Create video element for remote stream
-            const videoContainer = document.createElement('div');
-            videoContainer.className = 'remote-video-container';
-            videoContainer.id = `remoteVideo-${userId}`;
-            
-            const video = document.createElement('video');
-            video.autoplay = true;
-            video.playsInline = true;
-            video.srcObject = remoteStream;
-            
-            const name = document.createElement('div');
-            name.className = 'user-name';
-            name.textContent = getUserById(userId)?.name || 'Unknown';
-            
-            videoContainer.appendChild(video);
-            videoContainer.appendChild(name);
-            remoteVideos.appendChild(videoContainer);
-        };
-        
-        // Handle ICE candidates
-        peerConnection.onicecandidate = (event) => {
-            if (event.candidate) {
-                state.socket.emit('iceCandidate', {
-                    to: userId,
-                    candidate: event.candidate
+            function exportCanvas() {
+                const formats = [
+                    { name: 'PNG', value: 'png' },
+                    { name: 'JPG', value: 'jpg' },
+                    { name: 'PDF', value: 'pdf' }
+                ];
+                
+                let message = '<p>Select export format:</p><select id="export-format" class="form-control" style="margin-bottom: 16px;">';
+                formats.forEach(format => {
+                    message += `<option value="${format.value}">${format.name}</option>`;
+                });
+                message += '</select>';
+                
+                showConfirm('Export Whiteboard', message, () => {
+                    const format = document.getElementById('export-format').value;
+                    saveFormat.value = format;
+                    showSaveModal();
                 });
             }
-        };
-        
-        // Create offer
-        peerConnection.createOffer()
-            .then(offer => peerConnection.setLocalDescription(offer))
-            .then(() => {
-                state.socket.emit('offer', {
-                    to: userId,
-                    offer: peerConnection.localDescription
+
+            function toggleGrid() {
+                gridTool.classList.toggle('active');
+                // Grid implementation would go here
+                showAlert('Grid feature not implemented in demo');
+            }
+
+            function showBackgroundModal() {
+                showModal(backgroundModal);
+            }
+
+            function changeBackground() {
+                const color = bgColor.value;
+                const file = bgImage.files[0];
+                
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            ctx.clearRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                            ctx.fillStyle = color;
+                            ctx.fillRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                            ctx.drawImage(img, 0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                            saveDrawingState();
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    ctx.clearRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                    ctx.fillStyle = color;
+                    ctx.fillRect(0, 0, whiteboardCanvas.width, whiteboardCanvas.height);
+                    saveDrawingState();
+                }
+                
+                closeModal(backgroundModal);
+            }
+
+            function switchSlide(index) {
+                if (index >= 0 && index < slides.length) {
+                    currentSlide = index;
+                    document.querySelectorAll('.slide-btn').forEach((btn, i) => {
+                        if (i === index) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+                    redrawCanvas();
+                }
+            }
+
+            function addSlide() {
+                const newSlideIndex = slides.length;
+                slides.push('');
+                
+                const newSlideBtn = document.createElement('button');
+                newSlideBtn.className = 'slide-btn';
+                newSlideBtn.textContent = newSlideIndex + 1;
+                newSlideBtn.addEventListener('click', () => switchSlide(newSlideIndex));
+                
+                addSlideBtn.parentNode.insertBefore(newSlideBtn, addSlideBtn);
+                switchSlide(newSlideIndex);
+            }
+
+            function updateSlideButtons() {
+                const slideContainer = document.querySelector('.slide-container');
+                slideContainer.innerHTML = '';
+                
+                slides.forEach((slide, index) => {
+                    const slideBtn = document.createElement('button');
+                    slideBtn.className = `slide-btn ${index === currentSlide ? 'active' : ''}`;
+                    slideBtn.textContent = index + 1;
+                    slideBtn.addEventListener('click', () => switchSlide(index));
+                    slideContainer.appendChild(slideBtn);
                 });
-            })
-            .catch(err => {
-                console.error('Error creating offer:', err);
-            });
-        
-        // Listen for answer
-        state.socket.on('answer', (data) => {
-            if (data.from === userId) {
-                peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer))
-                    .catch(err => {
-                        console.error('Error setting remote description:', err);
-                    });
+                
+                slideContainer.appendChild(addSlideBtn);
             }
-        });
-        
-        // Listen for ICE candidates
-        state.socket.on('iceCandidate', (data) => {
-            if (data.from === userId) {
-                peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate))
-                    .catch(err => {
-                        console.error('Error adding ICE candidate:', err);
-                    });
-            }
-        });
-    }
 
-    function toggleMicrophone() {
-        if (state.localStream) {
-            const audioTracks = state.localStream.getAudioTracks();
-            if (audioTracks.length > 0) {
-                state.isMicOn = !audioTracks[0].enabled;
-                audioTracks[0].enabled = state.isMicOn;
-                
-                // Update UI
-                toggleMic.classList.toggle('active', state.isMicOn);
-                micControl.classList.toggle('active', state.isMicOn);
-                
-                // Broadcast mute state
-                if (state.socket) {
-                    state.socket.emit('muteState', {
-                        isMuted: !state.isMicOn
-                    });
-                }
-            }
-        }
-    }
-
-    function toggleVideoStream() {
-        if (state.localStream) {
-            const videoTracks = state.localStream.getVideoTracks();
-            if (videoTracks.length > 0) {
-                state.isVideoOn = !videoTracks[0].enabled;
-                videoTracks[0].enabled = state.isVideoOn;
-                
-                // Update UI
-                toggleVideo.classList.toggle('active', state.isVideoOn);
-                videoControl.classList.toggle('active', state.isVideoOn);
-            }
-        }
-    }
-
-    function toggleVirtualBackground() {
-        // In a real app, you'd use a library like TensorFlow.js or a WebGL shader
-        // This is a simplified version that just toggles between blur and none
-        state.backgroundEffect = state.backgroundEffect === 'blur' ? 'none' : 'blur';
-        
-        // Update UI
-        toggleBackground.classList.toggle('active', state.backgroundEffect !== 'none');
-        
-        // Apply effect (simplified)
-        if (state.backgroundEffect === 'blur') {
-            localVideo.style.filter = 'blur(10px)';
-        } else {
-            localVideo.style.filter = 'none';
-        }
-    }
-
-    function toggleScreenSharing() {
-        if (state.isScreenSharing) {
-            stopScreenSharing();
-        } else {
-            startScreenSharing();
-        }
-    }
-
-    function startScreenSharing() {
-        navigator.mediaDevices.getDisplayMedia({
-            video: true,
-            audio: true
-        }).then(stream => {
-            state.screenStream = stream;
-            state.isScreenSharing = true;
-            
-            // Replace video track in all peer connections
-            const videoTrack = stream.getVideoTracks()[0];
-            
-            Object.values(state.peerConnections).forEach(pc => {
-                const sender = pc.getSenders().find(s => s.track.kind === 'video');
-                if (sender) {
-                    sender.replaceTrack(videoTrack);
-                }
-            });
-            
-            // Update UI
-            screenShareControl.classList.add('active');
-            
-            // Handle when user stops sharing
-            videoTrack.onended = () => {
-                stopScreenSharing();
-            };
-        }).catch(err => {
-            console.error('Error sharing screen:', err);
-            showNotification('Could not share screen', 'error');
-        });
-    }
-
-    function stopScreenSharing() {
-        if (state.screenStream) {
-            state.screenStream.getTracks().forEach(track => track.stop());
-            state.screenStream = null;
-        }
-        
-        state.isScreenSharing = false;
-        
-        // Restore camera video track in all peer connections
-        if (state.localStream) {
-            const videoTrack = state.localStream.getVideoTracks()[0];
-            
-            Object.values(state.peerConnections).forEach(pc => {
-                const sender = pc.getSenders().find(s => s.track.kind === 'video');
-                if (sender && videoTrack) {
-                    sender.replaceTrack(videoTrack);
-                }
-            });
-        }
-        
-        // Update UI
-        screenShareControl.classList.remove('active');
-    }
-
-    function toggleRaiseHand() {
-        state.isHandRaised = !state.isHandRaised;
-        
-        // Update UI
-        raiseHand.classList.toggle('raise-hand', state.isHandRaised);
-        
-        // Broadcast state
-        if (state.socket) {
-            if (state.isHandRaised) {
-                state.socket.emit('raiseHand');
-                showNotification('You raised your hand');
-            } else {
-                state.socket.emit('lowerHand');
-            }
-        }
-        
-        // Update participant list
-        updateParticipantList();
-    }
-
-    function toggleParticipantsPanel() {
-        // In mobile view, this would show/hide the right panel
-        const rightPanel = document.querySelector('.right-panel');
-        rightPanel.classList.toggle('active');
-        participantsControl.classList.toggle('active', rightPanel.classList.contains('active'));
-    }
-
-    function showMoreControls() {
-        // Show a menu with additional controls
-        const menu = document.createElement('div');
-        menu.className = 'more-controls-menu';
-        menu.innerHTML = `
-            <button id="recordBtn"><i class="fas fa-circle"></i> Record</button>
-            <button id="inviteBtn"><i class="fas fa-user-plus"></i> Invite</button>
-            <button id="settingsBtn"><i class="fas fa-cog"></i> Settings</button>
-            <button id="chatBtn"><i class="fas fa-comment"></i> Chat</button>
-        `;
-        
-        menu.style.position = 'absolute';
-        menu.style.bottom = '60px';
-        menu.style.right = '10px';
-        menu.style.backgroundColor = 'white';
-        menu.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
-        menu.style.borderRadius = '5px';
-        menu.style.overflow = 'hidden';
-        menu.style.zIndex = '100';
-        
-        document.body.appendChild(menu);
-        
-        // Add event listeners
-        menu.querySelector('#recordBtn').addEventListener('click', () => {
-            toggleRecording();
-            document.body.removeChild(menu);
-        });
-        
-        menu.querySelector('#inviteBtn').addEventListener('click', () => {
-            showInviteModal();
-            document.body.removeChild(menu);
-        });
-        
-        menu.querySelector('#settingsBtn').addEventListener('click', () => {
-            toggleSettingsPanel();
-            document.body.removeChild(menu);
-        });
-        
-        menu.querySelector('#chatBtn').addEventListener('click', () => {
-            toggleChatPanel();
-            document.body.removeChild(menu);
-        });
-        
-        // Close menu when clicking elsewhere
-        const closeMenu = (e) => {
-            if (!menu.contains(e.target) && e.target !== moreControls) {
-                document.body.removeChild(menu);
-                document.removeEventListener('click', closeMenu);
-            }
-        };
-        
-        setTimeout(() => {
-            document.addEventListener('click', closeMenu);
-        }, 0);
-    }
-
-    function toggleRecording() {
-        // In a real app, you'd use the MediaRecorder API
-        showNotification('Recording feature would be implemented here');
-    }
-
-    function toggleChatPanel() {
-        chatPanel.classList.toggle('active');
-    }
-
-    function sendChatMessage() {
-        const message = chatInput.value.trim();
-        if (message) {
-            const chatMessage = {
-                id: Date.now(),
-                sender: {
-                    id: getUserId(),
-                    name: 'You'
-                },
-                text: message,
-                timestamp: new Date().toISOString()
-            };
-            
-            // Add to local chat
-            addChatMessage(chatMessage);
-            
-            // Broadcast to others
-            if (state.socket) {
-                state.socket.emit('chatMessage', chatMessage);
-            }
-            
-            // Clear input
-            chatInput.value = '';
-        }
-    }
-
-    function addChatMessage(message) {
-        const messageElement = document.createElement('div');
-        messageElement.className = `message ${message.sender.id === getUserId() ? 'sent' : 'received'}`;
-        
-        const senderElement = document.createElement('div');
-        senderElement.className = 'message-sender';
-        senderElement.textContent = message.sender.name;
-        
-        const textElement = document.createElement('div');
-        textElement.className = 'message-text';
-        textElement.textContent = message.text;
-        
-        const timeElement = document.createElement('div');
-        timeElement.className = 'message-time';
-        timeElement.textContent = new Date(message.timestamp).toLocaleTimeString();
-        
-        messageElement.appendChild(senderElement);
-        messageElement.appendChild(textElement);
-        messageElement.appendChild(timeElement);
-        
-        chatMessages.appendChild(messageElement);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function toggleSettingsPanel() {
-        settingsPanel.classList.toggle('active');
-    }
-
-    function showInviteModal() {
-        inviteModal.style.display = 'flex';
-    }
-
-    function hideInviteModal() {
-        inviteModal.style.display = 'none';
-    }
-
-    function copyMeetingLink() {
-        meetingLink.select();
-        document.execCommand('copy');
-        showNotification('Meeting link copied to clipboard!');
-    }
-
-    function copyMeetingId() {
-        meetingId.select();
-        document.execCommand('copy');
-        showNotification('Meeting ID copied to clipboard!');
-    }
-
-    function showWaitingRoom() {
-        waitingRoomModal.style.display = 'flex';
-        
-        // Populate device selectors
-        populateDeviceSelectors();
-    }
-
-    function hideWaitingRoom() {
-        waitingRoomModal.style.display = 'none';
-    }
-
-    function leaveWaitingRoom() {
-        if (state.socket) {
-            state.socket.emit('leaveWaitingRoom');
-        }
-        window.location.href = '/';
-    }
-
-    function populateDeviceSelectors() {
-        navigator.mediaDevices.enumerateDevices()
-            .then(devices => {
-                const micSelect = document.getElementById('micSelect');
-                const cameraSelect = document.getElementById('cameraSelect');
-                
-                // Clear existing options
-                micSelect.innerHTML = '';
-                cameraSelect.innerHTML = '';
-                
-                // Add default options
-                const defaultMicOption = document.createElement('option');
-                defaultMicOption.value = 'default';
-                defaultMicOption.textContent = 'Default Microphone';
-                micSelect.appendChild(defaultMicOption);
-                
-                const defaultCameraOption = document.createElement('option');
-                defaultCameraOption.value = 'default';
-                defaultCameraOption.textContent = 'Default Camera';
-                cameraSelect.appendChild(defaultCameraOption);
-                
-                // Add available devices
-                devices.forEach(device => {
-                    const option = document.createElement('option');
-                    option.value = device.deviceId;
-                    option.textContent = device.label || `${device.kind} (${device.deviceId.slice(0, 5)})`;
-                    
-                    if (device.kind === 'audioinput') {
-                        micSelect.appendChild(option);
-                    } else if (device.kind === 'videoinput') {
-                        cameraSelect.appendChild(option);
-                    }
-                });
-            })
-            .catch(err => {
-                console.error('Error enumerating devices:', err);
-            });
-    }
-
-    function showLeaveModal() {
-        leaveMeetingModal.style.display = 'flex';
-    }
-
-    function hideLeaveModal() {
-        leaveMeetingModal.style.display = 'none';
-    }
-
-    function leaveMeeting() {
-        // Clean up resources
-        if (state.localStream) {
-            state.localStream.getTracks().forEach(track => track.stop());
-        }
-        
-        if (state.screenStream) {
-            state.screenStream.getTracks().forEach(track => track.stop());
-        }
-        
-        Object.values(state.peerConnections).forEach(pc => pc.close());
-        
-        // Notify server
-        if (state.socket) {
-            state.socket.emit('leaveMeeting');
-            state.socket.disconnect();
-        }
-        
-        // Redirect or show leave screen
-        window.location.href = '/leave.html';
-    }
-
-    function handleBeforeUnload(e) {
-        if (state.autoSave) {
-            saveWhiteboard();
-        }
-        
-        // Show confirmation if there are unsaved changes
-        if (hasUnsavedChanges()) {
-            e.preventDefault();
-            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
-            return e.returnValue;
-        }
-    }
-
-    function hasUnsavedChanges() {
-        // Check if there are any drawings that haven't been saved
-        return state.slides.some(slide => slide.data.length > 0);
-    }
-
-    function checkPreviousSession() {
-        // Check if there's a previous session to restore
-        const savedData = localStorage.getItem('whiteboard-save');
-        if (savedData && confirm('Would you like to continue from your previous whiteboard session?')) {
-            try {
-                const data = JSON.parse(savedData);
-                
-                if (data.slides && Array.isArray(data.slides)) {
-                    // Clear current slides
-                    state.slides = [];
-                    state.currentSlide = 0;
-                    state.undoStack = [];
-                    state.redoStack = [];
-                    slidesThumbnails.innerHTML = '';
-                    
-                    // Load saved slides
-                    data.slides.forEach(slide => {
-                        state.slides.push({
-                            id: slide.id || Date.now(),
-                            data: slide.data || [],
-                            thumbnail: null
-                        });
-                        
-                        // Create undo/redo stacks
-                        state.undoStack.push([]);
-                        state.redoStack.push([]);
-                        
-                        // Create thumbnail
-                        createSlideThumbnail(state.slides[state.slides.length - 1]);
-                    });
-                    
-                    // Switch to first slide
-                    if (state.slides.length > 0) {
-                        switchToSlide(0);
+            function switchTab(tabName) {
+                panelTabs.forEach(tab => {
+                    if (tab.getAttribute('data-tab') === tabName) {
+                        tab.classList.add('active');
                     } else {
-                        createNewSlide();
+                        tab.classList.remove('active');
                     }
-                    
-                    showNotification('Previous whiteboard session restored');
+                });
+                
+                tabContents.forEach(content => {
+                    if (content.id === `${tabName}-tab`) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+                
+                // For mobile, show panel when switching tabs
+                if (window.innerWidth <= 992) {
+                    rightPanel.classList.add('active');
                 }
-            } catch (err) {
-                console.error('Error loading previous session:', err);
             }
-        }
-    }
-});
+
+            function toggleParticipantsPanel() {
+                if (window.innerWidth > 992) {
+                    switchTab('participants');
+                } else {
+                    rightPanel.classList.toggle('active');
+                    if (rightPanel.classList.contains('active')) {
+                        switchTab('participants');
+                    }
+                }
+            }
+
+            function toggleMicState() {
+                isMicOn = !isMicOn;
+                updateMediaControls();
+                
+                // In a real app, you would enable/disable the microphone track
+                // if (localStream) {
+                //     localStream.getAudioTracks().forEach(track => {
+                //         track.enabled = isMicOn;
+                //     });
+                // }
+            }
+
+            function toggleVideoState() {
+                isVideoOn = !isVideoOn;
+                updateMediaControls();
+                
+                // In a real app, you would enable/disable the video track
+                // if (localStream) {
+                //     localStream.getVideoTracks().forEach(track => {
+                //         track.enabled = isVideoOn;
+                //     });
+                // }
+            }
+
+            function toggleScreenShare() {
+                isScreenSharing = !isScreenSharing;
+                screenShareControl.classList.toggle('active', isScreenSharing);
+                
+                if (isScreenSharing) {
+                    // In a real app, you would start screen sharing
+                    // navigator.mediaDevices.getDisplayMedia({ video: true })
+                    //     .then(stream => {
+                    //         // Replace video track with screen share
+                    //     })
+                    //     .catch(err => {
+                    //         console.error('Error sharing screen:', err);
+                    //         isScreenSharing = false;
+                    //         screenShareControl.classList.remove('active');
+                    //     });
+                    showAlert('Screen sharing not implemented in demo');
+                    isScreenSharing = false;
+                    screenShareControl.classList.remove('active');
+                } else {
+                    // Stop screen sharing and revert to camera
+                    // In a real app, you would switch back to the camera
+                }
+            }
+
+            function toggleRaiseHand() {
+                isHandRaised = !isHandRaised;
+                raiseHandControl.classList.toggle('active', isHandRaised);
+                
+                // In a real app, you would notify other participants
+                if (isHandRaised) {
+                    showAlert('Hand raised!');
+                }
+            }
+
+            function toggleMoreMenu() {
+                moreControl.classList.toggle('open');
+            }
+
+            function showInviteModal() {
+                showModal(inviteModal);
+                moreControl.classList.remove('open');
+            }
+
+            function toggleRecording() {
+                // In a real app, you would start/stop recording
+                showAlert('Recording not implemented in demo');
+                moreControl.classList.remove('open');
+            }
+
+            function showSettingsModal() {
+                showModal(settingsModal);
+                moreControl.classList.remove('open');
+            }
+
+            function showReactionsModal() {
+                showModal(reactionsModal);
+            }
+
+            function showLeaveModal() {
+                if (isHost) {
+                    showModal(endMeetingModal);
+                } else {
+                    showModal(leaveModal);
+                }
+            }
+
+            function showModal(modal) {
+                modal.classList.add('active');
+            }
+
+            function closeModal(modal) {
+                modal.classList.remove('active');
+            }
+
+            function closeAllModals() {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+
+            function showConfirm(title, message, callback) {
+                document.getElementById('confirm-title').textContent = title;
+                document.getElementById('confirm-message').innerHTML = message;
+                document.getElementById('confirm-ok').onclick = function() {
+                    callback();
+                    closeModal(confirmModal);
+                };
+                showModal(confirmModal);
+            }
+
+            function confirmAction(message) {
+                let confirmed = false;
+                if (message) {
+                    showConfirm('Confirmation', message, () => {
+                        confirmed = true;
+                    });
+                    // In a real app, you would use promises/async-await
+                    return confirmed;
+                } else {
+                    return window.confirm(message || 'Are you sure?');
+                }
+            }
+
+            function closeConfirmModal() {
+                closeModal(confirmModal);
+            }
+
+            function confirmAction() {
+                // This would be set based on the action needing confirmation
+                closeModal(confirmModal);
+            }
+
+            function showAlert(message) {
+                alert(message); // In a real app, you'd use a nicer alert system
+            }
+
+            function copyMeetingLink() {
+                meetingLink.select();
+                document.execCommand('copy');
+                showAlert('Meeting link copied to clipboard!');
+            }
+
+            function saveSettingsChanges() {
+                displayName = displayNameInput.value;
+                userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                closeModal(settingsModal);
+                showAlert('Settings saved!');
+            }
+
+            function cancelJoinMeeting() {
+                // In a real app, you would disconnect from the meeting
+                isInMeeting = false;
+                closeModal(waitingRoomModal);
+                showAlert('You have left the waiting room');
+            }
+
+            function leaveMeeting() {
+                if (saveBeforeLeave.checked) {
+                    saveCanvas();
+                }
+                
+                // In a real app, you would disconnect from the meeting
+                isInMeeting = false;
+                closeModal(leaveModal);
+                showAlert('You have left the meeting');
+                
+                // For demo, show the leave image
+                window.location.href = 'https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg';
+            }
+
+            function endMeeting() {
+                if (saveBeforeEnd.checked) {
+                    saveCanvas();
+                }
+                
+                // In a real app, you would disconnect all participants
+                isInMeeting = false;
+                closeModal(endMeetingModal);
+                showAlert('Meeting ended for all participants');
+                
+                // For demo, show the leave image
+                window.location.href = 'https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg';
+            }
+
+            function updateMediaControls() {
+                micControl.classList.toggle('active', isMicOn);
+                videoControl.classList.toggle('active', isVideoOn);
+                toggleMic.classList.toggle('active', isMicOn);
+                toggleVideo.classList.toggle('active', isVideoOn);
+                
+                // Update icons based on state
+                const micIcon = micControl.querySelector('i');
+                const videoIcon = videoControl.querySelector('i');
+                
+                micIcon.className = isMicOn ? 'fas fa-microphone' : 'fas fa-microphone-slash';
+                videoIcon.className = isVideoOn ? 'fas fa-video' : 'fas fa-video-slash';
+            }
+
+            function sendChatMessage() {
+                const message = chatMessage.value.trim();
+                if (message) {
+                    // In a real app, you would send this via WebSocket
+                    const messageElement = document.createElement('div');
+                    messageElement.innerHTML = `<strong>You:</strong> ${message}`;
+                    chatMessages.appendChild(messageElement);
+                    chatMessage.value = '';
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
+
+            function sendReaction(reaction) {
+                // In a real app, you would send this to other participants
+                const reactionElement = document.createElement('div');
+                reactionElement.className = 'reaction';
+                reactionElement.textContent = reaction;
+                reactionElement.style.left = `${Math.random() * 80 + 10}%`;
+                reactionElement.style.top = `${Math.random() * 80 + 10}%`;
+                document.body.appendChild(reactionElement);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    reactionElement.remove();
+                }, 2000);
+            }
+
+            function updateUserCount(count) {
+                userCount.textContent = count;
+                
+                // Update participants list
+                participantsList.innerHTML = '';
+                
+                // Add host first
+                const hostElement = document.createElement('div');
+                hostElement.className = 'participant';
+                hostElement.innerHTML = `
+                    <div class="participant-avatar">${displayName.charAt(0).toUpperCase()}</div>
+                    <div class="participant-name">${displayName} (You)</div>
+                    <div class="participant-role">Host</div>
+                `;
+                participantsList.appendChild(hostElement);
+                
+                // Add other participants
+                for (let i = 1; i < count; i++) {
+                    const participantElement = document.createElement('div');
+                    participantElement.className = 'participant';
+                    participantElement.innerHTML = `
+                        <div class="participant-avatar">P${i}</div>
+                        <div class="participant-name">Participant ${i}</div>
+                        <div class="participant-role">Member</div>
+                    `;
+                    participantsList.appendChild(participantElement);
+                }
+            }
+
+            function switchSettingsTab(tabName) {
+                settingsTabs.forEach(tab => {
+                    if (tab.getAttribute('data-tab') === tabName) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                });
+                
+                settingsContents.forEach(content => {
+                    if (content.id === `${tabName}-settings`) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+            }
+
+            function downloadFile(data, filename, type) {
+                const blob = new Blob([data], { type: type });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 0);
+            }
+
+            function rgbToHex(rgb) {
+                // Convert rgb(r, g, b) to hex
+                const match = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+                if (!match) return '#ffffff';
+                
+                const r = parseInt(match[1], g = parseInt(match[2]), b = parseInt(match[3]);
+                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+            }
+
+            function handleBeforeUnload(e) {
+                if (isInMeeting) {
+                    e.preventDefault();
+                    e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+                    return e.returnValue;
+                }
+            }
+
+            function generateId() {
+                return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            }
+
+            function generateMeetingId() {
+                return Math.random().toString(36).substring(2, 6) + '-' + Math.random().toString(36).substring(2, 6);
+            }
+
+            function generatePasscode() {
+                return Math.floor(1000 + Math.random() * 9000).toString();
+            }
+        });
+    </script>
+</body>
+</html>
