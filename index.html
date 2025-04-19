@@ -3,453 +3,3137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhiteBoard Education - Advanced Collaborative Whiteboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>WhiteBoard Education | Collaborative Whiteboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #f5f7ff;
+            --dark-color: #1a1a2e;
+            --light-color: #ffffff;
+            --danger-color: #ff4757;
+            --success-color: #2ed573;
+            --warning-color: #ffa502;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: var(--dark-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: var(--light-color);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 40px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .app-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        .app-name::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), transparent);
+            border-radius: 2px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-count {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Left Sidebar - Tools */
+        .tools-sidebar {
+            width: 70px;
+            background-color: var(--light-color);
+            padding: 1rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: var(--box-shadow);
+            z-index: 10;
+        }
+
+        .tool-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .tool-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            background-color: transparent;
+            border: none;
+            color: var(--dark-color);
+        }
+
+        .tool-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .tool-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .tool-btn i {
+            font-size: 1.2rem;
+        }
+
+        .tool-separator {
+            width: 60%;
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 0.5rem 0;
+        }
+
+        /* Whiteboard Area */
+        .whiteboard-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #f8f9fa;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .whiteboard-header {
+            padding: 0.5rem 1rem;
+            background-color: var(--light-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .whiteboard-title {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .whiteboard-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--border-radius);
+            border: none;
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .action-btn:hover {
+            background-color: #e0e5ff;
+        }
+
+        .action-btn i {
+            font-size: 0.9rem;
+        }
+
+        .whiteboard-area {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background-color: white;
+        }
+
+        #whiteboard {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        .cursor {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor::after {
+            content: attr(data-user);
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+
+        /* Right Sidebar - Participants and Video */
+        .right-sidebar {
+            width: 320px;
+            background-color: var(--light-color);
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .tab-btn.active {
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        /* Participants Tab */
+        .participants-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .participant-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .participant-item:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .participant-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #e0e5ff;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .participant-avatar.host::after {
+            content: '★';
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            font-size: 0.8rem;
+            color: var(--warning-color);
+            background-color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .participant-info {
+            flex: 1;
+        }
+
+        .participant-name {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .participant-status {
+            font-size: 0.75rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .participant-status i {
+            font-size: 0.6rem;
+        }
+
+        .participant-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .participant-action-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: transparent;
+            border: none;
+            color: #666;
+        }
+
+        .participant-action-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Video Tab */
+        .video-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            height: 100%;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .video-item {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background-color: #f0f0f0;
+            aspect-ratio: 16/9;
+        }
+
+        .video-item.pinned {
+            grid-column: 1 / -1;
+            aspect-ratio: 16/9;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: #f0f0f0;
+        }
+
+        .video-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .video-name {
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .video-action-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .video-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 0.5rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--secondary-color);
+            border: none;
+            color: var(--dark-color);
+        }
+
+        .control-btn:hover {
+            background-color: #e0e5ff;
+        }
+
+        .control-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .control-btn.end-call {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Slides Tab */
+        .slides-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            height: 100%;
+        }
+
+        .slides-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .slide-item {
+            aspect-ratio: 16/9;
+            background-color: white;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-item.active {
+            border: 2px solid var(--primary-color);
+        }
+
+        .slide-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: white;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.2rem 0.4rem;
+            font-size: 0.7rem;
+            border-radius: 4px 0 0 0;
+        }
+
+        .slide-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: none;
+            gap: 0.3rem;
+            padding: 0.3rem;
+        }
+
+        .slide-item:hover .slide-actions {
+            display: flex;
+        }
+
+        .slide-action-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        .add-slide-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.6rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .add-slide-btn:hover {
+            background-color: #3a5bef;
+        }
+
+        /* Tool Options Panel */
+        .tool-options {
+            position: absolute;
+            top: 60px;
+            left: 85px;
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            padding: 0.8rem;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 50;
+            min-width: 200px;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .option-title {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .option-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--secondary-color);
+            border: none;
+        }
+
+        .option-btn:hover {
+            background-color: #e0e5ff;
+        }
+
+        .option-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .color-option {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-option.active {
+            border-color: var(--dark-color);
+        }
+
+        .range-input {
+            width: 100%;
+            accent-color: var(--primary-color);
+        }
+
+        /* Bottom Controls */
+        .bottom-controls {
+            background-color: var(--light-color);
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: var(--box-shadow);
+            z-index: 10;
+        }
+
+        .control-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .control-icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            transition: var(--transition);
+        }
+
+        .control-icon:hover .control-icon-btn {
+            background-color: #e0e5ff;
+        }
+
+        .control-icon.active .control-icon-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .control-icon.end-call .control-icon-btn {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .control-label {
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .reactions-menu {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            padding: 0.8rem;
+            box-shadow: var(--box-shadow);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            z-index: 100;
+            width: 200px;
+        }
+
+        .reaction-btn {
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            padding: 0.3rem;
+            border-radius: 4px;
+        }
+
+        .reaction-btn:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.2);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--box-shadow);
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            padding: 1rem;
+        }
+
+        .modal-footer {
+            padding: 1rem;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a5bef;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e5ff;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #ff3342;
+        }
+
+        /* Waiting Room Modal */
+        .waiting-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin: 1rem 0;
+        }
+
+        .waiting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+        }
+
+        .waiting-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .waiting-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Settings Modal */
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 1rem;
+        }
+
+        .settings-tab {
+            padding: 0.8rem 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .settings-tab.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .settings-content {
+            display: none;
+        }
+
+        .settings-content.active {
+            display: block;
+        }
+
+        .setting-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .setting-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .setting-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.8rem;
+        }
+
+        .setting-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .setting-option {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .setting-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+
+        .setting-option label {
+            flex: 1;
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 0.6rem;
+            border-radius: var(--border-radius);
+            border: 1px solid #e0e0e0;
+            background-color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .right-sidebar {
+                width: 280px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .right-sidebar {
+                position: absolute;
+                right: -280px;
+                top: 0;
+                bottom: 0;
+                width: 280px;
+            }
+
+            .right-sidebar.active {
+                right: 0;
+            }
+
+            .toggle-sidebar {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tools-sidebar {
+                width: 60px;
+                padding: 1rem 0.3rem;
+            }
+
+            .tool-btn {
+                width: 36px;
+                height: 36px;
+            }
+
+            .tool-options {
+                left: 70px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .app-name {
+                font-size: 1.2rem;
+            }
+
+            .user-count {
+                padding: 0.2rem 0.6rem;
+                font-size: 0.8rem;
+            }
+
+            .user-avatar {
+                width: 32px;
+                height: 32px;
+            }
+
+            .bottom-controls {
+                gap: 1rem;
+                padding: 0.5rem;
+            }
+
+            .control-icon-btn {
+                width: 36px;
+                height: 36px;
+            }
+
+            .control-label {
+                font-size: 0.6rem;
+            }
+        }
+
+        /* Animation for hand raise */
+        @keyframes raiseHand {
+            0% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(10deg); }
+            50% { transform: translateY(-20px) rotate(0deg); }
+            75% { transform: translateY(-10px) rotate(-10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        .hand-raised {
+            animation: raiseHand 1s infinite;
+            display: inline-block;
+        }
+
+        /* Animation for reaction */
+        @keyframes reactionPop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .reaction-display {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: reactionPop 0.3s forwards;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Waiting Room Modal -->
-        <div id="waitingRoomModal" class="modal">
-            <div class="modal-content">
-                <div class="logo-animation">
-                    <img src="assets/logo.png" alt="WhiteBoard Education Logo" class="animated-logo">
-                    <h1 class="animated-title">WhiteBoard Education</h1>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-container">
+            <img src="https://sigmawire.net/i/04/itNgcI.png" alt="WhiteBoard Education Logo" class="logo">
+            <div class="app-name">WhiteBoard Education</div>
+        </div>
+        <div class="user-info">
+            <div class="user-count">
+                <i class="fas fa-users"></i>
+                <span id="userCount">1</span>
+            </div>
+            <div class="user-avatar" id="userAvatar">U</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Left Sidebar - Tools -->
+        <div class="tools-sidebar">
+            <div class="tool-group">
+                <button class="tool-btn active" id="pencilTool" title="Pencil">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button class="tool-btn" id="lineTool" title="Line">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="tool-btn" id="rectangleTool" title="Rectangle">
+                    <i class="fas fa-square"></i>
+                </button>
+                <button class="tool-btn" id="circleTool" title="Circle">
+                    <i class="fas fa-circle"></i>
+                </button>
+                <button class="tool-btn" id="textTool" title="Text">
+                    <i class="fas fa-font"></i>
+                </button>
+                <button class="tool-btn" id="eraserTool" title="Eraser">
+                    <i class="fas fa-eraser"></i>
+                </button>
+            </div>
+
+            <div class="tool-separator"></div>
+
+            <div class="tool-group">
+                <button class="tool-btn" id="selectTool" title="Select">
+                    <i class="fas fa-mouse-pointer"></i>
+                </button>
+                <button class="tool-btn" id="moveTool" title="Move">
+                    <i class="fas fa-arrows-alt"></i>
+                </button>
+                <button class="tool-btn" id="zoomInTool" title="Zoom In">
+                    <i class="fas fa-search-plus"></i>
+                </button>
+                <button class="tool-btn" id="zoomOutTool" title="Zoom Out">
+                    <i class="fas fa-search-minus"></i>
+                </button>
+            </div>
+
+            <div class="tool-separator"></div>
+
+            <div class="tool-group">
+                <button class="tool-btn" id="undoTool" title="Undo">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button class="tool-btn" id="redoTool" title="Redo">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button class="tool-btn" id="clearTool" title="Clear">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Whiteboard Area -->
+        <div class="whiteboard-container">
+            <div class="whiteboard-header">
+                <div class="whiteboard-title">Whiteboard 1</div>
+                <div class="whiteboard-actions">
+                    <button class="action-btn" id="saveBtn">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button class="action-btn" id="loadBtn">
+                        <i class="fas fa-folder-open"></i> Load
+                    </button>
+                    <button class="action-btn" id="exportBtn">
+                        <i class="fas fa-file-export"></i> Export
+                    </button>
+                    <button class="action-btn" id="newSlideBtn">
+                        <i class="fas fa-plus"></i> New Slide
+                    </button>
                 </div>
-                <div class="waiting-content">
-                    <h2>You're in the Waiting Room</h2>
-                    <p>The host will let you in shortly. Please wait...</p>
-                    <img src="assets/waiting-room.jpg" alt="Waiting Room" class="waiting-image">
-                    <div class="device-check">
-                        <div class="device-option">
+            </div>
+            <div class="whiteboard-area">
+                <canvas id="whiteboard"></canvas>
+                <!-- Remote cursors will be added here dynamically -->
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Participants and Video -->
+        <div class="right-sidebar" id="rightSidebar">
+            <div class="sidebar-tabs">
+                <div class="tab-btn active" data-tab="participants">Participants</div>
+                <div class="tab-btn" data-tab="video">Video</div>
+                <div class="tab-btn" data-tab="slides">Slides</div>
+            </div>
+
+            <div class="tab-content" id="participantsTab">
+                <div class="participants-list" id="participantsList">
+                    <!-- Participants will be added here dynamically -->
+                </div>
+            </div>
+
+            <div class="tab-content" id="videoTab" style="display: none;">
+                <div class="video-container">
+                    <div class="video-grid" id="videoGrid">
+                        <!-- Video feeds will be added here dynamically -->
+                    </div>
+                    <div class="video-controls">
+                        <button class="control-btn" id="toggleMicBtn">
                             <i class="fas fa-microphone"></i>
-                            <span>Microphone</span>
-                            <select id="micSelect">
-                                <option value="default">Default</option>
-                            </select>
-                        </div>
-                        <div class="device-option">
+                        </button>
+                        <button class="control-btn" id="toggleVideoBtn">
                             <i class="fas fa-video"></i>
-                            <span>Camera</span>
-                            <select id="cameraSelect">
-                                <option value="default">Default</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button id="leaveWaitingRoom" class="btn btn-danger">Leave</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Leave Meeting Modal -->
-        <div id="leaveMeetingModal" class="modal">
-            <div class="modal-content leave-modal">
-                <img src="assets/leave-screen.jpg" alt="Leave Meeting" class="leave-image">
-                <h2>Leave Meeting?</h2>
-                <p>Are you sure you want to leave this whiteboard session?</p>
-                <div class="leave-options">
-                    <button id="confirmLeave" class="btn btn-danger">Leave</button>
-                    <button id="cancelLeave" class="btn btn-secondary">Cancel</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main App Interface -->
-        <div class="main-interface">
-            <!-- Header -->
-            <header class="app-header">
-                <div class="header-left">
-                    <div class="logo-container">
-                        <img src="assets/logo.png" alt="WhiteBoard Education Logo" class="logo">
-                        <span class="app-name">WhiteBoard Education</span>
-                    </div>
-                    <div class="user-count">
-                        <i class="fas fa-users"></i>
-                        <span id="userCount">0</span>
-                    </div>
-                </div>
-                <div class="header-right">
-                    <button id="inviteButton" class="btn btn-primary">
-                        <i class="fas fa-user-plus"></i> Invite
-                    </button>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" id="moreOptions">
-                            <i class="fas fa-ellipsis-v"></i>
                         </button>
-                        <div class="dropdown-content">
-                            <a href="#" id="chatOption"><i class="fas fa-comment"></i> Chat</a>
-                            <a href="#" id="screenShareOption"><i class="fas fa-desktop"></i> Share Screen</a>
-                            <a href="#" id="settingsOption"><i class="fas fa-cog"></i> Settings</a>
-                            <a href="#" id="recordOption"><i class="fas fa-circle"></i> Record Session</a>
-                            <a href="#" id="leaveOption"><i class="fas fa-sign-out-alt"></i> Leave</a>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Main Content -->
-            <div class="main-content">
-                <!-- Whiteboard Area -->
-                <div class="whiteboard-container">
-                    <div class="toolbar">
-                        <div class="tool-section">
-                            <button class="tool-btn active" data-tool="pencil" title="Pencil">
-                                <i class="fas fa-pencil-alt"></i>
-                            </button>
-                            <button class="tool-btn" data-tool="line" title="Line">
-                                <i class="fas fa-slash"></i>
-                            </button>
-                            <button class="tool-btn" data-tool="rectangle" title="Rectangle">
-                                <i class="fas fa-square"></i>
-                            </button>
-                            <button class="tool-btn" data-tool="circle" title="Circle">
-                                <i class="fas fa-circle"></i>
-                            </button>
-                            <button class="tool-btn" data-tool="text" title="Text">
-                                <i class="fas fa-font"></i>
-                            </button>
-                            <button class="tool-btn" data-tool="eraser" title="Eraser">
-                                <i class="fas fa-eraser"></i>
-                            </button>
-                        </div>
-                        <div class="tool-section">
-                            <input type="color" id="colorPicker" value="#000000" title="Color">
-                            <input type="range" id="brushSize" min="1" max="50" value="5" title="Brush Size">
-                            <button class="tool-btn" id="clearBoard" title="Clear Board">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                            <button class="tool-btn" id="undoAction" title="Undo">
-                                <i class="fas fa-undo"></i>
-                            </button>
-                            <button class="tool-btn" id="redoAction" title="Redo">
-                                <i class="fas fa-redo"></i>
-                            </button>
-                        </div>
-                        <div class="tool-section">
-                            <button class="tool-btn" id="addSlide" title="Add Slide">
-                                <i class="fas fa-plus"></i> Slide
-                            </button>
-                            <button class="tool-btn" id="prevSlide" title="Previous Slide">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <span id="slideCounter">1/1</span>
-                            <button class="tool-btn" id="nextSlide" title="Next Slide">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </div>
-                        <div class="tool-section">
-                            <button class="tool-btn" id="saveBoard" title="Save Whiteboard">
-                                <i class="fas fa-save"></i>
-                            </button>
-                            <button class="tool-btn" id="loadBoard" title="Load Whiteboard">
-                                <i class="fas fa-folder-open"></i>
-                            </button>
-                            <button class="tool-btn" id="exportBoard" title="Export Options">
-                                <i class="fas fa-file-export"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="whiteboard-area">
-                        <canvas id="whiteboard"></canvas>
-                        <div class="user-cursors" id="userCursors"></div>
-                    </div>
-                </div>
-
-                <!-- Right Panel -->
-                <div class="right-panel">
-                    <!-- Video Chat Section -->
-                    <div class="video-section">
-                        <div class="video-container" id="localVideoContainer">
-                            <video id="localVideo" autoplay muted></video>
-                            <div class="video-controls">
-                                <button id="toggleMic" class="btn-control active">
-                                    <i class="fas fa-microphone"></i>
-                                </button>
-                                <button id="toggleVideo" class="btn-control active">
-                                    <i class="fas fa-video"></i>
-                                </button>
-                                <button id="toggleBackground" class="btn-control">
-                                    <i class="fas fa-image"></i>
-                                </button>
-                            </div>
-                            <div class="user-name">You</div>
-                        </div>
-                        <div class="remote-videos" id="remoteVideos"></div>
-                    </div>
-
-                    <!-- Participants Section -->
-                    <div class="participants-section">
-                        <div class="section-header">
-                            <h3>Participants (<span id="participantCount">1</span>)</h3>
-                            <button id="manageParticipants" class="btn-icon">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                        </div>
-                        <div class="participants-list" id="participantsList">
-                            <!-- Participants will be added here dynamically -->
-                        </div>
-                    </div>
-
-                    <!-- Slides Thumbnails -->
-                    <div class="slides-section">
-                        <div class="section-header">
-                            <h3>Slides</h3>
-                            <button id="manageSlides" class="btn-icon">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                        </div>
-                        <div class="slides-thumbnails" id="slidesThumbnails">
-                            <!-- Slide thumbnails will be added here dynamically -->
-                        </div>
+                        <button class="control-btn" id="screenShareBtn">
+                            <i class="fas fa-desktop"></i>
+                        </button>
+                        <button class="control-btn end-call" id="leaveCallBtn">
+                            <i class="fas fa-phone-slash"></i>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Bottom Controls -->
-            <div class="bottom-controls">
-                <button id="micControl" class="control-btn active">
+            <div class="tab-content" id="slidesTab" style="display: none;">
+                <div class="slides-container">
+                    <div class="slides-list" id="slidesList">
+                        <!-- Slides will be added here dynamically -->
+                    </div>
+                    <button class="add-slide-btn" id="addSlideBtn">
+                        <i class="fas fa-plus"></i> Add Slide
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool Options Panel -->
+        <div class="tool-options" id="toolOptions">
+            <div class="option-group">
+                <div class="option-title">Color</div>
+                <div class="option-buttons">
+                    <div class="color-option active" style="background-color: #000000;" data-color="#000000"></div>
+                    <div class="color-option" style="background-color: #ff0000;" data-color="#ff0000"></div>
+                    <div class="color-option" style="background-color: #00ff00;" data-color="#00ff00"></div>
+                    <div class="color-option" style="background-color: #0000ff;" data-color="#0000ff"></div>
+                    <div class="color-option" style="background-color: #ffff00;" data-color="#ffff00"></div>
+                    <div class="color-option" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
+                    <div class="color-option" style="background-color: #00ffff;" data-color="#00ffff"></div>
+                    <div class="color-option" style="background-color: #ffffff; border: 1px solid #e0e0e0;" data-color="#ffffff"></div>
+                </div>
+            </div>
+
+            <div class="option-group">
+                <div class="option-title">Line Width</div>
+                <input type="range" class="range-input" id="lineWidthInput" min="1" max="20" value="3">
+            </div>
+
+            <div class="option-group">
+                <div class="option-title">Fill Color</div>
+                <div class="option-buttons">
+                    <div class="color-option" style="background-color: rgba(255, 0, 0, 0.3);" data-fill="rgba(255, 0, 0, 0.3)"></div>
+                    <div class="color-option" style="background-color: rgba(0, 255, 0, 0.3);" data-fill="rgba(0, 255, 0, 0.3)"></div>
+                    <div class="color-option" style="background-color: rgba(0, 0, 255, 0.3);" data-fill="rgba(0, 0, 255, 0.3)"></div>
+                    <div class="color-option" style="background-color: rgba(255, 255, 0, 0.3);" data-fill="rgba(255, 255, 0, 0.3)"></div>
+                    <div class="color-option" style="background-color: rgba(255, 0, 255, 0.3);" data-fill="rgba(255, 0, 255, 0.3)"></div>
+                    <div class="color-option" style="background-color: rgba(0, 255, 255, 0.3);" data-fill="rgba(0, 255, 255, 0.3)"></div>
+                    <div class="color-option" style="background-color: rgba(255, 255, 255, 0.3); border: 1px solid #e0e0e0;" data-fill="rgba(255, 255, 255, 0.3)"></div>
+                    <div class="color-option" style="background-color: transparent; border: 1px solid #e0e0e0;" data-fill="transparent">X</div>
+                </div>
+            </div>
+
+            <div class="option-group" id="textOptions">
+                <div class="option-title">Font Size</div>
+                <div class="option-buttons">
+                    <button class="option-btn" data-size="12">12</button>
+                    <button class="option-btn" data-size="16">16</button>
+                    <button class="option-btn active" data-size="24">24</button>
+                    <button class="option-btn" data-size="32">32</button>
+                    <button class="option-btn" data-size="48">48</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="bottom-controls">
+            <div class="control-icon" id="micControl">
+                <div class="control-icon-btn active">
                     <i class="fas fa-microphone"></i>
-                </button>
-                <button id="videoControl" class="control-btn active">
+                </div>
+                <div class="control-label">Mute</div>
+            </div>
+
+            <div class="control-icon" id="videoControl">
+                <div class="control-icon-btn active">
                     <i class="fas fa-video"></i>
-                </button>
-                <button id="screenShareControl" class="control-btn">
+                </div>
+                <div class="control-label">Stop Video</div>
+            </div>
+
+            <div class="control-icon" id="screenShareControl">
+                <div class="control-icon-btn">
                     <i class="fas fa-desktop"></i>
-                </button>
-                <div class="reaction-controls">
-                    <button id="raiseHand" class="control-btn">
-                        <i class="fas fa-hand-paper"></i>
-                    </button>
-                    <div class="reaction-menu">
-                        <button class="reaction-option" data-reaction="👍">👍</button>
-                        <button class="reaction-option" data-reaction="👏">👏</button>
-                        <button class="reaction-option" data-reaction="❤️">❤️</button>
-                        <button class="reaction-option" data-reaction="😂">😂</button>
-                        <button class="reaction-option" data-reaction="😮">😮</button>
-                    </div>
                 </div>
-                <button id="participantsControl" class="control-btn">
+                <div class="control-label">Share Screen</div>
+            </div>
+
+            <div class="control-icon" id="participantsControl">
+                <div class="control-icon-btn">
                     <i class="fas fa-users"></i>
-                </button>
-                <button id="moreControls" class="control-btn">
+                </div>
+                <div class="control-label">Participants</div>
+            </div>
+
+            <div class="control-icon" id="reactionsControl">
+                <div class="control-icon-btn">
+                    <i class="fas fa-smile"></i>
+                </div>
+                <div class="control-label">Reactions</div>
+                <div class="reactions-menu" id="reactionsMenu">
+                    <div class="reaction-btn">👍</div>
+                    <div class="reaction-btn">👎</div>
+                    <div class="reaction-btn">👏</div>
+                    <div class="reaction-btn">😊</div>
+                    <div class="reaction-btn">😂</div>
+                    <div class="reaction-btn">😮</div>
+                    <div class="reaction-btn">😢</div>
+                    <div class="reaction-btn">❤️</div>
+                </div>
+            </div>
+
+            <div class="control-icon" id="raiseHandControl">
+                <div class="control-icon-btn">
+                    <i class="fas fa-hand-paper"></i>
+                </div>
+                <div class="control-label">Raise Hand</div>
+            </div>
+
+            <div class="control-icon" id="moreControl">
+                <div class="control-icon-btn">
                     <i class="fas fa-ellipsis-h"></i>
-                </button>
-                <button id="leaveControl" class="control-btn leave-btn">
-                    <i class="fas fa-phone-slash"></i> Leave
-                </button>
+                </div>
+                <div class="control-label">More</div>
+            </div>
+
+            <div class="control-icon end-call" id="endCallControl">
+                <div class="control-icon-btn">
+                    <i class="fas fa-phone-slash"></i>
+                </div>
+                <div class="control-label">Leave</div>
             </div>
         </div>
+    </div>
 
-        <!-- Chat Panel -->
-        <div class="chat-panel" id="chatPanel">
-            <div class="chat-header">
-                <h3>Chat</h3>
-                <button id="closeChat" class="btn-icon">
-                    <i class="fas fa-times"></i>
-                </button>
+    <!-- Modals -->
+    <!-- Waiting Room Modal -->
+    <div class="modal-overlay" id="waitingRoomModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Waiting Room</div>
+                <button class="modal-close" id="closeWaitingRoomModal">&times;</button>
             </div>
-            <div class="chat-messages" id="chatMessages"></div>
-            <div class="chat-input">
-                <input type="text" id="chatInput" placeholder="Type a message...">
-                <button id="sendMessage" class="btn-icon">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+            <div class="modal-body">
+                <p>Participants are waiting to join the session. Please admit them to the meeting.</p>
+                <div class="waiting-list" id="waitingList">
+                    <!-- Waiting participants will be added here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="admitAllBtn">Admit All</button>
+                <button class="btn btn-primary" id="closeWaitingRoomBtn">Close</button>
             </div>
         </div>
+    </div>
 
-        <!-- Settings Panel -->
-        <div class="settings-panel" id="settingsPanel">
-            <div class="settings-header">
-                <h3>Settings</h3>
-                <button id="closeSettings" class="btn-icon">
-                    <i class="fas fa-times"></i>
-                </button>
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Settings</div>
+                <button class="modal-close" id="closeSettingsModal">&times;</button>
             </div>
-            <div class="settings-content">
+            <div class="modal-body">
                 <div class="settings-tabs">
-                    <button class="tab-btn active" data-tab="audio">Audio</button>
-                    <button class="tab-btn" data-tab="video">Video</button>
-                    <button class="tab-btn" data-tab="whiteboard">Whiteboard</button>
-                    <button class="tab-btn" data-tab="security">Security</button>
+                    <div class="settings-tab active" data-tab="general">General</div>
+                    <div class="settings-tab" data-tab="video">Video</div>
+                    <div class="settings-tab" data-tab="audio">Audio</div>
+                    <div class="settings-tab" data-tab="security">Security</div>
                 </div>
-                
-                <div class="tab-content active" id="audioTab">
-                    <h4>Audio Settings</h4>
-                    <div class="setting-option">
-                        <label>Microphone</label>
-                        <select id="audioInputSelect">
-                            <option value="default">Default</option>
-                        </select>
-                    </div>
-                    <div class="setting-option">
-                        <label>Speaker</label>
-                        <select id="audioOutputSelect">
-                            <option value="default">Default</option>
-                        </select>
-                    </div>
-                    <div class="setting-option">
-                        <label>Volume</label>
-                        <input type="range" id="audioVolume" min="0" max="100" value="80">
-                    </div>
-                    <div class="setting-option">
-                        <input type="checkbox" id="autoJoinAudio" checked>
-                        <label for="autoJoinAudio">Automatically join audio</label>
-                    </div>
-                    <div class="setting-option">
-                        <input type="checkbox" id="noiseSuppression" checked>
-                        <label for="noiseSuppression">Noise suppression</label>
-                    </div>
-                </div>
-                
-                <div class="tab-content" id="videoTab">
-                    <h4>Video Settings</h4>
-                    <div class="setting-option">
-                        <label>Camera</label>
-                        <select id="videoInputSelect">
-                            <option value="default">Default</option>
-                        </select>
-                    </div>
-                    <div class="setting-option">
-                        <label>Video Quality</label>
-                        <select id="videoQuality">
-                            <option value="auto">Auto</option>
-                            <option value="hd">HD</option>
-                            <option value="sd">SD</option>
-                        </select>
-                    </div>
-                    <div class="setting-option">
-                        <input type="checkbox" id="mirrorVideo">
-                        <label for="mirrorVideo">Mirror my video</label>
-                    </div>
-                    <div class="setting-option">
-                        <input type="checkbox" id="touchUpAppearance" checked>
-                        <label for="touchUpAppearance">Touch up my appearance</label>
-                    </div>
-                    <div class="setting-option">
-                        <label>Virtual Background</label>
-                        <div class="background-options">
-                            <div class="bg-option" data-bg="none">None</div>
-                            <div class="bg-option" data-bg="blur">Blur</div>
-                            <div class="bg-option" data-bg="office">
-                                <img src="assets/backgrounds/office.jpg" alt="Office">
+
+                <div class="settings-content active" id="generalSettings">
+                    <div class="setting-item">
+                        <div class="setting-title">
+                            <i class="fas fa-user"></i> Profile
+                        </div>
+                        <div class="setting-description">
+                            Customize your display name and profile picture.
+                        </div>
+                        <div class="setting-options">
+                            <div class="setting-option">
+                                <label for="displayName">Display Name:</label>
+                                <input type="text" id="displayName" class="select-input" placeholder="Enter your name">
                             </div>
-                            <div class="bg-option" data-bg="meeting">
-                                <img src="assets/backgrounds/meeting-room.jpg" alt="Meeting Room">
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-title">
+                            <i class="fas fa-palette"></i> Appearance
+                        </div>
+                        <div class="setting-options">
+                            <div class="setting-option">
+                                <input type="checkbox" id="darkMode" checked>
+                                <label for="darkMode">Dark Mode</label>
                             </div>
-                            <div class="bg-option" data-bg="bedroom">
-                                <img src="assets/backgrounds/bedroom.jpg" alt="Bedroom">
+                            <div class="setting-option">
+                                <input type="checkbox" id="showCursors">
+                                <label for="showCursors">Show other users' cursors</label>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="tab-content" id="whiteboardTab">
-                    <h4>Whiteboard Settings</h4>
-                    <div class="setting-option">
-                        <label>Default Brush Size</label>
-                        <input type="range" id="defaultBrushSize" min="1" max="50" value="5">
+
+                <div class="settings-content" id="videoSettings">
+                    <div class="setting-item">
+                        <div class="setting-title">
+                            <i class="fas fa-video"></i> Video Settings
+                        </div>
+                        <div class="setting-options">
+                            <div class="setting-option">
+                                <label for="cameraSelect">Camera:</label>
+                                <select id="cameraSelect" class="select-input">
+                                    <option value="default">Default Camera</option>
+                                </select>
+                            </div>
+                            <div class="setting-option">
+                                <input type="checkbox" id="hdVideo" checked>
+                                <label for="hdVideo">Enable HD Video</label>
+                            </div>
+                            <div class="setting-option">
+                                <input type="checkbox" id="mirrorVideo">
+                                <label for="mirrorVideo">Mirror My Video</label>
+                            </div>
+                            <div class="setting-option">
+                                <input type="checkbox" id="touchUpAppearance">
+                                <label for="touchUpAppearance">Touch Up My Appearance</label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="setting-option">
-                        <label>Default Color</label>
-                        <input type="color" id="defaultColor" value="#000000">
-                    </div>
-                    <div class="setting-option">
-                        <input type="checkbox" id="autoSave" checked>
-                        <label for="autoSave">Auto-save changes</label>
-                    </div>
-                    <div class="setting-option">
-                        <input type="checkbox" id="showCursors" checked>
-                        <label for="showCursors">Show other users' cursors</label>
-                    </div>
-                    <div class="setting-option">
-                        <label>Whiteboard Background</label>
-                        <select id="whiteboardBackground">
-                            <option value="white">White</option>
-                            <option value="grid">Grid</option>
-                            <option value="dots">Dots</option>
-                            <option value="black">Black</option>
-                        </select>
+
+                    <div class="setting-item">
+                        <div class="setting-title">
+                            <i class="fas fa-image"></i> Virtual Background
+                        </div>
+                        <div class="setting-description">
+                            Choose an image or video as your background during meetings.
+                        </div>
+                        <div class="setting-options">
+                            <div class="setting-option">
+                                <input type="radio" id="bgNone" name="background" checked>
+                                <label for="bgNone">None</label>
+                            </div>
+                            <div class="setting-option">
+                                <input type="radio" id="bgBlur" name="background">
+                                <label for="bgBlur">Blur</label>
+                            </div>
+                            <div class="setting-option">
+                                <input type="radio" id="bgOffice" name="background">
+                                <label for="bgOffice">Office</label>
+                            </div>
+                            <div class="setting-option">
+                                <input type="radio" id="bgMeetingRoom" name="background">
+                                <label for="bgMeetingRoom">Meeting Room</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="tab-content" id="securityTab">
-                    <h4>Security Settings</h4>
-                    <div class="setting-option">
-                        <input type="checkbox" id="enableWaitingRoom" checked>
-                        <label for="enableWaitingRoom">Enable waiting room</label>
+
+                <div class="settings-content" id="audioSettings">
+                    <div class="setting-item">
+                        <div class="setting-title">
+                            <i class="fas fa-microphone"></i> Microphone
+                        </div>
+                        <div class="setting-options">
+                            <div class="setting-option">
+                                <label for="micSelect">Microphone:</label>
+                                <select id="micSelect" class="select-input">
+                                    <option value="default">Default Microphone</option>
+                                </select>
+                            </div>
+                            <div class="setting-option">
+                                <input type="checkbox" id="autoAdjustMic" checked>
+                                <label for="autoAdjustMic">Automatically Adjust Microphone Volume</label>
+                            </div>
+                            <div class="setting-option">
+                                <input type="checkbox" id="suppressBackgroundNoise" checked>
+                                <label for="suppressBackgroundNoise">Suppress Background Noise</label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="setting-option">
-                        <input type="checkbox" id="requirePasscode">
-                        <label for="requirePasscode">Require meeting passcode</label>
-                        <input type="text" id="meetingPasscode" disabled>
+
+                    <div class="setting-item">
+                        <div class="setting-title">
+                            <i class="fas fa-volume-up"></i> Speaker
+                        </div>
+                        <div class="setting-options">
+                            <div class="setting-option">
+                                <label for="speakerSelect">Speaker:</label>
+                                <select id="speakerSelect" class="select-input">
+                                    <option value="default">Default Speaker</option>
+                                </select>
+                            </div>
+                            <div class="setting-option">
+                                <input type="checkbox" id="autoJoinAudio" checked>
+                                <label for="autoJoinAudio">Automatically Join Audio by Computer</label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="setting-option">
-                        <input type="checkbox" id="lockMeeting">
-                        <label for="lockMeeting">Lock meeting</label>
+                </div>
+
+                <div class="settings-content" id="securitySettings">
+                    <div class="setting-item">
+                        <div class="setting-title">
+                            <i class="fas fa-lock"></i> Meeting Security
+                        </div>
+                        <div class="setting-options">
+                            <div class="setting-option">
+                                <input type="checkbox" id="enableWaitingRoom" checked>
+                                <label for="enableWaitingRoom">Enable Waiting Room</label>
+                            </div>
+                            <div class="setting-option">
+                                <input type="checkbox" id="requirePasscode">
+                                <label for="requirePasscode">Require Meeting Passcode</label>
+                            </div>
+                            <div class="setting-option">
+                                <input type="checkbox" id="allowJoinBeforeHost">
+                                <label for="allowJoinBeforeHost">Allow Participants to Join Before Host</label>
+                            </div>
+                            <div class="setting-option">
+                                <input type="checkbox" id="muteOnEntry" checked>
+                                <label for="muteOnEntry">Mute Participants on Entry</label>
+                            </div>
+                            <div class="setting-option">
+                                <input type="checkbox" id="lockMeeting">
+                                <label for="lockMeeting">Lock Meeting</label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="setting-option">
-                        <input type="checkbox" id="muteOnEntry">
-                        <label for="muteOnEntry">Mute participants on entry</label>
-                    </div>
-                    <div class="setting-option">
-                        <input type="checkbox" id="allowRejoin">
-                        <label for="allowRejoin">Allow removed participants to rejoin</label>
-                    </div>
-                    <div class="setting-option">
-                        <input type="checkbox" id="watermark">
-                        <label for="watermark">Add watermark to shared content</label>
+
+                    <div class="setting-item">
+                        <div class="setting-title">
+                            <i class="fas fa-comments"></i> Chat Settings
+                        </div>
+                        <div class="setting-options">
+                            <div class="setting-option">
+                                <label for="chatPermission">Who can chat:</label>
+                                <select id="chatPermission" class="select-input">
+                                    <option value="everyone">Everyone</option>
+                                    <option value="hostOnly">Host Only</option>
+                                    <option value="none">No One</option>
+                                </select>
+                            </div>
+                            <div class="setting-option">
+                                <input type="checkbox" id="disablePrivateChat">
+                                <label for="disablePrivateChat">Disable Private Chat</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSettingsBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveSettingsBtn">Save</button>
+            </div>
         </div>
+    </div>
 
-        <!-- Invite Modal -->
-        <div id="inviteModal" class="modal">
-            <div class="modal-content invite-modal">
-                <h2>Invite Participants</h2>
-                <div class="invite-options">
-                    <div class="invite-link">
-                        <label>Meeting Link</label>
-                        <div class="link-container">
-                            <input type="text" id="meetingLink" readonly>
-                            <button id="copyLink" class="btn-icon">
-                                <i class="fas fa-copy"></i>
-                            </button>
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="exportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Export Whiteboard</div>
+                <button class="modal-close" id="closeExportModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <div class="setting-title">Export Format</div>
+                    <div class="setting-options">
+                        <div class="setting-option">
+                            <input type="radio" id="exportPNG" name="exportFormat" checked>
+                            <label for="exportPNG">PNG Image</label>
                         </div>
-                    </div>
-                    <div class="invite-code">
-                        <label>Meeting ID</label>
-                        <div class="code-container">
-                            <input type="text" id="meetingId" readonly>
-                            <button id="copyId" class="btn-icon">
-                                <i class="fas fa-copy"></i>
-                            </button>
+                        <div class="setting-option">
+                            <input type="radio" id="exportJPG" name="exportFormat">
+                            <label for="exportJPG">JPG Image</label>
                         </div>
-                    </div>
-                    <div class="invite-methods">
-                        <button class="invite-method">
-                            <i class="fas fa-envelope"></i> Email
-                        </button>
-                        <button class="invite-method">
-                            <i class="fas fa-sms"></i> SMS
-                        </button>
-                        <button class="invite-method">
-                            <i class="fab fa-whatsapp"></i> WhatsApp
-                        </button>
-                        <button class="invite-method">
-                            <i class="fab fa-slack"></i> Slack
-                        </button>
+                        <div class="setting-option">
+                            <input type="radio" id="exportPDF" name="exportFormat">
+                            <label for="exportPDF">PDF Document</label>
+                        </div>
                     </div>
                 </div>
-                <div class="invite-footer">
-                    <button id="closeInviteModal" class="btn btn-secondary">Close</button>
+
+                <div class="setting-item">
+                    <div class="setting-title">Export Options</div>
+                    <div class="setting-options">
+                        <div class="setting-option">
+                            <input type="checkbox" id="exportCurrentSlide" checked>
+                            <label for="exportCurrentSlide">Current Slide Only</label>
+                        </div>
+                        <div class="setting-option">
+                            <input type="checkbox" id="exportTransparentBG">
+                            <label for="exportTransparentBG">Transparent Background (PNG only)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelExportBtn">Cancel</button>
+                <button class="btn btn-primary" id="confirmExportBtn">Export</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave Meeting Modal -->
+    <div class="modal-overlay" id="leaveModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Leave Meeting</div>
+                <button class="modal-close" id="closeLeaveModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to leave the meeting?</p>
+                <div class="setting-option">
+                    <input type="checkbox" id="saveBeforeLeave" checked>
+                    <label for="saveBeforeLeave">Save whiteboard before leaving</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelLeaveBtn">Cancel</button>
+                <button class="btn btn-danger" id="confirmLeaveBtn">Leave</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- End Meeting Modal -->
+    <div class="modal-overlay" id="endMeetingModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">End Meeting for All</div>
+                <button class="modal-close" id="closeEndMeetingModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>You are about to end this meeting for all participants. Are you sure?</p>
+                <div class="setting-option">
+                    <input type="checkbox" id="saveBeforeEnd" checked>
+                    <label for="saveBeforeEnd">Save whiteboard before ending</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEndMeetingBtn">Cancel</button>
+                <button class="btn btn-danger" id="confirmEndMeetingBtn">End Meeting for All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- More Options Menu -->
+    <div class="modal-overlay" id="moreOptionsModal">
+        <div class="modal" style="width: 300px; position: absolute; right: 20px; bottom: 80px;">
+            <div class="modal-body" style="padding: 0;">
+                <div class="option-item">
+                    <button class="option-btn" style="width: 100%; justify-content: flex-start; border-radius: 0; padding: 0.8rem 1rem;" id="inviteBtn">
+                        <i class="fas fa-user-plus" style="margin-right: 0.8rem;"></i> Invite
+                    </button>
+                </div>
+                <div class="option-item">
+                    <button class="option-btn" style="width: 100%; justify-content: flex-start; border-radius: 0; padding: 0.8rem 1rem;" id="chatBtn">
+                        <i class="fas fa-comment" style="margin-right: 0.8rem;"></i> Chat
+                    </button>
+                </div>
+                <div class="option-item">
+                    <button class="option-btn" style="width: 100%; justify-content: flex-start; border-radius: 0; padding: 0.8rem 1rem;" id="recordBtn">
+                        <i class="fas fa-circle" style="margin-right: 0.8rem; color: var(--danger-color);"></i> Record
+                    </button>
+                </div>
+                <div class="option-item">
+                    <button class="option-btn" style="width: 100%; justify-content: flex-start; border-radius: 0; padding: 0.8rem 1rem;" id="settingsBtn">
+                        <i class="fas fa-cog" style="margin-right: 0.8rem;"></i> Settings
+                    </button>
+                </div>
+                <div class="option-item">
+                    <button class="option-btn" style="width: 100%; justify-content: flex-start; border-radius: 0; padding: 0.8rem 1rem;" id="endMeetingBtn">
+                        <i class="fas fa-door-open" style="margin-right: 0.8rem;"></i> End Meeting
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-    <script src="script.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const whiteboard = document.getElementById('whiteboard');
+            const ctx = whiteboard.getContext('2d');
+            const pencilTool = document.getElementById('pencilTool');
+            const lineTool = document.getElementById('lineTool');
+            const rectangleTool = document.getElementById('rectangleTool');
+            const circleTool = document.getElementById('circleTool');
+            const textTool = document.getElementById('textTool');
+            const eraserTool = document.getElementById('eraserTool');
+            const selectTool = document.getElementById('selectTool');
+            const moveTool = document.getElementById('moveTool');
+            const zoomInTool = document.getElementById('zoomInTool');
+            const zoomOutTool = document.getElementById('zoomOutTool');
+            const undoTool = document.getElementById('undoTool');
+            const redoTool = document.getElementById('redoTool');
+            const clearTool = document.getElementById('clearTool');
+            const colorOptions = document.querySelectorAll('.color-option');
+            const lineWidthInput = document.getElementById('lineWidthInput');
+            const fillColorOptions = document.querySelectorAll('.color-option[data-fill]');
+            const fontSizeButtons = document.querySelectorAll('#textOptions .option-btn');
+            const toolOptions = document.getElementById('toolOptions');
+            const saveBtn = document.getElementById('saveBtn');
+            const loadBtn = document.getElementById('loadBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const newSlideBtn = document.getElementById('newSlideBtn');
+            const addSlideBtn = document.getElementById('addSlideBtn');
+            const slidesList = document.getElementById('slidesList');
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const participantsList = document.getElementById('participantsList');
+            const videoGrid = document.getElementById('videoGrid');
+            const toggleMicBtn = document.getElementById('toggleMicBtn');
+            const toggleVideoBtn = document.getElementById('toggleVideoBtn');
+            const screenShareBtn = document.getElementById('screenShareBtn');
+            const leaveCallBtn = document.getElementById('leaveCallBtn');
+            const userCount = document.getElementById('userCount');
+            const userAvatar = document.getElementById('userAvatar');
+            const waitingRoomModal = document.getElementById('waitingRoomModal');
+            const closeWaitingRoomModal = document.getElementById('closeWaitingRoomModal');
+            const admitAllBtn = document.getElementById('admitAllBtn');
+            const closeWaitingRoomBtn = document.getElementById('closeWaitingRoomBtn');
+            const waitingList = document.getElementById('waitingList');
+            const settingsModal = document.getElementById('settingsModal');
+            const closeSettingsModal = document.getElementById('closeSettingsModal');
+            const cancelSettingsBtn = document.getElementById('cancelSettingsBtn');
+            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+            const settingsTabs = document.querySelectorAll('.settings-tab');
+            const settingsContents = document.querySelectorAll('.settings-content');
+            const exportModal = document.getElementById('exportModal');
+            const closeExportModal = document.getElementById('closeExportModal');
+            const cancelExportBtn = document.getElementById('cancelExportBtn');
+            const confirmExportBtn = document.getElementById('confirmExportBtn');
+            const leaveModal = document.getElementById('leaveModal');
+            const closeLeaveModal = document.getElementById('closeLeaveModal');
+            const cancelLeaveBtn = document.getElementById('cancelLeaveBtn');
+            const confirmLeaveBtn = document.getElementById('confirmLeaveBtn');
+            const endMeetingModal = document.getElementById('endMeetingModal');
+            const closeEndMeetingModal = document.getElementById('closeEndMeetingModal');
+            const cancelEndMeetingBtn = document.getElementById('cancelEndMeetingBtn');
+            const confirmEndMeetingBtn = document.getElementById('confirmEndMeetingBtn');
+            const moreOptionsModal = document.getElementById('moreOptionsModal');
+            const micControl = document.getElementById('micControl');
+            const videoControl = document.getElementById('videoControl');
+            const screenShareControl = document.getElementById('screenShareControl');
+            const participantsControl = document.getElementById('participantsControl');
+            const reactionsControl = document.getElementById('reactionsControl');
+            const raiseHandControl = document.getElementById('raiseHandControl');
+            const moreControl = document.getElementById('moreControl');
+            const endCallControl = document.getElementById('endCallControl');
+            const reactionsMenu = document.getElementById('reactionsMenu');
+            const inviteBtn = document.getElementById('inviteBtn');
+            const chatBtn = document.getElementById('chatBtn');
+            const recordBtn = document.getElementById('recordBtn');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const endMeetingBtn = document.getElementById('endMeetingBtn');
+            const rightSidebar = document.getElementById('rightSidebar');
+            const participantsTab = document.getElementById('participantsTab');
+
+            // Initialize canvas size
+            function resizeCanvas() {
+                const container = whiteboard.parentElement;
+                whiteboard.width = container.offsetWidth;
+                whiteboard.height = container.offsetHeight;
+                redrawCanvas();
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            // Drawing state
+            let isDrawing = false;
+            let currentTool = 'pencil';
+            let currentColor = '#000000';
+            let currentLineWidth = 3;
+            let currentFillColor = 'transparent';
+            let currentFontSize = 24;
+            let lastX = 0;
+            let lastY = 0;
+            let startX = 0;
+            let startY = 0;
+            let drawingHistory = [];
+            let historyIndex = -1;
+            let slides = [];
+            let currentSlideIndex = 0;
+            let remoteCursors = {};
+            let participants = [];
+            let isHost = true; // Assume first user is host for demo
+            let isMicOn = true;
+            let isVideoOn = true;
+            let isScreenSharing = false;
+            let isHandRaised = false;
+            let displayName = 'User' + Math.floor(Math.random() * 1000);
+            let userId = generateId();
+            let socket;
+
+            // Initialize socket connection
+            function initSocket() {
+                // For demo, we'll simulate socket behavior
+                // In a real app, you would connect to your Socket.io server
+                console.log('Connecting to Socket.io server...');
+                
+                // Simulate receiving data
+                setInterval(() => {
+                    if (Math.random() > 0.7) {
+                        simulateOtherUserDrawing();
+                    }
+                    if (Math.random() > 0.8) {
+                        simulateOtherUserCursor();
+                    }
+                    if (Math.random() > 0.9) {
+                        simulateParticipantChange();
+                    }
+                }, 1000);
+            }
+
+            function generateId() {
+                return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            }
+
+            // Simulate other users drawing for demo
+            function simulateOtherUserDrawing() {
+                if (slides.length === 0) return;
+                
+                const simulatedUserId = 'simulated-' + Math.floor(Math.random() * 5);
+                const color = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'][Math.floor(Math.random() * 5)];
+                const lineWidth = Math.floor(Math.random() * 10) + 1;
+                
+                // Draw a random line
+                const x1 = Math.random() * whiteboard.width;
+                const y1 = Math.random() * whiteboard.height;
+                const x2 = x1 + (Math.random() * 100 - 50);
+                const y2 = y1 + (Math.random() * 100 - 50);
+                
+                drawLine(x1, y1, x2, y2, color, lineWidth, simulatedUserId);
+                
+                // Add to history
+                const drawing = {
+                    tool: 'pencil',
+                    points: [{x: x1, y: y1}, {x: x2, y: y2}],
+                    color: color,
+                    lineWidth: lineWidth,
+                    userId: simulatedUserId
+                };
+                
+                slides[currentSlideIndex].drawings.push(drawing);
+            }
+
+            // Simulate other users' cursors for demo
+            function simulateOtherUserCursor() {
+                const simulatedUserId = 'simulated-' + Math.floor(Math.random() * 5);
+                const name = ['Alice', 'Bob', 'Charlie', 'Dana', 'Eve'][Math.floor(Math.random() * 5)];
+                const color = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'][Math.floor(Math.random() * 5)];
+                
+                const x = Math.random() * whiteboard.width;
+                const y = Math.random() * whiteboard.height;
+                
+                updateRemoteCursor(simulatedUserId, name, x, y, color);
+            }
+
+            // Simulate participants joining/leaving for demo
+            function simulateParticipantChange() {
+                if (Math.random() > 0.5) {
+                    // Simulate new participant
+                    const simulatedUserId = 'simulated-' + Math.floor(Math.random() * 100);
+                    const name = ['Alice', 'Bob', 'Charlie', 'Dana', 'Eve'][Math.floor(Math.random() * 5)];
+                    const isVideoOn = Math.random() > 0.5;
+                    
+                    addParticipant({
+                        id: simulatedUserId,
+                        name: name,
+                        isHost: false,
+                        isVideoOn: isVideoOn,
+                        isMicOn: Math.random() > 0.5,
+                        isHandRaised: Math.random() > 0.8
+                    });
+                    
+                    if (isVideoOn) {
+                        addVideoFeed(simulatedUserId, name);
+                    }
+                } else if (participants.length > 1) {
+                    // Simulate participant leaving
+                    const index = Math.floor(Math.random() * (participants.length - 1)) + 1;
+                    const participant = participants[index];
+                    removeParticipant(participant.id);
+                    removeVideoFeed(participant.id);
+                }
+                
+                updateUserCount();
+            }
+
+            // Initialize the first slide
+            function initFirstSlide() {
+                slides = [{
+                    id: generateId(),
+                    name: 'Whiteboard 1',
+                    drawings: []
+                }];
+                currentSlideIndex = 0;
+                renderSlides();
+                redrawCanvas();
+            }
+
+            // Drawing functions
+            function startDrawing(e) {
+                isDrawing = true;
+                const pos = getPosition(e);
+                [lastX, lastY] = [pos.x, pos.y];
+                [startX, startY] = [pos.x, pos.y];
+                
+                if (currentTool === 'text') {
+                    const text = prompt('Enter text:', '');
+                    if (text) {
+                        drawText(text, lastX, lastY);
+                        saveDrawing({
+                            tool: 'text',
+                            text: text,
+                            x: lastX,
+                            y: lastY,
+                            color: currentColor,
+                            fontSize: currentFontSize,
+                            userId: userId
+                        });
+                    }
+                    isDrawing = false;
+                    return;
+                }
+                
+                // Save initial drawing state
+                if (currentTool !== 'select' && currentTool !== 'move' && currentTool !== 'zoomIn' && currentTool !== 'zoomOut') {
+                    saveDrawingState();
+                }
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                
+                const pos = getPosition(e);
+                const x = pos.x;
+                const y = pos.y;
+                
+                switch (currentTool) {
+                    case 'pencil':
+                        drawLine(lastX, lastY, x, y, currentColor, currentLineWidth, userId);
+                        lastX = x;
+                        lastY = y;
+                        break;
+                    case 'line':
+                        redrawCanvas();
+                        drawLine(startX, startY, x, y, currentColor, currentLineWidth, userId);
+                        break;
+                    case 'rectangle':
+                        redrawCanvas();
+                        drawRectangle(startX, startY, x - startX, y - startY, currentColor, currentLineWidth, currentFillColor, userId);
+                        break;
+                    case 'circle':
+                        redrawCanvas();
+                        const radius = Math.sqrt(Math.pow(x - startX, 2) + Math.pow(y - startY, 2));
+                        drawCircle(startX, startY, radius, currentColor, currentLineWidth, currentFillColor, userId);
+                        break;
+                    case 'eraser':
+                        eraseLine(lastX, lastY, x, y, currentLineWidth);
+                        lastX = x;
+                        lastY = y;
+                        break;
+                }
+            }
+
+            function stopDrawing(e) {
+                if (!isDrawing) return;
+                
+                const pos = getPosition(e);
+                const x = pos.x;
+                const y = pos.y;
+                
+                switch (currentTool) {
+                    case 'line':
+                        drawLine(startX, startY, x, y, currentColor, currentLineWidth, userId);
+                        saveDrawing({
+                            tool: 'line',
+                            startX: startX,
+                            startY: startY,
+                            endX: x,
+                            endY: y,
+                            color: currentColor,
+                            lineWidth: currentLineWidth,
+                            userId: userId
+                        });
+                        break;
+                    case 'rectangle':
+                        drawRectangle(startX, startY, x - startX, y - startY, currentColor, currentLineWidth, currentFillColor, userId);
+                        saveDrawing({
+                            tool: 'rectangle',
+                            x: startX,
+                            y: startY,
+                            width: x - startX,
+                            height: y - startY,
+                            color: currentColor,
+                            lineWidth: currentLineWidth,
+                            fillColor: currentFillColor,
+                            userId: userId
+                        });
+                        break;
+                    case 'circle':
+                        const radius = Math.sqrt(Math.pow(x - startX, 2) + Math.pow(y - startY, 2));
+                        drawCircle(startX, startY, radius, currentColor, currentLineWidth, currentFillColor, userId);
+                        saveDrawing({
+                            tool: 'circle',
+                            x: startX,
+                            y: startY,
+                            radius: radius,
+                            color: currentColor,
+                            lineWidth: currentLineWidth,
+                            fillColor: currentFillColor,
+                            userId: userId
+                        });
+                        break;
+                    case 'pencil':
+                    case 'eraser':
+                        // Already saved continuously
+                        break;
+                }
+                
+                isDrawing = false;
+            }
+
+            function getPosition(e) {
+                const rect = whiteboard.getBoundingClientRect();
+                return {
+                    x: (e.clientX || e.touches[0].clientX) - rect.left,
+                    y: (e.clientY || e.touches[0].clientY) - rect.top
+                };
+            }
+
+            function drawLine(x1, y1, x2, y2, color, width, userId) {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = width;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+                
+                if (userId !== this.userId) {
+                    // Simulate sending drawing data to other users
+                    // In a real app, this would be sent via Socket.io
+                }
+            }
+
+            function drawRectangle(x, y, width, height, color, lineWidth, fillColor, userId) {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = lineWidth;
+                ctx.fillStyle = fillColor;
+                ctx.beginPath();
+                ctx.rect(x, y, width, height);
+                if (fillColor !== 'transparent') {
+                    ctx.fill();
+                }
+                ctx.stroke();
+            }
+
+            function drawCircle(x, y, radius, color, lineWidth, fillColor, userId) {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = lineWidth;
+                ctx.fillStyle = fillColor;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                if (fillColor !== 'transparent') {
+                    ctx.fill();
+                }
+                ctx.stroke();
+            }
+
+            function drawText(text, x, y) {
+                ctx.fillStyle = currentColor;
+                ctx.font = `${currentFontSize}px Arial`;
+                ctx.fillText(text, x, y);
+            }
+
+            function eraseLine(x1, y1, x2, y2, width) {
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = width;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+                
+                // Save eraser action as a drawing
+                saveDrawing({
+                    tool: 'eraser',
+                    points: [{x: x1, y: y1}, {x: x2, y: y2}],
+                    lineWidth: width,
+                    userId: userId
+                });
+            }
+
+            function redrawCanvas() {
+                ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+                
+                if (slides.length > 0 && slides[currentSlideIndex]) {
+                    slides[currentSlideIndex].drawings.forEach(drawing => {
+                        switch (drawing.tool) {
+                            case 'pencil':
+                            case 'eraser':
+                                ctx.strokeStyle = drawing.tool === 'eraser' ? 'white' : drawing.color;
+                                ctx.lineWidth = drawing.lineWidth;
+                                ctx.lineCap = 'round';
+                                ctx.lineJoin = 'round';
+                                ctx.beginPath();
+                                ctx.moveTo(drawing.points[0].x, drawing.points[0].y);
+                                for (let i = 1; i < drawing.points.length; i++) {
+                                    ctx.lineTo(drawing.points[i].x, drawing.points[i].y);
+                                }
+                                ctx.stroke();
+                                break;
+                            case 'line':
+                                drawLine(drawing.startX, drawing.startY, drawing.endX, drawing.endY, drawing.color, drawing.lineWidth, drawing.userId);
+                                break;
+                            case 'rectangle':
+                                drawRectangle(drawing.x, drawing.y, drawing.width, drawing.height, drawing.color, drawing.lineWidth, drawing.fillColor, drawing.userId);
+                                break;
+                            case 'circle':
+                                drawCircle(drawing.x, drawing.y, drawing.radius, drawing.color, drawing.lineWidth, drawing.fillColor, drawing.userId);
+                                break;
+                            case 'text':
+                                ctx.fillStyle = drawing.color;
+                                ctx.font = `${drawing.fontSize}px Arial`;
+                                ctx.fillText(drawing.text, drawing.x, drawing.y);
+                                break;
+                        }
+                    });
+                }
+            }
+
+            // Drawing history management
+            function saveDrawingState() {
+                if (slides.length === 0) return;
+                
+                // If we're not at the end of history, remove future states
+                if (historyIndex < drawingHistory.length - 1) {
+                    drawingHistory = drawingHistory.slice(0, historyIndex + 1);
+                }
+                
+                // Save current state
+                const currentState = JSON.stringify(slides[currentSlideIndex].drawings);
+                drawingHistory.push(currentState);
+                historyIndex++;
+                
+                // Enable/disable undo/redo buttons
+                undoTool.disabled = historyIndex <= 0;
+                redoTool.disabled = historyIndex >= drawingHistory.length - 1;
+            }
+
+            function saveDrawing(drawing) {
+                if (slides.length === 0) return;
+                
+                slides[currentSlideIndex].drawings.push(drawing);
+                saveDrawingState();
+            }
+
+            function undo() {
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    slides[currentSlideIndex].drawings = JSON.parse(drawingHistory[historyIndex]);
+                    redrawCanvas();
+                }
+                
+                undoTool.disabled = historyIndex <= 0;
+                redoTool.disabled = historyIndex >= drawingHistory.length - 1;
+            }
+
+            function redo() {
+                if (historyIndex < drawingHistory.length - 1) {
+                    historyIndex++;
+                    slides[currentSlideIndex].drawings = JSON.parse(drawingHistory[historyIndex]);
+                    redrawCanvas();
+                }
+                
+                undoTool.disabled = historyIndex <= 0;
+                redoTool.disabled = historyIndex >= drawingHistory.length - 1;
+            }
+
+            function clearCanvas() {
+                if (confirm('Are you sure you want to clear the whiteboard?')) {
+                    if (slides.length > 0) {
+                        slides[currentSlideIndex].drawings = [];
+                        saveDrawingState();
+                        redrawCanvas();
+                    }
+                }
+            }
+
+            // Slide management
+            function addSlide() {
+                const newSlide = {
+                    id: generateId(),
+                    name: `Whiteboard ${slides.length + 1}`,
+                    drawings: []
+                };
+                
+                slides.push(newSlide);
+                currentSlideIndex = slides.length - 1;
+                renderSlides();
+                redrawCanvas();
+                
+                // Reset history for new slide
+                drawingHistory = [];
+                historyIndex = -1;
+                saveDrawingState();
+            }
+
+            function duplicateSlide() {
+                if (slides.length === 0) return;
+                
+                const currentSlide = slides[currentSlideIndex];
+                const newSlide = {
+                    id: generateId(),
+                    name: `${currentSlide.name} (Copy)`,
+                    drawings: JSON.parse(JSON.stringify(currentSlide.drawings))
+                };
+                
+                slides.splice(currentSlideIndex + 1, 0, newSlide);
+                currentSlideIndex++;
+                renderSlides();
+                redrawCanvas();
+                
+                // Reset history for new slide
+                drawingHistory = [];
+                historyIndex = -1;
+                saveDrawingState();
+            }
+
+            function selectSlide(index) {
+                if (index >= 0 && index < slides.length) {
+                    currentSlideIndex = index;
+                    renderSlides();
+                    redrawCanvas();
+                    
+                    // Reset history for selected slide
+                    drawingHistory = [];
+                    historyIndex = -1;
+                    saveDrawingState();
+                }
+            }
+
+            function renderSlides() {
+                slidesList.innerHTML = '';
+                
+                slides.forEach((slide, index) => {
+                    const slideItem = document.createElement('div');
+                    slideItem.className = `slide-item ${index === currentSlideIndex ? 'active' : ''}`;
+                    slideItem.innerHTML = `
+                        <canvas class="slide-thumbnail"></canvas>
+                        <div class="slide-number">${index + 1}</div>
+                        <div class="slide-actions">
+                            <button class="slide-action-btn" data-action="duplicate" title="Duplicate">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="slide-action-btn" data-action="delete" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Render thumbnail
+                    const thumbnail = slideItem.querySelector('.slide-thumbnail');
+                    const thumbCtx = thumbnail.getContext('2d');
+                    
+                    // Set thumbnail size
+                    thumbnail.width = 200;
+                    thumbnail.height = 112.5; // 16:9 aspect ratio
+                    
+                    // Scale and draw the slide content
+                    const scaleX = thumbnail.width / whiteboard.width;
+                    const scaleY = thumbnail.height / whiteboard.height;
+                    const scale = Math.min(scaleX, scaleY);
+                    
+                    thumbCtx.save();
+                    thumbCtx.scale(scale, scale);
+                    
+                    slide.drawings.forEach(drawing => {
+                        switch (drawing.tool) {
+                            case 'pencil':
+                            case 'eraser':
+                                thumbCtx.strokeStyle = drawing.tool === 'eraser' ? 'white' : drawing.color;
+                                thumbCtx.lineWidth = drawing.lineWidth;
+                                thumbCtx.lineCap = 'round';
+                                thumbCtx.lineJoin = 'round';
+                                thumbCtx.beginPath();
+                                thumbCtx.moveTo(drawing.points[0].x, drawing.points[0].y);
+                                for (let i = 1; i < drawing.points.length; i++) {
+                                    thumbCtx.lineTo(drawing.points[i].x, drawing.points[i].y);
+                                }
+                                thumbCtx.stroke();
+                                break;
+                            case 'line':
+                                thumbCtx.strokeStyle = drawing.color;
+                                thumbCtx.lineWidth = drawing.lineWidth;
+                                thumbCtx.beginPath();
+                                thumbCtx.moveTo(drawing.startX, drawing.startY);
+                                thumbCtx.lineTo(drawing.endX, drawing.endY);
+                                thumbCtx.stroke();
+                                break;
+                            case 'rectangle':
+                                thumbCtx.strokeStyle = drawing.color;
+                                thumbCtx.lineWidth = drawing.lineWidth;
+                                thumbCtx.fillStyle = drawing.fillColor;
+                                thumbCtx.beginPath();
+                                thumbCtx.rect(drawing.x, drawing.y, drawing.width, drawing.height);
+                                if (drawing.fillColor !== 'transparent') {
+                                    thumbCtx.fill();
+                                }
+                                thumbCtx.stroke();
+                                break;
+                            case 'circle':
+                                thumbCtx.strokeStyle = drawing.color;
+                                thumbCtx.lineWidth = drawing.lineWidth;
+                                thumbCtx.fillStyle = drawing.fillColor;
+                                thumbCtx.beginPath();
+                                thumbCtx.arc(drawing.x, drawing.y, drawing.radius, 0, Math.PI * 2);
+                                if (drawing.fillColor !== 'transparent') {
+                                    thumbCtx.fill();
+                                }
+                                thumbCtx.stroke();
+                                break;
+                            case 'text':
+                                thumbCtx.fillStyle = drawing.color;
+                                thumbCtx.font = `${drawing.fontSize * scale}px Arial`;
+                                thumbCtx.fillText(drawing.text, drawing.x, drawing.y);
+                                break;
+                        }
+                    });
+                    
+                    thumbCtx.restore();
+                    
+                    slideItem.addEventListener('click', () => {
+                        selectSlide(index);
+                    });
+                    
+                    // Add event listeners for slide actions
+                    const duplicateBtn = slideItem.querySelector('[data-action="duplicate"]');
+                    const deleteBtn = slideItem.querySelector('[data-action="delete"]');
+                    
+                    duplicateBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        duplicateSlide();
+                    });
+                    
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (slides.length > 1) {
+                            if (confirm('Are you sure you want to delete this slide?')) {
+                                slides.splice(index, 1);
+                                if (currentSlideIndex >= index) {
+                                    currentSlideIndex = Math.max(0, currentSlideIndex - 1);
+                                }
+                                renderSlides();
+                                redrawCanvas();
+                            }
+                        } else {
+                            alert('You cannot delete the last slide.');
+                        }
+                    });
+                    
+                    slidesList.appendChild(slideItem);
+                });
+            }
+
+            // Participants management
+            function addParticipant(participant) {
+                // Check if participant already exists
+                const existingIndex = participants.findIndex(p => p.id === participant.id);
+                if (existingIndex >= 0) {
+                    participants[existingIndex] = participant;
+                } else {
+                    participants.push(participant);
+                }
+                renderParticipants();
+                updateUserCount();
+            }
+
+            function removeParticipant(participantId) {
+                participants = participants.filter(p => p.id !== participantId);
+                renderParticipants();
+                updateUserCount();
+            }
+
+            function renderParticipants() {
+                participantsList.innerHTML = '';
+                
+                // Sort with host first
+                const sortedParticipants = [...participants].sort((a, b) => b.isHost - a.isHost);
+                
+                sortedParticipants.forEach(participant => {
+                    const participantItem = document.createElement('div');
+                    participantItem.className = 'participant-item';
+                    
+                    const avatarText = participant.name.charAt(0).toUpperCase();
+                    const avatarColor = stringToColor(participant.id);
+                    
+                    participantItem.innerHTML = `
+                        <div class="participant-avatar ${participant.isHost ? 'host' : ''}" style="background-color: ${avatarColor}">
+                            ${avatarText}
+                        </div>
+                        <div class="participant-info">
+                            <div class="participant-name">${participant.name} ${participant.isHost ? '(Host)' : ''}</div>
+                            <div class="participant-status">
+                                <i class="fas ${participant.isMicOn ? 'fa-microphone' : 'fa-microphone-slash'}"></i>
+                                <i class="fas ${participant.isVideoOn ? 'fa-video' : 'fa-video-slash'}"></i>
+                                ${participant.isHandRaised ? '<span class="hand-raised">✋</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="participant-actions">
+                            ${participant.id !== userId ? `
+                                <button class="participant-action-btn" data-action="pin" title="Pin">
+                                    <i class="fas fa-thumbtack"></i>
+                                </button>
+                                ${isHost ? `
+                                    <button class="participant-action-btn" data-action="mute" title="${participant.isMicOn ? 'Mute' : 'Unmute'}">
+                                        <i class="fas ${participant.isMicOn ? 'fa-microphone-slash' : 'fa-microphone'}"></i>
+                                    </button>
+                                    <button class="participant-action-btn" data-action="remove" title="Remove">
+                                        <i class="fas fa-user-times"></i>
+                                    </button>
+                                ` : ''}
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    // Add event listeners for participant actions
+                    const actionButtons = participantItem.querySelectorAll('.participant-action-btn');
+                    actionButtons.forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const action = button.getAttribute('data-action');
+                            handleParticipantAction(action, participant.id);
+                        });
+                    });
+                    
+                    participantsList.appendChild(participantItem);
+                });
+            }
+
+            function handleParticipantAction(action, participantId) {
+                const participant = participants.find(p => p.id === participantId);
+                if (!participant) return;
+                
+                switch (action) {
+                    case 'pin':
+                        // Toggle pin for this participant's video
+                        const videoItem = document.querySelector(`.video-item[data-user="${participantId}"]`);
+                        if (videoItem) {
+                            videoItem.classList.toggle('pinned');
+                            // Ensure only one pinned video
+                            document.querySelectorAll('.video-item.pinned').forEach(item => {
+                                if (item !== videoItem) {
+                                    item.classList.remove('pinned');
+                                }
+                            });
+                        }
+                        break;
+                    case 'mute':
+                        // Toggle mute for this participant
+                        participant.isMicOn = !participant.isMicOn;
+                        renderParticipants();
+                        // In a real app, you would send this command via Socket.io
+                        break;
+                    case 'remove':
+                        // Remove this participant
+                        if (confirm(`Remove ${participant.name} from the meeting?`)) {
+                            removeParticipant(participantId);
+                            removeVideoFeed(participantId);
+                            // In a real app, you would send this command via Socket.io
+                        }
+                        break;
+                }
+            }
+
+            function updateUserCount() {
+                userCount.textContent = participants.length;
+            }
+
+            function stringToColor(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+                }
+                let color = '#';
+                for (let i = 0; i < 3; i++) {
+                    const value = (hash >> (i * 8)) & 0xFF;
+                    color += ('00' + value.toString(16)).substr(-2);
+                }
+                return color;
+            }
+
+            // Video management
+            function addVideoFeed(userId, userName) {
+                // Check if video feed already exists
+                if (document.querySelector(`.video-item[data-user="${userId}"]`)) return;
+                
+                const videoItem = document.createElement('div');
+                videoItem.className = 'video-item';
+                videoItem.dataset.user = userId;
+                
+                videoItem.innerHTML = `
+                    <video autoplay playsinline></video>
+                    <div class="video-info">
+                        <div class="video-name">${userName}</div>
+                        <div class="video-actions">
+                            <button class="video-action-btn" data-action="pin">
+                                <i class="fas fa-thumbtack"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Add event listener for pin action
+                const pinBtn = videoItem.querySelector('[data-action="pin"]');
+                pinBtn.addEventListener('click', () => {
+                    videoItem.classList.toggle('pinned');
+                    // Ensure only one pinned video
+                    document.querySelectorAll('.video-item.pinned').forEach(item => {
+                        if (item !== videoItem) {
+                            item.classList.remove('pinned');
+                        }
+                    });
+                });
+                
+                // In a real app, you would set up the video stream here
+                // For demo, we'll just show a placeholder
+                const video = videoItem.querySelector('video');
+                video.src = 'https://placehold.co/400x225?text=' + encodeURIComponent(userName);
+                
+                videoGrid.appendChild(videoItem);
+            }
+
+            function removeVideoFeed(userId) {
+                const videoItem = document.querySelector(`.video-item[data-user="${userId}"]`);
+                if (videoItem) {
+                    videoItem.remove();
+                }
+            }
+
+            function toggleMic() {
+                isMicOn = !isMicOn;
+                toggleMicBtn.classList.toggle('active');
+                micControl.querySelector('.control-icon-btn').classList.toggle('active');
+                micControl.querySelector('.control-label').textContent = isMicOn ? 'Mute' : 'Unmute';
+                
+                // Update participant status
+                const currentUser = participants.find(p => p.id === userId);
+                if (currentUser) {
+                    currentUser.isMicOn = isMicOn;
+                    renderParticipants();
+                }
+                
+                // In a real app, you would toggle the actual microphone stream
+            }
+
+            function toggleVideo() {
+                isVideoOn = !isVideoOn;
+                toggleVideoBtn.classList.toggle('active');
+                videoControl.querySelector('.control-icon-btn').classList.toggle('active');
+                videoControl.querySelector('.control-label').textContent = isVideoOn ? 'Stop Video' : 'Start Video';
+                
+                // Update participant status
+                const currentUser = participants.find(p => p.id === userId);
+                if (currentUser) {
+                    currentUser.isVideoOn = isVideoOn;
+                    renderParticipants();
+                    
+                    if (isVideoOn) {
+                        addVideoFeed(userId, displayName);
+                    } else {
+                        removeVideoFeed(userId);
+                    }
+                }
+                
+                // In a real app, you would toggle the actual video stream
+            }
+
+            function toggleScreenShare() {
+                isScreenSharing = !isScreenSharing;
+                screenShareBtn.classList.toggle('active');
+                screenShareControl.querySelector('.control-icon-btn').classList.toggle('active');
+                screenShareControl.querySelector('.control-label').textContent = isScreenSharing ? 'Stop Sharing' : 'Share Screen';
+                
+                // In a real app, you would handle screen sharing here
+                if (isScreenSharing) {
+                    alert('Screen sharing would start here in a real app');
+                }
+            }
+
+            // Remote cursors
+            function updateRemoteCursor(userId, userName, x, y, color) {
+                let cursor = remoteCursors[userId];
+                
+                if (!cursor) {
+                    cursor = document.createElement('div');
+                    cursor.className = 'cursor';
+                    cursor.dataset.user = userName;
+                    cursor.style.backgroundColor = color;
+                    whiteboard.parentElement.appendChild(cursor);
+                    remoteCursors[userId] = cursor;
+                }
+                
+                cursor.style.left = `${x}px`;
+                cursor.style.top = `${y}px`;
+            }
+
+            function removeRemoteCursor(userId) {
+                const cursor = remoteCursors[userId];
+                if (cursor) {
+                    cursor.remove();
+                    delete remoteCursors[userId];
+                }
+            }
+
+            // Tab switching
+            function switchTab(tabName) {
+                tabButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tab === tabName);
+                });
+                
+                tabContents.forEach(content => {
+                    content.style.display = content.id === `${tabName}Tab` ? 'block' : 'none';
+                });
+            }
+
+            // Modal controls
+            function openModal(modal) {
+                modal.classList.add('active');
+            }
+
+            function closeModal(modal) {
+                modal.classList.remove('active');
+            }
+
+            function switchSettingsTab(tabName) {
+                settingsTabs.forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.tab === tabName);
+                });
+                
+                settingsContents.forEach(content => {
+                    content.classList.toggle('active', content.id === `${tabName}Settings`);
+                });
+            }
+
+            // Export functions
+            function exportWhiteboard() {
+                openModal(exportModal);
+            }
+
+            function handleExport() {
+                const format = document.querySelector('input[name="exportFormat"]:checked').id.replace('export', '').toLowerCase();
+                const currentSlideOnly = document.getElementById('exportCurrentSlide').checked;
+                const transparentBG = document.getElementById('exportTransparentBG').checked;
+                
+                // In a real app, you would implement actual export functionality
+                alert(`Exporting as ${format.toUpperCase()} (${currentSlideOnly ? 'current slide only' : 'all slides'}) with ${transparentBG ? 'transparent' : 'white'} background`);
+                
+                closeModal(exportModal);
+            }
+
+            // Save/Load functions
+            function saveWhiteboard() {
+                const data = {
+                    slides: slides,
+                    currentSlideIndex: currentSlideIndex
+                };
+                
+                // In a real app, you would save to server or local storage
+                localStorage.setItem('whiteboardData', JSON.stringify(data));
+                alert('Whiteboard saved successfully!');
+            }
+
+            function loadWhiteboard() {
+                const savedData = localStorage.getItem('whiteboardData');
+                if (savedData) {
+                    if (confirm('Load saved whiteboard? Current work will be replaced.')) {
+                        const data = JSON.parse(savedData);
+                        slides = data.slides;
+                        currentSlideIndex = data.currentSlideIndex;
+                        renderSlides();
+                        redrawCanvas();
+                        
+                        // Reset history
+                        drawingHistory = [];
+                        historyIndex = -1;
+                        saveDrawingState();
+                    }
+                } else {
+                    alert('No saved whiteboard found.');
+                }
+            }
+
+            // Leave/End meeting functions
+            function leaveMeeting() {
+                openModal(leaveModal);
+            }
+
+            function confirmLeave() {
+                const saveBeforeLeave = document.getElementById('saveBeforeLeave').checked;
+                
+                if (saveBeforeLeave) {
+                    saveWhiteboard();
+                }
+                
+                // In a real app, you would disconnect from Socket.io and clean up
+                alert('Leaving meeting...');
+                closeModal(leaveModal);
+                
+                // Show leave image
+                const leaveImage = document.createElement('img');
+                leaveImage.src = 'https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg';
+                leaveImage.style.position = 'fixed';
+                leaveImage.style.top = '0';
+                leaveImage.style.left = '0';
+                leaveImage.style.width = '100%';
+                leaveImage.style.height = '100%';
+                leaveImage.style.objectFit = 'cover';
+                leaveImage.style.zIndex = '10000';
+                document.body.appendChild(leaveImage);
+                
+                // Redirect after 3 seconds
+                setTimeout(() => {
+                    window.location.href = 'https://whiteboard-education.com';
+                }, 3000);
+            }
+
+            function endMeetingForAll() {
+                if (isHost) {
+                    openModal(endMeetingModal);
+                }
+            }
+
+            function confirmEndMeeting() {
+                const saveBeforeEnd = document.getElementById('saveBeforeEnd').checked;
+                
+                if (saveBeforeEnd) {
+                    saveWhiteboard();
+                }
+                
+                // In a real app, you would notify all participants via Socket.io
+                alert('Ending meeting for all participants...');
+                closeModal(endMeetingModal);
+                
+                // Show leave image
+                const leaveImage = document.createElement('img');
+                leaveImage.src = 'https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg';
+                leaveImage.style.position = 'fixed';
+                leaveImage.style.top = '0';
+                leaveImage.style.left = '0';
+                leaveImage.style.width = '100%';
+                leaveImage.style.height = '100%';
+                leaveImage.style.objectFit = 'cover';
+                leaveImage.style.zIndex = '10000';
+                document.body.appendChild(leaveImage);
+                
+                // Redirect after 3 seconds
+                setTimeout(() => {
+                    window.location.href = 'https://whiteboard-education.com';
+                }, 3000);
+            }
+
+            // Raise hand function
+            function toggleRaiseHand() {
+                isHandRaised = !isHandRaised;
+                raiseHandControl.querySelector('.control-icon-btn').classList.toggle('active');
+                
+                // Update participant status
+                const currentUser = participants.find(p => p.id === userId);
+                if (currentUser) {
+                    currentUser.isHandRaised = isHandRaised;
+                    renderParticipants();
+                }
+                
+                // In a real app, you would notify other participants via Socket.io
+            }
+
+            // Reactions function
+            function showReactionsMenu() {
+                reactionsMenu.style.display = reactionsMenu.style.display === 'grid' ? 'none' : 'grid';
+            }
+
+            function sendReaction(reaction) {
+                // Display the reaction on the whiteboard
+                const pos = {
+                    x: Math.random() * whiteboard.width * 0.8 + whiteboard.width * 0.1,
+                    y: Math.random() * whiteboard.height * 0.8 + whiteboard.height * 0.1
+                };
+                
+                const reactionElement = document.createElement('div');
+                reactionElement.className = 'reaction-display';
+                reactionElement.textContent = reaction;
+                reactionElement.style.left = `${pos.x}px`;
+                reactionElement.style.top = `${pos.y}px`;
+                reactionElement.style.color = stringToColor(userId);
+                whiteboard.parentElement.appendChild(reactionElement);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    reactionElement.remove();
+                }, 3000);
+                
+                // In a real app, you would send the reaction to other participants via Socket.io
+            }
+
+            // More options function
+            function toggleMoreOptions() {
+                moreOptionsModal.classList.toggle('active');
+            }
+
+            // Event Listeners
+            // Tool selection
+            pencilTool.addEventListener('click', () => {
+                currentTool = 'pencil';
+                updateToolSelection();
+            });
+            
+            lineTool.addEventListener('click', () => {
+                currentTool = 'line';
+                updateToolSelection();
+            });
+            
+            rectangleTool.addEventListener('click', () => {
+                currentTool = 'rectangle';
+                updateToolSelection();
+            });
+            
+            circleTool.addEventListener('click', () => {
+                currentTool = 'circle';
+                updateToolSelection();
+            });
+            
+            textTool.addEventListener('click', () => {
+                currentTool = 'text';
+                updateToolSelection();
+            });
+            
+            eraserTool.addEventListener('click', () => {
+                currentTool = 'eraser';
+                updateToolSelection();
+            });
+            
+            selectTool.addEventListener('click', () => {
+                currentTool = 'select';
+                updateToolSelection();
+            });
+            
+            moveTool.addEventListener('click', () => {
+                currentTool = 'move';
+                updateToolSelection();
+            });
+            
+            zoomInTool.addEventListener('click', () => {
+                // In a real app, you would implement zoom in functionality
+                alert('Zoom In');
+            });
+            
+            zoomOutTool.addEventListener('click', () => {
+                // In a real app, you would implement zoom out functionality
+                alert('Zoom Out');
+            });
+            
+            undoTool.addEventListener('click', undo);
+            redoTool.addEventListener('click', redo);
+            clearTool.addEventListener('click', clearCanvas);
+            
+            function updateToolSelection() {
+                const tools = [pencilTool, lineTool, rectangleTool, circleTool, textTool, eraserTool, selectTool, moveTool];
+                tools.forEach(tool => tool.classList.remove('active'));
+                
+                switch (currentTool) {
+                    case 'pencil': pencilTool.classList.add('active'); break;
+                    case 'line': lineTool.classList.add('active'); break;
+                    case 'rectangle': rectangleTool.classList.add('active'); break;
+                    case 'circle': circleTool.classList.add('active'); break;
+                    case 'text': textTool.classList.add('active'); break;
+                    case 'eraser': eraserTool.classList.add('active'); break;
+                    case 'select': selectTool.classList.add('active'); break;
+                    case 'move': moveTool.classList.add('active'); break;
+                }
+                
+                // Show/hide text options
+                document.getElementById('textOptions').style.display = currentTool === 'text' ? 'block' : 'none';
+            }
+
+            // Color selection
+            colorOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelector('.color-option.active').classList.remove('active');
+                    option.classList.add('active');
+                    currentColor = option.dataset.color;
+                });
+            });
+            
+            fillColorOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelector('.color-option[data-fill].active')?.classList.remove('active');
+                    option.classList.add('active');
+                    currentFillColor = option.dataset.fill;
+                });
+            });
+            
+            lineWidthInput.addEventListener('input', () => {
+                currentLineWidth = lineWidthInput.value;
+            });
+            
+            fontSizeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    fontSizeButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    currentFontSize = parseInt(button.dataset.size);
+                });
+            });
+
+            // Canvas events
+            whiteboard.addEventListener('mousedown', startDrawing);
+            whiteboard.addEventListener('mousemove', draw);
+            whiteboard.addEventListener('mouseup', stopDrawing);
+            whiteboard.addEventListener('mouseout', stopDrawing);
+            
+            // Touch support
+            whiteboard.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                startDrawing(e.touches[0]);
+            });
+            
+            whiteboard.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                draw(e.touches[0]);
+            });
+            
+            whiteboard.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                stopDrawing(e.touches[0] || e.changedTouches[0]);
+            });
+
+            // Tab switching
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchTab(button.dataset.tab);
+                });
+            });
+
+            // Video controls
+            toggleMicBtn.addEventListener('click', toggleMic);
+            toggleVideoBtn.addEventListener('click', toggleVideo);
+            screenShareBtn.addEventListener('click', toggleScreenShare);
+            leaveCallBtn.addEventListener('click', leaveMeeting);
+            
+            // Bottom controls
+            micControl.addEventListener('click', toggleMic);
+            videoControl.addEventListener('click', toggleVideo);
+            screenShareControl.addEventListener('click', toggleScreenShare);
+            participantsControl.addEventListener('click', () => switchTab('participants'));
+            reactionsControl.addEventListener('click', showReactionsMenu);
+            raiseHandControl.addEventListener('click', toggleRaiseHand);
+            moreControl.addEventListener('click', toggleMoreOptions);
+            endCallControl.addEventListener('click', leaveMeeting);
+            
+            // Reaction buttons
+            document.querySelectorAll('.reaction-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    sendReaction(button.textContent);
+                    reactionsMenu.style.display = 'none';
+                });
+            });
+            
+            // More options
+            inviteBtn.addEventListener('click', () => {
+                alert('Invite link: https://whiteboard-education.com/join/' + generateId());
+                closeModal(moreOptionsModal);
+            });
+            
+            chatBtn.addEventListener('click', () => {
+                alert('Chat would open here');
+                closeModal(moreOptionsModal);
+            });
+            
+            recordBtn.addEventListener('click', () => {
+                alert('Recording would start here');
+                closeModal(moreOptionsModal);
+            });
+            
+            settingsBtn.addEventListener('click', () => {
+                openModal(settingsModal);
+                closeModal(moreOptionsModal);
+            });
+            
+            endMeetingBtn.addEventListener('click', () => {
+                endMeetingForAll();
+                closeModal(moreOptionsModal);
+            });
+            
+            // Modal controls
+            closeWaitingRoomModal.addEventListener('click', () => closeModal(waitingRoomModal));
+            admitAllBtn.addEventListener('click', () => {
+                // In a real app, you would admit all waiting participants
+                alert('All participants admitted');
+                closeModal(waitingRoomModal);
+            });
+            closeWaitingRoomBtn.addEventListener('click', () => closeModal(waitingRoomModal));
+            
+            closeSettingsModal.addEventListener('click', () => closeModal(settingsModal));
+            cancelSettingsBtn.addEventListener('click', () => closeModal(settingsModal));
+            saveSettingsBtn.addEventListener('click', () => {
+                // Save settings
+                displayName = document.getElementById('displayName').value || displayName;
+                userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                
+                // Update participant list
+                const currentUser = participants.find(p => p.id === userId);
+                if (currentUser) {
+                    currentUser.name = displayName;
+                    renderParticipants();
+                }
+                
+                closeModal(settingsModal);
+            });
+            
+            settingsTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchSettingsTab(tab.dataset.tab);
+                });
+            });
+            
+            closeExportModal.addEventListener('click', () => closeModal(exportModal));
+            cancelExportBtn.addEventListener('click', () => closeModal(exportModal));
+            confirmExportBtn.addEventListener('click', handleExport);
+            
+            closeLeaveModal.addEventListener('click', () => closeModal(leaveModal));
+            cancelLeaveBtn.addEventListener('click', () => closeModal(leaveModal));
+            confirmLeaveBtn.addEventListener('click', confirmLeave);
+            
+            closeEndMeetingModal.addEventListener('click', () => closeModal(endMeetingModal));
+            cancelEndMeetingBtn.addEventListener('click', () => closeModal(endMeetingModal));
+            confirmEndMeetingBtn.addEventListener('click', confirmEndMeeting);
+            
+            // Save/Load/Export
+            saveBtn.addEventListener('click', saveWhiteboard);
+            loadBtn.addEventListener('click', loadWhiteboard);
+            exportBtn.addEventListener('click', exportWhiteboard);
+            newSlideBtn.addEventListener('click', addSlide);
+            addSlideBtn.addEventListener('click', addSlide);
+            
+            // Close modals when clicking outside
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-overlay')) {
+                    closeModal(e.target);
+                }
+                
+                // Close reactions menu when clicking outside
+                if (!reactionsControl.contains(e.target) && !reactionsMenu.contains(e.target)) {
+                    reactionsMenu.style.display = 'none';
+                }
+                
+                // Close more options when clicking outside
+                if (!moreControl.contains(e.target) && !moreOptionsModal.contains(e.target)) {
+                    closeModal(moreOptionsModal);
+                }
+            });
+            
+            // Initialize the app
+            function initApp() {
+                // Set up display name
+                document.getElementById('displayName').value = displayName;
+                userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                
+                // Add current user as participant
+                addParticipant({
+                    id: userId,
+                    name: displayName,
+                    isHost: isHost,
+                    isVideoOn: isVideoOn,
+                    isMicOn: isMicOn,
+                    isHandRaised: isHandRaised
+                });
+                
+                // Add video feed for current user
+                if (isVideoOn) {
+                    addVideoFeed(userId, displayName);
+                }
+                
+                // Initialize first slide
+                initFirstSlide();
+                
+                // Initialize socket connection
+                initSocket();
+                
+                // Check for saved data
+                const savedData = localStorage.getItem('whiteboardData');
+                if (savedData) {
+                    if (confirm('Continue from previous whiteboard?')) {
+                        const data = JSON.parse(savedData);
+                        slides = data.slides;
+                        currentSlideIndex = data.currentSlideIndex;
+                        renderSlides();
+                        redrawCanvas();
+                        
+                        // Reset history
+                        drawingHistory = [];
+                        historyIndex = -1;
+                        saveDrawingState();
+                    }
+                }
+            }
+            
+            // Start the app
+            initApp();
+        });
+    </script>
 </body>
 </html>
