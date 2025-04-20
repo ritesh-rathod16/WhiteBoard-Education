@@ -3,601 +3,2460 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhiteBoard Pro - Next-Gen Collaborative Whiteboard</title>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>WhiteBoard Education</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Previous styles remain the same... */
-
-        /* New footer controls styles */
-        .footer-controls {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            background-color: var(--white);
-            padding: 8px 16px;
-            border-radius: 50px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            z-index: 100;
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #f5f7ff;
+            --accent-color: #ff6b6b;
+            --dark-color: #2c3e50;
+            --light-color: #ffffff;
+            --text-color: #333333;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
         }
 
-        .footer-control {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            background-color: rgba(0, 0, 0, 0.05);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
         }
 
-        .footer-control:hover {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .footer-control.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .footer-control.off {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .footer-control i {
-            font-size: 1rem;
-        }
-
-        .footer-control .badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: var(--accent-color);
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 5px;
-            border-radius: 50%;
-        }
-
-        .footer-control-label {
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.7rem;
-            white-space: nowrap;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            opacity: 0;
-            transition: opacity 0.2s;
-            pointer-events: none;
-        }
-
-        .footer-control:hover .footer-control-label {
-            opacity: 1;
-        }
-
-        /* Reactions panel */
-        .reactions-panel {
-            position: absolute;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 8px;
-            display: flex;
-            gap: 8px;
-            z-index: 100;
-            display: none;
-        }
-
-        .reactions-panel.show {
-            display: flex;
-        }
-
-        .reaction {
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: var(--transition);
-            padding: 4px;
-        }
-
-        .reaction:hover {
-            transform: scale(1.2);
-        }
-
-        /* Background effects modal */
-        .background-effects-modal {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 16px;
-            width: 300px;
-            z-index: 100;
-            display: none;
-        }
-
-        .background-effects-modal.show {
-            display: block;
-        }
-
-        .background-effect {
-            display: flex;
-            align-items: center;
-            padding: 8px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .background-effect:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-        .background-effect i {
-            margin-right: 10px;
-            font-size: 1.2rem;
-            color: var(--primary-color);
-        }
-
-        .background-effect.active {
-            background-color: rgba(67, 97, 238, 0.1);
-        }
-
-        /* Raise hand panel */
-        .raise-hand-panel {
-            position: absolute;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 8px;
+        body {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            background-color: var(--light-color);
+            box-shadow: var(--box-shadow);
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            height: 40px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .app-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+        }
+
+        .user-count {
+            display: flex;
+            align-items: center;
             gap: 8px;
-            z-index: 100;
-            display: none;
-        }
-
-        .raise-hand-panel.show {
-            display: flex;
-        }
-
-        .hand-emoji {
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: var(--transition);
-            padding: 4px;
-            text-align: center;
-        }
-
-        .hand-emoji:hover {
-            transform: scale(1.2);
-        }
-
-        /* Participants panel */
-        .participants-panel {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 16px;
-            width: 250px;
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 100;
-            display: none;
-        }
-
-        .participants-panel.show {
-            display: block;
-        }
-
-        .participant-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .participant-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            font-size: 0.9rem;
             font-weight: 500;
         }
 
-        .participant-name {
+        .user-count i {
+            color: var(--primary-color);
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
             flex: 1;
-            font-size: 0.9rem;
+            overflow: hidden;
         }
 
-        .participant-status {
-            width: 10px;
-            height: 10px;
+        /* Left Sidebar - Tools */
+        .toolbar {
+            width: 60px;
+            background-color: var(--light-color);
+            padding: 16px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--box-shadow);
+            z-index: 10;
+        }
+
+        .tool-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .tool-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: transparent;
+            border: none;
+            color: var(--text-color);
+            position: relative;
+        }
+
+        .tool-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .tool-btn.active {
+            background-color: var(--primary-color);
+            color: var(--light-color);
+        }
+
+        .tool-btn i {
+            font-size: 20px;
+        }
+
+        .tooltip {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+            z-index: 100;
+            margin-left: 8px;
+        }
+
+        .tool-btn:hover .tooltip {
+            opacity: 1;
+            margin-left: 12px;
+        }
+
+        .color-picker {
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            background-color: #38b000;
+            border: 2px solid var(--light-color);
+            cursor: pointer;
+            transition: var(--transition);
+            margin: 4px;
         }
 
-        /* Adjust footer to accommodate new controls */
-        .footer {
-            padding-bottom: 70px; /* Add space for the new controls */
+        .color-picker:hover {
+            transform: scale(1.1);
+        }
+
+        .color-palette {
+            display: none;
+            position: absolute;
+            left: 100%;
+            top: 0;
+            background-color: var(--light-color);
+            padding: 12px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            z-index: 10;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            width: 140px;
+        }
+
+        .color-container:hover .color-palette {
+            display: grid;
+        }
+
+        .brush-size {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        /* Whiteboard Area */
+        .whiteboard-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .whiteboard-header {
+            padding: 12px 16px;
+            background-color: var(--light-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 5;
+        }
+
+        .page-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-btn {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--text-color);
+            font-size: 16px;
+            transition: var(--transition);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .page-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-indicator {
+            font-weight: 500;
+        }
+
+        .whiteboard-area {
+            flex: 1;
+            background-color: var(--light-color);
+            overflow: hidden;
+            position: relative;
+        }
+
+        #whiteboard {
+            background-color: white;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .cursor {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Right Sidebar */
+        .right-sidebar {
+            width: 300px;
+            background-color: var(--light-color);
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            border-bottom: 3px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Participants Tab */
+        .participant {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .participant-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: 600;
+        }
+
+        .participant-info {
+            flex: 1;
+        }
+
+        .participant-name {
+            font-weight: 500;
+        }
+
+        .participant-role {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .participant-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Video Tab */
+        .video-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .video-item {
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background-color: #000;
+            aspect-ratio: 16/9;
+        }
+
+        .video-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            padding: 8px;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+
+        .video-name {
+            flex: 1;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .video-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .video-control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* Slides Tab */
+        .slides-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .slide-thumbnail {
+            aspect-ratio: 16/9;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-thumbnail.active {
+            border: 2px solid var(--primary-color);
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        .add-slide {
+            background-color: #e0e0e0;
+            color: #666;
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .add-slide:hover {
+            background-color: #d0d0d0;
+        }
+
+        /* Controls Bar */
+        .controls-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: var(--light-color);
+            gap: 16px;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 5;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-btn-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-color);
+            font-size: 12px;
+            min-width: 60px;
+            padding: 8px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .control-btn-main:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .control-btn-main i {
+            font-size: 20px;
+        }
+
+        .control-btn-main.active {
+            color: var(--primary-color);
+        }
+
+        .more-menu {
+            position: relative;
+        }
+
+        .more-options {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 8px 0;
+            min-width: 200px;
+            z-index: 100;
+            display: none;
+        }
+
+        .more-menu.open .more-options {
+            display: block;
+        }
+
+        .more-option {
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .more-option:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .more-option i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            padding: 16px;
+        }
+
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a5ae8;
+        }
+
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #d0d0d0;
+        }
+
+        /* Waiting Room */
+        .waiting-room {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .waiting-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+        }
+
+        .waiting-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .waiting-message {
+            color: #666;
+            margin-bottom: 24px;
+            max-width: 400px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .right-sidebar {
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                transform: translateX(100%);
+            }
+            
+            .right-sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .sidebar-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .toolbar {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                transform: translateX(-100%);
+                z-index: 20;
+            }
+            
+            .toolbar.open {
+                transform: translateX(0);
+            }
+            
+            .tool-toggle {
+                display: block;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--dark-color);
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        /* Reaction */
+        .reaction {
+            position: absolute;
+            font-size: 24px;
+            pointer-events: none;
+            z-index: 100;
+            animation: floatUp 2s forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { transform: translateY(-20px) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(0.5); opacity: 0; }
+        }
+
+        /* Hand Raise */
+        .hand-raised {
+            position: relative;
+        }
+
+        .hand-raised::after {
+            content: "✋";
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--accent-color);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
-    <!-- Previous HTML remains the same until the footer -->
-
-    <div class="footer">
-        <div class="footer-info">
-            <span>Made by Ritesh Rathod</span>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-container">
+            <img src="https://sigmawire.net/i/04/itNgcI.png" alt="WhiteBoard Education Logo" class="logo">
+            <span class="app-name">WhiteBoard Education</span>
         </div>
-        <div class="board-actions">
-            <button class="board-btn" id="copyBoardId">
-                <i class="fas fa-copy"></i> Copy Board ID
-            </button>
-            <span id="boardId">Loading...</span>
-            <button class="board-btn primary" id="saveBoard">
-                <i class="fas fa-save"></i> Save
-            </button>
-        </div>
-    </div>
-    
-    <!-- New footer controls -->
-    <div class="footer-controls">
-        <div class="footer-control" id="micControl">
-            <i class="fas fa-microphone"></i>
-            <span class="footer-control-label">Microphone</span>
-        </div>
-        <div class="footer-control" id="videoControl">
-            <i class="fas fa-video"></i>
-            <span class="footer-control-label">Video</span>
-        </div>
-        <div class="footer-control" id="screenShareControl">
-            <i class="fas fa-desktop"></i>
-            <span class="footer-control-label">Share Screen</span>
-        </div>
-        <div class="footer-control" id="participantsControl">
+        <div class="user-count">
             <i class="fas fa-users"></i>
-            <span class="footer-control-label">Participants</span>
-            <span class="badge" id="participantsCountBadge">0</span>
-        </div>
-        <div class="footer-control" id="raiseHandControl">
-            <i class="fas fa-hand-paper"></i>
-            <span class="footer-control-label">Raise Hand</span>
-        </div>
-        <div class="footer-control" id="reactionsControl">
-            <i class="fas fa-smile"></i>
-            <span class="footer-control-label">Reactions</span>
-        </div>
-        <div class="footer-control" id="backgroundEffectsControl">
-            <i class="fas fa-image"></i>
-            <span class="footer-control-label">Background</span>
-        </div>
-        <div class="footer-control" id="moreControls">
-            <i class="fas fa-ellipsis-h"></i>
-            <span class="footer-control-label">More</span>
+            <span id="userCount">1</span>
         </div>
     </div>
 
-    <!-- Reactions panel -->
-    <div class="reactions-panel" id="reactionsPanel">
-        <div class="reaction" data-reaction="👍">👍</div>
-        <div class="reaction" data-reaction="👎">👎</div>
-        <div class="reaction" data-reaction="👏">👏</div>
-        <div class="reaction" data-reaction="😄">😄</div>
-        <div class="reaction" data-reaction="😕">😕</div>
-        <div class="reaction" data-reaction="❤️">❤️</div>
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar - Tools -->
+        <div class="toolbar" id="toolbar">
+            <div class="tool-group">
+                <button class="tool-btn active" id="pencilTool" data-tool="pencil">
+                    <i class="fas fa-pencil-alt"></i>
+                    <span class="tooltip">Pencil (P)</span>
+                </button>
+                <button class="tool-btn" id="lineTool" data-tool="line">
+                    <i class="fas fa-slash"></i>
+                    <span class="tooltip">Line (L)</span>
+                </button>
+                <button class="tool-btn" id="rectangleTool" data-tool="rectangle">
+                    <i class="far fa-square"></i>
+                    <span class="tooltip">Rectangle (R)</span>
+                </button>
+                <button class="tool-btn" id="circleTool" data-tool="circle">
+                    <i class="far fa-circle"></i>
+                    <span class="tooltip">Circle (C)</span>
+                </button>
+                <button class="tool-btn" id="textTool" data-tool="text">
+                    <i class="fas fa-font"></i>
+                    <span class="tooltip">Text (T)</span>
+                </button>
+                <button class="tool-btn" id="eraserTool" data-tool="eraser">
+                    <i class="fas fa-eraser"></i>
+                    <span class="tooltip">Eraser (E)</span>
+                </button>
+            </div>
+
+            <div class="tool-group">
+                <div class="color-container">
+                    <button class="tool-btn" id="colorPicker">
+                        <i class="fas fa-palette" style="color: #000000;"></i>
+                        <span class="tooltip">Color</span>
+                    </button>
+                    <div class="color-palette">
+                        <div class="color-picker" style="background-color: #000000;" data-color="#000000"></div>
+                        <div class="color-picker" style="background-color: #ff0000;" data-color="#ff0000"></div>
+                        <div class="color-picker" style="background-color: #00ff00;" data-color="#00ff00"></div>
+                        <div class="color-picker" style="background-color: #0000ff;" data-color="#0000ff"></div>
+                        <div class="color-picker" style="background-color: #ffff00;" data-color="#ffff00"></div>
+                        <div class="color-picker" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
+                        <div class="color-picker" style="background-color: #00ffff;" data-color="#00ffff"></div>
+                        <div class="color-picker" style="background-color: #ffffff; border: 1px solid #ccc;" data-color="#ffffff"></div>
+                    </div>
+                </div>
+                <div class="tool-btn">
+                    <i class="fas fa-border-style"></i>
+                    <span class="tooltip">Line Width</span>
+                    <input type="range" class="brush-size" id="brushSize" min="1" max="50" value="5">
+                </div>
+            </div>
+
+            <div class="tool-group">
+                <button class="tool-btn" id="clearTool">
+                    <i class="fas fa-trash-alt"></i>
+                    <span class="tooltip">Clear</span>
+                </button>
+                <button class="tool-btn" id="undoTool">
+                    <i class="fas fa-undo"></i>
+                    <span class="tooltip">Undo</span>
+                </button>
+                <button class="tool-btn" id="redoTool">
+                    <i class="fas fa-redo"></i>
+                    <span class="tooltip">Redo</span>
+                </button>
+            </div>
+
+            <div class="tool-group">
+                <button class="tool-btn" id="saveTool">
+                    <i class="fas fa-save"></i>
+                    <span class="tooltip">Save</span>
+                </button>
+                <button class="tool-btn" id="loadTool">
+                    <i class="fas fa-folder-open"></i>
+                    <span class="tooltip">Load</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Whiteboard Area -->
+        <div class="whiteboard-container">
+            <div class="whiteboard-header">
+                <div class="page-controls">
+                    <button class="page-btn" id="prevPage" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="page-indicator">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+                    <button class="page-btn" id="nextPage" disabled>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div>
+                    <button class="page-btn" id="addPage">
+                        <i class="fas fa-plus"></i> Add Page
+                    </button>
+                    <button class="page-btn" id="duplicatePage">
+                        <i class="fas fa-copy"></i> Duplicate
+                    </button>
+                </div>
+            </div>
+            <div class="whiteboard-area">
+                <canvas id="whiteboard"></canvas>
+                <div id="cursors"></div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="right-sidebar" id="rightSidebar">
+            <div class="sidebar-tabs">
+                <div class="tab-btn active" data-tab="participants">Participants</div>
+                <div class="tab-btn" data-tab="video">Video</div>
+                <div class="tab-btn" data-tab="slides">Slides</div>
+            </div>
+            
+            <div class="tab-content active" id="participantsTab">
+                <div class="participant">
+                    <div class="participant-avatar">Y</div>
+                    <div class="participant-info">
+                        <div class="participant-name">You (Host)</div>
+                        <div class="participant-role">Host</div>
+                    </div>
+                    <div class="participant-controls">
+                        <button class="control-btn" title="Mute">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button class="control-btn" title="Stop Video">
+                            <i class="fas fa-video"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- More participants will be added here dynamically -->
+            </div>
+            
+            <div class="tab-content" id="videoTab">
+                <div class="video-container">
+                    <div class="video-item">
+                        <video id="localVideo" autoplay muted></video>
+                        <div class="video-info">
+                            <span class="video-name">You</span>
+                            <div class="video-controls">
+                                <button class="video-control-btn" id="toggleMic">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                                <button class="video-control-btn" id="toggleVideo">
+                                    <i class="fas fa-video"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Remote videos will be added here dynamically -->
+                </div>
+                <div>
+                    <button class="btn btn-primary" id="startRecording">
+                        <i class="fas fa-record-vinyl"></i> Start Recording
+                    </button>
+                    <button class="btn btn-secondary" id="stopRecording" disabled>
+                        <i class="fas fa-stop"></i> Stop Recording
+                    </button>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="slidesTab">
+                <div class="slides-container">
+                    <div class="slide-thumbnail active">
+                        <i class="fas fa-file-alt"></i>
+                        <span class="slide-number">1</span>
+                    </div>
+                    <div class="slide-thumbnail add-slide" id="addSlideBtn">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <!-- More slides will be added here dynamically -->
+                </div>
+                <div style="margin-top: 16px;">
+                    <button class="btn btn-secondary" id="exportPdf">
+                        <i class="fas fa-file-pdf"></i> Export as PDF
+                    </button>
+                    <button class="btn btn-secondary" id="exportImage" style="margin-top: 8px;">
+                        <i class="fas fa-file-image"></i> Export as Image
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Background effects modal -->
-    <div class="background-effects-modal" id="backgroundEffectsModal">
-        <div class="background-effect" data-effect="none">
-            <i class="fas fa-times"></i>
-            <span>None</span>
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+        <div class="control-group">
+            <button class="control-btn-main" id="micControl">
+                <i class="fas fa-microphone"></i>
+                <span>Mic</span>
+            </button>
+            <button class="control-btn-main" id="videoControl">
+                <i class="fas fa-video"></i>
+                <span>Video</span>
+            </button>
+            <button class="control-btn-main" id="screenShareControl">
+                <i class="fas fa-desktop"></i>
+                <span>Share</span>
+            </button>
         </div>
-        <div class="background-effect" data-effect="blur">
-            <i class="fas fa-blur"></i>
-            <span>Blur</span>
+        
+        <div class="control-group">
+            <button class="control-btn-main" id="participantsControl">
+                <i class="fas fa-users"></i>
+                <span>Participants</span>
+            </button>
+            <button class="control-btn-main" id="raiseHandControl">
+                <i class="fas fa-hand-paper"></i>
+                <span>Raise Hand</span>
+            </button>
+            <button class="control-btn-main" id="reactionsControl">
+                <i class="fas fa-smile"></i>
+                <span>Reactions</span>
+            </button>
         </div>
-        <div class="background-effect" data-effect="office">
-            <i class="fas fa-building"></i>
-            <span>Office</span>
-        </div>
-        <div class="background-effect" data-effect="meeting-room">
-            <i class="fas fa-users"></i>
-            <span>Meeting Room</span>
-        </div>
-        <div class="background-effect" data-effect="bedroom">
-            <i class="fas fa-bed"></i>
-            <span>Bedroom</span>
-        </div>
-        <div class="background-effect" data-effect="custom">
-            <i class="fas fa-image"></i>
-            <span>Custom Image</span>
+        
+        <div class="control-group">
+            <div class="more-menu">
+                <button class="control-btn-main" id="moreControl">
+                    <i class="fas fa-ellipsis-h"></i>
+                    <span>More</span>
+                </button>
+                <div class="more-options">
+                    <div class="more-option" id="chatOption">
+                        <i class="fas fa-comment"></i>
+                        <span>Chat</span>
+                    </div>
+                    <div class="more-option" id="inviteOption">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Invite</span>
+                    </div>
+                    <div class="more-option" id="recordOption">
+                        <i class="fas fa-record-vinyl"></i>
+                        <span>Record</span>
+                    </div>
+                    <div class="more-option" id="settingsOption">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </div>
+                    <div class="more-option" id="leaveOption">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Leave</span>
+                    </div>
+                </div>
+            </div>
+            <button class="control-btn-main" id="endMeetingControl">
+                <i class="fas fa-phone-slash"></i>
+                <span>End</span>
+            </button>
         </div>
     </div>
 
-    <!-- Raise hand panel -->
-    <div class="raise-hand-panel" id="raiseHandPanel">
-        <div class="hand-emoji" data-emoji="✋">✋ Raise Hand</div>
-        <div class="hand-emoji" data-emoji="👍">👍 Thumbs Up</div>
-        <div class="hand-emoji" data-emoji="👎">👎 Thumbs Down</div>
-        <div class="hand-emoji" data-emoji="👏">👏 Clap</div>
-        <div class="hand-emoji" data-emoji="🙋">🙋 Question</div>
-    </div>
-
-    <!-- Participants panel -->
-    <div class="participants-panel" id="participantsPanel">
-        <div class="participant-item">
-            <div class="participant-avatar" style="background-color: var(--primary-color);">Y</div>
-            <div class="participant-name">You (Host)</div>
-            <div class="participant-status"></div>
+    <!-- Modals -->
+    <div class="modal" id="inviteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Invite People</div>
+                <button class="modal-close" id="closeInviteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Share this link to invite others to join your whiteboard session:</p>
+                <div style="display: flex; margin: 16px 0;">
+                    <input type="text" id="inviteLink" readonly style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px 0 0 4px;">
+                    <button id="copyInviteLink" style="padding: 8px 12px; background-color: var(--primary-color); color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer;">
+                        Copy
+                    </button>
+                </div>
+                <p>Or share this meeting ID:</p>
+                <div style="display: flex; margin: 16px 0;">
+                    <input type="text" id="meetingId" readonly style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px 0 0 4px;">
+                    <button id="copyMeetingId" style="padding: 8px 12px; background-color: var(--primary-color); color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer;">
+                        Copy
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelInvite">Close</button>
+            </div>
         </div>
-        <!-- Other participants will be added dynamically -->
     </div>
 
-    <!-- Previous modals and scripts remain the same... -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Settings</div>
+                <button class="modal-close" id="closeSettingsModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 16px;">
+                    <h3 style="margin-bottom: 8px;">🔒 Security & Privacy</h3>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="checkbox" id="waitingRoom" checked> Enable waiting room
+                    </label>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="checkbox" id="meetingPasscode"> Require meeting passcode
+                    </label>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="checkbox" id="joinBeforeHost"> Allow participants to join before host
+                    </label>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="checkbox" id="participantScreenShare" checked> Allow participant screen sharing
+                    </label>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="checkbox" id="muteOnEntry" checked> Mute participants on entry
+                    </label>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="checkbox" id="allowRejoin"> Allow removed participants to rejoin
+                    </label>
+                </div>
 
+                <div style="margin-bottom: 16px;">
+                    <h3 style="margin-bottom: 8px;">🎥 Video Settings</h3>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="checkbox" id="hdVideo"> HD video
+                    </label>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="checkbox" id="touchUpAppearance"> Touch up my appearance
+                    </label>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="checkbox" id="mirrorVideo"> Mirror my video
+                    </label>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="checkbox" id="videoPreview"> Always show video preview
+                    </label>
+                    <div style="margin: 8px 0;">
+                        <label>Virtual Background:</label>
+                        <select id="virtualBackground" style="width: 100%; padding: 8px; margin-top: 4px;">
+                            <option value="none">None</option>
+                            <option value="blur">Blur</option>
+                            <option value="office">Office</option>
+                            <option value="meeting">Meeting Room</option>
+                            <option value="bedroom">Bedroom</option>
+                            <option value="custom">Custom Image</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <h3 style="margin-bottom: 8px;">🎙️ Audio Settings</h3>
+                    <div style="margin: 8px 0;">
+                        <label>Microphone:</label>
+                        <select id="microphone" style="width: 100%; padding: 8px; margin-top: 4px;"></select>
+                    </div>
+                    <div style="margin: 8px 0;">
+                        <label>Speaker:</label>
+                        <select id="speaker" style="width: 100%; padding: 8px; margin-top: 4px;"></select>
+                    </div>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="checkbox" id="suppressBackgroundNoise"> Suppress background noise
+                    </label>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="checkbox" id="originalSound"> Original sound for musicians
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSettings">Cancel</button>
+                <button class="btn btn-primary" id="saveSettings">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="reactionsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Send Reaction</div>
+                <button class="modal-close" id="closeReactionsModal">&times;</button>
+            </div>
+            <div class="modal-body" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                <button class="reaction-btn" data-reaction="👍">👍</button>
+                <button class="reaction-btn" data-reaction="👎">👎</button>
+                <button class="reaction-btn" data-reaction="👏">👏</button>
+                <button class="reaction-btn" data-reaction="🙌">🙌</button>
+                <button class="reaction-btn" data-reaction="😂">😂</button>
+                <button class="reaction-btn" data-reaction="😮">😮</button>
+                <button class="reaction-btn" data-reaction="😢">😢</button>
+                <button class="reaction-btn" data-reaction="❤️">❤️</button>
+                <button class="reaction-btn" data-reaction="🔥">🔥</button>
+                <button class="reaction-btn" data-reaction="🎉">🎉</button>
+                <button class="reaction-btn" data-reaction="🤔">🤔</button>
+                <button class="reaction-btn" data-reaction="🙏">🙏</button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelReactions">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="leaveModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Leave Meeting</div>
+                <button class="modal-close" id="closeLeaveModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to leave the meeting?</p>
+                <label style="display: block; margin: 16px 0;">
+                    <input type="checkbox" id="saveBeforeLeave"> Save whiteboard before leaving
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelLeave">Cancel</button>
+                <button class="btn btn-primary" id="confirmLeave">Leave</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="endMeetingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">End Meeting for All</div>
+                <button class="modal-close" id="closeEndMeetingModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to end the meeting for all participants?</p>
+                <label style="display: block; margin: 16px 0;">
+                    <input type="checkbox" id="saveBeforeEnd"> Save whiteboard before ending
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEndMeeting">Cancel</button>
+                <button class="btn btn-primary" id="confirmEndMeeting">End Meeting</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="waitingRoomModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Waiting Room</div>
+                <button class="modal-close" id="closeWaitingRoomModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="waitingParticipantsList">
+                    <p>No participants are waiting</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="admitAll">Admit All</button>
+                <button class="btn btn-primary" id="closeWaitingRoom">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Export Whiteboard</div>
+                <button class="modal-close" id="closeExportModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 16px;">
+                    <h3 style="margin-bottom: 8px;">Export Options</h3>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="radio" name="exportOption" value="current" checked> Current page only
+                    </label>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="radio" name="exportOption" value="all"> All pages
+                    </label>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <h3 style="margin-bottom: 8px;">Format</h3>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="radio" name="exportFormat" value="png" checked> PNG
+                    </label>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="radio" name="exportFormat" value="jpg"> JPG
+                    </label>
+                    <label style="display: block; margin: 8px 0;">
+                        <input type="radio" name="exportFormat" value="pdf"> PDF
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelExport">Cancel</button>
+                <button class="btn btn-primary" id="confirmExport">Export</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Waiting Room Screen -->
+    <div class="waiting-room" id="waitingRoomScreen" style="display: none;">
+        <div class="waiting-icon">
+            <i class="fas fa-door-open"></i>
+        </div>
+        <div class="waiting-title">You're in the waiting room</div>
+        <div class="waiting-message">
+            The meeting host will let you in soon. Please wait...
+        </div>
+        <div class="spinner">
+            <i class="fas fa-spinner fa-spin" style="font-size: 36px;"></i>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-info-circle"></i>
+        <span id="notificationText">Notification message</span>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
-        // Previous JavaScript remains the same...
-
-        // New footer controls
-        const micControl = document.getElementById('micControl');
-        const videoControl = document.getElementById('videoControl');
-        const screenShareControl = document.getElementById('screenShareControl');
-        const participantsControl = document.getElementById('participantsControl');
-        const raiseHandControl = document.getElementById('raiseHandControl');
-        const reactionsControl = document.getElementById('reactionsControl');
-        const backgroundEffectsControl = document.getElementById('backgroundEffectsControl');
-        const moreControls = document.getElementById('moreControls');
-        const participantsCountBadge = document.getElementById('participantsCountBadge');
-
-        // Panels
-        const reactionsPanel = document.getElementById('reactionsPanel');
-        const backgroundEffectsModal = document.getElementById('backgroundEffectsModal');
-        const raiseHandPanel = document.getElementById('raiseHandPanel');
-        const participantsPanel = document.getElementById('participantsPanel');
-
-        // Track active panels
-        let activePanel = null;
-
-        // Close all panels
-        function closeAllPanels() {
-            reactionsPanel.classList.remove('show');
-            backgroundEffectsModal.classList.remove('show');
-            raiseHandPanel.classList.remove('show');
-            participantsPanel.classList.remove('show');
-            activePanel = null;
-        }
-
-        // Toggle panel
-        function togglePanel(panel) {
-            if (activePanel === panel) {
-                closeAllPanels();
-            } else {
-                closeAllPanels();
-                panel.classList.add('show');
-                activePanel = panel;
-            }
-        }
-
-        // Event listeners for footer controls
-        micControl.addEventListener('click', toggleMic);
-        videoControl.addEventListener('click', toggleVideo);
-        screenShareControl.addEventListener('click', () => {
-            showNotification('Screen sharing coming soon!');
-        });
-        participantsControl.addEventListener('click', () => {
-            togglePanel(participantsPanel);
-            updateParticipantsPanel();
-        });
-        raiseHandControl.addEventListener('click', () => {
-            togglePanel(raiseHandPanel);
-        });
-        reactionsControl.addEventListener('click', () => {
-            togglePanel(reactionsPanel);
-        });
-        backgroundEffectsControl.addEventListener('click', () => {
-            togglePanel(backgroundEffectsModal);
-        });
-        moreControls.addEventListener('click', () => {
-            dropdownMenu.classList.toggle('show');
-        });
-
-        // Close panels when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.footer-control') && !e.target.closest('.reactions-panel') && 
-                !e.target.closest('.background-effects-modal') && !e.target.closest('.raise-hand-panel') &&
-                !e.target.closest('.participants-panel')) {
-                closeAllPanels();
-            }
-        });
-
-        // Update mic and video controls when state changes
-        function updateMediaControls() {
-            micControl.classList.toggle('off', !isMicOn);
-            micControl.querySelector('i').className = isMicOn ? 'fas fa-microphone' : 'fas fa-microphone-slash';
+        document.addEventListener('DOMContentLoaded', function() {
+            // API Key
+            const API_KEY = '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';
             
-            videoControl.classList.toggle('off', !isVideoOn);
-            videoControl.querySelector('i').className = isVideoOn ? 'fas fa-video' : 'fas fa-video-slash';
-        }
+            // DOM Elements
+            const whiteboard = document.getElementById('whiteboard');
+            const ctx = whiteboard.getContext('2d');
+            const cursorsContainer = document.getElementById('cursors');
+            const userCountElement = document.getElementById('userCount');
+            const pencilTool = document.getElementById('pencilTool');
+            const lineTool = document.getElementById('lineTool');
+            const rectangleTool = document.getElementById('rectangleTool');
+            const circleTool = document.getElementById('circleTool');
+            const textTool = document.getElementById('textTool');
+            const eraserTool = document.getElementById('eraserTool');
+            const colorPicker = document.getElementById('colorPicker');
+            const colorPalette = document.querySelector('.color-palette');
+            const brushSize = document.getElementById('brushSize');
+            const clearTool = document.getElementById('clearTool');
+            const undoTool = document.getElementById('undoTool');
+            const redoTool = document.getElementById('redoTool');
+            const saveTool = document.getElementById('saveTool');
+            const loadTool = document.getElementById('loadTool');
+            const prevPage = document.getElementById('prevPage');
+            const nextPage = document.getElementById('nextPage');
+            const currentPage = document.getElementById('currentPage');
+            const totalPages = document.getElementById('totalPages');
+            const addPage = document.getElementById('addPage');
+            const duplicatePage = document.getElementById('duplicatePage');
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const localVideo = document.getElementById('localVideo');
+            const toggleMic = document.getElementById('toggleMic');
+            const toggleVideo = document.getElementById('toggleVideo');
+            const startRecording = document.getElementById('startRecording');
+            const stopRecording = document.getElementById('stopRecording');
+            const slidesContainer = document.querySelector('.slides-container');
+            const addSlideBtn = document.getElementById('addSlideBtn');
+            const exportPdf = document.getElementById('exportPdf');
+            const exportImage = document.getElementById('exportImage');
+            const micControl = document.getElementById('micControl');
+            const videoControl = document.getElementById('videoControl');
+            const screenShareControl = document.getElementById('screenShareControl');
+            const participantsControl = document.getElementById('participantsControl');
+            const raiseHandControl = document.getElementById('raiseHandControl');
+            const reactionsControl = document.getElementById('reactionsControl');
+            const moreControl = document.getElementById('moreControl');
+            const moreOptions = document.querySelector('.more-options');
+            const chatOption = document.getElementById('chatOption');
+            const inviteOption = document.getElementById('inviteOption');
+            const recordOption = document.getElementById('recordOption');
+            const settingsOption = document.getElementById('settingsOption');
+            const leaveOption = document.getElementById('leaveOption');
+            const endMeetingControl = document.getElementById('endMeetingControl');
+            const inviteModal = document.getElementById('inviteModal');
+            const closeInviteModal = document.getElementById('closeInviteModal');
+            const inviteLink = document.getElementById('inviteLink');
+            const meetingId = document.getElementById('meetingId');
+            const copyInviteLink = document.getElementById('copyInviteLink');
+            const copyMeetingId = document.getElementById('copyMeetingId');
+            const cancelInvite = document.getElementById('cancelInvite');
+            const settingsModal = document.getElementById('settingsModal');
+            const closeSettingsModal = document.getElementById('closeSettingsModal');
+            const cancelSettings = document.getElementById('cancelSettings');
+            const saveSettings = document.getElementById('saveSettings');
+            const reactionsModal = document.getElementById('reactionsModal');
+            const closeReactionsModal = document.getElementById('closeReactionsModal');
+            const cancelReactions = document.getElementById('cancelReactions');
+            const reactionButtons = document.querySelectorAll('.reaction-btn');
+            const leaveModal = document.getElementById('leaveModal');
+            const closeLeaveModal = document.getElementById('closeLeaveModal');
+            const cancelLeave = document.getElementById('cancelLeave');
+            const confirmLeave = document.getElementById('confirmLeave');
+            const saveBeforeLeave = document.getElementById('saveBeforeLeave');
+            const endMeetingModal = document.getElementById('endMeetingModal');
+            const closeEndMeetingModal = document.getElementById('closeEndMeetingModal');
+            const cancelEndMeeting = document.getElementById('cancelEndMeeting');
+            const confirmEndMeeting = document.getElementById('confirmEndMeeting');
+            const saveBeforeEnd = document.getElementById('saveBeforeEnd');
+            const waitingRoomModal = document.getElementById('waitingRoomModal');
+            const closeWaitingRoomModal = document.getElementById('closeWaitingRoomModal');
+            const admitAll = document.getElementById('admitAll');
+            const waitingParticipantsList = document.getElementById('waitingParticipantsList');
+            const exportModal = document.getElementById('exportModal');
+            const closeExportModal = document.getElementById('closeExportModal');
+            const cancelExport = document.getElementById('cancelExport');
+            const confirmExport = document.getElementById('confirmExport');
+            const waitingRoomScreen = document.getElementById('waitingRoomScreen');
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
 
-        // Update participants panel
-        function updateParticipantsPanel() {
-            const panel = participantsPanel.querySelector('.participants-panel');
-            panel.innerHTML = '';
-            
-            // Add current user
-            const userItem = document.createElement('div');
-            userItem.className = 'participant-item';
-            
-            const userAvatar = document.createElement('div');
-            userAvatar.className = 'participant-avatar';
-            userAvatar.style.backgroundColor = userColor;
-            userAvatar.textContent = userName.substring(0, 1).toUpperCase();
-            
-            const userNameEl = document.createElement('div');
-            userNameEl.className = 'participant-name';
-            userNameEl.textContent = `${userName} (You)`;
-            
-            const userStatus = document.createElement('div');
-            userStatus.className = 'participant-status';
-            
-            userItem.appendChild(userAvatar);
-            userItem.appendChild(userNameEl);
-            userItem.appendChild(userStatus);
-            panel.appendChild(userItem);
-            
-            // Add other participants
-            Object.values(users).forEach(user => {
-                if (user.userId === userId) return;
+            // Application State
+            let state = {
+                tool: 'pencil',
+                color: '#000000',
+                brushSize: 5,
+                isDrawing: false,
+                lastX: 0,
+                lastY: 0,
+                currentPage: 1,
+                totalPages: 1,
+                whiteboards: {},
+                undoStack: {},
+                redoStack: {},
+                participants: [],
+                waitingParticipants: [],
+                isHost: true,
+                isMicOn: true,
+                isVideoOn: true,
+                isScreenSharing: false,
+                isRecording: false,
+                isHandRaised: false,
+                socket: null,
+                peerConnections: {},
+                localStream: null,
+                mediaRecorder: null,
+                recordedChunks: []
+            };
+
+            // Initialize the whiteboard
+            function initWhiteboard() {
+                // Set canvas size
+                resizeCanvas();
                 
-                const participantItem = document.createElement('div');
-                participantItem.className = 'participant-item';
+                // Initialize first whiteboard page
+                state.whiteboards[1] = {
+                    data: null,
+                    thumbnail: null
+                };
+                state.undoStack[1] = [];
+                state.redoStack[1] = [];
                 
-                const participantAvatar = document.createElement('div');
-                participantAvatar.className = 'participant-avatar';
-                participantAvatar.style.backgroundColor = user.userColor;
-                participantAvatar.textContent = user.userName.substring(0, 1).toUpperCase();
+                // Load from localStorage if available
+                const savedWhiteboard = localStorage.getItem('whiteboard-education');
+                if (savedWhiteboard) {
+                    const confirmLoad = confirm('Do you want to continue from your previous whiteboard session?');
+                    if (confirmLoad) {
+                        loadWhiteboard(JSON.parse(savedWhiteboard));
+                    }
+                }
                 
-                const participantName = document.createElement('div');
-                participantName.className = 'participant-name';
-                participantName.textContent = user.userName;
+                // Auto-save every 30 seconds
+                setInterval(() => {
+                    saveWhiteboardToLocalStorage();
+                }, 30000);
                 
-                const participantStatus = document.createElement('div');
-                participantStatus.className = 'participant-status';
-                
-                participantItem.appendChild(participantAvatar);
-                participantItem.appendChild(participantName);
-                participantItem.appendChild(participantStatus);
-                panel.appendChild(participantItem);
-            });
-        }
-
-        // Handle reactions
-        reactionsPanel.querySelectorAll('.reaction').forEach(reaction => {
-            reaction.addEventListener('click', () => {
-                const emoji = reaction.dataset.reaction;
-                showNotification(`You reacted with ${emoji}`);
-                socket.emit('reaction', { emoji, userId, boardId });
-                closeAllPanels();
-            });
-        });
-
-        // Handle raise hand emojis
-        raiseHandPanel.querySelectorAll('.hand-emoji').forEach(emoji => {
-            emoji.addEventListener('click', () => {
-                const handEmoji = emoji.dataset.emoji;
-                showNotification(`You sent ${handEmoji}`);
-                socket.emit('raiseHand', { emoji: handEmoji, userId, boardId });
-                closeAllPanels();
-            });
-        });
-
-        // Handle background effects
-        backgroundEffectsModal.querySelectorAll('.background-effect').forEach(effect => {
-            effect.addEventListener('click', () => {
-                const effectType = effect.dataset.effect;
-                
-                // Update active state
-                backgroundEffectsModal.querySelectorAll('.background-effect').forEach(e => {
-                    e.classList.remove('active');
+                // Handle beforeunload
+                window.addEventListener('beforeunload', (e) => {
+                    saveWhiteboardToLocalStorage();
+                    // Don't show confirmation if we're the host (we've already saved)
+                    if (state.isHost) {
+                        return undefined;
+                    }
+                    
+                    e.preventDefault();
+                    e.returnValue = '';
+                    return 'You have unsaved changes. Are you sure you want to leave?';
                 });
-                effect.classList.add('active');
+            }
+
+            // Resize canvas to fit container
+            function resizeCanvas() {
+                const container = whiteboard.parentElement;
+                whiteboard.width = container.clientWidth;
+                whiteboard.height = container.clientHeight;
                 
-                // Apply effect
-                switch (effectType) {
-                    case 'none':
-                        showNotification('Background effect removed');
+                // Redraw current page
+                redrawWhiteboard();
+            }
+
+            // Redraw the current whiteboard page
+            function redrawWhiteboard() {
+                if (state.whiteboards[state.currentPage] && state.whiteboards[state.currentPage].data) {
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+                        ctx.drawImage(img, 0, 0, whiteboard.width, whiteboard.height);
+                    };
+                    img.src = state.whiteboards[state.currentPage].data;
+                } else {
+                    ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, whiteboard.width, whiteboard.height);
+                }
+            }
+
+            // Save current whiteboard state
+            function saveWhiteboardState() {
+                const dataUrl = whiteboard.toDataURL();
+                state.whiteboards[state.currentPage] = {
+                    data: dataUrl,
+                    thumbnail: generateThumbnail()
+                };
+                
+                // Push to undo stack
+                if (!state.undoStack[state.currentPage]) {
+                    state.undoStack[state.currentPage] = [];
+                }
+                state.undoStack[state.currentPage].push(dataUrl);
+                
+                // Clear redo stack
+                state.redoStack[state.currentPage] = [];
+                
+                // Broadcast to other users
+                if (state.socket) {
+                    state.socket.emit('drawing', {
+                        page: state.currentPage,
+                        data: dataUrl
+                    });
+                }
+            }
+
+            // Generate thumbnail for current whiteboard
+            function generateThumbnail() {
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = 160;
+                tempCanvas.height = 90;
+                const tempCtx = tempCanvas.getContext('2d');
+                
+                const img = new Image();
+                img.onload = function() {
+                    tempCtx.drawImage(img, 0, 0, 160, 90);
+                };
+                img.src = whiteboard.toDataURL();
+                
+                return tempCanvas.toDataURL();
+            }
+
+            // Undo last action
+            function undo() {
+                if (state.undoStack[state.currentPage] && state.undoStack[state.currentPage].length > 0) {
+                    const lastState = state.undoStack[state.currentPage].pop();
+                    
+                    // Push to redo stack
+                    if (!state.redoStack[state.currentPage]) {
+                        state.redoStack[state.currentPage] = [];
+                    }
+                    state.redoStack[state.currentPage].push(state.whiteboards[state.currentPage].data);
+                    
+                    // Restore previous state
+                    state.whiteboards[state.currentPage].data = lastState;
+                    redrawWhiteboard();
+                    
+                    // Broadcast undo
+                    if (state.socket) {
+                        state.socket.emit('undo', state.currentPage);
+                    }
+                }
+            }
+
+            // Redo last undone action
+            function redo() {
+                if (state.redoStack[state.currentPage] && state.redoStack[state.currentPage].length > 0) {
+                    const nextState = state.redoStack[state.currentPage].pop();
+                    
+                    // Push to undo stack
+                    state.undoStack[state.currentPage].push(state.whiteboards[state.currentPage].data);
+                    
+                    // Restore next state
+                    state.whiteboards[state.currentPage].data = nextState;
+                    redrawWhiteboard();
+                    
+                    // Broadcast redo
+                    if (state.socket) {
+                        state.socket.emit('redo', state.currentPage);
+                    }
+                }
+            }
+
+            // Add a new whiteboard page
+            function addNewPage() {
+                state.totalPages++;
+                state.currentPage = state.totalPages;
+                
+                state.whiteboards[state.currentPage] = {
+                    data: null,
+                    thumbnail: null
+                };
+                state.undoStack[state.currentPage] = [];
+                state.redoStack[state.currentPage] = [];
+                
+                updatePageControls();
+                redrawWhiteboard();
+                
+                // Add slide thumbnail
+                const slideThumbnail = document.createElement('div');
+                slideThumbnail.className = 'slide-thumbnail';
+                slideThumbnail.innerHTML = '<i class="fas fa-file-alt"></i><span class="slide-number">' + state.currentPage + '</span>';
+                slideThumbnail.addEventListener('click', () => {
+                    goToPage(state.currentPage);
+                });
+                
+                addSlideBtn.parentNode.insertBefore(slideThumbnail, addSlideBtn);
+                
+                // Broadcast new page
+                if (state.socket) {
+                    state.socket.emit('newPage', state.currentPage);
+                }
+            }
+
+            // Duplicate current page
+            function duplicateCurrentPage() {
+                state.totalPages++;
+                const newPage = state.totalPages;
+                
+                state.whiteboards[newPage] = {
+                    data: whiteboard.toDataURL(),
+                    thumbnail: generateThumbnail()
+                };
+                state.undoStack[newPage] = [];
+                state.redoStack[newPage] = [];
+                
+                // Switch to new page
+                state.currentPage = newPage;
+                updatePageControls();
+                redrawWhiteboard();
+                
+                // Add slide thumbnail
+                const slideThumbnail = document.createElement('div');
+                slideThumbnail.className = 'slide-thumbnail';
+                slideThumbnail.innerHTML = '<i class="fas fa-file-alt"></i><span class="slide-number">' + state.currentPage + '</span>';
+                slideThumbnail.addEventListener('click', () => {
+                    goToPage(newPage);
+                });
+                
+                addSlideBtn.parentNode.insertBefore(slideThumbnail, addSlideBtn);
+                
+                // Broadcast duplicated page
+                if (state.socket) {
+                    state.socket.emit('duplicatePage', {
+                        fromPage: state.currentPage - 1,
+                        toPage: newPage
+                    });
+                }
+            }
+
+            // Go to specific page
+            function goToPage(page) {
+                if (page >= 1 && page <= state.totalPages) {
+                    state.currentPage = page;
+                    updatePageControls();
+                    redrawWhiteboard();
+                    
+                    // Highlight active slide
+                    document.querySelectorAll('.slide-thumbnail').forEach((slide, index) => {
+                        if (index + 1 === page) {
+                            slide.classList.add('active');
+                        } else {
+                            slide.classList.remove('active');
+                        }
+                    });
+                    
+                    // Broadcast page change
+                    if (state.socket) {
+                        state.socket.emit('pageChange', page);
+                    }
+                }
+            }
+
+            // Update page controls
+            function updatePageControls() {
+                currentPage.textContent = state.currentPage;
+                totalPages.textContent = state.totalPages;
+                
+                prevPage.disabled = state.currentPage <= 1;
+                nextPage.disabled = state.currentPage >= state.totalPages;
+            }
+
+            // Save whiteboard to localStorage
+            function saveWhiteboardToLocalStorage() {
+                const saveData = {
+                    whiteboards: state.whiteboards,
+                    currentPage: state.currentPage,
+                    totalPages: state.totalPages,
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem('whiteboard-education', JSON.stringify(saveData));
+            }
+
+            // Load whiteboard from data
+            function loadWhiteboard(data) {
+                state.whiteboards = data.whiteboards || {};
+                state.currentPage = data.currentPage || 1;
+                state.totalPages = data.totalPages || 1;
+                
+                // Initialize undo/redo stacks for each page
+                for (let i = 1; i <= state.totalPages; i++) {
+                    if (!state.undoStack[i]) {
+                        state.undoStack[i] = [];
+                    }
+                    if (!state.redoStack[i]) {
+                        state.redoStack[i] = [];
+                    }
+                }
+                
+                updatePageControls();
+                redrawWhiteboard();
+                
+                // Recreate slide thumbnails
+                slidesContainer.innerHTML = '';
+                for (let i = 1; i <= state.totalPages; i++) {
+                    const slideThumbnail = document.createElement('div');
+                    slideThumbnail.className = 'slide-thumbnail' + (i === state.currentPage ? ' active' : '');
+                    slideThumbnail.innerHTML = '<i class="fas fa-file-alt"></i><span class="slide-number">' + i + '</span>';
+                    slideThumbnail.addEventListener('click', () => {
+                        goToPage(i);
+                    });
+                    slidesContainer.appendChild(slideThumbnail);
+                }
+                
+                slidesContainer.appendChild(addSlideBtn);
+            }
+
+            // Export whiteboard
+            function exportWhiteboard(format, pages) {
+                if (format === 'pdf') {
+                    // For PDF, we'd typically use a library like jsPDF
+                    showNotification('Exporting to PDF is not implemented in this demo');
+                } else {
+                    // For image formats
+                    const link = document.createElement('a');
+                    if (pages === 'all') {
+                        // In a real app, we'd create a zip file or multi-page PDF
+                        showNotification('Exporting all pages is not implemented in this demo');
+                    } else {
+                        link.download = `whiteboard-page-${state.currentPage}.${format}`;
+                        link.href = whiteboard.toDataURL(`image/${format}`);
+                        link.click();
+                    }
+                }
+            }
+
+            // Show notification
+            function showNotification(message) {
+                notificationText.textContent = message;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+
+            // Initialize WebSocket connection
+            function initSocketConnection() {
+                // In a real app, this would connect to your server
+                // state.socket = io('https://your-server-url.com');
+                
+                // For demo purposes, we'll simulate socket behavior
+                state.socket = {
+                    emit: function(event, data) {
+                        console.log('Socket emit:', event, data);
+                    },
+                    on: function(event, callback) {
+                        console.log('Socket on:', event);
+                    }
+                };
+                
+                // Generate a random meeting ID
+                const meetingId = 'WB-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+                document.getElementById('meetingId').value = meetingId;
+                document.getElementById('inviteLink').value = window.location.href + '?meeting=' + meetingId;
+                
+                // Check if we're joining an existing meeting
+                const urlParams = new URLSearchParams(window.location.search);
+                const joinMeetingId = urlParams.get('meeting');
+                
+                if (joinMeetingId) {
+                    // In a real app, we'd join the existing meeting
+                    state.isHost = false;
+                    showWaitingRoom();
+                } else {
+                    // We're the host
+                    state.isHost = true;
+                }
+            }
+
+            // Initialize WebRTC
+            async function initWebRTC() {
+                try {
+                    state.localStream = await navigator.mediaDevices.getUserMedia({
+                        audio: true,
+                        video: true
+                    });
+                    
+                    localVideo.srcObject = state.localStream;
+                    
+                    // In a real app, we'd set up peer connections with other participants
+                } catch (error) {
+                    console.error('Error accessing media devices:', error);
+                    showNotification('Could not access camera or microphone');
+                }
+            }
+
+            // Show waiting room
+            function showWaitingRoom() {
+                waitingRoomScreen.style.display = 'flex';
+                document.querySelector('.main-container').style.display = 'none';
+                document.querySelector('.controls-bar').style.display = 'none';
+            }
+
+            // Hide waiting room
+            function hideWaitingRoom() {
+                waitingRoomScreen.style.display = 'none';
+                document.querySelector('.main-container').style.display = 'flex';
+                document.querySelector('.controls-bar').style.display = 'flex';
+            }
+
+            // Event Listeners
+            window.addEventListener('resize', resizeCanvas);
+
+            // Tool selection
+            pencilTool.addEventListener('click', () => {
+                state.tool = 'pencil';
+                updateToolSelection();
+            });
+
+            lineTool.addEventListener('click', () => {
+                state.tool = 'line';
+                updateToolSelection();
+            });
+
+            rectangleTool.addEventListener('click', () => {
+                state.tool = 'rectangle';
+                updateToolSelection();
+            });
+
+            circleTool.addEventListener('click', () => {
+                state.tool = 'circle';
+                updateToolSelection();
+            });
+
+            textTool.addEventListener('click', () => {
+                state.tool = 'text';
+                updateToolSelection();
+            });
+
+            eraserTool.addEventListener('click', () => {
+                state.tool = 'eraser';
+                updateToolSelection();
+            });
+
+            function updateToolSelection() {
+                document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`.tool-btn[data-tool="${state.tool}"]`).classList.add('active');
+            }
+
+            // Color selection
+            document.querySelectorAll('.color-picker').forEach(picker => {
+                picker.addEventListener('click', () => {
+                    state.color = picker.dataset.color;
+                    colorPicker.querySelector('i').style.color = state.color;
+                });
+            });
+
+            // Brush size
+            brushSize.addEventListener('input', () => {
+                state.brushSize = brushSize.value;
+            });
+
+            // Clear
+            clearTool.addEventListener('click', () => {
+                ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, whiteboard.width, whiteboard.height);
+                saveWhiteboardState();
+            });
+
+            // Undo/Redo
+            undoTool.addEventListener('click', undo);
+            redoTool.addEventListener('click', redo);
+
+            // Save/Load
+            saveTool.addEventListener('click', () => {
+                const dataUrl = whiteboard.toDataURL();
+                const link = document.createElement('a');
+                link.download = 'whiteboard.png';
+                link.href = dataUrl;
+                link.click();
+            });
+
+            loadTool.addEventListener('click', () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.onchange = e => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = event => {
+                        const img = new Image();
+                        img.onload = function() {
+                            ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+                            ctx.drawImage(img, 0, 0, whiteboard.width, whiteboard.height);
+                            saveWhiteboardState();
+                        };
+                        img.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                };
+                input.click();
+            });
+
+            // Page navigation
+            prevPage.addEventListener('click', () => goToPage(state.currentPage - 1));
+            nextPage.addEventListener('click', () => goToPage(state.currentPage + 1));
+            addPage.addEventListener('click', addNewPage);
+            duplicatePage.addEventListener('click', duplicateCurrentPage);
+
+            // Tab switching
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    button.classList.add('active');
+                    document.getElementById(button.dataset.tab + 'Tab').classList.add('active');
+                });
+            });
+
+            // Video controls
+            toggleMic.addEventListener('click', () => {
+                state.isMicOn = !state.isMicOn;
+                if (state.localStream) {
+                    state.localStream.getAudioTracks().forEach(track => {
+                        track.enabled = state.isMicOn;
+                    });
+                }
+                toggleMic.querySelector('i').classList.toggle('fa-microphone');
+                toggleMic.querySelector('i').classList.toggle('fa-microphone-slash');
+                micControl.querySelector('i').classList.toggle('fa-microphone');
+                micControl.querySelector('i').classList.toggle('fa-microphone-slash');
+            });
+
+            toggleVideo.addEventListener('click', () => {
+                state.isVideoOn = !state.isVideoOn;
+                if (state.localStream) {
+                    state.localStream.getVideoTracks().forEach(track => {
+                        track.enabled = state.isVideoOn;
+                    });
+                }
+                toggleVideo.querySelector('i').classList.toggle('fa-video');
+                toggleVideo.querySelector('i').classList.toggle('fa-video-slash');
+                videoControl.querySelector('i').classList.toggle('fa-video');
+                videoControl.querySelector('i').classList.toggle('fa-video-slash');
+            });
+
+            // Recording
+            startRecording.addEventListener('click', () => {
+                state.isRecording = true;
+                startRecording.disabled = true;
+                stopRecording.disabled = false;
+                showNotification('Recording started');
+            });
+
+            stopRecording.addEventListener('click', () => {
+                state.isRecording = false;
+                startRecording.disabled = false;
+                stopRecording.disabled = true;
+                showNotification('Recording stopped');
+                
+                // In a real app, we'd save the recording
+            });
+
+            // Add slide
+            addSlideBtn.addEventListener('click', addNewPage);
+
+            // Export
+            exportPdf.addEventListener('click', () => {
+                exportModal.style.display = 'flex';
+            });
+
+            exportImage.addEventListener('click', () => {
+                exportModal.style.display = 'flex';
+            });
+
+            // Bottom controls
+            micControl.addEventListener('click', () => {
+                state.isMicOn = !state.isMicOn;
+                if (state.localStream) {
+                    state.localStream.getAudioTracks().forEach(track => {
+                        track.enabled = state.isMicOn;
+                    });
+                }
+                micControl.querySelector('i').classList.toggle('fa-microphone');
+                micControl.querySelector('i').classList.toggle('fa-microphone-slash');
+                toggleMic.querySelector('i').classList.toggle('fa-microphone');
+                toggleMic.querySelector('i').classList.toggle('fa-microphone-slash');
+            });
+
+            videoControl.addEventListener('click', () => {
+                state.isVideoOn = !state.isVideoOn;
+                if (state.localStream) {
+                    state.localStream.getVideoTracks().forEach(track => {
+                        track.enabled = state.isVideoOn;
+                    });
+                }
+                videoControl.querySelector('i').classList.toggle('fa-video');
+                videoControl.querySelector('i').classList.toggle('fa-video-slash');
+                toggleVideo.querySelector('i').classList.toggle('fa-video');
+                toggleVideo.querySelector('i').classList.toggle('fa-video-slash');
+            });
+
+            screenShareControl.addEventListener('click', () => {
+                state.isScreenSharing = !state.isScreenSharing;
+                screenShareControl.classList.toggle('active');
+                
+                if (state.isScreenSharing) {
+                    // In a real app, we'd start screen sharing
+                    showNotification('Screen sharing started');
+                } else {
+                    // In a real app, we'd stop screen sharing
+                    showNotification('Screen sharing stopped');
+                }
+            });
+
+            participantsControl.addEventListener('click', () => {
+                // Switch to participants tab
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                document.querySelector('.tab-btn[data-tab="participants"]').classList.add('active');
+                document.getElementById('participantsTab').classList.add('active');
+            });
+
+            raiseHandControl.addEventListener('click', () => {
+                state.isHandRaised = !state.isHandRaised;
+                raiseHandControl.classList.toggle('hand-raised');
+                
+                if (state.isHandRaised) {
+                    showNotification('Hand raised');
+                } else {
+                    showNotification('Hand lowered');
+                }
+                
+                // Broadcast hand raise
+                if (state.socket) {
+                    state.socket.emit('handRaise', state.isHandRaised);
+                }
+            });
+
+            reactionsControl.addEventListener('click', () => {
+                reactionsModal.style.display = 'flex';
+            });
+
+            moreControl.addEventListener('click', () => {
+                moreControl.parentElement.classList.toggle('open');
+            });
+
+            // More options
+            chatOption.addEventListener('click', () => {
+                showNotification('Chat is not implemented in this demo');
+                moreControl.parentElement.classList.remove('open');
+            });
+
+            inviteOption.addEventListener('click', () => {
+                inviteModal.style.display = 'flex';
+                moreControl.parentElement.classList.remove('open');
+            });
+
+            recordOption.addEventListener('click', () => {
+                if (state.isRecording) {
+                    state.isRecording = false;
+                    startRecording.disabled = false;
+                    stopRecording.disabled = true;
+                    showNotification('Recording stopped');
+                } else {
+                    state.isRecording = true;
+                    startRecording.disabled = true;
+                    stopRecording.disabled = false;
+                    showNotification('Recording started');
+                }
+                moreControl.parentElement.classList.remove('open');
+            });
+
+            settingsOption.addEventListener('click', () => {
+                settingsModal.style.display = 'flex';
+                moreControl.parentElement.classList.remove('open');
+            });
+
+            leaveOption.addEventListener('click', () => {
+                leaveModal.style.display = 'flex';
+                moreControl.parentElement.classList.remove('open');
+            });
+
+            endMeetingControl.addEventListener('click', () => {
+                if (state.isHost) {
+                    endMeetingModal.style.display = 'flex';
+                } else {
+                    leaveModal.style.display = 'flex';
+                }
+            });
+
+            // Modal controls
+            closeInviteModal.addEventListener('click', () => {
+                inviteModal.style.display = 'none';
+            });
+
+            copyInviteLink.addEventListener('click', () => {
+                inviteLink.select();
+                document.execCommand('copy');
+                showNotification('Invite link copied to clipboard');
+            });
+
+            copyMeetingId.addEventListener('click', () => {
+                meetingId.select();
+                document.execCommand('copy');
+                showNotification('Meeting ID copied to clipboard');
+            });
+
+            cancelInvite.addEventListener('click', () => {
+                inviteModal.style.display = 'none';
+            });
+
+            closeSettingsModal.addEventListener('click', () => {
+                settingsModal.style.display = 'none';
+            });
+
+            cancelSettings.addEventListener('click', () => {
+                settingsModal.style.display = 'none';
+            });
+
+            saveSettings.addEventListener('click', () => {
+                // In a real app, we'd save these settings
+                showNotification('Settings saved');
+                settingsModal.style.display = 'none';
+            });
+
+            closeReactionsModal.addEventListener('click', () => {
+                reactionsModal.style.display = 'none';
+            });
+
+            cancelReactions.addEventListener('click', () => {
+                reactionsModal.style.display = 'none';
+            });
+
+            reactionButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const reaction = button.dataset.reaction;
+                    
+                    // Create reaction element
+                    const reactionElement = document.createElement('div');
+                    reactionElement.className = 'reaction';
+                    reactionElement.textContent = reaction;
+                    reactionElement.style.left = Math.random() * 80 + 10 + '%';
+                    reactionElement.style.top = Math.random() * 80 + 10 + '%';
+                    
+                    document.body.appendChild(reactionElement);
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        reactionElement.remove();
+                    }, 2000);
+                    
+                    // Broadcast reaction
+                    if (state.socket) {
+                        state.socket.emit('reaction', reaction);
+                    }
+                    
+                    reactionsModal.style.display = 'none';
+                });
+            });
+
+            closeLeaveModal.addEventListener('click', () => {
+                leaveModal.style.display = 'none';
+            });
+
+            cancelLeave.addEventListener('click', () => {
+                leaveModal.style.display = 'none';
+            });
+
+            confirmLeave.addEventListener('click', () => {
+                if (saveBeforeLeave.checked) {
+                    saveWhiteboardToLocalStorage();
+                }
+                
+                // In a real app, we'd disconnect from the meeting
+                showNotification('You have left the meeting');
+                
+                // Redirect to home or show leave image
+                window.location.href = 'https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg';
+            });
+
+            closeEndMeetingModal.addEventListener('click', () => {
+                endMeetingModal.style.display = 'none';
+            });
+
+            cancelEndMeeting.addEventListener('click', () => {
+                endMeetingModal.style.display = 'none';
+            });
+
+            confirmEndMeeting.addEventListener('click', () => {
+                if (saveBeforeEnd.checked) {
+                    saveWhiteboardToLocalStorage();
+                }
+                
+                // In a real app, we'd end the meeting for all participants
+                showNotification('Meeting ended for all participants');
+                
+                // Redirect to home or show leave image
+                window.location.href = 'https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg';
+            });
+
+            closeWaitingRoomModal.addEventListener('click', () => {
+                waitingRoomModal.style.display = 'none';
+            });
+
+            admitAll.addEventListener('click', () => {
+                // In a real app, we'd admit all waiting participants
+                state.waitingParticipants = [];
+                updateWaitingParticipantsList();
+                showNotification('All participants admitted');
+            });
+
+            closeExportModal.addEventListener('click', () => {
+                exportModal.style.display = 'none';
+            });
+
+            cancelExport.addEventListener('click', () => {
+                exportModal.style.display = 'none';
+            });
+
+            confirmExport.addEventListener('click', () => {
+                const format = document.querySelector('input[name="exportFormat"]:checked').value;
+                const pages = document.querySelector('input[name="exportOption"]:checked').value;
+                
+                exportWhiteboard(format, pages);
+                exportModal.style.display = 'none';
+            });
+
+            // Update waiting participants list
+            function updateWaitingParticipantsList() {
+                if (state.waitingParticipants.length === 0) {
+                    waitingParticipantsList.innerHTML = '<p>No participants are waiting</p>';
+                } else {
+                    waitingParticipantsList.innerHTML = '';
+                    state.waitingParticipants.forEach(participant => {
+                        const participantElement = document.createElement('div');
+                        participantElement.className = 'participant';
+                        participantElement.innerHTML = `
+                            <div class="participant-avatar">${participant.name.charAt(0)}</div>
+                            <div class="participant-info">
+                                <div class="participant-name">${participant.name}</div>
+                            </div>
+                            <div class="participant-controls">
+                                <button class="control-btn admit-btn" data-id="${participant.id}" title="Admit">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="control-btn remove-btn" data-id="${participant.id}" title="Remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+                        waitingParticipantsList.appendChild(participantElement);
+                    });
+                    
+                    // Add event listeners to new buttons
+                    document.querySelectorAll('.admit-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const participantId = btn.dataset.id;
+                            // In a real app, we'd admit this participant
+                            state.waitingParticipants = state.waitingParticipants.filter(p => p.id !== participantId);
+                            updateWaitingParticipantsList();
+                            showNotification('Participant admitted');
+                        });
+                    });
+                    
+                    document.querySelectorAll('.remove-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const participantId = btn.dataset.id;
+                            // In a real app, we'd remove this participant
+                            state.waitingParticipants = state.waitingParticipants.filter(p => p.id !== participantId);
+                            updateWaitingParticipantsList();
+                            showNotification('Participant removed');
+                        });
+                    });
+                }
+            }
+
+            // Drawing events
+            whiteboard.addEventListener('mousedown', startDrawing);
+            whiteboard.addEventListener('mousemove', draw);
+            whiteboard.addEventListener('mouseup', stopDrawing);
+            whiteboard.addEventListener('mouseout', stopDrawing);
+            
+            whiteboard.addEventListener('touchstart', handleTouchStart);
+            whiteboard.addEventListener('touchmove', handleTouchMove);
+            whiteboard.addEventListener('touchend', handleTouchEnd);
+
+            function startDrawing(e) {
+                state.isDrawing = true;
+                const rect = whiteboard.getBoundingClientRect();
+                state.lastX = (e.clientX || e.touches[0].clientX) - rect.left;
+                state.lastY = (e.clientY || e.touches[0].clientY) - rect.top;
+                
+                if (state.tool === 'text') {
+                    const text = prompt('Enter text:');
+                    if (text) {
+                        ctx.font = `${state.brushSize * 4}px Arial`;
+                        ctx.fillStyle = state.color;
+                        ctx.fillText(text, state.lastX, state.lastY);
+                        saveWhiteboardState();
+                    }
+                    state.isDrawing = false;
+                }
+            }
+
+            function draw(e) {
+                if (!state.isDrawing) return;
+                
+                const rect = whiteboard.getBoundingClientRect();
+                const currentX = (e.clientX || e.touches[0].clientX) - rect.left;
+                const currentY = (e.clientY || e.touches[0].clientY) - rect.top;
+                
+                ctx.lineJoin = 'round';
+                ctx.lineCap = 'round';
+                
+                if (state.tool === 'eraser') {
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.strokeStyle = 'rgba(0,0,0,1)';
+                } else {
+                    ctx.globalCompositeOperation = 'source-over';
+                    ctx.strokeStyle = state.color;
+                }
+                
+                ctx.lineWidth = state.brushSize;
+                
+                ctx.beginPath();
+                
+                switch (state.tool) {
+                    case 'pencil':
+                    case 'eraser':
+                        ctx.moveTo(state.lastX, state.lastY);
+                        ctx.lineTo(currentX, currentY);
+                        ctx.stroke();
                         break;
-                    case 'blur':
-                        showNotification('Background blurred');
+                        
+                    case 'line':
+                        // For line, we'll draw it on mouseup
                         break;
-                    case 'office':
-                        showNotification('Office background applied');
+                        
+                    case 'rectangle':
+                        // For rectangle, we'll draw it on mouseup
                         break;
-                    case 'meeting-room':
-                        showNotification('Meeting room background applied');
-                        break;
-                    case 'bedroom':
-                        showNotification('Bedroom background applied');
-                        break;
-                    case 'custom':
-                        showNotification('Custom background coming soon!');
+                        
+                    case 'circle':
+                        // For circle, we'll draw it on mouseup
                         break;
                 }
                 
-                closeAllPanels();
+                state.lastX = currentX;
+                state.lastY = currentY;
+            }
+
+            function stopDrawing() {
+                if (!state.isDrawing) return;
+                
+                // For shapes, we draw them on mouseup to have proper dimensions
+                if (state.tool === 'line') {
+                    const rect = whiteboard.getBoundingClientRect();
+                    const currentX = (event.clientX || event.changedTouches[0].clientX) - rect.left;
+                    const currentY = (event.clientY || event.changedTouches[0].clientY) - rect.top;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(state.lastX, state.lastY);
+                    ctx.lineTo(currentX, currentY);
+                    ctx.stroke();
+                } else if (state.tool === 'rectangle') {
+                    const rect = whiteboard.getBoundingClientRect();
+                    const currentX = (event.clientX || event.changedTouches[0].clientX) - rect.left;
+                    const currentY = (event.clientY || event.changedTouches[0].clientY) - rect.top;
+                    
+                    const width = currentX - state.lastX;
+                    const height = currentY - state.lastY;
+                    
+                    ctx.beginPath();
+                    ctx.rect(state.lastX, state.lastY, width, height);
+                    ctx.stroke();
+                } else if (state.tool === 'circle') {
+                    const rect = whiteboard.getBoundingClientRect();
+                    const currentX = (event.clientX || event.changedTouches[0].clientX) - rect.left;
+                    const currentY = (event.clientY || event.changedTouches[0].clientY) - rect.top;
+                    
+                    const radius = Math.sqrt(
+                        Math.pow(currentX - state.lastX, 2) + 
+                        Math.pow(currentY - state.lastY, 2)
+                    );
+                    
+                    ctx.beginPath();
+                    ctx.arc(state.lastX, state.lastY, radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                
+                state.isDrawing = false;
+                saveWhiteboardState();
+            }
+
+            function handleTouchStart(e) {
+                e.preventDefault();
+                startDrawing(e.touches[0]);
+            }
+
+            function handleTouchMove(e) {
+                e.preventDefault();
+                draw(e.touches[0]);
+            }
+
+            function handleTouchEnd(e) {
+                e.preventDefault();
+                stopDrawing(e.changedTouches[0]);
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Tool shortcuts
+                if (e.key.toLowerCase() === 'p') {
+                    state.tool = 'pencil';
+                    updateToolSelection();
+                } else if (e.key.toLowerCase() === 'l') {
+                    state.tool = 'line';
+                    updateToolSelection();
+                } else if (e.key.toLowerCase() === 'r') {
+                    state.tool = 'rectangle';
+                    updateToolSelection();
+                } else if (e.key.toLowerCase() === 'c') {
+                    state.tool = 'circle';
+                    updateToolSelection();
+                } else if (e.key.toLowerCase() === 't') {
+                    state.tool = 'text';
+                    updateToolSelection();
+                } else if (e.key.toLowerCase() === 'e') {
+                    state.tool = 'eraser';
+                    updateToolSelection();
+                }
+                
+                // Undo/Redo
+                if (e.ctrlKey && e.key.toLowerCase() === 'z') {
+                    undo();
+                } else if (e.ctrlKey && e.key.toLowerCase() === 'y') {
+                    redo();
+                }
+                
+                // Page navigation
+                if (e.key === 'ArrowLeft' && state.currentPage > 1) {
+                    goToPage(state.currentPage - 1);
+                } else if (e.key === 'ArrowRight' && state.currentPage < state.totalPages) {
+                    goToPage(state.currentPage + 1);
+                }
             });
+
+            // Initialize the application
+            initWhiteboard();
+            initSocketConnection();
+            initWebRTC();
         });
-
-        // Update user count in participants badge
-        socket.on('userCount', (count) => {
-            userCount.textContent = count;
-            participantsBadge.textContent = count > 1 ? count - 1 : '';
-            participantsTabBadge.textContent = count > 1 ? count - 1 : '';
-            participantsCountBadge.textContent = count > 1 ? count - 1 : '';
-        });
-
-        // Handle incoming reactions
-        socket.on('reaction', (data) => {
-            if (data.userId === userId) return;
-            const userName = users[data.userId]?.userName || 'A participant';
-            showNotification(`${userName} reacted with ${data.emoji}`);
-        });
-
-        // Handle incoming raise hand
-        socket.on('raiseHand', (data) => {
-            if (data.userId === userId) return;
-            const userName = users[data.userId]?.userName || 'A participant';
-            showNotification(`${userName} sent ${data.emoji}`);
-        });
-
-        // Update media controls when state changes
-        function toggleMic() {
-            // Previous toggleMic implementation...
-            // Add this at the end:
-            updateMediaControls();
-        }
-
-        function toggleVideo() {
-            // Previous toggleVideo implementation...
-            // Add this at the end:
-            updateMediaControls();
-        }
-
-        // Initialize media controls
-        updateMediaControls();
-
-        // Previous initialization remains the same...
     </script>
 </body>
 </html>
