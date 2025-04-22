@@ -419,6 +419,66 @@
             cursor: pointer;
         }
 
+        /* Chat Tab */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+        }
+
+        .chat-message {
+            margin-bottom: 12px;
+            padding: 8px;
+            border-radius: var(--border-radius);
+            background-color: #f5f5f5;
+        }
+
+        .chat-message.sent {
+            background-color: var(--primary-color);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .chat-message.received {
+            background-color: #f0f0f0;
+            align-self: flex-start;
+        }
+
+        .chat-sender {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius);
+        }
+
+        .chat-send-btn {
+            padding: 8px 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+        }
+
         /* Slides Tab */
         .slides-container {
             display: grid;
@@ -784,6 +844,105 @@
             justify-content: center;
             font-size: 12px;
         }
+
+        /* Recording indicator */
+        .recording-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #ff0000;
+            font-weight: 500;
+        }
+
+        .recording-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Draggable elements */
+        .draggable {
+            position: absolute;
+            cursor: move;
+            resize: both;
+            overflow: hidden;
+        }
+
+        .resize-handle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            bottom: 0;
+            right: 0;
+            cursor: nwse-resize;
+        }
+
+        /* Eraser types */
+        .eraser-options {
+            display: none;
+            position: absolute;
+            left: 100%;
+            top: 0;
+            background-color: var(--light-color);
+            padding: 12px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            z-index: 10;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .eraser-container:hover .eraser-options {
+            display: flex;
+        }
+
+        .eraser-type {
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .eraser-type:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Fullscreen controls */
+        .fullscreen-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        /* Invite button */
+        .invite-btn {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 20;
+        }
     </style>
 </head>
 <body>
@@ -824,10 +983,17 @@
                     <i class="fas fa-font"></i>
                     <span class="tooltip">Text (T)</span>
                 </button>
-                <button class="tool-btn" id="eraserTool" data-tool="eraser">
-                    <i class="fas fa-eraser"></i>
-                    <span class="tooltip">Eraser (E)</span>
-                </button>
+                <div class="eraser-container">
+                    <button class="tool-btn" id="eraserTool" data-tool="eraser">
+                        <i class="fas fa-eraser"></i>
+                        <span class="tooltip">Eraser (E)</span>
+                    </button>
+                    <div class="eraser-options">
+                        <div class="eraser-type" data-type="normal">Normal Eraser</div>
+                        <div class="eraser-type" data-type="box">Box Eraser</div>
+                        <div class="eraser-type" data-type="outline">Outline Eraser</div>
+                    </div>
+                </div>
             </div>
 
             <div class="tool-group">
@@ -870,13 +1036,13 @@
             </div>
 
             <div class="tool-group">
+                <button class="tool-btn" id="imageTool">
+                    <i class="fas fa-image"></i>
+                    <span class="tooltip">Insert Image</span>
+                </button>
                 <button class="tool-btn" id="saveTool">
                     <i class="fas fa-save"></i>
                     <span class="tooltip">Save</span>
-                </button>
-                <button class="tool-btn" id="loadTool">
-                    <i class="fas fa-folder-open"></i>
-                    <span class="tooltip">Load</span>
                 </button>
             </div>
         </div>
@@ -900,11 +1066,26 @@
                     <button class="page-btn" id="duplicatePage">
                         <i class="fas fa-copy"></i> Duplicate
                     </button>
+                    <button class="page-btn" id="deletePage">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <div class="recording-indicator" id="recordingIndicator" style="display: none;">
+                        <div class="recording-dot"></div>
+                        <span>Recording</span>
+                    </div>
                 </div>
             </div>
             <div class="whiteboard-area">
                 <canvas id="whiteboard"></canvas>
                 <div id="cursors"></div>
+                <div id="draggableElements"></div>
+                <button class="fullscreen-btn" id="fullscreenBtn">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button class="invite-btn" id="inviteBtn">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Invite</span>
+                </button>
             </div>
         </div>
 
@@ -913,7 +1094,7 @@
             <div class="sidebar-tabs">
                 <div class="tab-btn active" data-tab="participants">Participants</div>
                 <div class="tab-btn" data-tab="video">Video</div>
-                <div class="tab-btn" data-tab="slides">Slides</div>
+                <div class="tab-btn" data-tab="chat">Chat</div>
             </div>
             
             <div class="tab-content active" id="participantsTab">
@@ -953,34 +1134,19 @@
                     </div>
                     <!-- Remote videos will be added here dynamically -->
                 </div>
-                <div>
-                    <button class="btn btn-primary" id="startRecording">
-                        <i class="fas fa-record-vinyl"></i> Start Recording
-                    </button>
-                    <button class="btn btn-secondary" id="stopRecording" disabled>
-                        <i class="fas fa-stop"></i> Stop Recording
-                    </button>
-                </div>
             </div>
             
-            <div class="tab-content" id="slidesTab">
-                <div class="slides-container">
-                    <div class="slide-thumbnail active">
-                        <i class="fas fa-file-alt"></i>
-                        <span class="slide-number">1</span>
+            <div class="tab-content" id="chatTab">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Chat messages will be added here dynamically -->
                     </div>
-                    <div class="slide-thumbnail add-slide" id="addSlideBtn">
-                        <i class="fas fa-plus"></i>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
+                        <button class="chat-send-btn" id="chatSendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
                     </div>
-                    <!-- More slides will be added here dynamically -->
-                </div>
-                <div style="margin-top: 16px;">
-                    <button class="btn btn-secondary" id="exportPdf">
-                        <i class="fas fa-file-pdf"></i> Export as PDF
-                    </button>
-                    <button class="btn btn-secondary" id="exportImage" style="margin-top: 8px;">
-                        <i class="fas fa-file-image"></i> Export as Image
-                    </button>
                 </div>
             </div>
         </div>
@@ -1025,14 +1191,6 @@
                     <span>More</span>
                 </button>
                 <div class="more-options">
-                    <div class="more-option" id="chatOption">
-                        <i class="fas fa-comment"></i>
-                        <span>Chat</span>
-                    </div>
-                    <div class="more-option" id="inviteOption">
-                        <i class="fas fa-user-plus"></i>
-                        <span>Invite</span>
-                    </div>
                     <div class="more-option" id="recordOption">
                         <i class="fas fa-record-vinyl"></i>
                         <span>Record</span>
@@ -1076,6 +1234,7 @@
                         Copy
                     </button>
                 </div>
+                <p>Meeting Passcode: <strong id="meetingPasscode">123456</strong></p>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="cancelInvite">Close</button>
@@ -1096,7 +1255,7 @@
                         <input type="checkbox" id="waitingRoom" checked> Enable waiting room
                     </label>
                     <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="meetingPasscode"> Require meeting passcode
+                        <input type="checkbox" id="meetingPasscode" checked> Require meeting passcode
                     </label>
                     <label style="display: block; margin: 8px 0;">
                         <input type="checkbox" id="joinBeforeHost"> Allow participants to join before host
@@ -1246,38 +1405,26 @@
         </div>
     </div>
 
-    <div class="modal" id="exportModal">
+    <div class="modal" id="imageModal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">Export Whiteboard</div>
-                <button class="modal-close" id="closeExportModal">&times;</button>
+                <div class="modal-title">Insert Image</div>
+                <button class="modal-close" id="closeImageModal">&times;</button>
             </div>
             <div class="modal-body">
                 <div style="margin-bottom: 16px;">
-                    <h3 style="margin-bottom: 8px;">Export Options</h3>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="radio" name="exportOption" value="current" checked> Current page only
-                    </label>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="radio" name="exportOption" value="all"> All pages
-                    </label>
+                    <h3 style="margin-bottom: 8px;">Upload Image</h3>
+                    <input type="file" id="imageUpload" accept="image/*">
                 </div>
-                <div style="margin-bottom: 16px;">
-                    <h3 style="margin-bottom: 8px;">Format</h3>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="radio" name="exportFormat" value="png" checked> PNG
-                    </label>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="radio" name="exportFormat" value="jpg"> JPG
-                    </label>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="radio" name="exportFormat" value="pdf"> PDF
-                    </label>
+                <div>
+                    <h3 style="margin-bottom: 8px;">Or Enter Image URL</h3>
+                    <input type="text" id="imageUrl" placeholder="https://example.com/image.jpg" style="width: 100%; padding: 8px; margin-bottom: 8px;">
+                    <button class="btn btn-primary" id="loadImageUrl">Load Image</button>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelExport">Cancel</button>
-                <button class="btn btn-primary" id="confirmExport">Export</button>
+                <button class="btn btn-secondary" id="cancelImage">Cancel</button>
+                <button class="btn btn-primary" id="insertImage">Insert</button>
             </div>
         </div>
     </div>
@@ -1312,6 +1459,7 @@
             const whiteboard = document.getElementById('whiteboard');
             const ctx = whiteboard.getContext('2d');
             const cursorsContainer = document.getElementById('cursors');
+            const draggableElements = document.getElementById('draggableElements');
             const userCountElement = document.getElementById('userCount');
             const pencilTool = document.getElementById('pencilTool');
             const lineTool = document.getElementById('lineTool');
@@ -1325,25 +1473,24 @@
             const clearTool = document.getElementById('clearTool');
             const undoTool = document.getElementById('undoTool');
             const redoTool = document.getElementById('redoTool');
+            const imageTool = document.getElementById('imageTool');
             const saveTool = document.getElementById('saveTool');
-            const loadTool = document.getElementById('loadTool');
             const prevPage = document.getElementById('prevPage');
             const nextPage = document.getElementById('nextPage');
             const currentPage = document.getElementById('currentPage');
             const totalPages = document.getElementById('totalPages');
             const addPage = document.getElementById('addPage');
             const duplicatePage = document.getElementById('duplicatePage');
+            const deletePage = document.getElementById('deletePage');
+            const recordingIndicator = document.getElementById('recordingIndicator');
             const tabButtons = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-content');
             const localVideo = document.getElementById('localVideo');
             const toggleMic = document.getElementById('toggleMic');
             const toggleVideo = document.getElementById('toggleVideo');
-            const startRecording = document.getElementById('startRecording');
-            const stopRecording = document.getElementById('stopRecording');
-            const slidesContainer = document.querySelector('.slides-container');
-            const addSlideBtn = document.getElementById('addSlideBtn');
-            const exportPdf = document.getElementById('exportPdf');
-            const exportImage = document.getElementById('exportImage');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatInput = document.getElementById('chatInput');
+            const chatSendBtn = document.getElementById('chatSendBtn');
             const micControl = document.getElementById('micControl');
             const videoControl = document.getElementById('videoControl');
             const screenShareControl = document.getElementById('screenShareControl');
@@ -1352,16 +1499,16 @@
             const reactionsControl = document.getElementById('reactionsControl');
             const moreControl = document.getElementById('moreControl');
             const moreOptions = document.querySelector('.more-options');
-            const chatOption = document.getElementById('chatOption');
-            const inviteOption = document.getElementById('inviteOption');
             const recordOption = document.getElementById('recordOption');
             const settingsOption = document.getElementById('settingsOption');
             const leaveOption = document.getElementById('leaveOption');
             const endMeetingControl = document.getElementById('endMeetingControl');
+            const inviteBtn = document.getElementById('inviteBtn');
             const inviteModal = document.getElementById('inviteModal');
             const closeInviteModal = document.getElementById('closeInviteModal');
             const inviteLink = document.getElementById('inviteLink');
             const meetingId = document.getElementById('meetingId');
+            const meetingPasscode = document.getElementById('meetingPasscode');
             const copyInviteLink = document.getElementById('copyInviteLink');
             const copyMeetingId = document.getElementById('copyMeetingId');
             const cancelInvite = document.getElementById('cancelInvite');
@@ -1387,10 +1534,14 @@
             const closeWaitingRoomModal = document.getElementById('closeWaitingRoomModal');
             const admitAll = document.getElementById('admitAll');
             const waitingParticipantsList = document.getElementById('waitingParticipantsList');
-            const exportModal = document.getElementById('exportModal');
-            const closeExportModal = document.getElementById('closeExportModal');
-            const cancelExport = document.getElementById('cancelExport');
-            const confirmExport = document.getElementById('confirmExport');
+            const imageModal = document.getElementById('imageModal');
+            const closeImageModal = document.getElementById('closeImageModal');
+            const imageUpload = document.getElementById('imageUpload');
+            const imageUrl = document.getElementById('imageUrl');
+            const loadImageUrl = document.getElementById('loadImageUrl');
+            const insertImage = document.getElementById('insertImage');
+            const cancelImage = document.getElementById('cancelImage');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
             const waitingRoomScreen = document.getElementById('waitingRoomScreen');
             const notification = document.getElementById('notification');
             const notificationText = document.getElementById('notificationText');
@@ -1398,6 +1549,7 @@
             // Application State
             let state = {
                 tool: 'pencil',
+                eraserType: 'normal',
                 color: '#000000',
                 brushSize: 5,
                 isDrawing: false,
@@ -1420,7 +1572,16 @@
                 peerConnections: {},
                 localStream: null,
                 mediaRecorder: null,
-                recordedChunks: []
+                recordedChunks: [],
+                currentImage: null,
+                draggedElement: null,
+                dragOffsetX: 0,
+                dragOffsetY: 0,
+                resizeElement: null,
+                resizeStartWidth: 0,
+                resizeStartHeight: 0,
+                resizeStartX: 0,
+                resizeStartY: 0
             };
 
             // Initialize the whiteboard
@@ -1588,16 +1749,6 @@
                 updatePageControls();
                 redrawWhiteboard();
                 
-                // Add slide thumbnail
-                const slideThumbnail = document.createElement('div');
-                slideThumbnail.className = 'slide-thumbnail';
-                slideThumbnail.innerHTML = '<i class="fas fa-file-alt"></i><span class="slide-number">' + state.currentPage + '</span>';
-                slideThumbnail.addEventListener('click', () => {
-                    goToPage(state.currentPage);
-                });
-                
-                addSlideBtn.parentNode.insertBefore(slideThumbnail, addSlideBtn);
-                
                 // Broadcast new page
                 if (state.socket) {
                     state.socket.emit('newPage', state.currentPage);
@@ -1621,16 +1772,6 @@
                 updatePageControls();
                 redrawWhiteboard();
                 
-                // Add slide thumbnail
-                const slideThumbnail = document.createElement('div');
-                slideThumbnail.className = 'slide-thumbnail';
-                slideThumbnail.innerHTML = '<i class="fas fa-file-alt"></i><span class="slide-number">' + state.currentPage + '</span>';
-                slideThumbnail.addEventListener('click', () => {
-                    goToPage(newPage);
-                });
-                
-                addSlideBtn.parentNode.insertBefore(slideThumbnail, addSlideBtn);
-                
                 // Broadcast duplicated page
                 if (state.socket) {
                     state.socket.emit('duplicatePage', {
@@ -1640,21 +1781,60 @@
                 }
             }
 
+            // Delete current page
+            function deleteCurrentPage() {
+                if (state.totalPages <= 1) {
+                    showNotification("Can't delete the only page");
+                    return;
+                }
+                
+                if (confirm("Are you sure you want to delete this page?")) {
+                    delete state.whiteboards[state.currentPage];
+                    delete state.undoStack[state.currentPage];
+                    delete state.redoStack[state.currentPage];
+                    
+                    // If we're deleting the last page, go to previous page
+                    if (state.currentPage === state.totalPages) {
+                        state.currentPage--;
+                    }
+                    
+                    state.totalPages--;
+                    
+                    // Reorganize the pages if needed
+                    const newWhiteboards = {};
+                    const newUndoStack = {};
+                    const newRedoStack = {};
+                    
+                    let newPageNum = 1;
+                    for (let i = 1; i <= state.totalPages + 1; i++) {
+                        if (state.whiteboards[i]) {
+                            newWhiteboards[newPageNum] = state.whiteboards[i];
+                            newUndoStack[newPageNum] = state.undoStack[i];
+                            newRedoStack[newPageNum] = state.redoStack[i];
+                            newPageNum++;
+                        }
+                    }
+                    
+                    state.whiteboards = newWhiteboards;
+                    state.undoStack = newUndoStack;
+                    state.redoStack = newRedoStack;
+                    
+                    updatePageControls();
+                    redrawWhiteboard();
+                    
+                    // Broadcast page deletion
+                    if (state.socket) {
+                        state.socket.emit('deletePage', state.currentPage);
+                    }
+                }
+            }
+
             // Go to specific page
             function goToPage(page) {
                 if (page >= 1 && page <= state.totalPages) {
                     state.currentPage = page;
                     updatePageControls();
                     redrawWhiteboard();
-                    
-                    // Highlight active slide
-                    document.querySelectorAll('.slide-thumbnail').forEach((slide, index) => {
-                        if (index + 1 === page) {
-                            slide.classList.add('active');
-                        } else {
-                            slide.classList.remove('active');
-                        }
-                    });
                     
                     // Broadcast page change
                     if (state.socket) {
@@ -1701,40 +1881,110 @@
                 
                 updatePageControls();
                 redrawWhiteboard();
-                
-                // Recreate slide thumbnails
-                slidesContainer.innerHTML = '';
-                for (let i = 1; i <= state.totalPages; i++) {
-                    const slideThumbnail = document.createElement('div');
-                    slideThumbnail.className = 'slide-thumbnail' + (i === state.currentPage ? ' active' : '');
-                    slideThumbnail.innerHTML = '<i class="fas fa-file-alt"></i><span class="slide-number">' + i + '</span>';
-                    slideThumbnail.addEventListener('click', () => {
-                        goToPage(i);
-                    });
-                    slidesContainer.appendChild(slideThumbnail);
-                }
-                
-                slidesContainer.appendChild(addSlideBtn);
             }
 
-            // Export whiteboard
-            function exportWhiteboard(format, pages) {
-                if (format === 'pdf') {
-                    // For PDF, we'd typically use a library like jsPDF
-                    showNotification('Exporting to PDF is not implemented in this demo');
-                } else {
-                    // For image formats
-                    const link = document.createElement('a');
-                    if (pages === 'all') {
-                        // In a real app, we'd create a zip file or multi-page PDF
-                        showNotification('Exporting all pages is not implemented in this demo');
-                    } else {
-                        link.download = `whiteboard-page-${state.currentPage}.${format}`;
-                        link.href = whiteboard.toDataURL(`image/${format}`);
-                        link.click();
-                    }
-                }
+            // Insert image onto whiteboard
+            function insertImageOnWhiteboard(imageSrc) {
+                const img = new Image();
+                img.onload = function() {
+                    // Create a draggable element for the image
+                    const imgElement = document.createElement('div');
+                    imgElement.className = 'draggable';
+                    imgElement.style.position = 'absolute';
+                    imgElement.style.left = '100px';
+                    imgElement.style.top = '100px';
+                    imgElement.style.width = '200px';
+                    imgElement.style.height = 'auto';
+                    
+                    const imgTag = document.createElement('img');
+                    imgTag.src = imageSrc;
+                    imgTag.style.width = '100%';
+                    imgTag.style.height = '100%';
+                    imgTag.style.objectFit = 'contain';
+                    
+                    const resizeHandle = document.createElement('div');
+                    resizeHandle.className = 'resize-handle';
+                    
+                    imgElement.appendChild(imgTag);
+                    imgElement.appendChild(resizeHandle);
+                    draggableElements.appendChild(imgElement);
+                    
+                    // Make the element draggable
+                    makeDraggable(imgElement);
+                    
+                    // Save the current state
+                    saveWhiteboardState();
+                };
+                img.src = imageSrc;
             }
+
+            // Make an element draggable and resizable
+            function makeDraggable(element) {
+                const img = element.querySelector('img');
+                const resizeHandle = element.querySelector('.resize-handle');
+                
+                // Dragging
+                element.addEventListener('mousedown', function(e) {
+                    if (e.target === resizeHandle) return;
+                    
+                    state.draggedElement = element;
+                    const rect = element.getBoundingClientRect();
+                    state.dragOffsetX = e.clientX - rect.left;
+                    state.dragOffsetY = e.clientY - rect.top;
+                    
+                    element.style.zIndex = '10';
+                    e.preventDefault();
+                });
+                
+                // Resizing
+                resizeHandle.addEventListener('mousedown', function(e) {
+                    state.resizeElement = element;
+                    const rect = element.getBoundingClientRect();
+                    state.resizeStartWidth = rect.width;
+                    state.resizeStartHeight = rect.height;
+                    state.resizeStartX = e.clientX;
+                    state.resizeStartY = e.clientY;
+                    
+                    element.style.zIndex = '10';
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+                
+                // Stop dragging/resizing
+                document.addEventListener('mouseup', function() {
+                    if (state.draggedElement || state.resizeElement) {
+                        saveWhiteboardState();
+                    }
+                    state.draggedElement = null;
+                    state.resizeElement = null;
+                    
+                    if (element) {
+                        element.style.zIndex = '';
+                    }
+                });
+            }
+
+            // Handle mouse move for dragging and resizing
+            document.addEventListener('mousemove', function(e) {
+                if (state.draggedElement) {
+                    const x = e.clientX - state.dragOffsetX;
+                    const y = e.clientY - state.dragOffsetY;
+                    
+                    state.draggedElement.style.left = x + 'px';
+                    state.draggedElement.style.top = y + 'px';
+                }
+                
+                if (state.resizeElement) {
+                    const dx = e.clientX - state.resizeStartX;
+                    const dy = e.clientY - state.resizeStartY;
+                    
+                    const newWidth = state.resizeStartWidth + dx;
+                    const newHeight = state.resizeStartHeight + dy;
+                    
+                    state.resizeElement.style.width = newWidth + 'px';
+                    state.resizeElement.querySelector('img').style.height = '100%';
+                }
+            });
 
             // Show notification
             function showNotification(message) {
@@ -1761,14 +2011,18 @@
                     }
                 };
                 
-                // Generate a random meeting ID
-                const meetingId = 'WB-' + Math.random().toString(36).substr(2, 8).toUpperCase();
-                document.getElementById('meetingId').value = meetingId;
-                document.getElementById('inviteLink').value = window.location.href + '?meeting=' + meetingId;
+                // Generate a random meeting ID (9-11 digits)
+                const meetingIdStr = Math.floor(100000000 + Math.random() * 900000000).toString();
+                const passcode = Math.random().toString(36).substring(2, 8);
+                
+                document.getElementById('meetingId').value = meetingIdStr;
+                document.getElementById('meetingPasscode').textContent = passcode;
+                document.getElementById('inviteLink').value = window.location.href + '?meeting=' + meetingIdStr + '&pwd=' + passcode;
                 
                 // Check if we're joining an existing meeting
                 const urlParams = new URLSearchParams(window.location.search);
                 const joinMeetingId = urlParams.get('meeting');
+                const joinPasscode = urlParams.get('pwd');
                 
                 if (joinMeetingId) {
                     // In a real app, we'd join the existing meeting
@@ -1797,6 +2051,57 @@
                 }
             }
 
+            // Start screen sharing
+            async function startScreenShare() {
+                try {
+                    const stream = await navigator.mediaDevices.getDisplayMedia({
+                        video: true,
+                        audio: true
+                    });
+                    
+                    // Create a draggable element for the screen share
+                    const screenElement = document.createElement('div');
+                    screenElement.className = 'draggable';
+                    screenElement.style.position = 'absolute';
+                    screenElement.style.left = '100px';
+                    screenElement.style.top = '100px';
+                    screenElement.style.width = '400px';
+                    screenElement.style.height = '300px';
+                    
+                    const videoTag = document.createElement('video');
+                    videoTag.srcObject = stream;
+                    videoTag.autoplay = true;
+                    videoTag.style.width = '100%';
+                    videoTag.style.height = '100%';
+                    
+                    const resizeHandle = document.createElement('div');
+                    resizeHandle.className = 'resize-handle';
+                    
+                    screenElement.appendChild(videoTag);
+                    screenElement.appendChild(resizeHandle);
+                    draggableElements.appendChild(screenElement);
+                    
+                    // Make the element draggable
+                    makeDraggable(screenElement);
+                    
+                    // Handle when screen sharing is stopped
+                    const videoTrack = stream.getVideoTracks()[0];
+                    videoTrack.onended = function() {
+                        screenElement.remove();
+                        state.isScreenSharing = false;
+                        screenShareControl.classList.remove('active');
+                    };
+                    
+                    state.isScreenSharing = true;
+                    screenShareControl.classList.add('active');
+                    
+                    showNotification('Screen sharing started');
+                } catch (error) {
+                    console.error('Error starting screen share:', error);
+                    showNotification('Screen sharing failed or was canceled');
+                }
+            }
+
             // Show waiting room
             function showWaitingRoom() {
                 waitingRoomScreen.style.display = 'flex';
@@ -1809,6 +2114,24 @@
                 waitingRoomScreen.style.display = 'none';
                 document.querySelector('.main-container').style.display = 'flex';
                 document.querySelector('.controls-bar').style.display = 'flex';
+            }
+
+            // Start recording
+            function startRecordingSession() {
+                state.isRecording = true;
+                recordingIndicator.style.display = 'flex';
+                showNotification('Recording started');
+                
+                // In a real app, we'd start recording the session
+            }
+
+            // Stop recording
+            function stopRecordingSession() {
+                state.isRecording = false;
+                recordingIndicator.style.display = 'none';
+                showNotification('Recording stopped');
+                
+                // In a real app, we'd stop recording and save the file
             }
 
             // Event Listeners
@@ -1845,6 +2168,14 @@
                 updateToolSelection();
             });
 
+            // Eraser type selection
+            document.querySelectorAll('.eraser-type').forEach(type => {
+                type.addEventListener('click', () => {
+                    state.eraserType = type.dataset.type;
+                    showNotification(`${type.textContent} selected`);
+                });
+            });
+
             function updateToolSelection() {
                 document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
                 document.querySelector(`.tool-btn[data-tool="${state.tool}"]`).classList.add('active');
@@ -1875,7 +2206,12 @@
             undoTool.addEventListener('click', undo);
             redoTool.addEventListener('click', redo);
 
-            // Save/Load
+            // Image tool
+            imageTool.addEventListener('click', () => {
+                imageModal.style.display = 'flex';
+            });
+
+            // Save
             saveTool.addEventListener('click', () => {
                 const dataUrl = whiteboard.toDataURL();
                 const link = document.createElement('a');
@@ -1884,25 +2220,47 @@
                 link.click();
             });
 
-            loadTool.addEventListener('click', () => {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.onchange = e => {
-                    const file = e.target.files[0];
+            // Image upload
+            imageUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
                     const reader = new FileReader();
-                    reader.onload = event => {
-                        const img = new Image();
-                        img.onload = function() {
-                            ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
-                            ctx.drawImage(img, 0, 0, whiteboard.width, whiteboard.height);
-                            saveWhiteboardState();
-                        };
-                        img.src = event.target.result;
+                    reader.onload = function(event) {
+                        state.currentImage = event.target.result;
                     };
                     reader.readAsDataURL(file);
-                };
-                input.click();
+                }
+            });
+
+            // Load image from URL
+            loadImageUrl.addEventListener('click', () => {
+                if (imageUrl.value) {
+                    state.currentImage = imageUrl.value;
+                    showNotification('Image loaded from URL');
+                } else {
+                    showNotification('Please enter a valid URL');
+                }
+            });
+
+            // Insert image
+            insertImage.addEventListener('click', () => {
+                if (state.currentImage) {
+                    insertImageOnWhiteboard(state.currentImage);
+                    imageModal.style.display = 'none';
+                    state.currentImage = null;
+                    imageUpload.value = '';
+                    imageUrl.value = '';
+                } else {
+                    showNotification('Please select or load an image first');
+                }
+            });
+
+            // Cancel image insertion
+            cancelImage.addEventListener('click', () => {
+                imageModal.style.display = 'none';
+                state.currentImage = null;
+                imageUpload.value = '';
+                imageUrl.value = '';
             });
 
             // Page navigation
@@ -1910,6 +2268,7 @@
             nextPage.addEventListener('click', () => goToPage(state.currentPage + 1));
             addPage.addEventListener('click', addNewPage);
             duplicatePage.addEventListener('click', duplicateCurrentPage);
+            deletePage.addEventListener('click', deleteCurrentPage);
 
             // Tab switching
             tabButtons.forEach(button => {
@@ -1949,34 +2308,29 @@
                 videoControl.querySelector('i').classList.toggle('fa-video-slash');
             });
 
-            // Recording
-            startRecording.addEventListener('click', () => {
-                state.isRecording = true;
-                startRecording.disabled = true;
-                stopRecording.disabled = false;
-                showNotification('Recording started');
+            // Chat functionality
+            chatSendBtn.addEventListener('click', sendChatMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
             });
 
-            stopRecording.addEventListener('click', () => {
-                state.isRecording = false;
-                startRecording.disabled = false;
-                stopRecording.disabled = true;
-                showNotification('Recording stopped');
-                
-                // In a real app, we'd save the recording
-            });
-
-            // Add slide
-            addSlideBtn.addEventListener('click', addNewPage);
-
-            // Export
-            exportPdf.addEventListener('click', () => {
-                exportModal.style.display = 'flex';
-            });
-
-            exportImage.addEventListener('click', () => {
-                exportModal.style.display = 'flex';
-            });
+            function sendChatMessage() {
+                const message = chatInput.value.trim();
+                if (message) {
+                    // In a real app, we'd send this to other participants via socket
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'chat-message sent';
+                    messageElement.innerHTML = `
+                        <div class="chat-sender">You</div>
+                        <div class="chat-text">${message}</div>
+                    `;
+                    chatMessages.appendChild(messageElement);
+                    chatInput.value = '';
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
 
             // Bottom controls
             micControl.addEventListener('click', () => {
@@ -2006,15 +2360,13 @@
             });
 
             screenShareControl.addEventListener('click', () => {
-                state.isScreenSharing = !state.isScreenSharing;
-                screenShareControl.classList.toggle('active');
-                
                 if (state.isScreenSharing) {
-                    // In a real app, we'd start screen sharing
-                    showNotification('Screen sharing started');
-                } else {
                     // In a real app, we'd stop screen sharing
+                    state.isScreenSharing = false;
+                    screenShareControl.classList.remove('active');
                     showNotification('Screen sharing stopped');
+                } else {
+                    startScreenShare();
                 }
             });
 
@@ -2052,27 +2404,11 @@
             });
 
             // More options
-            chatOption.addEventListener('click', () => {
-                showNotification('Chat is not implemented in this demo');
-                moreControl.parentElement.classList.remove('open');
-            });
-
-            inviteOption.addEventListener('click', () => {
-                inviteModal.style.display = 'flex';
-                moreControl.parentElement.classList.remove('open');
-            });
-
             recordOption.addEventListener('click', () => {
                 if (state.isRecording) {
-                    state.isRecording = false;
-                    startRecording.disabled = false;
-                    stopRecording.disabled = true;
-                    showNotification('Recording stopped');
+                    stopRecordingSession();
                 } else {
-                    state.isRecording = true;
-                    startRecording.disabled = true;
-                    stopRecording.disabled = false;
-                    showNotification('Recording started');
+                    startRecordingSession();
                 }
                 moreControl.parentElement.classList.remove('open');
             });
@@ -2092,6 +2428,26 @@
                     endMeetingModal.style.display = 'flex';
                 } else {
                     leaveModal.style.display = 'flex';
+                }
+            });
+
+            // Invite button
+            inviteBtn.addEventListener('click', () => {
+                inviteModal.style.display = 'flex';
+            });
+
+            // Fullscreen button
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.error('Error attempting to enable fullscreen:', err);
+                    });
+                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                    }
                 }
             });
 
@@ -2216,20 +2572,11 @@
                 showNotification('All participants admitted');
             });
 
-            closeExportModal.addEventListener('click', () => {
-                exportModal.style.display = 'none';
-            });
-
-            cancelExport.addEventListener('click', () => {
-                exportModal.style.display = 'none';
-            });
-
-            confirmExport.addEventListener('click', () => {
-                const format = document.querySelector('input[name="exportFormat"]:checked').value;
-                const pages = document.querySelector('input[name="exportOption"]:checked').value;
-                
-                exportWhiteboard(format, pages);
-                exportModal.style.display = 'none';
+            closeImageModal.addEventListener('click', () => {
+                imageModal.style.display = 'none';
+                state.currentImage = null;
+                imageUpload.value = '';
+                imageUrl.value = '';
             });
 
             // Update waiting participants list
@@ -2320,8 +2667,16 @@
                 ctx.lineCap = 'round';
                 
                 if (state.tool === 'eraser') {
-                    ctx.globalCompositeOperation = 'destination-out';
-                    ctx.strokeStyle = 'rgba(0,0,0,1)';
+                    if (state.eraserType === 'normal') {
+                        ctx.globalCompositeOperation = 'destination-out';
+                        ctx.strokeStyle = 'rgba(0,0,0,1)';
+                    } else if (state.eraserType === 'box') {
+                        // For box eraser, we'll draw it on mouseup
+                        return;
+                    } else if (state.eraserType === 'outline') {
+                        // For outline eraser, we'll draw it on mouseup
+                        return;
+                    }
                 } else {
                     ctx.globalCompositeOperation = 'source-over';
                     ctx.strokeStyle = state.color;
@@ -2334,9 +2689,11 @@
                 switch (state.tool) {
                     case 'pencil':
                     case 'eraser':
-                        ctx.moveTo(state.lastX, state.lastY);
-                        ctx.lineTo(currentX, currentY);
-                        ctx.stroke();
+                        if (state.eraserType === 'normal') {
+                            ctx.moveTo(state.lastX, state.lastY);
+                            ctx.lineTo(currentX, currentY);
+                            ctx.stroke();
+                        }
                         break;
                         
                     case 'line':
@@ -2359,39 +2716,52 @@
             function stopDrawing() {
                 if (!state.isDrawing) return;
                 
+                const rect = whiteboard.getBoundingClientRect();
+                const currentX = (event.clientX || event.changedTouches[0].clientX) - rect.left;
+                const currentY = (event.clientY || event.changedTouches[0].clientY) - rect.top;
+                
+                ctx.lineJoin = 'round';
+                ctx.lineCap = 'round';
+                
+                if (state.tool === 'eraser' && state.eraserType !== 'normal') {
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.strokeStyle = 'rgba(0,0,0,1)';
+                } else {
+                    ctx.globalCompositeOperation = 'source-over';
+                    ctx.strokeStyle = state.color;
+                }
+                
+                ctx.lineWidth = state.brushSize;
+                ctx.beginPath();
+                
                 // For shapes, we draw them on mouseup to have proper dimensions
                 if (state.tool === 'line') {
-                    const rect = whiteboard.getBoundingClientRect();
-                    const currentX = (event.clientX || event.changedTouches[0].clientX) - rect.left;
-                    const currentY = (event.clientY || event.changedTouches[0].clientY) - rect.top;
-                    
-                    ctx.beginPath();
                     ctx.moveTo(state.lastX, state.lastY);
                     ctx.lineTo(currentX, currentY);
                     ctx.stroke();
                 } else if (state.tool === 'rectangle') {
-                    const rect = whiteboard.getBoundingClientRect();
-                    const currentX = (event.clientX || event.changedTouches[0].clientX) - rect.left;
-                    const currentY = (event.clientY || event.changedTouches[0].clientY) - rect.top;
-                    
                     const width = currentX - state.lastX;
                     const height = currentY - state.lastY;
                     
-                    ctx.beginPath();
                     ctx.rect(state.lastX, state.lastY, width, height);
                     ctx.stroke();
                 } else if (state.tool === 'circle') {
-                    const rect = whiteboard.getBoundingClientRect();
-                    const currentX = (event.clientX || event.changedTouches[0].clientX) - rect.left;
-                    const currentY = (event.clientY || event.changedTouches[0].clientY) - rect.top;
-                    
                     const radius = Math.sqrt(
                         Math.pow(currentX - state.lastX, 2) + 
                         Math.pow(currentY - state.lastY, 2)
                     );
                     
-                    ctx.beginPath();
                     ctx.arc(state.lastX, state.lastY, radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                } else if (state.tool === 'eraser' && state.eraserType === 'box') {
+                    const width = currentX - state.lastX;
+                    const height = currentY - state.lastY;
+                    
+                    ctx.rect(state.lastX, state.lastY, width, height);
+                    ctx.fill();
+                } else if (state.tool === 'eraser' && state.eraserType === 'outline') {
+                    ctx.moveTo(state.lastX, state.lastY);
+                    ctx.lineTo(currentX, currentY);
                     ctx.stroke();
                 }
                 
