@@ -479,51 +479,6 @@
             cursor: pointer;
         }
 
-        /* Slides Tab */
-        .slides-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .slide-thumbnail {
-            aspect-ratio: 16/9;
-            background-color: #f0f0f0;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .slide-thumbnail.active {
-            border: 2px solid var(--primary-color);
-        }
-
-        .slide-number {
-            position: absolute;
-            bottom: 4px;
-            right: 4px;
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            font-size: 10px;
-            padding: 2px 4px;
-            border-radius: 2px;
-        }
-
-        .add-slide {
-            background-color: #e0e0e0;
-            color: #666;
-            font-size: 24px;
-            transition: var(--transition);
-        }
-
-        .add-slide:hover {
-            background-color: #d0d0d0;
-        }
-
         /* Controls Bar */
         .controls-bar {
             display: flex;
@@ -1452,14 +1407,9 @@
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // API Key
-            const API_KEY = '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';
-            
             // DOM Elements
             const whiteboard = document.getElementById('whiteboard');
             const ctx = whiteboard.getContext('2d');
-            const cursorsContainer = document.getElementById('cursors');
-            const draggableElements = document.getElementById('draggableElements');
             const userCountElement = document.getElementById('userCount');
             const pencilTool = document.getElementById('pencilTool');
             const lineTool = document.getElementById('lineTool');
@@ -1468,7 +1418,6 @@
             const textTool = document.getElementById('textTool');
             const eraserTool = document.getElementById('eraserTool');
             const colorPicker = document.getElementById('colorPicker');
-            const colorPalette = document.querySelector('.color-palette');
             const brushSize = document.getElementById('brushSize');
             const clearTool = document.getElementById('clearTool');
             const undoTool = document.getElementById('undoTool');
@@ -1498,7 +1447,6 @@
             const raiseHandControl = document.getElementById('raiseHandControl');
             const reactionsControl = document.getElementById('reactionsControl');
             const moreControl = document.getElementById('moreControl');
-            const moreOptions = document.querySelector('.more-options');
             const recordOption = document.getElementById('recordOption');
             const settingsOption = document.getElementById('settingsOption');
             const leaveOption = document.getElementById('leaveOption');
@@ -1569,27 +1517,16 @@
                 isRecording: false,
                 isHandRaised: false,
                 socket: null,
-                peerConnections: {},
                 localStream: null,
                 mediaRecorder: null,
                 recordedChunks: [],
-                currentImage: null,
-                draggedElement: null,
-                dragOffsetX: 0,
-                dragOffsetY: 0,
-                resizeElement: null,
-                resizeStartWidth: 0,
-                resizeStartHeight: 0,
-                resizeStartX: 0,
-                resizeStartY: 0
+                currentImage: null
             };
 
             // Initialize the whiteboard
             function initWhiteboard() {
-                // Set canvas size
                 resizeCanvas();
                 
-                // Initialize first whiteboard page
                 state.whiteboards[1] = {
                     data: null,
                     thumbnail: null
@@ -1597,7 +1534,6 @@
                 state.undoStack[1] = [];
                 state.redoStack[1] = [];
                 
-                // Load from localStorage if available
                 const savedWhiteboard = localStorage.getItem('whiteboard-education');
                 if (savedWhiteboard) {
                     const confirmLoad = confirm('Do you want to continue from your previous whiteboard session?');
@@ -1606,36 +1542,28 @@
                     }
                 }
                 
-                // Auto-save every 30 seconds
                 setInterval(() => {
                     saveWhiteboardToLocalStorage();
                 }, 30000);
                 
-                // Handle beforeunload
                 window.addEventListener('beforeunload', (e) => {
                     saveWhiteboardToLocalStorage();
-                    // Don't show confirmation if we're the host (we've already saved)
                     if (state.isHost) {
                         return undefined;
                     }
-                    
                     e.preventDefault();
                     e.returnValue = '';
                     return 'You have unsaved changes. Are you sure you want to leave?';
                 });
             }
 
-            // Resize canvas to fit container
             function resizeCanvas() {
                 const container = whiteboard.parentElement;
                 whiteboard.width = container.clientWidth;
                 whiteboard.height = container.clientHeight;
-                
-                // Redraw current page
                 redrawWhiteboard();
             }
 
-            // Redraw the current whiteboard page
             function redrawWhiteboard() {
                 if (state.whiteboards[state.currentPage] && state.whiteboards[state.currentPage].data) {
                     const img = new Image();
@@ -1651,7 +1579,6 @@
                 }
             }
 
-            // Save current whiteboard state
             function saveWhiteboardState() {
                 const dataUrl = whiteboard.toDataURL();
                 state.whiteboards[state.currentPage] = {
@@ -1659,16 +1586,13 @@
                     thumbnail: generateThumbnail()
                 };
                 
-                // Push to undo stack
                 if (!state.undoStack[state.currentPage]) {
                     state.undoStack[state.currentPage] = [];
                 }
                 state.undoStack[state.currentPage].push(dataUrl);
                 
-                // Clear redo stack
                 state.redoStack[state.currentPage] = [];
                 
-                // Broadcast to other users
                 if (state.socket) {
                     state.socket.emit('drawing', {
                         page: state.currentPage,
@@ -1677,7 +1601,6 @@
                 }
             }
 
-            // Generate thumbnail for current whiteboard
             function generateThumbnail() {
                 const tempCanvas = document.createElement('canvas');
                 tempCanvas.width = 160;
@@ -1693,48 +1616,39 @@
                 return tempCanvas.toDataURL();
             }
 
-            // Undo last action
             function undo() {
                 if (state.undoStack[state.currentPage] && state.undoStack[state.currentPage].length > 0) {
                     const lastState = state.undoStack[state.currentPage].pop();
                     
-                    // Push to redo stack
                     if (!state.redoStack[state.currentPage]) {
                         state.redoStack[state.currentPage] = [];
                     }
                     state.redoStack[state.currentPage].push(state.whiteboards[state.currentPage].data);
                     
-                    // Restore previous state
                     state.whiteboards[state.currentPage].data = lastState;
                     redrawWhiteboard();
                     
-                    // Broadcast undo
                     if (state.socket) {
                         state.socket.emit('undo', state.currentPage);
                     }
                 }
             }
 
-            // Redo last undone action
             function redo() {
                 if (state.redoStack[state.currentPage] && state.redoStack[state.currentPage].length > 0) {
                     const nextState = state.redoStack[state.currentPage].pop();
                     
-                    // Push to undo stack
                     state.undoStack[state.currentPage].push(state.whiteboards[state.currentPage].data);
                     
-                    // Restore next state
                     state.whiteboards[state.currentPage].data = nextState;
                     redrawWhiteboard();
                     
-                    // Broadcast redo
                     if (state.socket) {
                         state.socket.emit('redo', state.currentPage);
                     }
                 }
             }
 
-            // Add a new whiteboard page
             function addNewPage() {
                 state.totalPages++;
                 state.currentPage = state.totalPages;
@@ -1749,13 +1663,11 @@
                 updatePageControls();
                 redrawWhiteboard();
                 
-                // Broadcast new page
                 if (state.socket) {
                     state.socket.emit('newPage', state.currentPage);
                 }
             }
 
-            // Duplicate current page
             function duplicateCurrentPage() {
                 state.totalPages++;
                 const newPage = state.totalPages;
@@ -1767,12 +1679,10 @@
                 state.undoStack[newPage] = [];
                 state.redoStack[newPage] = [];
                 
-                // Switch to new page
                 state.currentPage = newPage;
                 updatePageControls();
                 redrawWhiteboard();
                 
-                // Broadcast duplicated page
                 if (state.socket) {
                     state.socket.emit('duplicatePage', {
                         fromPage: state.currentPage - 1,
@@ -1781,7 +1691,6 @@
                 }
             }
 
-            // Delete current page
             function deleteCurrentPage() {
                 if (state.totalPages <= 1) {
                     showNotification("Can't delete the only page");
@@ -1793,14 +1702,12 @@
                     delete state.undoStack[state.currentPage];
                     delete state.redoStack[state.currentPage];
                     
-                    // If we're deleting the last page, go to previous page
                     if (state.currentPage === state.totalPages) {
                         state.currentPage--;
                     }
                     
                     state.totalPages--;
                     
-                    // Reorganize the pages if needed
                     const newWhiteboards = {};
                     const newUndoStack = {};
                     const newRedoStack = {};
@@ -1822,28 +1729,24 @@
                     updatePageControls();
                     redrawWhiteboard();
                     
-                    // Broadcast page deletion
                     if (state.socket) {
                         state.socket.emit('deletePage', state.currentPage);
                     }
                 }
             }
 
-            // Go to specific page
             function goToPage(page) {
                 if (page >= 1 && page <= state.totalPages) {
                     state.currentPage = page;
                     updatePageControls();
                     redrawWhiteboard();
                     
-                    // Broadcast page change
                     if (state.socket) {
                         state.socket.emit('pageChange', page);
                     }
                 }
             }
 
-            // Update page controls
             function updatePageControls() {
                 currentPage.textContent = state.currentPage;
                 totalPages.textContent = state.totalPages;
@@ -1852,7 +1755,6 @@
                 nextPage.disabled = state.currentPage >= state.totalPages;
             }
 
-            // Save whiteboard to localStorage
             function saveWhiteboardToLocalStorage() {
                 const saveData = {
                     whiteboards: state.whiteboards,
@@ -1863,13 +1765,11 @@
                 localStorage.setItem('whiteboard-education', JSON.stringify(saveData));
             }
 
-            // Load whiteboard from data
             function loadWhiteboard(data) {
                 state.whiteboards = data.whiteboards || {};
                 state.currentPage = data.currentPage || 1;
                 state.totalPages = data.totalPages || 1;
                 
-                // Initialize undo/redo stacks for each page
                 for (let i = 1; i <= state.totalPages; i++) {
                     if (!state.undoStack[i]) {
                         state.undoStack[i] = [];
@@ -1883,11 +1783,9 @@
                 redrawWhiteboard();
             }
 
-            // Insert image onto whiteboard
             function insertImageOnWhiteboard(imageSrc) {
                 const img = new Image();
                 img.onload = function() {
-                    // Create a draggable element for the image
                     const imgElement = document.createElement('div');
                     imgElement.className = 'draggable';
                     imgElement.style.position = 'absolute';
@@ -1907,23 +1805,18 @@
                     
                     imgElement.appendChild(imgTag);
                     imgElement.appendChild(resizeHandle);
-                    draggableElements.appendChild(imgElement);
+                    document.getElementById('draggableElements').appendChild(imgElement);
                     
-                    // Make the element draggable
                     makeDraggable(imgElement);
-                    
-                    // Save the current state
                     saveWhiteboardState();
                 };
                 img.src = imageSrc;
             }
 
-            // Make an element draggable and resizable
             function makeDraggable(element) {
                 const img = element.querySelector('img');
                 const resizeHandle = element.querySelector('.resize-handle');
                 
-                // Dragging
                 element.addEventListener('mousedown', function(e) {
                     if (e.target === resizeHandle) return;
                     
@@ -1936,7 +1829,6 @@
                     e.preventDefault();
                 });
                 
-                // Resizing
                 resizeHandle.addEventListener('mousedown', function(e) {
                     state.resizeElement = element;
                     const rect = element.getBoundingClientRect();
@@ -1950,7 +1842,6 @@
                     e.stopPropagation();
                 });
                 
-                // Stop dragging/resizing
                 document.addEventListener('mouseup', function() {
                     if (state.draggedElement || state.resizeElement) {
                         saveWhiteboardState();
@@ -1964,7 +1855,6 @@
                 });
             }
 
-            // Handle mouse move for dragging and resizing
             document.addEventListener('mousemove', function(e) {
                 if (state.draggedElement) {
                     const x = e.clientX - state.dragOffsetX;
@@ -1986,7 +1876,6 @@
                 }
             });
 
-            // Show notification
             function showNotification(message) {
                 notificationText.textContent = message;
                 notification.classList.add('show');
@@ -1996,22 +1885,9 @@
                 }, 3000);
             }
 
-            // Initialize WebSocket connection
             function initSocketConnection() {
-                // In a real app, this would connect to your server
-                // state.socket = io('https://your-server-url.com');
+                state.socket = io();
                 
-                // For demo purposes, we'll simulate socket behavior
-                state.socket = {
-                    emit: function(event, data) {
-                        console.log('Socket emit:', event, data);
-                    },
-                    on: function(event, callback) {
-                        console.log('Socket on:', event);
-                    }
-                };
-                
-                // Generate a random meeting ID (9-11 digits)
                 const meetingIdStr = Math.floor(100000000 + Math.random() * 900000000).toString();
                 const passcode = Math.random().toString(36).substring(2, 8);
                 
@@ -2019,22 +1895,18 @@
                 document.getElementById('meetingPasscode').textContent = passcode;
                 document.getElementById('inviteLink').value = window.location.href + '?meeting=' + meetingIdStr + '&pwd=' + passcode;
                 
-                // Check if we're joining an existing meeting
                 const urlParams = new URLSearchParams(window.location.search);
                 const joinMeetingId = urlParams.get('meeting');
                 const joinPasscode = urlParams.get('pwd');
                 
                 if (joinMeetingId) {
-                    // In a real app, we'd join the existing meeting
                     state.isHost = false;
                     showWaitingRoom();
                 } else {
-                    // We're the host
                     state.isHost = true;
                 }
             }
 
-            // Initialize WebRTC
             async function initWebRTC() {
                 try {
                     state.localStream = await navigator.mediaDevices.getUserMedia({
@@ -2043,15 +1915,12 @@
                     });
                     
                     localVideo.srcObject = state.localStream;
-                    
-                    // In a real app, we'd set up peer connections with other participants
                 } catch (error) {
                     console.error('Error accessing media devices:', error);
                     showNotification('Could not access camera or microphone');
                 }
             }
 
-            // Start screen sharing
             async function startScreenShare() {
                 try {
                     const stream = await navigator.mediaDevices.getDisplayMedia({
@@ -2059,7 +1928,6 @@
                         audio: true
                     });
                     
-                    // Create a draggable element for the screen share
                     const screenElement = document.createElement('div');
                     screenElement.className = 'draggable';
                     screenElement.style.position = 'absolute';
@@ -2079,12 +1947,10 @@
                     
                     screenElement.appendChild(videoTag);
                     screenElement.appendChild(resizeHandle);
-                    draggableElements.appendChild(screenElement);
+                    document.getElementById('draggableElements').appendChild(screenElement);
                     
-                    // Make the element draggable
                     makeDraggable(screenElement);
                     
-                    // Handle when screen sharing is stopped
                     const videoTrack = stream.getVideoTracks()[0];
                     videoTrack.onended = function() {
                         screenElement.remove();
@@ -2102,42 +1968,33 @@
                 }
             }
 
-            // Show waiting room
             function showWaitingRoom() {
                 waitingRoomScreen.style.display = 'flex';
                 document.querySelector('.main-container').style.display = 'none';
                 document.querySelector('.controls-bar').style.display = 'none';
             }
 
-            // Hide waiting room
             function hideWaitingRoom() {
                 waitingRoomScreen.style.display = 'none';
                 document.querySelector('.main-container').style.display = 'flex';
                 document.querySelector('.controls-bar').style.display = 'flex';
             }
 
-            // Start recording
             function startRecordingSession() {
                 state.isRecording = true;
                 recordingIndicator.style.display = 'flex';
                 showNotification('Recording started');
-                
-                // In a real app, we'd start recording the session
             }
 
-            // Stop recording
             function stopRecordingSession() {
                 state.isRecording = false;
                 recordingIndicator.style.display = 'none';
                 showNotification('Recording stopped');
-                
-                // In a real app, we'd stop recording and save the file
             }
 
             // Event Listeners
             window.addEventListener('resize', resizeCanvas);
 
-            // Tool selection
             pencilTool.addEventListener('click', () => {
                 state.tool = 'pencil';
                 updateToolSelection();
@@ -2168,7 +2025,6 @@
                 updateToolSelection();
             });
 
-            // Eraser type selection
             document.querySelectorAll('.eraser-type').forEach(type => {
                 type.addEventListener('click', () => {
                     state.eraserType = type.dataset.type;
@@ -2181,7 +2037,6 @@
                 document.querySelector(`.tool-btn[data-tool="${state.tool}"]`).classList.add('active');
             }
 
-            // Color selection
             document.querySelectorAll('.color-picker').forEach(picker => {
                 picker.addEventListener('click', () => {
                     state.color = picker.dataset.color;
@@ -2189,12 +2044,10 @@
                 });
             });
 
-            // Brush size
             brushSize.addEventListener('input', () => {
                 state.brushSize = brushSize.value;
             });
 
-            // Clear
             clearTool.addEventListener('click', () => {
                 ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
                 ctx.fillStyle = '#ffffff';
@@ -2202,16 +2055,13 @@
                 saveWhiteboardState();
             });
 
-            // Undo/Redo
             undoTool.addEventListener('click', undo);
             redoTool.addEventListener('click', redo);
 
-            // Image tool
             imageTool.addEventListener('click', () => {
                 imageModal.style.display = 'flex';
             });
 
-            // Save
             saveTool.addEventListener('click', () => {
                 const dataUrl = whiteboard.toDataURL();
                 const link = document.createElement('a');
@@ -2220,7 +2070,6 @@
                 link.click();
             });
 
-            // Image upload
             imageUpload.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (file) {
@@ -2232,7 +2081,6 @@
                 }
             });
 
-            // Load image from URL
             loadImageUrl.addEventListener('click', () => {
                 if (imageUrl.value) {
                     state.currentImage = imageUrl.value;
@@ -2242,7 +2090,6 @@
                 }
             });
 
-            // Insert image
             insertImage.addEventListener('click', () => {
                 if (state.currentImage) {
                     insertImageOnWhiteboard(state.currentImage);
@@ -2255,7 +2102,6 @@
                 }
             });
 
-            // Cancel image insertion
             cancelImage.addEventListener('click', () => {
                 imageModal.style.display = 'none';
                 state.currentImage = null;
@@ -2263,14 +2109,12 @@
                 imageUrl.value = '';
             });
 
-            // Page navigation
             prevPage.addEventListener('click', () => goToPage(state.currentPage - 1));
             nextPage.addEventListener('click', () => goToPage(state.currentPage + 1));
             addPage.addEventListener('click', addNewPage);
             duplicatePage.addEventListener('click', duplicateCurrentPage);
             deletePage.addEventListener('click', deleteCurrentPage);
 
-            // Tab switching
             tabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     tabButtons.forEach(btn => btn.classList.remove('active'));
@@ -2281,7 +2125,6 @@
                 });
             });
 
-            // Video controls
             toggleMic.addEventListener('click', () => {
                 state.isMicOn = !state.isMicOn;
                 if (state.localStream) {
@@ -2308,7 +2151,6 @@
                 videoControl.querySelector('i').classList.toggle('fa-video-slash');
             });
 
-            // Chat functionality
             chatSendBtn.addEventListener('click', sendChatMessage);
             chatInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
@@ -2319,7 +2161,6 @@
             function sendChatMessage() {
                 const message = chatInput.value.trim();
                 if (message) {
-                    // In a real app, we'd send this to other participants via socket
                     const messageElement = document.createElement('div');
                     messageElement.className = 'chat-message sent';
                     messageElement.innerHTML = `
@@ -2332,13 +2173,12 @@
                 }
             }
 
-            // Bottom controls
             micControl.addEventListener('click', () => {
                 state.isMicOn = !state.isMicOn;
                 if (state.localStream) {
                     state.localStream.getAudioTracks().forEach(track => {
-                        track.enabled = state.isMicOn;
-                    });
+                        track.enabled = state.isMic 
+ });
                 }
                 micControl.querySelector('i').classList.toggle('fa-microphone');
                 micControl.querySelector('i').classList.toggle('fa-microphone-slash');
@@ -2360,18 +2200,17 @@
             });
 
             screenShareControl.addEventListener('click', () => {
-                if (state.isScreenSharing) {
-                    // In a real app, we'd stop screen sharing
+                if (!state.isScreenSharing) {
+                    startScreenShare();
+                } else {
+                    // Stop screen sharing
                     state.isScreenSharing = false;
                     screenShareControl.classList.remove('active');
                     showNotification('Screen sharing stopped');
-                } else {
-                    startScreenShare();
                 }
             });
 
             participantsControl.addEventListener('click', () => {
-                // Switch to participants tab
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 tabContents.forEach(content => content.classList.remove('active'));
                 
@@ -2381,17 +2220,14 @@
 
             raiseHandControl.addEventListener('click', () => {
                 state.isHandRaised = !state.isHandRaised;
-                raiseHandControl.classList.toggle('hand-raised');
+                raiseHandControl.classList.toggle('active');
                 
                 if (state.isHandRaised) {
+                    raiseHandControl.classList.add('hand-raised');
                     showNotification('Hand raised');
                 } else {
+                    raiseHandControl.classList.remove('hand-raised');
                     showNotification('Hand lowered');
-                }
-                
-                // Broadcast hand raise
-                if (state.socket) {
-                    state.socket.emit('handRaise', state.isHandRaised);
                 }
             });
 
@@ -2399,61 +2235,59 @@
                 reactionsModal.style.display = 'flex';
             });
 
-            moreControl.addEventListener('click', () => {
-                moreControl.parentElement.classList.toggle('open');
+            reactionButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const reaction = button.dataset.reaction;
+                    showNotification(`Sent reaction: ${reaction}`);
+                    reactionsModal.style.display = 'none';
+                    
+                    // Create floating reaction animation
+                    const reactionElement = document.createElement('div');
+                    reactionElement.className = 'reaction';
+                    reactionElement.textContent = reaction;
+                    reactionElement.style.left = `${Math.random() * 80 + 10}%`;
+                    reactionElement.style.top = `${Math.random() * 80 + 10}%`;
+                    document.getElementById('whiteboard-area').appendChild(reactionElement);
+                    
+                    setTimeout(() => {
+                        reactionElement.remove();
+                    }, 2000);
+                });
             });
 
-            // More options
+            moreControl.addEventListener('click', () => {
+                document.querySelector('.more-menu').classList.toggle('open');
+            });
+
             recordOption.addEventListener('click', () => {
-                if (state.isRecording) {
-                    stopRecordingSession();
-                } else {
+                document.querySelector('.more-menu').classList.remove('open');
+                if (!state.isRecording) {
                     startRecordingSession();
+                } else {
+                    stopRecordingSession();
                 }
-                moreControl.parentElement.classList.remove('open');
             });
 
             settingsOption.addEventListener('click', () => {
+                document.querySelector('.more-menu').classList.remove('open');
                 settingsModal.style.display = 'flex';
-                moreControl.parentElement.classList.remove('open');
             });
 
             leaveOption.addEventListener('click', () => {
+                document.querySelector('.more-menu').classList.remove('open');
                 leaveModal.style.display = 'flex';
-                moreControl.parentElement.classList.remove('open');
             });
 
             endMeetingControl.addEventListener('click', () => {
                 if (state.isHost) {
                     endMeetingModal.style.display = 'flex';
                 } else {
-                    leaveModal.style.display = 'flex';
+                    showNotification('Only the host can end the meeting');
                 }
             });
 
-            // Invite button
             inviteBtn.addEventListener('click', () => {
                 inviteModal.style.display = 'flex';
-            });
-
-            // Fullscreen button
-            fullscreenBtn.addEventListener('click', () => {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(err => {
-                        console.error('Error attempting to enable fullscreen:', err);
-                    });
-                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
-                } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-                    }
-                }
-            });
-
-            // Modal controls
-            closeInviteModal.addEventListener('click', () => {
-                inviteModal.style.display = 'none';
             });
 
             copyInviteLink.addEventListener('click', () => {
@@ -2466,6 +2300,10 @@
                 meetingId.select();
                 document.execCommand('copy');
                 showNotification('Meeting ID copied to clipboard');
+            });
+
+            closeInviteModal.addEventListener('click', () => {
+                inviteModal.style.display = 'none';
             });
 
             cancelInvite.addEventListener('click', () => {
@@ -2481,9 +2319,8 @@
             });
 
             saveSettings.addEventListener('click', () => {
-                // In a real app, we'd save these settings
-                showNotification('Settings saved');
                 settingsModal.style.display = 'none';
+                showNotification('Settings saved');
             });
 
             closeReactionsModal.addEventListener('click', () => {
@@ -2492,33 +2329,6 @@
 
             cancelReactions.addEventListener('click', () => {
                 reactionsModal.style.display = 'none';
-            });
-
-            reactionButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const reaction = button.dataset.reaction;
-                    
-                    // Create reaction element
-                    const reactionElement = document.createElement('div');
-                    reactionElement.className = 'reaction';
-                    reactionElement.textContent = reaction;
-                    reactionElement.style.left = Math.random() * 80 + 10 + '%';
-                    reactionElement.style.top = Math.random() * 80 + 10 + '%';
-                    
-                    document.body.appendChild(reactionElement);
-                    
-                    // Remove after animation
-                    setTimeout(() => {
-                        reactionElement.remove();
-                    }, 2000);
-                    
-                    // Broadcast reaction
-                    if (state.socket) {
-                        state.socket.emit('reaction', reaction);
-                    }
-                    
-                    reactionsModal.style.display = 'none';
-                });
             });
 
             closeLeaveModal.addEventListener('click', () => {
@@ -2533,12 +2343,9 @@
                 if (saveBeforeLeave.checked) {
                     saveWhiteboardToLocalStorage();
                 }
-                
-                // In a real app, we'd disconnect from the meeting
-                showNotification('You have left the meeting');
-                
-                // Redirect to home or show leave image
-                window.location.href = 'https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg';
+                showNotification('You left the meeting');
+                leaveModal.style.display = 'none';
+                // In a real app, you would disconnect from the socket and clean up
             });
 
             closeEndMeetingModal.addEventListener('click', () => {
@@ -2553,12 +2360,9 @@
                 if (saveBeforeEnd.checked) {
                     saveWhiteboardToLocalStorage();
                 }
-                
-                // In a real app, we'd end the meeting for all participants
                 showNotification('Meeting ended for all participants');
-                
-                // Redirect to home or show leave image
-                window.location.href = 'https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg';
+                endMeetingModal.style.display = 'none';
+                // In a real app, you would disconnect all participants
             });
 
             closeWaitingRoomModal.addEventListener('click', () => {
@@ -2566,259 +2370,206 @@
             });
 
             admitAll.addEventListener('click', () => {
-                // In a real app, we'd admit all waiting participants
-                state.waitingParticipants = [];
-                updateWaitingParticipantsList();
                 showNotification('All participants admitted');
+                waitingRoomModal.style.display = 'none';
             });
 
             closeImageModal.addEventListener('click', () => {
                 imageModal.style.display = 'none';
-                state.currentImage = null;
-                imageUpload.value = '';
-                imageUrl.value = '';
             });
 
-            // Update waiting participants list
-            function updateWaitingParticipantsList() {
-                if (state.waitingParticipants.length === 0) {
-                    waitingParticipantsList.innerHTML = '<p>No participants are waiting</p>';
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        showNotification('Fullscreen failed: ' + err.message);
+                    });
                 } else {
-                    waitingParticipantsList.innerHTML = '';
-                    state.waitingParticipants.forEach(participant => {
-                        const participantElement = document.createElement('div');
-                        participantElement.className = 'participant';
-                        participantElement.innerHTML = `
-                            <div class="participant-avatar">${participant.name.charAt(0)}</div>
-                            <div class="participant-info">
-                                <div class="participant-name">${participant.name}</div>
-                            </div>
-                            <div class="participant-controls">
-                                <button class="control-btn admit-btn" data-id="${participant.id}" title="Admit">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                                <button class="control-btn remove-btn" data-id="${participant.id}" title="Remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        `;
-                        waitingParticipantsList.appendChild(participantElement);
-                    });
-                    
-                    // Add event listeners to new buttons
-                    document.querySelectorAll('.admit-btn').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const participantId = btn.dataset.id;
-                            // In a real app, we'd admit this participant
-                            state.waitingParticipants = state.waitingParticipants.filter(p => p.id !== participantId);
-                            updateWaitingParticipantsList();
-                            showNotification('Participant admitted');
-                        });
-                    });
-                    
-                    document.querySelectorAll('.remove-btn').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const participantId = btn.dataset.id;
-                            // In a real app, we'd remove this participant
-                            state.waitingParticipants = state.waitingParticipants.filter(p => p.id !== participantId);
-                            updateWaitingParticipantsList();
-                            showNotification('Participant removed');
-                        });
-                    });
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
                 }
-            }
+            });
 
-            // Drawing events
+            // Whiteboard Drawing Logic
             whiteboard.addEventListener('mousedown', startDrawing);
             whiteboard.addEventListener('mousemove', draw);
             whiteboard.addEventListener('mouseup', stopDrawing);
             whiteboard.addEventListener('mouseout', stopDrawing);
-            
+
+            // Touch support
             whiteboard.addEventListener('touchstart', handleTouchStart);
             whiteboard.addEventListener('touchmove', handleTouchMove);
             whiteboard.addEventListener('touchend', handleTouchEnd);
 
+            function handleTouchStart(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousedown', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                whiteboard.dispatchEvent(mouseEvent);
+            }
+
+            function handleTouchMove(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent('mousemove', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                whiteboard.dispatchEvent(mouseEvent);
+            }
+
+            function handleTouchEnd(e) {
+                e.preventDefault();
+                const mouseEvent = new MouseEvent('mouseup');
+                whiteboard.dispatchEvent(mouseEvent);
+            }
+
             function startDrawing(e) {
-                state.isDrawing = true;
-                const rect = whiteboard.getBoundingClientRect();
-                state.lastX = (e.clientX || e.touches[0].clientX) - rect.left;
-                state.lastY = (e.clientY || e.touches[0].clientY) - rect.top;
-                
                 if (state.tool === 'text') {
                     const text = prompt('Enter text:');
                     if (text) {
                         ctx.font = `${state.brushSize * 4}px Arial`;
                         ctx.fillStyle = state.color;
-                        ctx.fillText(text, state.lastX, state.lastY);
+                        ctx.fillText(text, e.offsetX, e.offsetY);
                         saveWhiteboardState();
                     }
-                    state.isDrawing = false;
+                    return;
                 }
+
+                state.isDrawing = true;
+                [state.lastX, state.lastY] = [e.offsetX, e.offsetY];
             }
 
             function draw(e) {
                 if (!state.isDrawing) return;
-                
-                const rect = whiteboard.getBoundingClientRect();
-                const currentX = (e.clientX || e.touches[0].clientX) - rect.left;
-                const currentY = (e.clientY || e.touches[0].clientY) - rect.top;
-                
+
+                ctx.strokeStyle = state.tool === 'eraser' ? '#ffffff' : state.color;
+                ctx.lineWidth = state.brushSize;
                 ctx.lineJoin = 'round';
                 ctx.lineCap = 'round';
-                
-                if (state.tool === 'eraser') {
-                    if (state.eraserType === 'normal') {
-                        ctx.globalCompositeOperation = 'destination-out';
-                        ctx.strokeStyle = 'rgba(0,0,0,1)';
-                    } else if (state.eraserType === 'box') {
-                        // For box eraser, we'll draw it on mouseup
-                        return;
-                    } else if (state.eraserType === 'outline') {
-                        // For outline eraser, we'll draw it on mouseup
-                        return;
-                    }
-                } else {
-                    ctx.globalCompositeOperation = 'source-over';
-                    ctx.strokeStyle = state.color;
-                }
-                
-                ctx.lineWidth = state.brushSize;
-                
-                ctx.beginPath();
-                
+
                 switch (state.tool) {
                     case 'pencil':
+                        ctx.beginPath();
+                        ctx.moveTo(state.lastX, state.lastY);
+                        ctx.lineTo(e.offsetX, e.offsetY);
+                        ctx.stroke();
+                        break;
+
+                    case 'line':
+                        // For line, we need to redraw the entire canvas each time during mouse move
+                        redrawWhiteboard();
+                        ctx.beginPath();
+                        ctx.moveTo(state.lastX, state.lastY);
+                        ctx.lineTo(e.offsetX, e.offsetY);
+                        ctx.stroke();
+                        break;
+
+                    case 'rectangle':
+                        redrawWhiteboard();
+                        ctx.beginPath();
+                        ctx.rect(
+                            state.lastX,
+                            state.lastY,
+                            e.offsetX - state.lastX,
+                            e.offsetY - state.lastY
+                        );
+                        ctx.stroke();
+                        break;
+
+                    case 'circle':
+                        redrawWhiteboard();
+                        ctx.beginPath();
+                        const radius = Math.sqrt(
+                            Math.pow(e.offsetX - state.lastX, 2) +
+                            Math.pow(e.offsetY - state.lastY, 2)
+                        );
+                        ctx.arc(state.lastX, state.lastY, radius, 0, Math.PI * 2);
+                        ctx.stroke();
+                        break;
+
                     case 'eraser':
                         if (state.eraserType === 'normal') {
+                            ctx.beginPath();
                             ctx.moveTo(state.lastX, state.lastY);
-                            ctx.lineTo(currentX, currentY);
+                            ctx.lineTo(e.offsetX, e.offsetY);
                             ctx.stroke();
+                        } else if (state.eraserType === 'box') {
+                            redrawWhiteboard();
+                            ctx.clearRect(
+                                state.lastX,
+                                state.lastY,
+                                e.offsetX - state.lastX,
+                                e.offsetY - state.lastY
+                            );
                         }
                         break;
-                        
-                    case 'line':
-                        // For line, we'll draw it on mouseup
-                        break;
-                        
-                    case 'rectangle':
-                        // For rectangle, we'll draw it on mouseup
-                        break;
-                        
-                    case 'circle':
-                        // For circle, we'll draw it on mouseup
-                        break;
                 }
-                
-                state.lastX = currentX;
-                state.lastY = currentY;
+
+                [state.lastX, state.lastY] = [e.offsetX, e.offsetY];
             }
 
             function stopDrawing() {
-                if (!state.isDrawing) return;
-                
-                const rect = whiteboard.getBoundingClientRect();
-                const currentX = (event.clientX || event.changedTouches[0].clientX) - rect.left;
-                const currentY = (event.clientY || event.changedTouches[0].clientY) - rect.top;
-                
-                ctx.lineJoin = 'round';
-                ctx.lineCap = 'round';
-                
-                if (state.tool === 'eraser' && state.eraserType !== 'normal') {
-                    ctx.globalCompositeOperation = 'destination-out';
-                    ctx.strokeStyle = 'rgba(0,0,0,1)';
-                } else {
-                    ctx.globalCompositeOperation = 'source-over';
-                    ctx.strokeStyle = state.color;
+                if (state.isDrawing) {
+                    state.isDrawing = false;
+                    saveWhiteboardState();
                 }
-                
-                ctx.lineWidth = state.brushSize;
-                ctx.beginPath();
-                
-                // For shapes, we draw them on mouseup to have proper dimensions
-                if (state.tool === 'line') {
-                    ctx.moveTo(state.lastX, state.lastY);
-                    ctx.lineTo(currentX, currentY);
-                    ctx.stroke();
-                } else if (state.tool === 'rectangle') {
-                    const width = currentX - state.lastX;
-                    const height = currentY - state.lastY;
-                    
-                    ctx.rect(state.lastX, state.lastY, width, height);
-                    ctx.stroke();
-                } else if (state.tool === 'circle') {
-                    const radius = Math.sqrt(
-                        Math.pow(currentX - state.lastX, 2) + 
-                        Math.pow(currentY - state.lastY, 2)
-                    );
-                    
-                    ctx.arc(state.lastX, state.lastY, radius, 0, Math.PI * 2);
-                    ctx.stroke();
-                } else if (state.tool === 'eraser' && state.eraserType === 'box') {
-                    const width = currentX - state.lastX;
-                    const height = currentY - state.lastY;
-                    
-                    ctx.rect(state.lastX, state.lastY, width, height);
-                    ctx.fill();
-                } else if (state.tool === 'eraser' && state.eraserType === 'outline') {
-                    ctx.moveTo(state.lastX, state.lastY);
-                    ctx.lineTo(currentX, currentY);
-                    ctx.stroke();
-                }
-                
-                state.isDrawing = false;
-                saveWhiteboardState();
             }
 
-            function handleTouchStart(e) {
-                e.preventDefault();
-                startDrawing(e.touches[0]);
-            }
-
-            function handleTouchMove(e) {
-                e.preventDefault();
-                draw(e.touches[0]);
-            }
-
-            function handleTouchEnd(e) {
-                e.preventDefault();
-                stopDrawing(e.changedTouches[0]);
-            }
-
-            // Keyboard shortcuts
+            // Keyboard Shortcuts
             document.addEventListener('keydown', (e) => {
-                // Tool shortcuts
-                if (e.key.toLowerCase() === 'p') {
-                    state.tool = 'pencil';
-                    updateToolSelection();
-                } else if (e.key.toLowerCase() === 'l') {
-                    state.tool = 'line';
-                    updateToolSelection();
-                } else if (e.key.toLowerCase() === 'r') {
-                    state.tool = 'rectangle';
-                    updateToolSelection();
-                } else if (e.key.toLowerCase() === 'c') {
-                    state.tool = 'circle';
-                    updateToolSelection();
-                } else if (e.key.toLowerCase() === 't') {
-                    state.tool = 'text';
-                    updateToolSelection();
-                } else if (e.key.toLowerCase() === 'e') {
-                    state.tool = 'eraser';
-                    updateToolSelection();
-                }
-                
-                // Undo/Redo
-                if (e.ctrlKey && e.key.toLowerCase() === 'z') {
-                    undo();
-                } else if (e.ctrlKey && e.key.toLowerCase() === 'y') {
-                    redo();
-                }
-                
-                // Page navigation
-                if (e.key === 'ArrowLeft' && state.currentPage > 1) {
-                    goToPage(state.currentPage - 1);
-                } else if (e.key === 'ArrowRight' && state.currentPage < state.totalPages) {
-                    goToPage(state.currentPage + 1);
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+                switch (e.key.toLowerCase()) {
+                    case 'p':
+                        state.tool = 'pencil';
+                        updateToolSelection();
+                        break;
+                    case 'l':
+                        state.tool = 'line';
+                        updateToolSelection();
+                        break;
+                    case 'r':
+                        state.tool = 'rectangle';
+                        updateToolSelection();
+                        break;
+                    case 'c':
+                        state.tool = 'circle';
+                        updateToolSelection();
+                        break;
+                    case 't':
+                        state.tool = 'text';
+                        updateToolSelection();
+                        break;
+                    case 'e':
+                        state.tool = 'eraser';
+                        updateToolSelection();
+                        break;
+                    case 'z':
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            undo();
+                        }
+                        break;
+                    case 'y':
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            redo();
+                        }
+                        break;
+                    case 'arrowleft':
+                        if (e.ctrlKey || e.metaKey) {
+                            goToPage(state.currentPage - 1);
+                        }
+                        break;
+                    case 'arrowright':
+                        if (e.ctrlKey || e.metaKey) {
+                            goToPage(state.currentPage + 1);
+                        }
+                        break;
                 }
             });
 
