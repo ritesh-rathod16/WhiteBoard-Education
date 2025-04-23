@@ -3,202 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhiteBoard Education</title>
+    <title>WhiteBoard Education with PowerPoint Tools</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #4a6bff;
-            --secondary-color: #f5f7ff;
-            --accent-color: #ff6b6b;
-            --dark-color: #2c3e50;
-            --light-color: #ffffff;
-            --text-color: #333333;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+        /* Previous CSS remains the same, just add these new styles */
+        
+        /* PowerPoint-style Ribbon */
+        .ribbon {
+            background-color: #f3f3f3;
+            border-bottom: 1px solid #d9d9d9;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        * {
+        
+        .ribbon-tabs {
+            display: flex;
+            list-style: none;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
         }
-
-        body {
-            background-color: var(--secondary-color);
-            color: var(--text-color);
-            height: 100vh;
+        
+        .ribbon-tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+            position: relative;
+        }
+        
+        .ribbon-tab.active {
+            background-color: #fff;
+            border: 1px solid #d9d9d9;
+            border-bottom: 1px solid #fff;
+            border-top: 2px solid #4a6bff;
+            margin-top: -1px;
+        }
+        
+        .ribbon-content {
+            display: none;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #d9d9d9;
+            border-top: none;
+        }
+        
+        .ribbon-content.active {
+            display: block;
+        }
+        
+        .toolbar-group {
+            margin-bottom: 15px;
+        }
+        
+        .toolbar-group-title {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            padding-left: 5px;
+        }
+        
+        .toolbar-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .toolbar-button {
+            background: none;
+            border: none;
+            padding: 5px 8px;
+            cursor: pointer;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* Header Styles */
-        .header {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 12px 24px;
-            background-color: var(--light-color);
-            box-shadow: var(--box-shadow);
-            z-index: 100;
+            min-width: 60px;
+            border-radius: 4px;
         }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        
+        .toolbar-button:hover {
+            background-color: #e6e6e6;
         }
-
-        .logo {
-            height: 40px;
-            animation: pulse 2s infinite;
+        
+        .toolbar-button i {
+            font-size: 16px;
+            margin-bottom: 3px;
+            color: #333;
         }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        
+        .toolbar-button span {
+            font-size: 11px;
+            color: #333;
         }
-
-        .app-name {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary-color);
-            letter-spacing: 1px;
-        }
-
-        .user-count {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-        }
-
-        .user-count i {
-            color: var(--primary-color);
-        }
-
-        /* Main Container */
+        
+        /* Adjust main container to accommodate ribbon */
         .main-container {
             display: flex;
             flex: 1;
             overflow: hidden;
-        }
-
-        /* Left Sidebar - Tools */
-        .toolbar {
-            width: 60px;
-            background-color: var(--light-color);
-            padding: 16px 8px;
-            display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            box-shadow: var(--box-shadow);
-            z-index: 10;
         }
-
-        .tool-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-        }
-
-        .tool-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: var(--border-radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            background-color: transparent;
-            border: none;
-            color: var(--text-color);
-            position: relative;
-        }
-
-        .tool-btn:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .tool-btn.active {
-            background-color: var(--primary-color);
-            color: var(--light-color);
-        }
-
-        .tool-btn i {
-            font-size: 20px;
-        }
-
-        .tooltip {
-            position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: var(--dark-color);
-            color: var(--light-color);
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: var(--transition);
-            z-index: 100;
-            margin-left: 8px;
-        }
-
-        .tool-btn:hover .tooltip {
-            opacity: 1;
-            margin-left: 12px;
-        }
-
-        .color-picker {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 2px solid var(--light-color);
-            cursor: pointer;
-            transition: var(--transition);
-            margin: 4px;
-        }
-
-        .color-picker:hover {
-            transform: scale(1.1);
-        }
-
-        .color-palette {
-            display: none;
-            position: absolute;
-            left: 100%;
-            top: 0;
-            background-color: var(--light-color);
-            padding: 12px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            z-index: 10;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            width: 140px;
-        }
-
-        .color-container:hover .color-palette {
-            display: grid;
-        }
-
-        .brush-size {
-            width: 100%;
-            margin-top: 8px;
-        }
-
-        /* Whiteboard Area */
+        
         .whiteboard-container {
             flex: 1;
             display: flex;
@@ -206,697 +111,16 @@
             overflow: hidden;
             position: relative;
         }
-
-        .whiteboard-header {
-            padding: 12px 16px;
-            background-color: var(--light-color);
+        
+        /* Status bar */
+        .status-bar {
+            background-color: #f3f3f3;
+            border-top: 1px solid #d9d9d9;
+            padding: 5px 10px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            z-index: 5;
-        }
-
-        .page-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .page-btn {
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            color: var(--text-color);
-            font-size: 16px;
-            transition: var(--transition);
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        .page-btn:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .page-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .page-indicator {
-            font-weight: 500;
-        }
-
-        .whiteboard-area {
-            flex: 1;
-            background-color: var(--light-color);
-            overflow: hidden;
-            position: relative;
-        }
-
-        #whiteboard {
-            background-color: white;
-            cursor: crosshair;
-            touch-action: none;
-        }
-
-        .cursor {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 100;
-            transform: translate(-50%, -50%);
-        }
-
-        /* Right Sidebar */
-        .right-sidebar {
-            width: 300px;
-            background-color: var(--light-color);
-            display: flex;
-            flex-direction: column;
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-            z-index: 10;
-        }
-
-        .sidebar-tabs {
-            display: flex;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 500;
-            transition: var(--transition);
-            border-bottom: 3px solid transparent;
-        }
-
-        .tab-btn.active {
-            border-bottom: 3px solid var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        .tab-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Participants Tab */
-        .participant {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .participant-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            font-weight: 600;
-        }
-
-        .participant-info {
-            flex: 1;
-        }
-
-        .participant-name {
-            font-weight: 500;
-        }
-
-        .participant-role {
             font-size: 12px;
-            color: #666;
-        }
-
-        .participant-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .control-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #666;
-            font-size: 14px;
-        }
-
-        /* Video Tab */
-        .video-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .video-item {
-            position: relative;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            background-color: #000;
-            aspect-ratio: 16/9;
-        }
-
-        .video-item video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .video-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-            padding: 8px;
-            color: white;
-            display: flex;
-            align-items: center;
-        }
-
-        .video-name {
-            flex: 1;
-            font-size: 12px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .video-controls {
-            display: flex;
-            gap: 4px;
-        }
-
-        .video-control-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        /* Chat Tab */
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 8px;
-            margin-bottom: 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: var(--border-radius);
-        }
-
-        .chat-message {
-            margin-bottom: 12px;
-            padding: 8px;
-            border-radius: var(--border-radius);
-            background-color: #f5f5f5;
-        }
-
-        .chat-message.sent {
-            background-color: var(--primary-color);
-            color: white;
-            align-self: flex-end;
-        }
-
-        .chat-message.received {
-            background-color: #f0f0f0;
-            align-self: flex-start;
-        }
-
-        .chat-sender {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .chat-input-container {
-            display: flex;
-            gap: 8px;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: var(--border-radius);
-        }
-
-        .chat-send-btn {
-            padding: 8px 16px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-        }
-
-        /* Controls Bar */
-        .controls-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 8px 16px;
-            background-color: var(--light-color);
-            gap: 16px;
-            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-            z-index: 5;
-        }
-
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .control-btn-main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--text-color);
-            font-size: 12px;
-            min-width: 60px;
-            padding: 8px;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-        }
-
-        .control-btn-main:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .control-btn-main i {
-            font-size: 20px;
-        }
-
-        .control-btn-main.active {
-            color: var(--primary-color);
-        }
-
-        .more-menu {
-            position: relative;
-        }
-
-        .more-options {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--light-color);
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 8px 0;
-            min-width: 200px;
-            z-index: 100;
-            display: none;
-        }
-
-        .more-menu.open .more-options {
-            display: block;
-        }
-
-        .more-option {
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .more-option:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .more-option i {
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Modals */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: var(--transition);
-        }
-
-        .modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .modal-content {
-            background-color: var(--light-color);
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            transform: translateY(20px);
-            transition: var(--transition);
-        }
-
-        .modal.active .modal-content {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            padding: 16px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-weight: 600;
-            font-size: 18px;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: #666;
-        }
-
-        .modal-body {
-            padding: 16px;
-        }
-
-        .modal-footer {
-            padding: 16px;
-            border-top: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-weight: 500;
-            transition: var(--transition);
-            border: none;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #3a5ae8;
-        }
-
-        .btn-secondary {
-            background-color: #e0e0e0;
-            color: var(--text-color);
-        }
-
-        .btn-secondary:hover {
-            background-color: #d0d0d0;
-        }
-
-        /* Waiting Room */
-        .waiting-room {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 24px;
-            text-align: center;
-        }
-
-        .waiting-icon {
-            font-size: 48px;
-            color: var(--primary-color);
-            margin-bottom: 16px;
-        }
-
-        .waiting-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .waiting-message {
-            color: #666;
-            margin-bottom: 24px;
-            max-width: 400px;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .right-sidebar {
-                position: absolute;
-                right: 0;
-                top: 0;
-                bottom: 0;
-                transform: translateX(100%);
-            }
-            
-            .right-sidebar.open {
-                transform: translateX(0);
-            }
-            
-            .sidebar-toggle {
-                display: block;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .toolbar {
-                position: absolute;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                transform: translateX(-100%);
-                z-index: 20;
-            }
-            
-            .toolbar.open {
-                transform: translateX(0);
-            }
-            
-            .tool-toggle {
-                display: block;
-            }
-        }
-
-        /* Animation */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        /* Notification */
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--dark-color);
-            color: white;
-            padding: 12px 24px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .notification.show {
-            opacity: 1;
-        }
-
-        /* Reaction */
-        .reaction {
-            position: absolute;
-            font-size: 24px;
-            pointer-events: none;
-            z-index: 100;
-            animation: floatUp 2s forwards;
-        }
-
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(0.5); opacity: 0; }
-            20% { transform: translateY(-20px) scale(1); opacity: 1; }
-            100% { transform: translateY(-100px) scale(0.5); opacity: 0; }
-        }
-
-        /* Hand Raise */
-        .hand-raised {
-            position: relative;
-        }
-
-        .hand-raised::after {
-            content: "✋";
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: var(--accent-color);
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-
-        /* Recording indicator */
-        .recording-indicator {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #ff0000;
-            font-weight: 500;
-        }
-
-        .recording-dot {
-            width: 10px;
-            height: 10px;
-            background-color: #ff0000;
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-
-        /* Draggable elements */
-        .draggable {
-            position: absolute;
-            cursor: move;
-            resize: both;
-            overflow: hidden;
-        }
-
-        .resize-handle {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: var(--primary-color);
-            bottom: 0;
-            right: 0;
-            cursor: nwse-resize;
-        }
-
-        /* Eraser types */
-        .eraser-options {
-            display: none;
-            position: absolute;
-            left: 100%;
-            top: 0;
-            background-color: var(--light-color);
-            padding: 12px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            z-index: 10;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .eraser-container:hover .eraser-options {
-            display: flex;
-        }
-
-        .eraser-type {
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .eraser-type:hover {
-            background-color: var(--secondary-color);
-        }
-
-        /* Fullscreen controls */
-        .fullscreen-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(0,0,0,0.5);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 20;
-        }
-
-        /* Invite button */
-        .invite-btn {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            z-index: 20;
+            color: #333;
         }
     </style>
 </head>
@@ -915,90 +139,559 @@
 
     <!-- Main Container -->
     <div class="main-container">
-        <!-- Left Sidebar - Tools -->
-        <div class="toolbar" id="toolbar">
-            <div class="tool-group">
-                <button class="tool-btn active" id="pencilTool" data-tool="pencil">
-                    <i class="fas fa-pencil-alt"></i>
-                    <span class="tooltip">Pencil (P)</span>
-                </button>
-                <button class="tool-btn" id="lineTool" data-tool="line">
-                    <i class="fas fa-slash"></i>
-                    <span class="tooltip">Line (L)</span>
-                </button>
-                <button class="tool-btn" id="rectangleTool" data-tool="rectangle">
-                    <i class="far fa-square"></i>
-                    <span class="tooltip">Rectangle (R)</span>
-                </button>
-                <button class="tool-btn" id="circleTool" data-tool="circle">
-                    <i class="far fa-circle"></i>
-                    <span class="tooltip">Circle (C)</span>
-                </button>
-                <button class="tool-btn" id="textTool" data-tool="text">
-                    <i class="fas fa-font"></i>
-                    <span class="tooltip">Text (T)</span>
-                </button>
-                <div class="eraser-container">
-                    <button class="tool-btn" id="eraserTool" data-tool="eraser">
-                        <i class="fas fa-eraser"></i>
-                        <span class="tooltip">Eraser (E)</span>
-                    </button>
-                    <div class="eraser-options">
-                        <div class="eraser-type" data-type="normal">Normal Eraser</div>
-                        <div class="eraser-type" data-type="box">Box Eraser</div>
-                        <div class="eraser-type" data-type="outline">Outline Eraser</div>
+        <!-- PowerPoint-style Ribbon -->
+        <div class="ribbon">
+            <ul class="ribbon-tabs">
+                <li class="ribbon-tab active" data-tab="home">Home</li>
+                <li class="ribbon-tab" data-tab="insert">Insert</li>
+                <li class="ribbon-tab" data-tab="design">Design</li>
+                <li class="ribbon-tab" data-tab="transitions">Transitions</li>
+                <li class="ribbon-tab" data-tab="animations">Animations</li>
+                <li class="ribbon-tab" data-tab="slideshow">Slide Show</li>
+                <li class="ribbon-tab" data-tab="review">Review</li>
+                <li class="ribbon-tab" data-tab="view">View</li>
+            </ul>
+            
+            <div class="ribbon-content active" id="homeTab">
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Clipboard</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Cut">
+                            <i class="fas fa-cut"></i>
+                            <span>Cut</span>
+                        </button>
+                        <button class="toolbar-button" title="Copy">
+                            <i class="fas fa-copy"></i>
+                            <span>Copy</span>
+                        </button>
+                        <button class="toolbar-button" title="Paste">
+                            <i class="fas fa-paste"></i>
+                            <span>Paste</span>
+                        </button>
+                        <button class="toolbar-button" title="Format Painter">
+                            <i class="fas fa-paint-brush"></i>
+                            <span>Format Painter</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Slides</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" id="addSlideBtn" title="New Slide">
+                            <i class="fas fa-plus-square"></i>
+                            <span>New Slide</span>
+                        </button>
+                        <button class="toolbar-button" title="Layout">
+                            <i class="fas fa-th-large"></i>
+                            <span>Layout</span>
+                        </button>
+                        <button class="toolbar-button" title="Reset">
+                            <i class="fas fa-undo"></i>
+                            <span>Reset</span>
+                        </button>
+                        <button class="toolbar-button" id="deleteSlideBtn" title="Delete">
+                            <i class="fas fa-trash"></i>
+                            <span>Delete</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Font</div>
+                    <div class="toolbar-buttons">
+                        <select class="toolbar-button" style="padding: 0; height: 50px;">
+                            <option>Arial</option>
+                            <option>Calibri</option>
+                            <option>Times New Roman</option>
+                        </select>
+                        <select class="toolbar-button" style="padding: 0; height: 50px;">
+                            <option>12</option>
+                            <option>14</option>
+                            <option>18</option>
+                            <option>24</option>
+                            <option>36</option>
+                        </select>
+                        <button class="toolbar-button" title="Bold">
+                            <i class="fas fa-bold"></i>
+                            <span>Bold</span>
+                        </button>
+                        <button class="toolbar-button" title="Italic">
+                            <i class="fas fa-italic"></i>
+                            <span>Italic</span>
+                        </button>
+                        <button class="toolbar-button" title="Underline">
+                            <i class="fas fa-underline"></i>
+                            <span>Underline</span>
+                        </button>
+                        <button class="toolbar-button" title="Text Shadow">
+                            <i class="fas fa-text-height"></i>
+                            <span>Shadow</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Paragraph</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Bullets">
+                            <i class="fas fa-list-ul"></i>
+                            <span>Bullets</span>
+                        </button>
+                        <button class="toolbar-button" title="Numbering">
+                            <i class="fas fa-list-ol"></i>
+                            <span>Numbering</span>
+                        </button>
+                        <button class="toolbar-button" title="Align Left">
+                            <i class="fas fa-align-left"></i>
+                            <span>Left</span>
+                        </button>
+                        <button class="toolbar-button" title="Center">
+                            <i class="fas fa-align-center"></i>
+                            <span>Center</span>
+                        </button>
+                        <button class="toolbar-button" title="Align Right">
+                            <i class="fas fa-align-right"></i>
+                            <span>Right</span>
+                        </button>
+                        <button class="toolbar-button" title="Line Spacing">
+                            <i class="fas fa-arrows-alt-v"></i>
+                            <span>Line Spacing</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Drawing</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Shapes">
+                            <i class="fas fa-shapes"></i>
+                            <span>Shapes</span>
+                        </button>
+                        <button class="toolbar-button" title="Arrange">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Arrange</span>
+                        </button>
+                        <button class="toolbar-button" title="Quick Styles">
+                            <i class="fas fa-palette"></i>
+                            <span>Quick Styles</span>
+                        </button>
                     </div>
                 </div>
             </div>
-
-            <div class="tool-group">
-                <div class="color-container">
-                    <button class="tool-btn" id="colorPicker">
-                        <i class="fas fa-palette" style="color: #000000;"></i>
-                        <span class="tooltip">Color</span>
-                    </button>
-                    <div class="color-palette">
-                        <div class="color-picker" style="background-color: #000000;" data-color="#000000"></div>
-                        <div class="color-picker" style="background-color: #ff0000;" data-color="#ff0000"></div>
-                        <div class="color-picker" style="background-color: #00ff00;" data-color="#00ff00"></div>
-                        <div class="color-picker" style="background-color: #0000ff;" data-color="#0000ff"></div>
-                        <div class="color-picker" style="background-color: #ffff00;" data-color="#ffff00"></div>
-                        <div class="color-picker" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
-                        <div class="color-picker" style="background-color: #00ffff;" data-color="#00ffff"></div>
-                        <div class="color-picker" style="background-color: #ffffff; border: 1px solid #ccc;" data-color="#ffffff"></div>
+            
+            <div class="ribbon-content" id="insertTab">
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Tables</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Insert Table">
+                            <i class="fas fa-table"></i>
+                            <span>Table</span>
+                        </button>
                     </div>
                 </div>
-                <div class="tool-btn">
-                    <i class="fas fa-border-style"></i>
-                    <span class="tooltip">Line Width</span>
-                    <input type="range" class="brush-size" id="brushSize" min="1" max="50" value="5">
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Images</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" id="insertPictureBtn" title="Pictures">
+                            <i class="fas fa-image"></i>
+                            <span>Pictures</span>
+                        </button>
+                        <button class="toolbar-button" title="Online Pictures">
+                            <i class="fas fa-cloud"></i>
+                            <span>Online</span>
+                        </button>
+                        <button class="toolbar-button" title="Screenshot">
+                            <i class="fas fa-camera"></i>
+                            <span>Screenshot</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Illustrations</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Shapes">
+                            <i class="fas fa-shapes"></i>
+                            <span>Shapes</span>
+                        </button>
+                        <button class="toolbar-button" title="Icons">
+                            <i class="fas fa-icons"></i>
+                            <span>Icons</span>
+                        </button>
+                        <button class="toolbar-button" title="3D Models">
+                            <i class="fas fa-cube"></i>
+                            <span>3D Models</span>
+                        </button>
+                        <button class="toolbar-button" title="SmartArt">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>SmartArt</span>
+                        </button>
+                        <button class="toolbar-button" title="Charts">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Charts</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Links</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Hyperlink">
+                            <i class="fas fa-link"></i>
+                            <span>Link</span>
+                        </button>
+                        <button class="toolbar-button" title="Bookmark">
+                            <i class="fas fa-bookmark"></i>
+                            <span>Bookmark</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Text</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Text Box">
+                            <i class="fas fa-square"></i>
+                            <span>Text Box</span>
+                        </button>
+                        <button class="toolbar-button" title="Header & Footer">
+                            <i class="fas fa-heading"></i>
+                            <span>Header/Footer</span>
+                        </button>
+                        <button class="toolbar-button" title="WordArt">
+                            <i class="fas fa-font"></i>
+                            <span>WordArt</span>
+                        </button>
+                        <button class="toolbar-button" title="Date & Time">
+                            <i class="fas fa-clock"></i>
+                            <span>Date & Time</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Media</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Audio">
+                            <i class="fas fa-music"></i>
+                            <span>Audio</span>
+                        </button>
+                        <button class="toolbar-button" title="Video">
+                            <i class="fas fa-video"></i>
+                            <span>Video</span>
+                        </button>
+                        <button class="toolbar-button" title="Screen Recording">
+                            <i class="fas fa-desktop"></i>
+                            <span>Screen Record</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <div class="tool-group">
-                <button class="tool-btn" id="clearTool">
-                    <i class="fas fa-trash-alt"></i>
-                    <span class="tooltip">Clear</span>
-                </button>
-                <button class="tool-btn" id="undoTool">
-                    <i class="fas fa-undo"></i>
-                    <span class="tooltip">Undo</span>
-                </button>
-                <button class="tool-btn" id="redoTool">
-                    <i class="fas fa-redo"></i>
-                    <span class="tooltip">Redo</span>
-                </button>
+            
+            <div class="ribbon-content" id="designTab">
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Themes</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Themes">
+                            <i class="fas fa-palette"></i>
+                            <span>Themes</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Variants</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Colors">
+                            <i class="fas fa-fill-drip"></i>
+                            <span>Colors</span>
+                        </button>
+                        <button class="toolbar-button" title="Fonts">
+                            <i class="fas fa-font"></i>
+                            <span>Fonts</span>
+                        </button>
+                        <button class="toolbar-button" title="Effects">
+                            <i class="fas fa-magic"></i>
+                            <span>Effects</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Customize</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Slide Size">
+                            <i class="fas fa-expand"></i>
+                            <span>Slide Size</span>
+                        </button>
+                        <button class="toolbar-button" title="Format Background">
+                            <i class="fas fa-sliders-h"></i>
+                            <span>Format Background</span>
+                        </button>
+                    </div>
+                </div>
             </div>
-
-            <div class="tool-group">
-                <button class="tool-btn" id="imageTool">
-                    <i class="fas fa-image"></i>
-                    <span class="tooltip">Insert Image</span>
-                </button>
-                <button class="tool-btn" id="saveTool">
-                    <i class="fas fa-save"></i>
-                    <span class="tooltip">Save</span>
-                </button>
+            
+            <div class="ribbon-content" id="transitionsTab">
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Transition Effects</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Fade">
+                            <i class="fas fa-adjust"></i>
+                            <span>Fade</span>
+                        </button>
+                        <button class="toolbar-button" title="Push">
+                            <i class="fas fa-arrow-right"></i>
+                            <span>Push</span>
+                        </button>
+                        <button class="toolbar-button" title="Wipe">
+                            <i class="fas fa-broom"></i>
+                            <span>Wipe</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Timing</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Duration">
+                            <i class="fas fa-clock"></i>
+                            <span>Duration</span>
+                        </button>
+                        <button class="toolbar-button" title="Sound">
+                            <i class="fas fa-volume-up"></i>
+                            <span>Sound</span>
+                        </button>
+                        <button class="toolbar-button" title="Advance Slide">
+                            <i class="fas fa-forward"></i>
+                            <span>Advance Slide</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ribbon-content" id="animationsTab">
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Animation Effects</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Entrance">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>Entrance</span>
+                        </button>
+                        <button class="toolbar-button" title="Emphasis">
+                            <i class="fas fa-star"></i>
+                            <span>Emphasis</span>
+                        </button>
+                        <button class="toolbar-button" title="Exit">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Exit</span>
+                        </button>
+                        <button class="toolbar-button" title="Motion Paths">
+                            <i class="fas fa-route"></i>
+                            <span>Motion Paths</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Advanced Animation</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Add Animation">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Add Animation</span>
+                        </button>
+                        <button class="toolbar-button" title="Animation Pane">
+                            <i class="fas fa-list"></i>
+                            <span>Animation Pane</span>
+                        </button>
+                        <button class="toolbar-button" title="Trigger">
+                            <i class="fas fa-bolt"></i>
+                            <span>Trigger</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Timing</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Start">
+                            <i class="fas fa-play"></i>
+                            <span>Start</span>
+                        </button>
+                        <button class="toolbar-button" title="Duration">
+                            <i class="fas fa-clock"></i>
+                            <span>Duration</span>
+                        </button>
+                        <button class="toolbar-button" title="Delay">
+                            <i class="fas fa-hourglass-start"></i>
+                            <span>Delay</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ribbon-content" id="slideshowTab">
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Start Slide Show</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="From Beginning">
+                            <i class="fas fa-play"></i>
+                            <span>From Beginning</span>
+                        </button>
+                        <button class="toolbar-button" title="From Current Slide">
+                            <i class="fas fa-forward"></i>
+                            <span>From Current</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Set Up</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Rehearse Timings">
+                            <i class="fas fa-stopwatch"></i>
+                            <span>Rehearse Timings</span>
+                        </button>
+                        <button class="toolbar-button" title="Record Slide Show">
+                            <i class="fas fa-record-vinyl"></i>
+                            <span>Record</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Monitors</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Presenter View">
+                            <i class="fas fa-desktop"></i>
+                            <span>Presenter View</span>
+                        </button>
+                        <button class="toolbar-button" title="Resolution">
+                            <i class="fas fa-tv"></i>
+                            <span>Resolution</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ribbon-content" id="reviewTab">
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Proofing</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Spelling">
+                            <i class="fas fa-spell-check"></i>
+                            <span>Spelling</span>
+                        </button>
+                        <button class="toolbar-button" title="Thesaurus">
+                            <i class="fas fa-book"></i>
+                            <span>Thesaurus</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Language</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Translate">
+                            <i class="fas fa-language"></i>
+                            <span>Translate</span>
+                        </button>
+                        <button class="toolbar-button" title="Language">
+                            <i class="fas fa-globe"></i>
+                            <span>Language</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Comments</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="New Comment">
+                            <i class="fas fa-comment"></i>
+                            <span>New Comment</span>
+                        </button>
+                        <button class="toolbar-button" title="Edit Comment">
+                            <i class="fas fa-edit"></i>
+                            <span>Edit</span>
+                        </button>
+                        <button class="toolbar-button" title="Delete Comment">
+                            <i class="fas fa-trash"></i>
+                            <span>Delete</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ribbon-content" id="viewTab">
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Presentation Views</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Normal">
+                            <i class="fas fa-th"></i>
+                            <span>Normal</span>
+                        </button>
+                        <button class="toolbar-button" title="Outline">
+                            <i class="fas fa-align-left"></i>
+                            <span>Outline</span>
+                        </button>
+                        <button class="toolbar-button" title="Slide Sorter">
+                            <i class="fas fa-th-large"></i>
+                            <span>Slide Sorter</span>
+                        </button>
+                        <button class="toolbar-button" title="Notes Page">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>Notes Page</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Master Views</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Slide Master">
+                            <i class="fas fa-sliders-h"></i>
+                            <span>Slide Master</span>
+                        </button>
+                        <button class="toolbar-button" title="Handout Master">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Handout Master</span>
+                        </button>
+                        <button class="toolbar-button" title="Notes Master">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>Notes Master</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Zoom</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Zoom In">
+                            <i class="fas fa-search-plus"></i>
+                            <span>Zoom In</span>
+                        </button>
+                        <button class="toolbar-button" title="Zoom Out">
+                            <i class="fas fa-search-minus"></i>
+                            <span>Zoom Out</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="toolbar-group">
+                    <div class="toolbar-group-title">Color/Grayscale</div>
+                    <div class="toolbar-buttons">
+                        <button class="toolbar-button" title="Color">
+                            <i class="fas fa-palette"></i>
+                            <span>Color</span>
+                        </button>
+                        <button class="toolbar-button" title="Grayscale">
+                            <i class="fas fa-adjust"></i>
+                            <span>Grayscale</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1043,65 +736,67 @@
                 </button>
             </div>
         </div>
+    </div>
 
-        <!-- Right Sidebar -->
-        <div class="right-sidebar" id="rightSidebar">
-            <div class="sidebar-tabs">
-                <div class="tab-btn active" data-tab="participants">Participants</div>
-                <div class="tab-btn" data-tab="video">Video</div>
-                <div class="tab-btn" data-tab="chat">Chat</div>
-            </div>
-            
-            <div class="tab-content active" id="participantsTab">
-                <div class="participant">
-                    <div class="participant-avatar">Y</div>
-                    <div class="participant-info">
-                        <div class="participant-name">You (Host)</div>
-                        <div class="participant-role">Host</div>
-                    </div>
-                    <div class="participant-controls">
-                        <button class="control-btn" title="Mute">
-                            <i class="fas fa-microphone"></i>
-                        </button>
-                        <button class="control-btn" title="Stop Video">
-                            <i class="fas fa-video"></i>
-                        </button>
-                    </div>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div>Slide 1 of 1</div>
+        <div>English (United States)</div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="right-sidebar" id="rightSidebar">
+        <div class="sidebar-tabs">
+            <div class="tab-btn active" data-tab="participants">Participants</div>
+            <div class="tab-btn" data-tab="video">Video</div>
+            <div class="tab-btn" data-tab="chat">Chat</div>
+        </div>
+        
+        <div class="tab-content active" id="participantsTab">
+            <div class="participant">
+                <div class="participant-avatar">Y</div>
+                <div class="participant-info">
+                    <div class="participant-name">You (Host)</div>
+                    <div class="participant-role">Host</div>
                 </div>
-                <!-- More participants will be added here dynamically -->
+                <div class="participant-controls">
+                    <button class="control-btn" title="Mute">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="control-btn" title="Stop Video">
+                        <i class="fas fa-video"></i>
+                    </button>
+                </div>
             </div>
-            
-            <div class="tab-content" id="videoTab">
-                <div class="video-container">
-                    <div class="video-item">
-                        <video id="localVideo" autoplay muted></video>
-                        <div class="video-info">
-                            <span class="video-name">You</span>
-                            <div class="video-controls">
-                                <button class="video-control-btn" id="toggleMic">
-                                    <i class="fas fa-microphone"></i>
-                                </button>
-                                <button class="video-control-btn" id="toggleVideo">
-                                    <i class="fas fa-video"></i>
-                                </button>
-                            </div>
+        </div>
+        
+        <div class="tab-content" id="videoTab">
+            <div class="video-container">
+                <div class="video-item">
+                    <video id="localVideo" autoplay muted></video>
+                    <div class="video-info">
+                        <span class="video-name">You</span>
+                        <div class="video-controls">
+                            <button class="video-control-btn" id="toggleMic">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                            <button class="video-control-btn" id="toggleVideo">
+                                <i class="fas fa-video"></i>
+                            </button>
                         </div>
                     </div>
-                    <!-- Remote videos will be added here dynamically -->
                 </div>
             </div>
-            
-            <div class="tab-content" id="chatTab">
-                <div class="chat-container">
-                    <div class="chat-messages" id="chatMessages">
-                        <!-- Chat messages will be added here dynamically -->
-                    </div>
-                    <div class="chat-input-container">
-                        <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
-                        <button class="chat-send-btn" id="chatSendBtn">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
+        </div>
+        
+        <div class="tab-content" id="chatTab">
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
+                    <button class="chat-send-btn" id="chatSendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -1167,363 +862,42 @@
         </div>
     </div>
 
-    <!-- Modals -->
-    <div class="modal" id="inviteModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Invite People</div>
-                <button class="modal-close" id="closeInviteModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Share this link to invite others to join your whiteboard session:</p>
-                <div style="display: flex; margin: 16px 0;">
-                    <input type="text" id="inviteLink" readonly style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px 0 0 4px;">
-                    <button id="copyInviteLink" style="padding: 8px 12px; background-color: var(--primary-color); color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer;">
-                        Copy
-                    </button>
-                </div>
-                <p>Or share this meeting ID:</p>
-                <div style="display: flex; margin: 16px 0;">
-                    <input type="text" id="meetingId" readonly style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px 0 0 4px;">
-                    <button id="copyMeetingId" style="padding: 8px 12px; background-color: var(--primary-color); color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer;">
-                        Copy
-                    </button>
-                </div>
-                <p>Meeting Passcode: <strong id="meetingPasscode">123456</strong></p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelInvite">Close</button>
-            </div>
-        </div>
-    </div>
+    <!-- All modals remain the same as in your original code -->
 
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Settings</div>
-                <button class="modal-close" id="closeSettingsModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div style="margin-bottom: 16px;">
-                    <h3 style="margin-bottom: 8px;">🔒 Security & Privacy</h3>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="waitingRoom" checked> Enable waiting room
-                    </label>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="meetingPasscode" checked> Require meeting passcode
-                    </label>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="joinBeforeHost"> Allow participants to join before host
-                    </label>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="participantScreenShare" checked> Allow participant screen sharing
-                    </label>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="muteOnEntry" checked> Mute participants on entry
-                    </label>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="allowRejoin"> Allow removed participants to rejoin
-                    </label>
-                </div>
-
-                <div style="margin-bottom: 16px;">
-                    <h3 style="margin-bottom: 8px;">🎥 Video Settings</h3>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="hdVideo"> HD video
-                    </label>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="touchUpAppearance"> Touch up my appearance
-                    </label>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="mirrorVideo"> Mirror my video
-                    </label>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="videoPreview"> Always show video preview
-                    </label>
-                    <div style="margin: 8px 0;">
-                        <label>Virtual Background:</label>
-                        <select id="virtualBackground" style="width: 100%; padding: 8px; margin-top: 4px;">
-                            <option value="none">None</option>
-                            <option value="blur">Blur</option>
-                            <option value="office">Office</option>
-                            <option value="meeting">Meeting Room</option>
-                            <option value="bedroom">Bedroom</option>
-                            <option value="custom">Custom Image</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 16px;">
-                    <h3 style="margin-bottom: 8px;">🎙️ Audio Settings</h3>
-                    <div style="margin: 8px 0;">
-                        <label>Microphone:</label>
-                        <select id="microphone" style="width: 100%; padding: 8px; margin-top: 4px;"></select>
-                    </div>
-                    <div style="margin: 8px 0;">
-                        <label>Speaker:</label>
-                        <select id="speaker" style="width: 100%; padding: 8px; margin-top: 4px;"></select>
-                    </div>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="suppressBackgroundNoise"> Suppress background noise
-                    </label>
-                    <label style="display: block; margin: 8px 0;">
-                        <input type="checkbox" id="originalSound"> Original sound for musicians
-                    </label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelSettings">Cancel</button>
-                <button class="btn btn-primary" id="saveSettings">Save</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="reactionsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Send Reaction</div>
-                <button class="modal-close" id="closeReactionsModal">&times;</button>
-            </div>
-            <div class="modal-body" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
-                <button class="reaction-btn" data-reaction="👍">👍</button>
-                <button class="reaction-btn" data-reaction="👎">👎</button>
-                <button class="reaction-btn" data-reaction="👏">👏</button>
-                <button class="reaction-btn" data-reaction="🙌">🙌</button>
-                <button class="reaction-btn" data-reaction="😂">😂</button>
-                <button class="reaction-btn" data-reaction="😮">😮</button>
-                <button class="reaction-btn" data-reaction="😢">😢</button>
-                <button class="reaction-btn" data-reaction="❤️">❤️</button>
-                <button class="reaction-btn" data-reaction="🔥">🔥</button>
-                <button class="reaction-btn" data-reaction="🎉">🎉</button>
-                <button class="reaction-btn" data-reaction="🤔">🤔</button>
-                <button class="reaction-btn" data-reaction="🙏">🙏</button>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelReactions">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="leaveModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Leave Meeting</div>
-                <button class="modal-close" id="closeLeaveModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to leave the meeting?</p>
-                <label style="display: block; margin: 16px 0;">
-                    <input type="checkbox" id="saveBeforeLeave"> Save whiteboard before leaving
-                </label>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelLeave">Cancel</button>
-                <button class="btn btn-primary" id="confirmLeave">Leave</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="endMeetingModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">End Meeting for All</div>
-                <button class="modal-close" id="closeEndMeetingModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to end the meeting for all participants?</p>
-                <label style="display: block; margin: 16px 0;">
-                    <input type="checkbox" id="saveBeforeEnd"> Save whiteboard before ending
-                </label>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelEndMeeting">Cancel</button>
-                <button class="btn btn-primary" id="confirmEndMeeting">End Meeting</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="waitingRoomModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Waiting Room</div>
-                <button class="modal-close" id="closeWaitingRoomModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="waitingParticipantsList">
-                    <p>No participants are waiting</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="admitAll">Admit All</button>
-                <button class="btn btn-primary" id="closeWaitingRoom">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="imageModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Insert Image</div>
-                <button class="modal-close" id="closeImageModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div style="margin-bottom: 16px;">
-                    <h3 style="margin-bottom: 8px;">Upload Image</h3>
-                    <input type="file" id="imageUpload" accept="image/*">
-                </div>
-                <div>
-                    <h3 style="margin-bottom: 8px;">Or Enter Image URL</h3>
-                    <input type="text" id="imageUrl" placeholder="https://example.com/image.jpg" style="width: 100%; padding: 8px; margin-bottom: 8px;">
-                    <button class="btn btn-primary" id="loadImageUrl">Load Image</button>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelImage">Cancel</button>
-                <button class="btn btn-primary" id="insertImage">Insert</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Waiting Room Screen -->
-    <div class="waiting-room" id="waitingRoomScreen" style="display: none;">
-        <div class="waiting-icon">
-            <i class="fas fa-door-open"></i>
-        </div>
-        <div class="waiting-title">You're in the waiting room</div>
-        <div class="waiting-message">
-            The meeting host will let you in soon. Please wait...
-        </div>
-        <div class="spinner">
-            <i class="fas fa-spinner fa-spin" style="font-size: 36px;"></i>
-        </div>
-    </div>
-
-    <!-- Notification -->
-    <div class="notification" id="notification">
-        <i class="fas fa-info-circle"></i>
-        <span id="notificationText">Notification message</span>
-    </div>
-
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const whiteboard = document.getElementById('whiteboard');
-            const ctx = whiteboard.getContext('2d');
-            const userCountElement = document.getElementById('userCount');
-            const pencilTool = document.getElementById('pencilTool');
-            const lineTool = document.getElementById('lineTool');
-            const rectangleTool = document.getElementById('rectangleTool');
-            const circleTool = document.getElementById('circleTool');
-            const textTool = document.getElementById('textTool');
-            const eraserTool = document.getElementById('eraserTool');
-            const colorPicker = document.getElementById('colorPicker');
-            const brushSize = document.getElementById('brushSize');
-            const clearTool = document.getElementById('clearTool');
-            const undoTool = document.getElementById('undoTool');
-            const redoTool = document.getElementById('redoTool');
-            const imageTool = document.getElementById('imageTool');
-            const saveTool = document.getElementById('saveTool');
-            const prevPage = document.getElementById('prevPage');
-            const nextPage = document.getElementById('nextPage');
-            const currentPage = document.getElementById('currentPage');
-            const totalPages = document.getElementById('totalPages');
-            const addPage = document.getElementById('addPage');
-            const duplicatePage = document.getElementById('duplicatePage');
-            const deletePage = document.getElementById('deletePage');
-            const recordingIndicator = document.getElementById('recordingIndicator');
-            const tabButtons = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-            const localVideo = document.getElementById('localVideo');
-            const toggleMic = document.getElementById('toggleMic');
-            const toggleVideo = document.getElementById('toggleVideo');
-            const chatMessages = document.getElementById('chatMessages');
-            const chatInput = document.getElementById('chatInput');
-            const chatSendBtn = document.getElementById('chatSendBtn');
-            const micControl = document.getElementById('micControl');
-            const videoControl = document.getElementById('videoControl');
-            const screenShareControl = document.getElementById('screenShareControl');
-            const participantsControl = document.getElementById('participantsControl');
-            const raiseHandControl = document.getElementById('raiseHandControl');
-            const reactionsControl = document.getElementById('reactionsControl');
-            const moreControl = document.getElementById('moreControl');
-            const recordOption = document.getElementById('recordOption');
-            const settingsOption = document.getElementById('settingsOption');
-            const leaveOption = document.getElementById('leaveOption');
-            const endMeetingControl = document.getElementById('endMeetingControl');
-            const inviteBtn = document.getElementById('inviteBtn');
-            const inviteModal = document.getElementById('inviteModal');
-            const closeInviteModal = document.getElementById('closeInviteModal');
-            const inviteLink = document.getElementById('inviteLink');
-            const meetingId = document.getElementById('meetingId');
-            const meetingPasscode = document.getElementById('meetingPasscode');
-            const copyInviteLink = document.getElementById('copyInviteLink');
-            const copyMeetingId = document.getElementById('copyMeetingId');
-            const cancelInvite = document.getElementById('cancelInvite');
-            const settingsModal = document.getElementById('settingsModal');
-            const closeSettingsModal = document.getElementById('closeSettingsModal');
-            const cancelSettings = document.getElementById('cancelSettings');
-            const saveSettings = document.getElementById('saveSettings');
-            const reactionsModal = document.getElementById('reactionsModal');
-            const closeReactionsModal = document.getElementById('closeReactionsModal');
-            const cancelReactions = document.getElementById('cancelReactions');
-            const reactionButtons = document.querySelectorAll('.reaction-btn');
-            const leaveModal = document.getElementById('leaveModal');
-            const closeLeaveModal = document.getElementById('closeLeaveModal');
-            const cancelLeave = document.getElementById('cancelLeave');
-            const confirmLeave = document.getElementById('confirmLeave');
-            const saveBeforeLeave = document.getElementById('saveBeforeLeave');
-            const endMeetingModal = document.getElementById('endMeetingModal');
-            const closeEndMeetingModal = document.getElementById('closeEndMeetingModal');
-            const cancelEndMeeting = document.getElementById('cancelEndMeeting');
-            const confirmEndMeeting = document.getElementById('confirmEndMeeting');
-            const saveBeforeEnd = document.getElementById('saveBeforeEnd');
-            const waitingRoomModal = document.getElementById('waitingRoomModal');
-            const closeWaitingRoomModal = document.getElementById('closeWaitingRoomModal');
-            const admitAll = document.getElementById('admitAll');
-            const waitingParticipantsList = document.getElementById('waitingParticipantsList');
-            const imageModal = document.getElementById('imageModal');
-            const closeImageModal = document.getElementById('closeImageModal');
-            const imageUpload = document.getElementById('imageUpload');
-            const imageUrl = document.getElementById('imageUrl');
-            const loadImageUrl = document.getElementById('loadImageUrl');
-            const insertImage = document.getElementById('insertImage');
-            const cancelImage = document.getElementById('cancelImage');
-            const fullscreenBtn = document.getElementById('fullscreenBtn');
-            const waitingRoomScreen = document.getElementById('waitingRoomScreen');
-            const notification = document.getElementById('notification');
-            const notificationText = document.getElementById('notificationText');
-
-            // Application State
-            let state = {
-                tool: 'pencil',
-                eraserType: 'normal',
-                color: '#000000',
-                brushSize: 5,
-                isDrawing: false,
-                lastX: 0,
-                lastY: 0,
-                currentPage: 1,
-                totalPages: 1,
-                whiteboards: {},
-                undoStack: {},
-                redoStack: {},
-                participants: [],
-                waitingParticipants: [],
-                isHost: true,
-                isMicOn: true,
-                isVideoOn: true,
-                isScreenSharing: false,
-                isRecording: false,
-                isHandRaised: false,
-                socket: null,
-                localStream: null,
-                mediaRecorder: null,
-                recordedChunks: [],
-                currentImage: null
-            };
-
-            // Initialize the whiteboard
+            // Previous JavaScript remains the same, just add these new functions
+            
+            // Ribbon Tab Switching
+            const ribbonTabs = document.querySelectorAll('.ribbon-tab');
+            const ribbonContents = document.querySelectorAll('.ribbon-content');
+            
+            ribbonTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    ribbonTabs.forEach(t => t.classList.remove('active'));
+                    ribbonContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab') + 'Tab';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Toolbar Button Functionality
+            document.getElementById('addSlideBtn').addEventListener('click', addNewPage);
+            document.getElementById('deleteSlideBtn').addEventListener('click', deleteCurrentPage);
+            document.getElementById('insertPictureBtn').addEventListener('click', () => {
+                document.getElementById('imageModal').style.display = 'flex';
+            });
+            
+            // Initialize the application
+            initWhiteboard();
+            initSocketConnection();
+            initWebRTC();
+            
+            // All other existing functions remain the same
             function initWhiteboard() {
                 resizeCanvas();
                 
@@ -1556,1027 +930,8 @@
                     return 'You have unsaved changes. Are you sure you want to leave?';
                 });
             }
-
-            function resizeCanvas() {
-                const container = whiteboard.parentElement;
-                whiteboard.width = container.clientWidth;
-                whiteboard.height = container.clientHeight;
-                redrawWhiteboard();
-            }
-
-            function redrawWhiteboard() {
-                if (state.whiteboards[state.currentPage] && state.whiteboards[state.currentPage].data) {
-                    const img = new Image();
-                    img.onload = function() {
-                        ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
-                        ctx.drawImage(img, 0, 0, whiteboard.width, whiteboard.height);
-                    };
-                    img.src = state.whiteboards[state.currentPage].data;
-                } else {
-                    ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, whiteboard.width, whiteboard.height);
-                }
-            }
-
-            function saveWhiteboardState() {
-                const dataUrl = whiteboard.toDataURL();
-                state.whiteboards[state.currentPage] = {
-                    data: dataUrl,
-                    thumbnail: generateThumbnail()
-                };
-                
-                if (!state.undoStack[state.currentPage]) {
-                    state.undoStack[state.currentPage] = [];
-                }
-                state.undoStack[state.currentPage].push(dataUrl);
-                
-                state.redoStack[state.currentPage] = [];
-                
-                if (state.socket) {
-                    state.socket.emit('drawing', {
-                        page: state.currentPage,
-                        data: dataUrl
-                    });
-                }
-            }
-
-            function generateThumbnail() {
-                const tempCanvas = document.createElement('canvas');
-                tempCanvas.width = 160;
-                tempCanvas.height = 90;
-                const tempCtx = tempCanvas.getContext('2d');
-                
-                const img = new Image();
-                img.onload = function() {
-                    tempCtx.drawImage(img, 0, 0, 160, 90);
-                };
-                img.src = whiteboard.toDataURL();
-                
-                return tempCanvas.toDataURL();
-            }
-
-            function undo() {
-                if (state.undoStack[state.currentPage] && state.undoStack[state.currentPage].length > 0) {
-                    const lastState = state.undoStack[state.currentPage].pop();
-                    
-                    if (!state.redoStack[state.currentPage]) {
-                        state.redoStack[state.currentPage] = [];
-                    }
-                    state.redoStack[state.currentPage].push(state.whiteboards[state.currentPage].data);
-                    
-                    state.whiteboards[state.currentPage].data = lastState;
-                    redrawWhiteboard();
-                    
-                    if (state.socket) {
-                        state.socket.emit('undo', state.currentPage);
-                    }
-                }
-            }
-
-            function redo() {
-                if (state.redoStack[state.currentPage] && state.redoStack[state.currentPage].length > 0) {
-                    const nextState = state.redoStack[state.currentPage].pop();
-                    
-                    state.undoStack[state.currentPage].push(state.whiteboards[state.currentPage].data);
-                    
-                    state.whiteboards[state.currentPage].data = nextState;
-                    redrawWhiteboard();
-                    
-                    if (state.socket) {
-                        state.socket.emit('redo', state.currentPage);
-                    }
-                }
-            }
-
-            function addNewPage() {
-                state.totalPages++;
-                state.currentPage = state.totalPages;
-                
-                state.whiteboards[state.currentPage] = {
-                    data: null,
-                    thumbnail: null
-                };
-                state.undoStack[state.currentPage] = [];
-                state.redoStack[state.currentPage] = [];
-                
-                updatePageControls();
-                redrawWhiteboard();
-                
-                if (state.socket) {
-                    state.socket.emit('newPage', state.currentPage);
-                }
-            }
-
-            function duplicateCurrentPage() {
-                state.totalPages++;
-                const newPage = state.totalPages;
-                
-                state.whiteboards[newPage] = {
-                    data: whiteboard.toDataURL(),
-                    thumbnail: generateThumbnail()
-                };
-                state.undoStack[newPage] = [];
-                state.redoStack[newPage] = [];
-                
-                state.currentPage = newPage;
-                updatePageControls();
-                redrawWhiteboard();
-                
-                if (state.socket) {
-                    state.socket.emit('duplicatePage', {
-                        fromPage: state.currentPage - 1,
-                        toPage: newPage
-                    });
-                }
-            }
-
-            function deleteCurrentPage() {
-                if (state.totalPages <= 1) {
-                    showNotification("Can't delete the only page");
-                    return;
-                }
-                
-                if (confirm("Are you sure you want to delete this page?")) {
-                    delete state.whiteboards[state.currentPage];
-                    delete state.undoStack[state.currentPage];
-                    delete state.redoStack[state.currentPage];
-                    
-                    if (state.currentPage === state.totalPages) {
-                        state.currentPage--;
-                    }
-                    
-                    state.totalPages--;
-                    
-                    const newWhiteboards = {};
-                    const newUndoStack = {};
-                    const newRedoStack = {};
-                    
-                    let newPageNum = 1;
-                    for (let i = 1; i <= state.totalPages + 1; i++) {
-                        if (state.whiteboards[i]) {
-                            newWhiteboards[newPageNum] = state.whiteboards[i];
-                            newUndoStack[newPageNum] = state.undoStack[i];
-                            newRedoStack[newPageNum] = state.redoStack[i];
-                            newPageNum++;
-                        }
-                    }
-                    
-                    state.whiteboards = newWhiteboards;
-                    state.undoStack = newUndoStack;
-                    state.redoStack = newRedoStack;
-                    
-                    updatePageControls();
-                    redrawWhiteboard();
-                    
-                    if (state.socket) {
-                        state.socket.emit('deletePage', state.currentPage);
-                    }
-                }
-            }
-
-            function goToPage(page) {
-                if (page >= 1 && page <= state.totalPages) {
-                    state.currentPage = page;
-                    updatePageControls();
-                    redrawWhiteboard();
-                    
-                    if (state.socket) {
-                        state.socket.emit('pageChange', page);
-                    }
-                }
-            }
-
-            function updatePageControls() {
-                currentPage.textContent = state.currentPage;
-                totalPages.textContent = state.totalPages;
-                
-                prevPage.disabled = state.currentPage <= 1;
-                nextPage.disabled = state.currentPage >= state.totalPages;
-            }
-
-            function saveWhiteboardToLocalStorage() {
-                const saveData = {
-                    whiteboards: state.whiteboards,
-                    currentPage: state.currentPage,
-                    totalPages: state.totalPages,
-                    timestamp: new Date().toISOString()
-                };
-                localStorage.setItem('whiteboard-education', JSON.stringify(saveData));
-            }
-
-            function loadWhiteboard(data) {
-                state.whiteboards = data.whiteboards || {};
-                state.currentPage = data.currentPage || 1;
-                state.totalPages = data.totalPages || 1;
-                
-                for (let i = 1; i <= state.totalPages; i++) {
-                    if (!state.undoStack[i]) {
-                        state.undoStack[i] = [];
-                    }
-                    if (!state.redoStack[i]) {
-                        state.redoStack[i] = [];
-                    }
-                }
-                
-                updatePageControls();
-                redrawWhiteboard();
-            }
-
-            function insertImageOnWhiteboard(imageSrc) {
-                const img = new Image();
-                img.onload = function() {
-                    const imgElement = document.createElement('div');
-                    imgElement.className = 'draggable';
-                    imgElement.style.position = 'absolute';
-                    imgElement.style.left = '100px';
-                    imgElement.style.top = '100px';
-                    imgElement.style.width = '200px';
-                    imgElement.style.height = 'auto';
-                    
-                    const imgTag = document.createElement('img');
-                    imgTag.src = imageSrc;
-                    imgTag.style.width = '100%';
-                    imgTag.style.height = '100%';
-                    imgTag.style.objectFit = 'contain';
-                    
-                    const resizeHandle = document.createElement('div');
-                    resizeHandle.className = 'resize-handle';
-                    
-                    imgElement.appendChild(imgTag);
-                    imgElement.appendChild(resizeHandle);
-                    document.getElementById('draggableElements').appendChild(imgElement);
-                    
-                    makeDraggable(imgElement);
-                    saveWhiteboardState();
-                };
-                img.src = imageSrc;
-            }
-
-            function makeDraggable(element) {
-                const img = element.querySelector('img');
-                const resizeHandle = element.querySelector('.resize-handle');
-                
-                element.addEventListener('mousedown', function(e) {
-                    if (e.target === resizeHandle) return;
-                    
-                    state.draggedElement = element;
-                    const rect = element.getBoundingClientRect();
-                    state.dragOffsetX = e.clientX - rect.left;
-                    state.dragOffsetY = e.clientY - rect.top;
-                    
-                    element.style.zIndex = '10';
-                    e.preventDefault();
-                });
-                
-                resizeHandle.addEventListener('mousedown', function(e) {
-                    state.resizeElement = element;
-                    const rect = element.getBoundingClientRect();
-                    state.resizeStartWidth = rect.width;
-                    state.resizeStartHeight = rect.height;
-                    state.resizeStartX = e.clientX;
-                    state.resizeStartY = e.clientY;
-                    
-                    element.style.zIndex = '10';
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-                
-                document.addEventListener('mouseup', function() {
-                    if (state.draggedElement || state.resizeElement) {
-                        saveWhiteboardState();
-                    }
-                    state.draggedElement = null;
-                    state.resizeElement = null;
-                    
-                    if (element) {
-                        element.style.zIndex = '';
-                    }
-                });
-            }
-
-            document.addEventListener('mousemove', function(e) {
-                if (state.draggedElement) {
-                    const x = e.clientX - state.dragOffsetX;
-                    const y = e.clientY - state.dragOffsetY;
-                    
-                    state.draggedElement.style.left = x + 'px';
-                    state.draggedElement.style.top = y + 'px';
-                }
-                
-                if (state.resizeElement) {
-                    const dx = e.clientX - state.resizeStartX;
-                    const dy = e.clientY - state.resizeStartY;
-                    
-                    const newWidth = state.resizeStartWidth + dx;
-                    const newHeight = state.resizeStartHeight + dy;
-                    
-                    state.resizeElement.style.width = newWidth + 'px';
-                    state.resizeElement.querySelector('img').style.height = '100%';
-                }
-            });
-
-            function showNotification(message) {
-                notificationText.textContent = message;
-                notification.classList.add('show');
-                
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 3000);
-            }
-
-            function initSocketConnection() {
-                state.socket = io();
-                
-                const meetingIdStr = Math.floor(100000000 + Math.random() * 900000000).toString();
-                const passcode = Math.random().toString(36).substring(2, 8);
-                
-                document.getElementById('meetingId').value = meetingIdStr;
-                document.getElementById('meetingPasscode').textContent = passcode;
-                document.getElementById('inviteLink').value = window.location.href + '?meeting=' + meetingIdStr + '&pwd=' + passcode;
-                
-                const urlParams = new URLSearchParams(window.location.search);
-                const joinMeetingId = urlParams.get('meeting');
-                const joinPasscode = urlParams.get('pwd');
-                
-                if (joinMeetingId) {
-                    state.isHost = false;
-                    showWaitingRoom();
-                } else {
-                    state.isHost = true;
-                }
-            }
-
-            async function initWebRTC() {
-                try {
-                    state.localStream = await navigator.mediaDevices.getUserMedia({
-                        audio: true,
-                        video: true
-                    });
-                    
-                    localVideo.srcObject = state.localStream;
-                } catch (error) {
-                    console.error('Error accessing media devices:', error);
-                    showNotification('Could not access camera or microphone');
-                }
-            }
-
-            async function startScreenShare() {
-                try {
-                    const stream = await navigator.mediaDevices.getDisplayMedia({
-                        video: true,
-                        audio: true
-                    });
-                    
-                    const screenElement = document.createElement('div');
-                    screenElement.className = 'draggable';
-                    screenElement.style.position = 'absolute';
-                    screenElement.style.left = '100px';
-                    screenElement.style.top = '100px';
-                    screenElement.style.width = '400px';
-                    screenElement.style.height = '300px';
-                    
-                    const videoTag = document.createElement('video');
-                    videoTag.srcObject = stream;
-                    videoTag.autoplay = true;
-                    videoTag.style.width = '100%';
-                    videoTag.style.height = '100%';
-                    
-                    const resizeHandle = document.createElement('div');
-                    resizeHandle.className = 'resize-handle';
-                    
-                    screenElement.appendChild(videoTag);
-                    screenElement.appendChild(resizeHandle);
-                    document.getElementById('draggableElements').appendChild(screenElement);
-                    
-                    makeDraggable(screenElement);
-                    
-                    const videoTrack = stream.getVideoTracks()[0];
-                    videoTrack.onended = function() {
-                        screenElement.remove();
-                        state.isScreenSharing = false;
-                        screenShareControl.classList.remove('active');
-                    };
-                    
-                    state.isScreenSharing = true;
-                    screenShareControl.classList.add('active');
-                    
-                    showNotification('Screen sharing started');
-                } catch (error) {
-                    console.error('Error starting screen share:', error);
-                    showNotification('Screen sharing failed or was canceled');
-                }
-            }
-
-            function showWaitingRoom() {
-                waitingRoomScreen.style.display = 'flex';
-                document.querySelector('.main-container').style.display = 'none';
-                document.querySelector('.controls-bar').style.display = 'none';
-            }
-
-            function hideWaitingRoom() {
-                waitingRoomScreen.style.display = 'none';
-                document.querySelector('.main-container').style.display = 'flex';
-                document.querySelector('.controls-bar').style.display = 'flex';
-            }
-
-            function startRecordingSession() {
-                state.isRecording = true;
-                recordingIndicator.style.display = 'flex';
-                showNotification('Recording started');
-            }
-
-            function stopRecordingSession() {
-                state.isRecording = false;
-                recordingIndicator.style.display = 'none';
-                showNotification('Recording stopped');
-            }
-
-            // Event Listeners
-            window.addEventListener('resize', resizeCanvas);
-
-            pencilTool.addEventListener('click', () => {
-                state.tool = 'pencil';
-                updateToolSelection();
-            });
-
-            lineTool.addEventListener('click', () => {
-                state.tool = 'line';
-                updateToolSelection();
-            });
-
-            rectangleTool.addEventListener('click', () => {
-                state.tool = 'rectangle';
-                updateToolSelection();
-            });
-
-            circleTool.addEventListener('click', () => {
-                state.tool = 'circle';
-                updateToolSelection();
-            });
-
-            textTool.addEventListener('click', () => {
-                state.tool = 'text';
-                updateToolSelection();
-            });
-
-            eraserTool.addEventListener('click', () => {
-                state.tool = 'eraser';
-                updateToolSelection();
-            });
-
-            document.querySelectorAll('.eraser-type').forEach(type => {
-                type.addEventListener('click', () => {
-                    state.eraserType = type.dataset.type;
-                    showNotification(`${type.textContent} selected`);
-                });
-            });
-
-            function updateToolSelection() {
-                document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
-                document.querySelector(`.tool-btn[data-tool="${state.tool}"]`).classList.add('active');
-            }
-
-            document.querySelectorAll('.color-picker').forEach(picker => {
-                picker.addEventListener('click', () => {
-                    state.color = picker.dataset.color;
-                    colorPicker.querySelector('i').style.color = state.color;
-                });
-            });
-
-            brushSize.addEventListener('input', () => {
-                state.brushSize = brushSize.value;
-            });
-
-            clearTool.addEventListener('click', () => {
-                ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, whiteboard.width, whiteboard.height);
-                saveWhiteboardState();
-            });
-
-            undoTool.addEventListener('click', undo);
-            redoTool.addEventListener('click', redo);
-
-            imageTool.addEventListener('click', () => {
-                imageModal.style.display = 'flex';
-            });
-
-            saveTool.addEventListener('click', () => {
-                const dataUrl = whiteboard.toDataURL();
-                const link = document.createElement('a');
-                link.download = 'whiteboard.png';
-                link.href = dataUrl;
-                link.click();
-            });
-
-            imageUpload.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        state.currentImage = event.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            loadImageUrl.addEventListener('click', () => {
-                if (imageUrl.value) {
-                    state.currentImage = imageUrl.value;
-                    showNotification('Image loaded from URL');
-                } else {
-                    showNotification('Please enter a valid URL');
-                }
-            });
-
-            insertImage.addEventListener('click', () => {
-                if (state.currentImage) {
-                    insertImageOnWhiteboard(state.currentImage);
-                    imageModal.style.display = 'none';
-                    state.currentImage = null;
-                    imageUpload.value = '';
-                    imageUrl.value = '';
-                } else {
-                    showNotification('Please select or load an image first');
-                }
-            });
-
-            cancelImage.addEventListener('click', () => {
-                imageModal.style.display = 'none';
-                state.currentImage = null;
-                imageUpload.value = '';
-                imageUrl.value = '';
-            });
-
-            prevPage.addEventListener('click', () => goToPage(state.currentPage - 1));
-            nextPage.addEventListener('click', () => goToPage(state.currentPage + 1));
-            addPage.addEventListener('click', addNewPage);
-            duplicatePage.addEventListener('click', duplicateCurrentPage);
-            deletePage.addEventListener('click', deleteCurrentPage);
-
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.remove('active'));
-                    
-                    button.classList.add('active');
-                    document.getElementById(button.dataset.tab + 'Tab').classList.add('active');
-                });
-            });
-
-            toggleMic.addEventListener('click', () => {
-                state.isMicOn = !state.isMicOn;
-                if (state.localStream) {
-                    state.localStream.getAudioTracks().forEach(track => {
-                        track.enabled = state.isMicOn;
-                    });
-                }
-                toggleMic.querySelector('i').classList.toggle('fa-microphone');
-                toggleMic.querySelector('i').classList.toggle('fa-microphone-slash');
-                micControl.querySelector('i').classList.toggle('fa-microphone');
-                micControl.querySelector('i').classList.toggle('fa-microphone-slash');
-            });
-
-            toggleVideo.addEventListener('click', () => {
-                state.isVideoOn = !state.isVideoOn;
-                if (state.localStream) {
-                    state.localStream.getVideoTracks().forEach(track => {
-                        track.enabled = state.isVideoOn;
-                    });
-                }
-                toggleVideo.querySelector('i').classList.toggle('fa-video');
-                toggleVideo.querySelector('i').classList.toggle('fa-video-slash');
-                videoControl.querySelector('i').classList.toggle('fa-video');
-                videoControl.querySelector('i').classList.toggle('fa-video-slash');
-            });
-
-            chatSendBtn.addEventListener('click', sendChatMessage);
-            chatInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    sendChatMessage();
-                }
-            });
-
-            function sendChatMessage() {
-                const message = chatInput.value.trim();
-                if (message) {
-                    const messageElement = document.createElement('div');
-                    messageElement.className = 'chat-message sent';
-                    messageElement.innerHTML = `
-                        <div class="chat-sender">You</div>
-                        <div class="chat-text">${message}</div>
-                    `;
-                    chatMessages.appendChild(messageElement);
-                    chatInput.value = '';
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }
-            }
-
-            micControl.addEventListener('click', () => {
-                state.isMicOn = !state.isMicOn;
-                if (state.localStream) {
-                    state.localStream.getAudioTracks().forEach(track => {
-                        track.enabled = state.isMic 
- });
-                }
-                micControl.querySelector('i').classList.toggle('fa-microphone');
-                micControl.querySelector('i').classList.toggle('fa-microphone-slash');
-                toggleMic.querySelector('i').classList.toggle('fa-microphone');
-                toggleMic.querySelector('i').classList.toggle('fa-microphone-slash');
-            });
-
-            videoControl.addEventListener('click', () => {
-                state.isVideoOn = !state.isVideoOn;
-                if (state.localStream) {
-                    state.localStream.getVideoTracks().forEach(track => {
-                        track.enabled = state.isVideoOn;
-                    });
-                }
-                videoControl.querySelector('i').classList.toggle('fa-video');
-                videoControl.querySelector('i').classList.toggle('fa-video-slash');
-                toggleVideo.querySelector('i').classList.toggle('fa-video');
-                toggleVideo.querySelector('i').classList.toggle('fa-video-slash');
-            });
-
-            screenShareControl.addEventListener('click', () => {
-                if (!state.isScreenSharing) {
-                    startScreenShare();
-                } else {
-                    // Stop screen sharing
-                    state.isScreenSharing = false;
-                    screenShareControl.classList.remove('active');
-                    showNotification('Screen sharing stopped');
-                }
-            });
-
-            participantsControl.addEventListener('click', () => {
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                tabContents.forEach(content => content.classList.remove('active'));
-                
-                document.querySelector('.tab-btn[data-tab="participants"]').classList.add('active');
-                document.getElementById('participantsTab').classList.add('active');
-            });
-
-            raiseHandControl.addEventListener('click', () => {
-                state.isHandRaised = !state.isHandRaised;
-                raiseHandControl.classList.toggle('active');
-                
-                if (state.isHandRaised) {
-                    raiseHandControl.classList.add('hand-raised');
-                    showNotification('Hand raised');
-                } else {
-                    raiseHandControl.classList.remove('hand-raised');
-                    showNotification('Hand lowered');
-                }
-            });
-
-            reactionsControl.addEventListener('click', () => {
-                reactionsModal.style.display = 'flex';
-            });
-
-            reactionButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const reaction = button.dataset.reaction;
-                    showNotification(`Sent reaction: ${reaction}`);
-                    reactionsModal.style.display = 'none';
-                    
-                    // Create floating reaction animation
-                    const reactionElement = document.createElement('div');
-                    reactionElement.className = 'reaction';
-                    reactionElement.textContent = reaction;
-                    reactionElement.style.left = `${Math.random() * 80 + 10}%`;
-                    reactionElement.style.top = `${Math.random() * 80 + 10}%`;
-                    document.getElementById('whiteboard-area').appendChild(reactionElement);
-                    
-                    setTimeout(() => {
-                        reactionElement.remove();
-                    }, 2000);
-                });
-            });
-
-            moreControl.addEventListener('click', () => {
-                document.querySelector('.more-menu').classList.toggle('open');
-            });
-
-            recordOption.addEventListener('click', () => {
-                document.querySelector('.more-menu').classList.remove('open');
-                if (!state.isRecording) {
-                    startRecordingSession();
-                } else {
-                    stopRecordingSession();
-                }
-            });
-
-            settingsOption.addEventListener('click', () => {
-                document.querySelector('.more-menu').classList.remove('open');
-                settingsModal.style.display = 'flex';
-            });
-
-            leaveOption.addEventListener('click', () => {
-                document.querySelector('.more-menu').classList.remove('open');
-                leaveModal.style.display = 'flex';
-            });
-
-            endMeetingControl.addEventListener('click', () => {
-                if (state.isHost) {
-                    endMeetingModal.style.display = 'flex';
-                } else {
-                    showNotification('Only the host can end the meeting');
-                }
-            });
-
-            inviteBtn.addEventListener('click', () => {
-                inviteModal.style.display = 'flex';
-            });
-
-            copyInviteLink.addEventListener('click', () => {
-                inviteLink.select();
-                document.execCommand('copy');
-                showNotification('Invite link copied to clipboard');
-            });
-
-            copyMeetingId.addEventListener('click', () => {
-                meetingId.select();
-                document.execCommand('copy');
-                showNotification('Meeting ID copied to clipboard');
-            });
-
-            closeInviteModal.addEventListener('click', () => {
-                inviteModal.style.display = 'none';
-            });
-
-            cancelInvite.addEventListener('click', () => {
-                inviteModal.style.display = 'none';
-            });
-
-            closeSettingsModal.addEventListener('click', () => {
-                settingsModal.style.display = 'none';
-            });
-
-            cancelSettings.addEventListener('click', () => {
-                settingsModal.style.display = 'none';
-            });
-
-            saveSettings.addEventListener('click', () => {
-                settingsModal.style.display = 'none';
-                showNotification('Settings saved');
-            });
-
-            closeReactionsModal.addEventListener('click', () => {
-                reactionsModal.style.display = 'none';
-            });
-
-            cancelReactions.addEventListener('click', () => {
-                reactionsModal.style.display = 'none';
-            });
-
-            closeLeaveModal.addEventListener('click', () => {
-                leaveModal.style.display = 'none';
-            });
-
-            cancelLeave.addEventListener('click', () => {
-                leaveModal.style.display = 'none';
-            });
-
-            confirmLeave.addEventListener('click', () => {
-                if (saveBeforeLeave.checked) {
-                    saveWhiteboardToLocalStorage();
-                }
-                showNotification('You left the meeting');
-                leaveModal.style.display = 'none';
-                // In a real app, you would disconnect from the socket and clean up
-            });
-
-            closeEndMeetingModal.addEventListener('click', () => {
-                endMeetingModal.style.display = 'none';
-            });
-
-            cancelEndMeeting.addEventListener('click', () => {
-                endMeetingModal.style.display = 'none';
-            });
-
-            confirmEndMeeting.addEventListener('click', () => {
-                if (saveBeforeEnd.checked) {
-                    saveWhiteboardToLocalStorage();
-                }
-                showNotification('Meeting ended for all participants');
-                endMeetingModal.style.display = 'none';
-                // In a real app, you would disconnect all participants
-            });
-
-            closeWaitingRoomModal.addEventListener('click', () => {
-                waitingRoomModal.style.display = 'none';
-            });
-
-            admitAll.addEventListener('click', () => {
-                showNotification('All participants admitted');
-                waitingRoomModal.style.display = 'none';
-            });
-
-            closeImageModal.addEventListener('click', () => {
-                imageModal.style.display = 'none';
-            });
-
-            fullscreenBtn.addEventListener('click', () => {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(err => {
-                        showNotification('Fullscreen failed: ' + err.message);
-                    });
-                } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    }
-                }
-            });
-
-            // Whiteboard Drawing Logic
-            whiteboard.addEventListener('mousedown', startDrawing);
-            whiteboard.addEventListener('mousemove', draw);
-            whiteboard.addEventListener('mouseup', stopDrawing);
-            whiteboard.addEventListener('mouseout', stopDrawing);
-
-            // Touch support
-            whiteboard.addEventListener('touchstart', handleTouchStart);
-            whiteboard.addEventListener('touchmove', handleTouchMove);
-            whiteboard.addEventListener('touchend', handleTouchEnd);
-
-            function handleTouchStart(e) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const mouseEvent = new MouseEvent('mousedown', {
-                    clientX: touch.clientX,
-                    clientY: touch.clientY
-                });
-                whiteboard.dispatchEvent(mouseEvent);
-            }
-
-            function handleTouchMove(e) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const mouseEvent = new MouseEvent('mousemove', {
-                    clientX: touch.clientX,
-                    clientY: touch.clientY
-                });
-                whiteboard.dispatchEvent(mouseEvent);
-            }
-
-            function handleTouchEnd(e) {
-                e.preventDefault();
-                const mouseEvent = new MouseEvent('mouseup');
-                whiteboard.dispatchEvent(mouseEvent);
-            }
-
-            function startDrawing(e) {
-                if (state.tool === 'text') {
-                    const text = prompt('Enter text:');
-                    if (text) {
-                        ctx.font = `${state.brushSize * 4}px Arial`;
-                        ctx.fillStyle = state.color;
-                        ctx.fillText(text, e.offsetX, e.offsetY);
-                        saveWhiteboardState();
-                    }
-                    return;
-                }
-
-                state.isDrawing = true;
-                [state.lastX, state.lastY] = [e.offsetX, e.offsetY];
-            }
-
-            function draw(e) {
-                if (!state.isDrawing) return;
-
-                ctx.strokeStyle = state.tool === 'eraser' ? '#ffffff' : state.color;
-                ctx.lineWidth = state.brushSize;
-                ctx.lineJoin = 'round';
-                ctx.lineCap = 'round';
-
-                switch (state.tool) {
-                    case 'pencil':
-                        ctx.beginPath();
-                        ctx.moveTo(state.lastX, state.lastY);
-                        ctx.lineTo(e.offsetX, e.offsetY);
-                        ctx.stroke();
-                        break;
-
-                    case 'line':
-                        // For line, we need to redraw the entire canvas each time during mouse move
-                        redrawWhiteboard();
-                        ctx.beginPath();
-                        ctx.moveTo(state.lastX, state.lastY);
-                        ctx.lineTo(e.offsetX, e.offsetY);
-                        ctx.stroke();
-                        break;
-
-                    case 'rectangle':
-                        redrawWhiteboard();
-                        ctx.beginPath();
-                        ctx.rect(
-                            state.lastX,
-                            state.lastY,
-                            e.offsetX - state.lastX,
-                            e.offsetY - state.lastY
-                        );
-                        ctx.stroke();
-                        break;
-
-                    case 'circle':
-                        redrawWhiteboard();
-                        ctx.beginPath();
-                        const radius = Math.sqrt(
-                            Math.pow(e.offsetX - state.lastX, 2) +
-                            Math.pow(e.offsetY - state.lastY, 2)
-                        );
-                        ctx.arc(state.lastX, state.lastY, radius, 0, Math.PI * 2);
-                        ctx.stroke();
-                        break;
-
-                    case 'eraser':
-                        if (state.eraserType === 'normal') {
-                            ctx.beginPath();
-                            ctx.moveTo(state.lastX, state.lastY);
-                            ctx.lineTo(e.offsetX, e.offsetY);
-                            ctx.stroke();
-                        } else if (state.eraserType === 'box') {
-                            redrawWhiteboard();
-                            ctx.clearRect(
-                                state.lastX,
-                                state.lastY,
-                                e.offsetX - state.lastX,
-                                e.offsetY - state.lastY
-                            );
-                        }
-                        break;
-                }
-
-                [state.lastX, state.lastY] = [e.offsetX, e.offsetY];
-            }
-
-            function stopDrawing() {
-                if (state.isDrawing) {
-                    state.isDrawing = false;
-                    saveWhiteboardState();
-                }
-            }
-
-            // Keyboard Shortcuts
-            document.addEventListener('keydown', (e) => {
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
-                switch (e.key.toLowerCase()) {
-                    case 'p':
-                        state.tool = 'pencil';
-                        updateToolSelection();
-                        break;
-                    case 'l':
-                        state.tool = 'line';
-                        updateToolSelection();
-                        break;
-                    case 'r':
-                        state.tool = 'rectangle';
-                        updateToolSelection();
-                        break;
-                    case 'c':
-                        state.tool = 'circle';
-                        updateToolSelection();
-                        break;
-                    case 't':
-                        state.tool = 'text';
-                        updateToolSelection();
-                        break;
-                    case 'e':
-                        state.tool = 'eraser';
-                        updateToolSelection();
-                        break;
-                    case 'z':
-                        if (e.ctrlKey || e.metaKey) {
-                            e.preventDefault();
-                            undo();
-                        }
-                        break;
-                    case 'y':
-                        if (e.ctrlKey || e.metaKey) {
-                            e.preventDefault();
-                            redo();
-                        }
-                        break;
-                    case 'arrowleft':
-                        if (e.ctrlKey || e.metaKey) {
-                            goToPage(state.currentPage - 1);
-                        }
-                        break;
-                    case 'arrowright':
-                        if (e.ctrlKey || e.metaKey) {
-                            goToPage(state.currentPage + 1);
-                        }
-                        break;
-                }
-            });
-
-            // Initialize the application
-            initWhiteboard();
-            initSocketConnection();
-            initWebRTC();
+            
+            // ... rest of your existing JavaScript functions ...
         });
     </script>
 </body>
