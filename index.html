@@ -7,7 +7,67 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Previous CSS remains the same, just add these new styles */
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f5;
+            color: #333;
+            overflow: hidden;
+        }
+        
+        /* Header Styles */
+        .header {
+            background-color: #4a6bff;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo {
+            height: 30px;
+        }
+        
+        .app-name {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .user-count {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        /* Main Container */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
         
         /* PowerPoint-style Ribbon */
         .ribbon {
@@ -15,6 +75,7 @@
             border-bottom: 1px solid #d9d9d9;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            width: 100%;
         }
         
         .ribbon-tabs {
@@ -30,6 +91,11 @@
             font-size: 14px;
             color: #333;
             position: relative;
+            user-select: none;
+        }
+        
+        .ribbon-tab:hover {
+            background-color: #e6e6e6;
         }
         
         .ribbon-tab.active {
@@ -61,6 +127,7 @@
             color: #666;
             margin-bottom: 5px;
             padding-left: 5px;
+            font-weight: 600;
         }
         
         .toolbar-buttons {
@@ -79,10 +146,15 @@
             align-items: center;
             min-width: 60px;
             border-radius: 4px;
+            transition: background-color 0.2s;
         }
         
         .toolbar-button:hover {
             background-color: #e6e6e6;
+        }
+        
+        .toolbar-button:active {
+            background-color: #d9d9d9;
         }
         
         .toolbar-button i {
@@ -96,23 +168,198 @@
             color: #333;
         }
         
-        /* Adjust main container to accommodate ribbon */
-        .main-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            flex-direction: column;
+        .toolbar-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
+        .toolbar-button.active {
+            background-color: #d9e3ff;
+        }
+        
+        /* Whiteboard Container */
         .whiteboard-container {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             position: relative;
+            background-color: #fff;
         }
         
-        /* Status bar */
+        .whiteboard-header {
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f3f3f3;
+            border-bottom: 1px solid #d9d9d9;
+        }
+        
+        .page-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-btn {
+            background: none;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .page-btn:hover {
+            background-color: #e6e6e6;
+        }
+        
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .page-indicator {
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .recording-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #ff4a4a;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: rgba(255, 74, 74, 0.1);
+        }
+        
+        .recording-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ff4a4a;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
+        /* Whiteboard Area */
+        .whiteboard-area {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background-color: #fff;
+        }
+        
+        #whiteboard {
+            display: block;
+            background-color: white;
+            cursor: crosshair;
+            touch-action: none;
+        }
+        
+        #cursors {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .remote-cursor {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .remote-cursor::after {
+            content: attr(data-name);
+            position: absolute;
+            top: 15px;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        #draggableElements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .draggable {
+            position: absolute;
+            pointer-events: auto;
+            cursor: move;
+            user-select: none;
+        }
+        
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4a6bff;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 20;
+            transition: background-color 0.2s;
+        }
+        
+        .fullscreen-btn:hover {
+            background-color: #3a5bef;
+        }
+        
+        .invite-btn {
+            position: absolute;
+            bottom: 70px;
+            right: 20px;
+            background-color: #4a6bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 20;
+            transition: background-color 0.2s;
+        }
+        
+        .invite-btn:hover {
+            background-color: #3a5bef;
+        }
+        
+        /* Status Bar */
         .status-bar {
             background-color: #f3f3f3;
             border-top: 1px solid #d9d9d9;
@@ -121,6 +368,703 @@
             justify-content: space-between;
             font-size: 12px;
             color: #333;
+            height: 25px;
+        }
+        
+        /* Right Sidebar */
+        .right-sidebar {
+            width: 300px;
+            background-color: #fff;
+            border-left: 1px solid #d9d9d9;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            z-index: 50;
+        }
+        
+        .right-sidebar.collapsed {
+            transform: translateX(100%);
+        }
+        
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid #d9d9d9;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+            transition: background-color 0.2s;
+        }
+        
+        .tab-btn:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .tab-btn.active {
+            color: #4a6bff;
+            border-bottom: 2px solid #4a6bff;
+            font-weight: 500;
+        }
+        
+        .tab-content {
+            flex: 1;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Participants Tab */
+        .participant {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .participant-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #4a6bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+        
+        .participant-info {
+            flex: 1;
+        }
+        
+        .participant-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .participant-role {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .participant-controls {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .control-btn {
+            background: none;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #666;
+            transition: background-color 0.2s;
+        }
+        
+        .control-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .control-btn.muted {
+            color: #ff4a4a;
+        }
+        
+        .control-btn.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Video Tab */
+        .video-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .video-item {
+            margin-bottom: 15px;
+            position: relative;
+            border-radius: 5px;
+            overflow: hidden;
+            background-color: #000;
+        }
+        
+        .video-item video {
+            width: 100%;
+            display: block;
+        }
+        
+        .video-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .video-name {
+            color: white;
+            font-size: 12px;
+        }
+        
+        .video-controls {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .video-control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.2s;
+        }
+        
+        .video-control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .video-control-btn.muted {
+            background: rgba(255, 74, 74, 0.7);
+        }
+        
+        .video-control-btn.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+        }
+        
+        /* Chat Tab */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background-color: #f5f5f5;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .chat-message.sent {
+            margin-left: auto;
+            background-color: #4a6bff;
+            color: white;
+        }
+        
+        .chat-message.received {
+            margin-right: auto;
+        }
+        
+        .chat-message-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 3px;
+            opacity: 0.8;
+        }
+        
+        .chat-message.sent .chat-message-info {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .chat-input-container {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #d9d9d9;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+        
+        .chat-input:focus {
+            border-color: #4a6bff;
+        }
+        
+        .chat-send-btn {
+            background-color: #4a6bff;
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-left: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .chat-send-btn:hover {
+            background-color: #3a5bef;
+        }
+        
+        .chat-send-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* Controls Bar */
+        .controls-bar {
+            background-color: #fff;
+            border-top: 1px solid #d9d9d9;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn-main {
+            background: none;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            color: #333;
+            transition: background-color 0.2s;
+            min-width: 70px;
+        }
+        
+        .control-btn-main i {
+            font-size: 18px;
+            margin-bottom: 3px;
+        }
+        
+        .control-btn-main span {
+            font-size: 12px;
+        }
+        
+        .control-btn-main:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .control-btn-main.active {
+            color: #4a6bff;
+        }
+        
+        .control-btn-main.danger {
+            color: #ff4a4a;
+        }
+        
+        .control-btn-main.danger:hover {
+            background-color: rgba(255, 74, 74, 0.1);
+        }
+        
+        .more-menu {
+            position: relative;
+        }
+        
+        .more-options {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            border: 1px solid #d9d9d9;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 5px 0;
+            display: none;
+            z-index: 100;
+            min-width: 150px;
+        }
+        
+        .more-menu:hover .more-options {
+            display: block;
+        }
+        
+        .more-option {
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .more-option:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .more-option i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #d9d9d9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #d9d9d9;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #4a6bff;
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5bef;
+        }
+        
+        .btn-secondary {
+            background-color: #f0f0f0;
+            border: 1px solid #d9d9d9;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e6e6e6;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #4a6bff;
+        }
+        
+        /* Tool Selection */
+        .tool-selection {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 20;
+        }
+        
+        .tool-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            background-color: white;
+            border: 1px solid #d9d9d9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .tool-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .tool-btn.active {
+            background-color: #d9e3ff;
+            border-color: #4a6bff;
+        }
+        
+        /* Color Picker */
+        .color-picker {
+            position: absolute;
+            top: 60px;
+            left: 10px;
+            background-color: white;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            padding: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            width: 180px;
+            z-index: 20;
+        }
+        
+        .color-option {
+            width: 25px;
+            height: 25px;
+            border-radius: 3px;
+            cursor: pointer;
+            border: 1px solid #d9d9d9;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-option.active {
+            border: 2px solid #333;
+            transform: scale(1.1);
+        }
+        
+        /* Line Width Picker */
+        .width-picker {
+            position: absolute;
+            top: 120px;
+            left: 10px;
+            background-color: white;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 20;
+        }
+        
+        .width-option {
+            height: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .width-line {
+            background-color: #333;
+            height: 2px;
+            width: 100%;
+        }
+        
+        .width-option[data-width="5"] .width-line {
+            height: 5px;
+        }
+        
+        .width-option[data-width="10"] .width-line {
+            height: 10px;
+        }
+        
+        .width-option[data-width="15"] .width-line {
+            height: 15px;
+        }
+        
+        .width-option.active .width-line {
+            background-color: #4a6bff;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .right-sidebar {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 70px;
+                width: 80%;
+                max-width: 300px;
+            }
+            
+            .controls-bar {
+                justify-content: center;
+            }
+            
+            .control-group:first-child,
+            .control-group:last-child {
+                display: none;
+            }
+            
+            .ribbon-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+        
+        /* Fullscreen Styles */
+        .fullscreen .header,
+        .fullscreen .ribbon,
+        .fullscreen .status-bar,
+        .fullscreen .controls-bar,
+        .fullscreen .right-sidebar {
+            display: none;
+        }
+        
+        .fullscreen .main-container {
+            height: 100vh;
+        }
+        
+        .fullscreen .whiteboard-container {
+            height: 100%;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.3s;
+        }
+        
+        .toast.success {
+            background-color: rgba(40, 167, 69, 0.9);
+        }
+        
+        .toast.error {
+            background-color: rgba(220, 53, 69, 0.9);
+        }
+        
+        .toast.warning {
+            background-color: rgba(255, 193, 7, 0.9);
+        }
+        
+        /* Context Menu */
+        .context-menu {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #d9d9d9;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 150px;
+            display: none;
+        }
+        
+        .context-menu-item {
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .context-menu-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .context-menu-divider {
+            height: 1px;
+            background-color: #d9d9d9;
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -156,19 +1100,19 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Clipboard</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Cut">
+                        <button class="toolbar-button" id="cutBtn" title="Cut">
                             <i class="fas fa-cut"></i>
                             <span>Cut</span>
                         </button>
-                        <button class="toolbar-button" title="Copy">
+                        <button class="toolbar-button" id="copyBtn" title="Copy">
                             <i class="fas fa-copy"></i>
                             <span>Copy</span>
                         </button>
-                        <button class="toolbar-button" title="Paste">
+                        <button class="toolbar-button" id="pasteBtn" title="Paste">
                             <i class="fas fa-paste"></i>
                             <span>Paste</span>
                         </button>
-                        <button class="toolbar-button" title="Format Painter">
+                        <button class="toolbar-button" id="formatPainterBtn" title="Format Painter">
                             <i class="fas fa-paint-brush"></i>
                             <span>Format Painter</span>
                         </button>
@@ -182,11 +1126,11 @@
                             <i class="fas fa-plus-square"></i>
                             <span>New Slide</span>
                         </button>
-                        <button class="toolbar-button" title="Layout">
+                        <button class="toolbar-button" id="layoutBtn" title="Layout">
                             <i class="fas fa-th-large"></i>
                             <span>Layout</span>
                         </button>
-                        <button class="toolbar-button" title="Reset">
+                        <button class="toolbar-button" id="resetSlideBtn" title="Reset">
                             <i class="fas fa-undo"></i>
                             <span>Reset</span>
                         </button>
@@ -200,31 +1144,36 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Font</div>
                     <div class="toolbar-buttons">
-                        <select class="toolbar-button" style="padding: 0; height: 50px;">
-                            <option>Arial</option>
-                            <option>Calibri</option>
-                            <option>Times New Roman</option>
+                        <select class="toolbar-button" id="fontFamilySelect" style="padding: 0; height: 50px;">
+                            <option value="Arial">Arial</option>
+                            <option value="Calibri">Calibri</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Courier New">Courier New</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Verdana">Verdana</option>
                         </select>
-                        <select class="toolbar-button" style="padding: 0; height: 50px;">
-                            <option>12</option>
-                            <option>14</option>
-                            <option>18</option>
-                            <option>24</option>
-                            <option>36</option>
+                        <select class="toolbar-button" id="fontSizeSelect" style="padding: 0; height: 50px;">
+                            <option value="8">8</option>
+                            <option value="10">10</option>
+                            <option value="12" selected>12</option>
+                            <option value="14">14</option>
+                            <option value="18">18</option>
+                            <option value="24">24</option>
+                            <option value="36">36</option>
                         </select>
-                        <button class="toolbar-button" title="Bold">
+                        <button class="toolbar-button" id="boldBtn" title="Bold">
                             <i class="fas fa-bold"></i>
                             <span>Bold</span>
                         </button>
-                        <button class="toolbar-button" title="Italic">
+                        <button class="toolbar-button" id="italicBtn" title="Italic">
                             <i class="fas fa-italic"></i>
                             <span>Italic</span>
                         </button>
-                        <button class="toolbar-button" title="Underline">
+                        <button class="toolbar-button" id="underlineBtn" title="Underline">
                             <i class="fas fa-underline"></i>
                             <span>Underline</span>
                         </button>
-                        <button class="toolbar-button" title="Text Shadow">
+                        <button class="toolbar-button" id="textShadowBtn" title="Text Shadow">
                             <i class="fas fa-text-height"></i>
                             <span>Shadow</span>
                         </button>
@@ -234,27 +1183,27 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Paragraph</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Bullets">
+                        <button class="toolbar-button" id="bulletsBtn" title="Bullets">
                             <i class="fas fa-list-ul"></i>
                             <span>Bullets</span>
                         </button>
-                        <button class="toolbar-button" title="Numbering">
+                        <button class="toolbar-button" id="numberingBtn" title="Numbering">
                             <i class="fas fa-list-ol"></i>
                             <span>Numbering</span>
                         </button>
-                        <button class="toolbar-button" title="Align Left">
+                        <button class="toolbar-button" id="alignLeftBtn" title="Align Left">
                             <i class="fas fa-align-left"></i>
                             <span>Left</span>
                         </button>
-                        <button class="toolbar-button" title="Center">
+                        <button class="toolbar-button" id="alignCenterBtn" title="Center">
                             <i class="fas fa-align-center"></i>
                             <span>Center</span>
                         </button>
-                        <button class="toolbar-button" title="Align Right">
+                        <button class="toolbar-button" id="alignRightBtn" title="Align Right">
                             <i class="fas fa-align-right"></i>
                             <span>Right</span>
                         </button>
-                        <button class="toolbar-button" title="Line Spacing">
+                        <button class="toolbar-button" id="lineSpacingBtn" title="Line Spacing">
                             <i class="fas fa-arrows-alt-v"></i>
                             <span>Line Spacing</span>
                         </button>
@@ -264,15 +1213,15 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Drawing</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Shapes">
+                        <button class="toolbar-button" id="shapesBtn" title="Shapes">
                             <i class="fas fa-shapes"></i>
                             <span>Shapes</span>
                         </button>
-                        <button class="toolbar-button" title="Arrange">
+                        <button class="toolbar-button" id="arrangeBtn" title="Arrange">
                             <i class="fas fa-layer-group"></i>
                             <span>Arrange</span>
                         </button>
-                        <button class="toolbar-button" title="Quick Styles">
+                        <button class="toolbar-button" id="quickStylesBtn" title="Quick Styles">
                             <i class="fas fa-palette"></i>
                             <span>Quick Styles</span>
                         </button>
@@ -284,7 +1233,7 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Tables</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Insert Table">
+                        <button class="toolbar-button" id="insertTableBtn" title="Insert Table">
                             <i class="fas fa-table"></i>
                             <span>Table</span>
                         </button>
@@ -298,11 +1247,11 @@
                             <i class="fas fa-image"></i>
                             <span>Pictures</span>
                         </button>
-                        <button class="toolbar-button" title="Online Pictures">
+                        <button class="toolbar-button" id="onlinePicturesBtn" title="Online Pictures">
                             <i class="fas fa-cloud"></i>
                             <span>Online</span>
                         </button>
-                        <button class="toolbar-button" title="Screenshot">
+                        <button class="toolbar-button" id="screenshotBtn" title="Screenshot">
                             <i class="fas fa-camera"></i>
                             <span>Screenshot</span>
                         </button>
@@ -312,23 +1261,23 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Illustrations</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Shapes">
+                        <button class="toolbar-button" id="shapesInsertBtn" title="Shapes">
                             <i class="fas fa-shapes"></i>
                             <span>Shapes</span>
                         </button>
-                        <button class="toolbar-button" title="Icons">
+                        <button class="toolbar-button" id="iconsBtn" title="Icons">
                             <i class="fas fa-icons"></i>
                             <span>Icons</span>
                         </button>
-                        <button class="toolbar-button" title="3D Models">
+                        <button class="toolbar-button" id="models3DBtn" title="3D Models">
                             <i class="fas fa-cube"></i>
                             <span>3D Models</span>
                         </button>
-                        <button class="toolbar-button" title="SmartArt">
+                        <button class="toolbar-button" id="smartArtBtn" title="SmartArt">
                             <i class="fas fa-project-diagram"></i>
                             <span>SmartArt</span>
                         </button>
-                        <button class="toolbar-button" title="Charts">
+                        <button class="toolbar-button" id="chartsBtn" title="Charts">
                             <i class="fas fa-chart-bar"></i>
                             <span>Charts</span>
                         </button>
@@ -338,11 +1287,11 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Links</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Hyperlink">
+                        <button class="toolbar-button" id="hyperlinkBtn" title="Hyperlink">
                             <i class="fas fa-link"></i>
                             <span>Link</span>
                         </button>
-                        <button class="toolbar-button" title="Bookmark">
+                        <button class="toolbar-button" id="bookmarkBtn" title="Bookmark">
                             <i class="fas fa-bookmark"></i>
                             <span>Bookmark</span>
                         </button>
@@ -352,19 +1301,19 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Text</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Text Box">
+                        <button class="toolbar-button" id="textBoxBtn" title="Text Box">
                             <i class="fas fa-square"></i>
                             <span>Text Box</span>
                         </button>
-                        <button class="toolbar-button" title="Header & Footer">
+                        <button class="toolbar-button" id="headerFooterBtn" title="Header & Footer">
                             <i class="fas fa-heading"></i>
                             <span>Header/Footer</span>
                         </button>
-                        <button class="toolbar-button" title="WordArt">
+                        <button class="toolbar-button" id="wordArtBtn" title="WordArt">
                             <i class="fas fa-font"></i>
                             <span>WordArt</span>
                         </button>
-                        <button class="toolbar-button" title="Date & Time">
+                        <button class="toolbar-button" id="dateTimeBtn" title="Date & Time">
                             <i class="fas fa-clock"></i>
                             <span>Date & Time</span>
                         </button>
@@ -374,15 +1323,15 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Media</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Audio">
+                        <button class="toolbar-button" id="audioBtn" title="Audio">
                             <i class="fas fa-music"></i>
                             <span>Audio</span>
                         </button>
-                        <button class="toolbar-button" title="Video">
+                        <button class="toolbar-button" id="videoBtn" title="Video">
                             <i class="fas fa-video"></i>
                             <span>Video</span>
                         </button>
-                        <button class="toolbar-button" title="Screen Recording">
+                        <button class="toolbar-button" id="screenRecordingBtn" title="Screen Recording">
                             <i class="fas fa-desktop"></i>
                             <span>Screen Record</span>
                         </button>
@@ -394,7 +1343,7 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Themes</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Themes">
+                        <button class="toolbar-button" id="themesBtn" title="Themes">
                             <i class="fas fa-palette"></i>
                             <span>Themes</span>
                         </button>
@@ -404,15 +1353,15 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Variants</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Colors">
+                        <button class="toolbar-button" id="colorsBtn" title="Colors">
                             <i class="fas fa-fill-drip"></i>
                             <span>Colors</span>
                         </button>
-                        <button class="toolbar-button" title="Fonts">
+                        <button class="toolbar-button" id="fontsBtn" title="Fonts">
                             <i class="fas fa-font"></i>
                             <span>Fonts</span>
                         </button>
-                        <button class="toolbar-button" title="Effects">
+                        <button class="toolbar-button" id="effectsBtn" title="Effects">
                             <i class="fas fa-magic"></i>
                             <span>Effects</span>
                         </button>
@@ -422,11 +1371,11 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Customize</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Slide Size">
+                        <button class="toolbar-button" id="slideSizeBtn" title="Slide Size">
                             <i class="fas fa-expand"></i>
                             <span>Slide Size</span>
                         </button>
-                        <button class="toolbar-button" title="Format Background">
+                        <button class="toolbar-button" id="formatBackgroundBtn" title="Format Background">
                             <i class="fas fa-sliders-h"></i>
                             <span>Format Background</span>
                         </button>
@@ -438,15 +1387,15 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Transition Effects</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Fade">
+                        <button class="toolbar-button" id="fadeTransitionBtn" title="Fade">
                             <i class="fas fa-adjust"></i>
                             <span>Fade</span>
                         </button>
-                        <button class="toolbar-button" title="Push">
+                        <button class="toolbar-button" id="pushTransitionBtn" title="Push">
                             <i class="fas fa-arrow-right"></i>
                             <span>Push</span>
                         </button>
-                        <button class="toolbar-button" title="Wipe">
+                        <button class="toolbar-button" id="wipeTransitionBtn" title="Wipe">
                             <i class="fas fa-broom"></i>
                             <span>Wipe</span>
                         </button>
@@ -456,15 +1405,15 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Timing</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Duration">
+                        <button class="toolbar-button" id="durationTransitionBtn" title="Duration">
                             <i class="fas fa-clock"></i>
                             <span>Duration</span>
                         </button>
-                        <button class="toolbar-button" title="Sound">
+                        <button class="toolbar-button" id="soundTransitionBtn" title="Sound">
                             <i class="fas fa-volume-up"></i>
                             <span>Sound</span>
                         </button>
-                        <button class="toolbar-button" title="Advance Slide">
+                        <button class="toolbar-button" id="advanceSlideBtn" title="Advance Slide">
                             <i class="fas fa-forward"></i>
                             <span>Advance Slide</span>
                         </button>
@@ -476,19 +1425,19 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Animation Effects</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Entrance">
+                        <button class="toolbar-button" id="entranceAnimationBtn" title="Entrance">
                             <i class="fas fa-arrow-down"></i>
                             <span>Entrance</span>
                         </button>
-                        <button class="toolbar-button" title="Emphasis">
+                        <button class="toolbar-button" id="emphasisAnimationBtn" title="Emphasis">
                             <i class="fas fa-star"></i>
                             <span>Emphasis</span>
                         </button>
-                        <button class="toolbar-button" title="Exit">
+                        <button class="toolbar-button" id="exitAnimationBtn" title="Exit">
                             <i class="fas fa-arrow-up"></i>
                             <span>Exit</span>
                         </button>
-                        <button class="toolbar-button" title="Motion Paths">
+                        <button class="toolbar-button" id="motionPathsBtn" title="Motion Paths">
                             <i class="fas fa-route"></i>
                             <span>Motion Paths</span>
                         </button>
@@ -498,15 +1447,15 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Advanced Animation</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Add Animation">
+                        <button class="toolbar-button" id="addAnimationBtn" title="Add Animation">
                             <i class="fas fa-plus-circle"></i>
                             <span>Add Animation</span>
                         </button>
-                        <button class="toolbar-button" title="Animation Pane">
+                        <button class="toolbar-button" id="animationPaneBtn" title="Animation Pane">
                             <i class="fas fa-list"></i>
                             <span>Animation Pane</span>
                         </button>
-                        <button class="toolbar-button" title="Trigger">
+                        <button class="toolbar-button" id="triggerBtn" title="Trigger">
                             <i class="fas fa-bolt"></i>
                             <span>Trigger</span>
                         </button>
@@ -516,15 +1465,15 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Timing</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Start">
+                        <button class="toolbar-button" id="startAnimationBtn" title="Start">
                             <i class="fas fa-play"></i>
                             <span>Start</span>
                         </button>
-                        <button class="toolbar-button" title="Duration">
+                        <button class="toolbar-button" id="durationAnimationBtn" title="Duration">
                             <i class="fas fa-clock"></i>
                             <span>Duration</span>
                         </button>
-                        <button class="toolbar-button" title="Delay">
+                        <button class="toolbar-button" id="delayAnimationBtn" title="Delay">
                             <i class="fas fa-hourglass-start"></i>
                             <span>Delay</span>
                         </button>
@@ -536,11 +1485,11 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Start Slide Show</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="From Beginning">
+                        <button class="toolbar-button" id="fromBeginningBtn" title="From Beginning">
                             <i class="fas fa-play"></i>
                             <span>From Beginning</span>
                         </button>
-                        <button class="toolbar-button" title="From Current Slide">
+                        <button class="toolbar-button" id="fromCurrentSlideBtn" title="From Current Slide">
                             <i class="fas fa-forward"></i>
                             <span>From Current</span>
                         </button>
@@ -550,11 +1499,11 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Set Up</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Rehearse Timings">
+                        <button class="toolbar-button" id="rehearseTimingsBtn" title="Rehearse Timings">
                             <i class="fas fa-stopwatch"></i>
                             <span>Rehearse Timings</span>
                         </button>
-                        <button class="toolbar-button" title="Record Slide Show">
+                        <button class="toolbar-button" id="recordSlideShowBtn" title="Record Slide Show">
                             <i class="fas fa-record-vinyl"></i>
                             <span>Record</span>
                         </button>
@@ -564,11 +1513,11 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Monitors</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Presenter View">
+                        <button class="toolbar-button" id="presenterViewBtn" title="Presenter View">
                             <i class="fas fa-desktop"></i>
                             <span>Presenter View</span>
                         </button>
-                        <button class="toolbar-button" title="Resolution">
+                        <button class="toolbar-button" id="resolutionBtn" title="Resolution">
                             <i class="fas fa-tv"></i>
                             <span>Resolution</span>
                         </button>
@@ -580,11 +1529,11 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Proofing</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Spelling">
+                        <button class="toolbar-button" id="spellingBtn" title="Spelling">
                             <i class="fas fa-spell-check"></i>
                             <span>Spelling</span>
                         </button>
-                        <button class="toolbar-button" title="Thesaurus">
+                        <button class="toolbar-button" id="thesaurusBtn" title="Thesaurus">
                             <i class="fas fa-book"></i>
                             <span>Thesaurus</span>
                         </button>
@@ -594,11 +1543,11 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Language</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Translate">
+                        <button class="toolbar-button" id="translateBtn" title="Translate">
                             <i class="fas fa-language"></i>
                             <span>Translate</span>
                         </button>
-                        <button class="toolbar-button" title="Language">
+                        <button class="toolbar-button" id="languageBtn" title="Language">
                             <i class="fas fa-globe"></i>
                             <span>Language</span>
                         </button>
@@ -608,15 +1557,15 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Comments</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="New Comment">
+                        <button class="toolbar-button" id="newCommentBtn" title="New Comment">
                             <i class="fas fa-comment"></i>
                             <span>New Comment</span>
                         </button>
-                        <button class="toolbar-button" title="Edit Comment">
+                        <button class="toolbar-button" id="editCommentBtn" title="Edit Comment">
                             <i class="fas fa-edit"></i>
                             <span>Edit</span>
                         </button>
-                        <button class="toolbar-button" title="Delete Comment">
+                        <button class="toolbar-button" id="deleteCommentBtn" title="Delete Comment">
                             <i class="fas fa-trash"></i>
                             <span>Delete</span>
                         </button>
@@ -628,19 +1577,19 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Presentation Views</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Normal">
+                        <button class="toolbar-button" id="normalViewBtn" title="Normal">
                             <i class="fas fa-th"></i>
                             <span>Normal</span>
                         </button>
-                        <button class="toolbar-button" title="Outline">
+                        <button class="toolbar-button" id="outlineViewBtn" title="Outline">
                             <i class="fas fa-align-left"></i>
                             <span>Outline</span>
                         </button>
-                        <button class="toolbar-button" title="Slide Sorter">
+                        <button class="toolbar-button" id="slideSorterBtn" title="Slide Sorter">
                             <i class="fas fa-th-large"></i>
                             <span>Slide Sorter</span>
                         </button>
-                        <button class="toolbar-button" title="Notes Page">
+                        <button class="toolbar-button" id="notesPageBtn" title="Notes Page">
                             <i class="fas fa-sticky-note"></i>
                             <span>Notes Page</span>
                         </button>
@@ -650,15 +1599,15 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Master Views</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Slide Master">
+                        <button class="toolbar-button" id="slideMasterBtn" title="Slide Master">
                             <i class="fas fa-sliders-h"></i>
                             <span>Slide Master</span>
                         </button>
-                        <button class="toolbar-button" title="Handout Master">
+                        <button class="toolbar-button" id="handoutMasterBtn" title="Handout Master">
                             <i class="fas fa-file-alt"></i>
                             <span>Handout Master</span>
                         </button>
-                        <button class="toolbar-button" title="Notes Master">
+                        <button class="toolbar-button" id="notesMasterBtn" title="Notes Master">
                             <i class="fas fa-sticky-note"></i>
                             <span>Notes Master</span>
                         </button>
@@ -668,11 +1617,11 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Zoom</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Zoom In">
+                        <button class="toolbar-button" id="zoomInBtn" title="Zoom In">
                             <i class="fas fa-search-plus"></i>
                             <span>Zoom In</span>
                         </button>
-                        <button class="toolbar-button" title="Zoom Out">
+                        <button class="toolbar-button" id="zoomOutBtn" title="Zoom Out">
                             <i class="fas fa-search-minus"></i>
                             <span>Zoom Out</span>
                         </button>
@@ -682,11 +1631,11 @@
                 <div class="toolbar-group">
                     <div class="toolbar-group-title">Color/Grayscale</div>
                     <div class="toolbar-buttons">
-                        <button class="toolbar-button" title="Color">
+                        <button class="toolbar-button" id="colorViewBtn" title="Color">
                             <i class="fas fa-palette"></i>
                             <span>Color</span>
                         </button>
-                        <button class="toolbar-button" title="Grayscale">
+                        <button class="toolbar-button" id="grayscaleBtn" title="Grayscale">
                             <i class="fas fa-adjust"></i>
                             <span>Grayscale</span>
                         </button>
@@ -724,6 +1673,60 @@
                 </div>
             </div>
             <div class="whiteboard-area">
+                <!-- Tool Selection -->
+                <div class="tool-selection">
+                    <button class="tool-btn active" id="selectTool" title="Select (V)">
+                        <i class="fas fa-mouse-pointer"></i>
+                    </button>
+                    <button class="tool-btn" id="penTool" title="Pen (P)">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                    <button class="tool-btn" id="highlighterTool" title="Highlighter (H)">
+                        <i class="fas fa-highlighter"></i>
+                    </button>
+                    <button class="tool-btn" id="eraserTool" title="Eraser (E)">
+                        <i class="fas fa-eraser"></i>
+                    </button>
+                    <button class="tool-btn" id="textTool" title="Text (T)">
+                        <i class="fas fa-font"></i>
+                    </button>
+                    <button class="tool-btn" id="shapeTool" title="Shapes (S)">
+                        <i class="fas fa-square"></i>
+                    </button>
+                </div>
+                
+                <!-- Color Picker -->
+                <div class="color-picker" id="colorPicker">
+                    <div class="color-option active" style="background-color: #000000;" data-color="#000000"></div>
+                    <div class="color-option" style="background-color: #ff0000;" data-color="#ff0000"></div>
+                    <div class="color-option" style="background-color: #00ff00;" data-color="#00ff00"></div>
+                    <div class="color-option" style="background-color: #0000ff;" data-color="#0000ff"></div>
+                    <div class="color-option" style="background-color: #ffff00;" data-color="#ffff00"></div>
+                    <div class="color-option" style="background-color: #ff00ff;" data-color="#ff00ff"></div>
+                    <div class="color-option" style="background-color: #00ffff;" data-color="#00ffff"></div>
+                    <div class="color-option" style="background-color: #ffffff; border: 1px solid #ccc;" data-color="#ffffff"></div>
+                    <div class="color-option" style="background-color: #808080;" data-color="#808080"></div>
+                    <div class="color-option" style="background-color: #800000;" data-color="#800000"></div>
+                    <div class="color-option" style="background-color: #008000;" data-color="#008000"></div>
+                    <div class="color-option" style="background-color: #000080;" data-color="#000080"></div>
+                </div>
+                
+                <!-- Line Width Picker -->
+                <div class="width-picker" id="widthPicker">
+                    <div class="width-option active" data-width="2">
+                        <div class="width-line"></div>
+                    </div>
+                    <div class="width-option" data-width="5">
+                        <div class="width-line"></div>
+                    </div>
+                    <div class="width-option" data-width="10">
+                        <div class="width-line"></div>
+                    </div>
+                    <div class="width-option" data-width="15">
+                        <div class="width-line"></div>
+                    </div>
+                </div>
+                
                 <canvas id="whiteboard"></canvas>
                 <div id="cursors"></div>
                 <div id="draggableElements"></div>
@@ -760,10 +1763,10 @@
                     <div class="participant-role">Host</div>
                 </div>
                 <div class="participant-controls">
-                    <button class="control-btn" title="Mute">
+                    <button class="control-btn" id="muteSelfBtn" title="Mute">
                         <i class="fas fa-microphone"></i>
                     </button>
-                    <button class="control-btn" title="Stop Video">
+                    <button class="control-btn" id="videoSelfBtn" title="Stop Video">
                         <i class="fas fa-video"></i>
                     </button>
                 </div>
@@ -855,28 +1858,968 @@
                     </div>
                 </div>
             </div>
-            <button class="control-btn-main" id="endMeetingControl">
+            <button class="control-btn-main danger" id="endMeetingControl">
                 <i class="fas fa-phone-slash"></i>
                 <span>End</span>
             </button>
         </div>
     </div>
 
-    <!-- All modals remain the same as in your original code -->
+    <!-- Modals -->
+    <div class="modal" id="inviteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Invite Participants</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Meeting Link</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" class="form-control" id="meetingLink" readonly>
+                        <button class="btn btn-secondary" id="copyLinkBtn">Copy</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Or share via</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" style="flex: 1;">
+                            <i class="fas fa-envelope"></i> Email
+                        </button>
+                        <button class="btn btn-secondary" style="flex: 1;">
+                            <i class="fas fa-sms"></i> SMS
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="closeInviteModal">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Insert Image</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Upload from your computer</label>
+                    <input type="file" class="form-control" id="imageUpload" accept="image/*">
+                </div>
+                <div style="text-align: center; margin: 15px 0; color: #666;">OR</div>
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="text" class="form-control" id="imageUrl" placeholder="https://example.com/image.jpg">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelImageBtn">Cancel</button>
+                <button class="btn btn-primary" id="insertImageBtn">Insert</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="textModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Add Text</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <textarea class="form-control" id="textInput" rows="5" placeholder="Enter your text here..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelTextBtn">Cancel</button>
+                <button class="btn btn-primary" id="insertTextBtn">Insert</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="shapeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Insert Shape</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                    <button class="btn btn-secondary shape-option" data-shape="rectangle">
+                        <i class="fas fa-square"></i> Rectangle
+                    </button>
+                    <button class="btn btn-secondary shape-option" data-shape="circle">
+                        <i class="fas fa-circle"></i> Circle
+                    </button>
+                    <button class="btn btn-secondary shape-option" data-shape="triangle">
+                        <i class="fas fa-play"></i> Triangle
+                    </button>
+                    <button class="btn btn-secondary shape-option" data-shape="line">
+                        <i class="fas fa-minus"></i> Line
+                    </button>
+                    <button class="btn btn-secondary shape-option" data-shape="arrow">
+                        <i class="fas fa-arrow-right"></i> Arrow
+                    </button>
+                    <button class="btn btn-secondary shape-option" data-shape="star">
+                        <i class="fas fa-star"></i> Star
+                    </button>
+                    <button class="btn btn-secondary shape-option" data-shape="heart">
+                        <i class="fas fa-heart"></i> Heart
+                    </button>
+                    <button class="btn btn-secondary shape-option" data-shape="cloud">
+                        <i class="fas fa-cloud"></i> Cloud
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelShapeBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="recordingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Start Recording</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Recording will capture everything in this session, including audio, video, and whiteboard activity.</p>
+                <div class="form-group">
+                    <label class="form-label">Recording options</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" checked id="recordAudio"> Record audio
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" checked id="recordVideo"> Record video
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" checked id="recordWhiteboard"> Record whiteboard
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelRecordingBtn">Cancel</button>
+                <button class="btn btn-primary" id="startRecordingBtn">Start Recording</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="endMeetingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">End Meeting</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to end the meeting for all participants?</p>
+                <div class="form-group">
+                    <label class="form-label">Options</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="saveRecording"> Save recording (if available)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="saveWhiteboard"> Save whiteboard content
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEndMeetingBtn">Cancel</button>
+                <button class="btn btn-primary danger" id="confirmEndMeetingBtn">End Meeting</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Settings</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Audio Input</label>
+                    <select class="form-control" id="audioInputSelect"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Audio Output</label>
+                    <select class="form-control" id="audioOutputSelect"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Video Input</label>
+                    <select class="form-control" id="videoInputSelect"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Whiteboard Settings</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="autoSaveCheckbox" checked> Auto-save whiteboard
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="showCursorsCheckbox" checked> Show remote cursors
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSettingsBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveSettingsBtn">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="leaveModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Leave Meeting</div>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to leave the meeting?</p>
+                <div class="form-group">
+                    <label class="form-label">Options</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="saveBeforeLeave"> Save whiteboard before leaving
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelLeaveBtn">Cancel</button>
+                <button class="btn btn-primary" id="confirmLeaveBtn">Leave</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" id="cutContextMenu">
+            <i class="fas fa-cut"></i> Cut
+        </div>
+        <div class="context-menu-item" id="copyContextMenu">
+            <i class="fas fa-copy"></i> Copy
+        </div>
+        <div class="context-menu-item" id="pasteContextMenu">
+            <i class="fas fa-paste"></i> Paste
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="deleteContextMenu">
+            <i class="fas fa-trash"></i> Delete
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="bringToFrontContextMenu">
+            <i class="fas fa-arrow-up"></i> Bring to Front
+        </div>
+        <div class="context-menu-item" id="sendToBackContextMenu">
+            <i class="fas fa-arrow-down"></i> Send to Back
+        </div>
+    </div>
+    
+    <!-- Toast Notification Container -->
+    <div id="toastContainer"></div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Previous JavaScript remains the same, just add these new functions
+        // Application State
+        const state = {
+            currentPage: 1,
+            totalPages: 1,
+            whiteboards: {},
+            undoStack: {},
+            redoStack: {},
+            selectedTool: 'pen',
+            selectedColor: '#000000',
+            selectedWidth: 2,
+            isDrawing: false,
+            lastX: 0,
+            lastY: 0,
+            isHost: true,
+            participants: {},
+            localStream: null,
+            remoteStreams: {},
+            isMuted: false,
+            isVideoOff: false,
+            isScreenSharing: false,
+            isRecording: false,
+            recordingStartTime: null,
+            chatMessages: [],
+            selectedElement: null,
+            copiedElement: null,
+            showSidebar: true,
+            showParticipants: true,
+            showVideo: false,
+            showChat: false,
+            socket: null,
+            peerConnections: {},
+            dataChannel: null,
+            username: 'User' + Math.floor(Math.random() * 1000),
+            userId: generateId(),
+            roomId: generateId(),
+            meetingName: 'Whiteboard Session',
+            cursorPositions: {},
+            zoomLevel: 1,
+            textElements: {},
+            imageElements: {},
+            shapeElements: {},
+            draggableElements: {},
+            zIndexCounter: 1,
+            autoSaveInterval: null,
+            showCursors: true
+        };
+
+        // DOM Elements
+        const elements = {
+            whiteboard: document.getElementById('whiteboard'),
+            cursors: document.getElementById('cursors'),
+            draggableElements: document.getElementById('draggableElements'),
+            currentPage: document.getElementById('currentPage'),
+            totalPages: document.getElementById('totalPages'),
+            prevPage: document.getElementById('prevPage'),
+            nextPage: document.getElementById('nextPage'),
+            addPage: document.getElementById('addPage'),
+            duplicatePage: document.getElementById('duplicatePage'),
+            deletePage: document.getElementById('deletePage'),
+            fullscreenBtn: document.getElementById('fullscreenBtn'),
+            inviteBtn: document.getElementById('inviteBtn'),
+            userCount: document.getElementById('userCount'),
+            recordingIndicator: document.getElementById('recordingIndicator'),
             
-            // Ribbon Tab Switching
-            const ribbonTabs = document.querySelectorAll('.ribbon-tab');
-            const ribbonContents = document.querySelectorAll('.ribbon-content');
+            // Tool selection
+            selectTool: document.getElementById('selectTool'),
+            penTool: document.getElementById('penTool'),
+            highlighterTool: document.getElementById('highlighterTool'),
+            eraserTool: document.getElementById('eraserTool'),
+            textTool: document.getElementById('textTool'),
+            shapeTool: document.getElementById('shapeTool'),
             
-            ribbonTabs.forEach(tab => {
+            // Color and width pickers
+            colorPicker: document.getElementById('colorPicker'),
+            colorOptions: document.querySelectorAll('.color-option'),
+            widthPicker: document.getElementById('widthPicker'),
+            widthOptions: document.querySelectorAll('.width-option'),
+            
+            // Right sidebar
+            rightSidebar: document.getElementById('rightSidebar'),
+            participantsTab: document.getElementById('participantsTab'),
+            videoTab: document.getElementById('videoTab'),
+            chatTab: document.getElementById('chatTab'),
+            tabBtns: document.querySelectorAll('.tab-btn'),
+            chatMessages: document.getElementById('chatMessages'),
+            chatInput: document.getElementById('chatInput'),
+            chatSendBtn: document.getElementById('chatSendBtn'),
+            localVideo: document.getElementById('localVideo'),
+            toggleMic: document.getElementById('toggleMic'),
+            toggleVideo: document.getElementById('toggleVideo'),
+            muteSelfBtn: document.getElementById('muteSelfBtn'),
+            videoSelfBtn: document.getElementById('videoSelfBtn'),
+            
+            // Controls bar
+            micControl: document.getElementById('micControl'),
+            videoControl: document.getElementById('videoControl'),
+            screenShareControl: document.getElementById('screenShareControl'),
+            participantsControl: document.getElementById('participantsControl'),
+            raiseHandControl: document.getElementById('raiseHandControl'),
+            reactionsControl: document.getElementById('reactionsControl'),
+            moreControl: document.getElementById('moreControl'),
+            endMeetingControl: document.getElementById('endMeetingControl'),
+            
+            // More options
+            recordOption: document.getElementById('recordOption'),
+            settingsOption: document.getElementById('settingsOption'),
+            leaveOption: document.getElementById('leaveOption'),
+            
+            // Modals
+            inviteModal: document.getElementById('inviteModal'),
+            meetingLink: document.getElementById('meetingLink'),
+            copyLinkBtn: document.getElementById('copyLinkBtn'),
+            closeInviteModal: document.getElementById('closeInviteModal'),
+            
+            imageModal: document.getElementById('imageModal'),
+            imageUpload: document.getElementById('imageUpload'),
+            imageUrl: document.getElementById('imageUrl'),
+            cancelImageBtn: document.getElementById('cancelImageBtn'),
+            insertImageBtn: document.getElementById('insertImageBtn'),
+            
+            textModal: document.getElementById('textModal'),
+            textInput: document.getElementById('textInput'),
+            cancelTextBtn: document.getElementById('cancelTextBtn'),
+            insertTextBtn: document.getElementById('insertTextBtn'),
+            
+            shapeModal: document.getElementById('shapeModal'),
+            shapeOptions: document.querySelectorAll('.shape-option'),
+            cancelShapeBtn: document.getElementById('cancelShapeBtn'),
+            
+            recordingModal: document.getElementById('recordingModal'),
+            cancelRecordingBtn: document.getElementById('cancelRecordingBtn'),
+            startRecordingBtn: document.getElementById('startRecordingBtn'),
+            
+            endMeetingModal: document.getElementById('endMeetingModal'),
+            cancelEndMeetingBtn: document.getElementById('cancelEndMeetingBtn'),
+            confirmEndMeetingBtn: document.getElementById('confirmEndMeetingBtn'),
+            
+            settingsModal: document.getElementById('settingsModal'),
+            audioInputSelect: document.getElementById('audioInputSelect'),
+            audioOutputSelect: document.getElementById('audioOutputSelect'),
+            videoInputSelect: document.getElementById('videoInputSelect'),
+            autoSaveCheckbox: document.getElementById('autoSaveCheckbox'),
+            showCursorsCheckbox: document.getElementById('showCursorsCheckbox'),
+            cancelSettingsBtn: document.getElementById('cancelSettingsBtn'),
+            saveSettingsBtn: document.getElementById('saveSettingsBtn'),
+            
+            leaveModal: document.getElementById('leaveModal'),
+            cancelLeaveBtn: document.getElementById('cancelLeaveBtn'),
+            confirmLeaveBtn: document.getElementById('confirmLeaveBtn'),
+            
+            // Context menu
+            contextMenu: document.getElementById('contextMenu'),
+            cutContextMenu: document.getElementById('cutContextMenu'),
+            copyContextMenu: document.getElementById('copyContextMenu'),
+            pasteContextMenu: document.getElementById('pasteContextMenu'),
+            deleteContextMenu: document.getElementById('deleteContextMenu'),
+            bringToFrontContextMenu: document.getElementById('bringToFrontContextMenu'),
+            sendToBackContextMenu: document.getElementById('sendToBackContextMenu'),
+            
+            // Ribbon tabs and content
+            ribbonTabs: document.querySelectorAll('.ribbon-tab'),
+            ribbonContents: document.querySelectorAll('.ribbon-content'),
+            
+            // Home tab buttons
+            cutBtn: document.getElementById('cutBtn'),
+            copyBtn: document.getElementById('copyBtn'),
+            pasteBtn: document.getElementById('pasteBtn'),
+            formatPainterBtn: document.getElementById('formatPainterBtn'),
+            addSlideBtn: document.getElementById('addSlideBtn'),
+            layoutBtn: document.getElementById('layoutBtn'),
+            resetSlideBtn: document.getElementById('resetSlideBtn'),
+            deleteSlideBtn: document.getElementById('deleteSlideBtn'),
+            fontFamilySelect: document.getElementById('fontFamilySelect'),
+            fontSizeSelect: document.getElementById('fontSizeSelect'),
+            boldBtn: document.getElementById('boldBtn'),
+            italicBtn: document.getElementById('italicBtn'),
+            underlineBtn: document.getElementById('underlineBtn'),
+            textShadowBtn: document.getElementById('textShadowBtn'),
+            bulletsBtn: document.getElementById('bulletsBtn'),
+            numberingBtn: document.getElementById('numberingBtn'),
+            alignLeftBtn: document.getElementById('alignLeftBtn'),
+            alignCenterBtn: document.getElementById('alignCenterBtn'),
+            alignRightBtn: document.getElementById('alignRightBtn'),
+            lineSpacingBtn: document.getElementById('lineSpacingBtn'),
+            shapesBtn: document.getElementById('shapesBtn'),
+            arrangeBtn: document.getElementById('arrangeBtn'),
+            quickStylesBtn: document.getElementById('quickStylesBtn'),
+            
+            // Insert tab buttons
+            insertTableBtn: document.getElementById('insertTableBtn'),
+            insertPictureBtn: document.getElementById('insertPictureBtn'),
+            onlinePicturesBtn: document.getElementById('onlinePicturesBtn'),
+            screenshotBtn: document.getElementById('screenshotBtn'),
+            shapesInsertBtn: document.getElementById('shapesInsertBtn'),
+            iconsBtn: document.getElementById('iconsBtn'),
+            models3DBtn: document.getElementById('models3DBtn'),
+            smartArtBtn: document.getElementById('smartArtBtn'),
+            chartsBtn: document.getElementById('chartsBtn'),
+            hyperlinkBtn: document.getElementById('hyperlinkBtn'),
+            bookmarkBtn: document.getElementById('bookmarkBtn'),
+            textBoxBtn: document.getElementById('textBoxBtn'),
+            headerFooterBtn: document.getElementById('headerFooterBtn'),
+            wordArtBtn: document.getElementById('wordArtBtn'),
+            dateTimeBtn: document.getElementById('dateTimeBtn'),
+            audioBtn: document.getElementById('audioBtn'),
+            videoBtn: document.getElementById('videoBtn'),
+            screenRecordingBtn: document.getElementById('screenRecordingBtn'),
+            
+            // Other ribbon tab buttons
+            themesBtn: document.getElementById('themesBtn'),
+            colorsBtn: document.getElementById('colorsBtn'),
+            fontsBtn: document.getElementById('fontsBtn'),
+            effectsBtn: document.getElementById('effectsBtn'),
+            slideSizeBtn: document.getElementById('slideSizeBtn'),
+            formatBackgroundBtn: document.getElementById('formatBackgroundBtn'),
+            fadeTransitionBtn: document.getElementById('fadeTransitionBtn'),
+            pushTransitionBtn: document.getElementById('pushTransitionBtn'),
+            wipeTransitionBtn: document.getElementById('wipeTransitionBtn'),
+            durationTransitionBtn: document.getElementById('durationTransitionBtn'),
+            soundTransitionBtn: document.getElementById('soundTransitionBtn'),
+            advanceSlideBtn: document.getElementById('advanceSlideBtn'),
+            entranceAnimationBtn: document.getElementById('entranceAnimationBtn'),
+            emphasisAnimationBtn: document.getElementById('emphasisAnimationBtn'),
+            exitAnimationBtn: document.getElementById('exitAnimationBtn'),
+            motionPathsBtn: document.getElementById('motionPathsBtn'),
+            addAnimationBtn: document.getElementById('addAnimationBtn'),
+            animationPaneBtn: document.getElementById('animationPaneBtn'),
+            triggerBtn: document.getElementById('triggerBtn'),
+            startAnimationBtn: document.getElementById('startAnimationBtn'),
+            durationAnimationBtn: document.getElementById('durationAnimationBtn'),
+            delayAnimationBtn: document.getElementById('delayAnimationBtn'),
+            fromBeginningBtn: document.getElementById('fromBeginningBtn'),
+            fromCurrentSlideBtn: document.getElementById('fromCurrentSlideBtn'),
+            rehearseTimingsBtn: document.getElementById('rehearseTimingsBtn'),
+            recordSlideShowBtn: document.getElementById('recordSlideShowBtn'),
+            presenterViewBtn: document.getElementById('presenterViewBtn'),
+            resolutionBtn: document.getElementById('resolutionBtn'),
+            spellingBtn: document.getElementById('spellingBtn'),
+            thesaurusBtn: document.getElementById('thesaurusBtn'),
+            translateBtn: document.getElementById('translateBtn'),
+            languageBtn: document.getElementById('languageBtn'),
+            newCommentBtn: document.getElementById('newCommentBtn'),
+            editCommentBtn: document.getElementById('editCommentBtn'),
+            deleteCommentBtn: document.getElementById('deleteCommentBtn'),
+            normalViewBtn: document.getElementById('normalViewBtn'),
+            outlineViewBtn: document.getElementById('outlineViewBtn'),
+            slideSorterBtn: document.getElementById('slideSorterBtn'),
+            notesPageBtn: document.getElementById('notesPageBtn'),
+            slideMasterBtn: document.getElementById('slideMasterBtn'),
+            handoutMasterBtn: document.getElementById('handoutMasterBtn'),
+            notesMasterBtn: document.getElementById('notesMasterBtn'),
+            zoomInBtn: document.getElementById('zoomInBtn'),
+            zoomOutBtn: document.getElementById('zoomOutBtn'),
+            colorViewBtn: document.getElementById('colorViewBtn'),
+            grayscaleBtn: document.getElementById('grayscaleBtn')
+        };
+
+        // Initialize the whiteboard canvas
+        function initWhiteboard() {
+            const canvas = elements.whiteboard;
+            const ctx = canvas.getContext('2d');
+            
+            // Set initial canvas size
+            resizeCanvas();
+            
+            // Initialize whiteboard data structure
+            state.whiteboards[state.currentPage] = {
+                data: null,
+                thumbnail: null
+            };
+            
+            // Initialize undo/redo stacks
+            state.undoStack[state.currentPage] = [];
+            state.redoStack[state.currentPage] = [];
+            
+            // Load from localStorage if available
+            const savedWhiteboard = localStorage.getItem('whiteboard-education');
+            if (savedWhiteboard) {
+                const confirmLoad = confirm('Do you want to continue from your previous whiteboard session?');
+                if (confirmLoad) {
+                    loadWhiteboard(JSON.parse(savedWhiteboard));
+                }
+            }
+            
+            // Set up auto-save
+            state.autoSaveInterval = setInterval(() => {
+                saveWhiteboardToLocalStorage();
+            }, 30000);
+            
+            // Warn before leaving if there are unsaved changes
+            window.addEventListener('beforeunload', (e) => {
+                saveWhiteboardToLocalStorage();
+                if (state.isHost) {
+                    return undefined;
+                }
+                e.preventDefault();
+                e.returnValue = '';
+                return 'You have unsaved changes. Are you sure you want to leave?';
+            });
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Initialize the first page
+            updatePageControls();
+            clearCanvas();
+        }
+        
+        // Resize canvas to fit container
+        function resizeCanvas() {
+            const canvas = elements.whiteboard;
+            const container = canvas.parentElement;
+            
+            // Set canvas dimensions to match container
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            
+            // Redraw content if it exists
+            if (state.whiteboards[state.currentPage]?.data) {
+                redrawCanvas();
+            }
+        }
+        
+        // Clear the canvas
+        function clearCanvas() {
+            const canvas = elements.whiteboard;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Save the blank canvas
+            saveCanvasState();
+        }
+        
+        // Redraw canvas from saved state
+        function redrawCanvas() {
+            const canvas = elements.whiteboard;
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw saved content if it exists
+            if (state.whiteboards[state.currentPage]?.data) {
+                const img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                };
+                img.src = state.whiteboards[state.currentPage].data;
+            }
+        }
+        
+        // Save current canvas state
+        function saveCanvasState() {
+            const canvas = elements.whiteboard;
+            state.whiteboards[state.currentPage].data = canvas.toDataURL();
+            
+            // Create thumbnail
+            const thumbCanvas = document.createElement('canvas');
+            thumbCanvas.width = 200;
+            thumbCanvas.height = 150;
+            const thumbCtx = thumbCanvas.getContext('2d');
+            
+            const img = new Image();
+            img.onload = function() {
+                thumbCtx.drawImage(img, 0, 0, thumbCanvas.width, thumbCanvas.height);
+                state.whiteboards[state.currentPage].thumbnail = thumbCanvas.toDataURL();
+            };
+            img.src = state.whiteboards[state.currentPage].data;
+        }
+        
+        // Save whiteboard to localStorage
+        function saveWhiteboardToLocalStorage() {
+            const data = {
+                currentPage: state.currentPage,
+                whiteboards: state.whiteboards,
+                undoStack: state.undoStack,
+                redoStack: state.redoStack
+            };
+            localStorage.setItem('whiteboard-education', JSON.stringify(data));
+        }
+        
+        // Load whiteboard from data
+        function loadWhiteboard(data) {
+            state.currentPage = data.currentPage || 1;
+            state.whiteboards = data.whiteboards || {};
+            state.undoStack = data.undoStack || {};
+            state.redoStack = data.redoStack || {};
+            
+            // Initialize any missing data structures
+            if (!state.whiteboards[state.currentPage]) {
+                state.whiteboards[state.currentPage] = {
+                    data: null,
+                    thumbnail: null
+                };
+            }
+            
+            if (!state.undoStack[state.currentPage]) {
+                state.undoStack[state.currentPage] = [];
+            }
+            
+            if (!state.redoStack[state.currentPage]) {
+                state.redoStack[state.currentPage] = [];
+            }
+            
+            // Update UI
+            updatePageControls();
+            redrawCanvas();
+        }
+        
+        // Update page navigation controls
+        function updatePageControls() {
+            elements.currentPage.textContent = state.currentPage;
+            elements.totalPages.textContent = state.totalPages;
+            
+            elements.prevPage.disabled = state.currentPage <= 1;
+            elements.nextPage.disabled = state.currentPage >= state.totalPages;
+        }
+        
+        // Add a new page
+        function addNewPage() {
+            // Save current canvas before switching
+            saveCanvasState();
+            
+            // Create new page
+            state.currentPage = state.totalPages + 1;
+            state.totalPages = state.currentPage;
+            
+            // Initialize data structures for new page
+            state.whiteboards[state.currentPage] = {
+                data: null,
+                thumbnail: null
+            };
+            
+            state.undoStack[state.currentPage] = [];
+            state.redoStack[state.currentPage] = [];
+            
+            // Update UI and clear canvas
+            updatePageControls();
+            clearCanvas();
+            
+            // Broadcast page change to other participants
+            broadcastPageChange();
+        }
+        
+        // Delete current page
+        function deleteCurrentPage() {
+            if (state.totalPages <= 1) {
+                showToast('Cannot delete the only page', 'error');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to delete this page?')) {
+                return;
+            }
+            
+            // Delete current page data
+            delete state.whiteboards[state.currentPage];
+            delete state.undoStack[state.currentPage];
+            delete state.redoStack[state.currentPage];
+            
+            // Adjust current page if needed
+            if (state.currentPage > 1) {
+                state.currentPage--;
+            }
+            
+            state.totalPages--;
+            
+            // Update UI and load previous page
+            updatePageControls();
+            redrawCanvas();
+            
+            // Broadcast page change to other participants
+            broadcastPageChange();
+        }
+        
+        // Duplicate current page
+        function duplicateCurrentPage() {
+            // Save current canvas
+            saveCanvasState();
+            
+            // Create new page
+            const newPage = state.totalPages + 1;
+            state.totalPages = newPage;
+            
+            // Copy data from current page
+            state.whiteboards[newPage] = {
+                data: state.whiteboards[state.currentPage].data,
+                thumbnail: state.whiteboards[state.currentPage].thumbnail
+            };
+            
+            state.undoStack[newPage] = [...state.undoStack[state.currentPage]];
+            state.redoStack[newPage] = [...state.redoStack[state.currentPage]];
+            
+            // Switch to new page
+            state.currentPage = newPage;
+            
+            // Update UI
+            updatePageControls();
+            
+            // Broadcast page change to other participants
+            broadcastPageChange();
+        }
+        
+        // Navigate to previous page
+        function goToPreviousPage() {
+            if (state.currentPage > 1) {
+                // Save current canvas before switching
+                saveCanvasState();
+                
+                state.currentPage--;
+                updatePageControls();
+                redrawCanvas();
+                
+                // Broadcast page change to other participants
+                broadcastPageChange();
+            }
+        }
+        
+        // Navigate to next page
+        function goToNextPage() {
+            if (state.currentPage < state.totalPages) {
+                // Save current canvas before switching
+                saveCanvasState();
+                
+                state.currentPage++;
+                updatePageControls();
+                redrawCanvas();
+                
+                // Broadcast page change to other participants
+                broadcastPageChange();
+            }
+        }
+        
+        // Broadcast page change to other participants
+        function broadcastPageChange() {
+            if (state.socket) {
+                state.socket.send(JSON.stringify({
+                    type: 'pageChange',
+                    currentPage: state.currentPage,
+                    totalPages: state.totalPages,
+                    userId: state.userId
+                }));
+            }
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            const canvas = elements.whiteboard;
+            const ctx = canvas.getContext('2d');
+            
+            // Page navigation
+            elements.prevPage.addEventListener('click', goToPreviousPage);
+            elements.nextPage.addEventListener('click', goToNextPage);
+            elements.addPage.addEventListener('click', addNewPage);
+            elements.duplicatePage.addEventListener('click', duplicateCurrentPage);
+            elements.deletePage.addEventListener('click', deleteCurrentPage);
+            
+            // Fullscreen
+            elements.fullscreenBtn.addEventListener('click', toggleFullscreen);
+            
+            // Invite modal
+            elements.inviteBtn.addEventListener('click', showInviteModal);
+            elements.copyLinkBtn.addEventListener('click', copyMeetingLink);
+            elements.closeInviteModal.addEventListener('click', hideInviteModal);
+            
+            // Tool selection
+            elements.selectTool.addEventListener('click', () => selectTool('select'));
+            elements.penTool.addEventListener('click', () => selectTool('pen'));
+            elements.highlighterTool.addEventListener('click', () => selectTool('highlighter'));
+            elements.eraserTool.addEventListener('click', () => selectTool('eraser'));
+            elements.textTool.addEventListener('click', () => selectTool('text'));
+            elements.shapeTool.addEventListener('click', () => selectTool('shape'));
+            
+            // Color selection
+            elements.colorOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove active class from all options
+                    elements.colorOptions.forEach(opt => opt.classList.remove('active'));
+                    
+                    // Add active class to clicked option
+                    option.classList.add('active');
+                    
+                    // Update selected color
+                    state.selectedColor = option.getAttribute('data-color');
+                });
+            });
+            
+            // Width selection
+            elements.widthOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove active class from all options
+                    elements.widthOptions.forEach(opt => opt.classList.remove('active'));
+                    
+                    // Add active class to clicked option
+                    option.classList.add('active');
+                    
+                    // Update selected width
+                    state.selectedWidth = parseInt(option.getAttribute('data-width'));
+                });
+            });
+            
+            // Drawing events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', handleTouchEnd);
+            
+            // Right sidebar tabs
+            elements.tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    elements.tabBtns.forEach(t => t.classList.remove('active'));
+                    elements.participantsTab.classList.remove('active');
+                    elements.videoTab.classList.remove('active');
+                    elements.chatTab.classList.remove('active');
+                    
+                    // Add active class to clicked tab and corresponding content
+                    btn.classList.add('active');
+                    const tabId = btn.getAttribute('data-tab') + 'Tab';
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Update state
+                    state.showParticipants = tabId === 'participantsTab';
+                    state.showVideo = tabId === 'videoTab';
+                    state.showChat = tabId === 'chatTab';
+                });
+            });
+            
+            // Chat
+            elements.chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
+            });
+            elements.chatSendBtn.addEventListener('click', sendChatMessage);
+            
+            // Controls bar
+            elements.micControl.addEventListener('click', toggleMicrophone);
+            elements.videoControl.addEventListener('click', toggleVideo);
+            elements.screenShareControl.addEventListener('click', toggleScreenShare);
+            elements.participantsControl.addEventListener('click', toggleParticipants);
+            elements.raiseHandControl.addEventListener('click', raiseHand);
+            elements.reactionsControl.addEventListener('click', showReactions);
+            elements.endMeetingControl.addEventListener('click', showEndMeetingModal);
+            
+            // More options
+            elements.recordOption.addEventListener('click', showRecordingModal);
+            elements.settingsOption.addEventListener('click', showSettingsModal);
+            elements.leaveOption.addEventListener('click', showLeaveModal);
+            
+            // Modals
+            elements.cancelImageBtn.addEventListener('click', hideImageModal);
+            elements.insertImageBtn.addEventListener('click', insertImage);
+            elements.imageUpload.addEventListener('change', handleImageUpload);
+            
+            elements.cancelTextBtn.addEventListener('click', hideTextModal);
+            elements.insertTextBtn.addEventListener('click', insertText);
+            
+            elements.cancelShapeBtn.addEventListener('click', hideShapeModal);
+            elements.shapeOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const shape = option.getAttribute('data-shape');
+                    insertShape(shape);
+                    hideShapeModal();
+                });
+            });
+            
+            elements.cancelRecordingBtn.addEventListener('click', hideRecordingModal);
+            elements.startRecordingBtn.addEventListener('click', startRecording);
+            
+            elements.cancelEndMeetingBtn.addEventListener('click', hideEndMeetingModal);
+            elements.confirmEndMeetingBtn.addEventListener('click', endMeeting);
+            
+            elements.cancelSettingsBtn.addEventListener('click', hideSettingsModal);
+            elements.saveSettingsBtn.addEventListener('click', saveSettings);
+            
+            elements.cancelLeaveBtn.addEventListener('click', hideLeaveModal);
+            elements.confirmLeaveBtn.addEventListener('click', leaveMeeting);
+            
+            // Ribbon tabs
+            elements.ribbonTabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     // Remove active class from all tabs and contents
-                    ribbonTabs.forEach(t => t.classList.remove('active'));
-                    ribbonContents.forEach(c => c.classList.remove('active'));
+                    elements.ribbonTabs.forEach(t => t.classList.remove('active'));
+                    elements.ribbonContents.forEach(c => c.classList.remove('active'));
                     
                     // Add active class to clicked tab and corresponding content
                     tab.classList.add('active');
@@ -885,53 +2828,1852 @@
                 });
             });
             
-            // Toolbar Button Functionality
-            document.getElementById('addSlideBtn').addEventListener('click', addNewPage);
-            document.getElementById('deleteSlideBtn').addEventListener('click', deleteCurrentPage);
-            document.getElementById('insertPictureBtn').addEventListener('click', () => {
-                document.getElementById('imageModal').style.display = 'flex';
+            // Home tab buttons
+            elements.cutBtn.addEventListener('click', cutElement);
+            elements.copyBtn.addEventListener('click', copyElement);
+            elements.pasteBtn.addEventListener('click', pasteElement);
+            elements.formatPainterBtn.addEventListener('click', formatPainter);
+            elements.addSlideBtn.addEventListener('click', addNewPage);
+            elements.deleteSlideBtn.addEventListener('click', deleteCurrentPage);
+            
+            // Insert tab buttons
+            elements.insertPictureBtn.addEventListener('click', showImageModal);
+            elements.textBoxBtn.addEventListener('click', showTextModal);
+            elements.shapesInsertBtn.addEventListener('click', showShapeModal);
+            
+            // Context menu
+            elements.cutContextMenu.addEventListener('click', cutElement);
+            elements.copyContextMenu.addEventListener('click', copyElement);
+            elements.pasteContextMenu.addEventListener('click', pasteElement);
+            elements.deleteContextMenu.addEventListener('click', deleteElement);
+            elements.bringToFrontContextMenu.addEventListener('click', bringToFront);
+            elements.sendToBackContextMenu.addEventListener('click', sendToBack);
+            
+            // Window resize
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Context menu
+            canvas.addEventListener('contextmenu', showContextMenu);
+            document.addEventListener('click', hideContextMenu);
+        }
+        
+        // Select drawing tool
+        function selectTool(tool) {
+            state.selectedTool = tool;
+            
+            // Update active tool button
+            elements.selectTool.classList.remove('active');
+            elements.penTool.classList.remove('active');
+            elements.highlighterTool.classList.remove('active');
+            elements.eraserTool.classList.remove('active');
+            elements.textTool.classList.remove('active');
+            elements.shapeTool.classList.remove('active');
+            
+            switch (tool) {
+                case 'select':
+                    elements.selectTool.classList.add('active');
+                    elements.whiteboard.style.cursor = 'default';
+                    break;
+                case 'pen':
+                    elements.penTool.classList.add('active');
+                    elements.whiteboard.style.cursor = 'crosshair';
+                    break;
+                case 'highlighter':
+                    elements.highlighterTool.classList.add('active');
+                    elements.whiteboard.style.cursor = 'crosshair';
+                    state.selectedColor = '#ffff00';
+                    state.selectedWidth = 10;
+                    break;
+                case 'eraser':
+                    elements.eraserTool.classList.add('active');
+                    elements.whiteboard.style.cursor = 'crosshair';
+                    state.selectedColor = '#ffffff';
+                    state.selectedWidth = 20;
+                    break;
+                case 'text':
+                    elements.textTool.classList.add('active');
+                    elements.whiteboard.style.cursor = 'text';
+                    break;
+                case 'shape':
+                    elements.shapeTool.classList.add('active');
+                    elements.whiteboard.style.cursor = 'crosshair';
+                    break;
+            }
+        }
+        
+        // Start drawing
+        function startDrawing(e) {
+            if (state.selectedTool === 'text') {
+                showTextModal();
+                return;
+            }
+            
+            if (state.selectedTool === 'shape') {
+                showShapeModal();
+                return;
+            }
+            
+            if (state.selectedTool === 'select') {
+                // Handle element selection
+                const rect = elements.whiteboard.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Check if we clicked on an element
+                const element = findElementAtPosition(x, y);
+                if (element) {
+                    state.selectedElement = element;
+                    state.isDrawing = true;
+                    state.lastX = x;
+                    state.lastY = y;
+                    
+                    // Show selection handles or highlight
+                    highlightSelectedElement(element);
+                }
+                return;
+            }
+            
+            state.isDrawing = true;
+            
+            const rect = elements.whiteboard.getBoundingClientRect();
+            state.lastX = e.clientX - rect.left;
+            state.lastY = e.clientY - rect.top;
+            
+            // Save current canvas state for undo
+            saveCanvasStateForUndo();
+        }
+        
+        // Draw on canvas
+        function draw(e) {
+            if (!state.isDrawing) return;
+            
+            const canvas = elements.whiteboard;
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.getBoundingClientRect();
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+            
+            if (state.selectedTool === 'select' && state.selectedElement) {
+                // Move the selected element
+                const dx = currentX - state.lastX;
+                const dy = currentY - state.lastY;
+                
+                moveElement(state.selectedElement, dx, dy);
+                
+                state.lastX = currentX;
+                state.lastY = currentY;
+                return;
+            }
+            
+            // Set drawing style based on tool
+            switch (state.selectedTool) {
+                case 'pen':
+                    ctx.strokeStyle = state.selectedColor;
+                    ctx.lineWidth = state.selectedWidth;
+                    ctx.lineJoin = 'round';
+                    ctx.lineCap = 'round';
+                    break;
+                case 'highlighter':
+                    ctx.strokeStyle = state.selectedColor;
+                    ctx.lineWidth = state.selectedWidth;
+                    ctx.lineJoin = 'round';
+                    ctx.lineCap = 'round';
+                    ctx.globalAlpha = 0.5;
+                    break;
+                case 'eraser':
+                    ctx.strokeStyle = state.selectedColor;
+                    ctx.lineWidth = state.selectedWidth;
+                    ctx.lineJoin = 'round';
+                    ctx.lineCap = 'round';
+                    break;
+            }
+            
+            // Draw line
+            ctx.beginPath();
+            ctx.moveTo(state.lastX, state.lastY);
+            ctx.lineTo(currentX, currentY);
+            ctx.stroke();
+            
+            // Update last position
+            state.lastX = currentX;
+            state.lastY = currentY;
+            
+            // Broadcast drawing to other participants
+            broadcastDrawing({
+                type: 'draw',
+                tool: state.selectedTool,
+                color: state.selectedColor,
+                width: state.selectedWidth,
+                fromX: state.lastX,
+                fromY: state.lastY,
+                toX: currentX,
+                toY: currentY,
+                userId: state.userId
             });
-            
-            // Initialize the application
-            initWhiteboard();
-            initSocketConnection();
-            initWebRTC();
-            
-            // All other existing functions remain the same
-            function initWhiteboard() {
-                resizeCanvas();
+        }
+        
+        // Stop drawing
+        function stopDrawing() {
+            if (state.isDrawing) {
+                state.isDrawing = false;
                 
-                state.whiteboards[1] = {
-                    data: null,
-                    thumbnail: null
-                };
-                state.undoStack[1] = [];
-                state.redoStack[1] = [];
+                // Save canvas state after drawing is complete
+                saveCanvasState();
                 
-                const savedWhiteboard = localStorage.getItem('whiteboard-education');
-                if (savedWhiteboard) {
-                    const confirmLoad = confirm('Do you want to continue from your previous whiteboard session?');
-                    if (confirmLoad) {
-                        loadWhiteboard(JSON.parse(savedWhiteboard));
-                    }
+                // Reset global alpha if it was changed
+                if (state.selectedTool === 'highlighter') {
+                    const ctx = elements.whiteboard.getContext('2d');
+                    ctx.globalAlpha = 1.0;
+                }
+            }
+        }
+        
+        // Handle touch start
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            startDrawing(mouseEvent);
+        }
+        
+        // Handle touch move
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            draw(mouseEvent);
+        }
+        
+        // Handle touch end
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            const mouseEvent = new MouseEvent('mouseup', {});
+            stopDrawing(mouseEvent);
+        }
+        
+        // Save canvas state for undo
+        function saveCanvasStateForUndo() {
+            const canvas = elements.whiteboard;
+            const dataUrl = canvas.toDataURL();
+            
+            // Push current state to undo stack
+            if (!state.undoStack[state.currentPage]) {
+                state.undoStack[state.currentPage] = [];
+            }
+            
+            state.undoStack[state.currentPage].push(dataUrl);
+            
+            // Clear redo stack
+            state.redoStack[state.currentPage] = [];
+        }
+        
+        // Undo last action
+        function undo() {
+            if (state.undoStack[state.currentPage]?.length > 0) {
+                // Save current state to redo stack
+                const currentState = elements.whiteboard.toDataURL();
+                
+                if (!state.redoStack[state.currentPage]) {
+                    state.redoStack[state.currentPage] = [];
                 }
                 
-                setInterval(() => {
-                    saveWhiteboardToLocalStorage();
-                }, 30000);
+                state.redoStack[state.currentPage].push(currentState);
                 
-                window.addEventListener('beforeunload', (e) => {
-                    saveWhiteboardToLocalStorage();
-                    if (state.isHost) {
-                        return undefined;
+                // Get last state from undo stack
+                const lastState = state.undoStack[state.currentPage].pop();
+                
+                // Restore state
+                const img = new Image();
+                img.onload = function() {
+                    const ctx = elements.whiteboard.getContext('2d');
+                    ctx.clearRect(0, 0, elements.whiteboard.width, elements.whiteboard.height);
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Save the restored state
+                    saveCanvasState();
+                };
+                img.src = lastState;
+            }
+        }
+        
+        // Redo last undone action
+        function redo() {
+            if (state.redoStack[state.currentPage]?.length > 0) {
+                // Save current state to undo stack
+                const currentState = elements.whiteboard.toDataURL();
+                
+                if (!state.undoStack[state.currentPage]) {
+                    state.undoStack[state.currentPage] = [];
+                }
+                
+                state.undoStack[state.currentPage].push(currentState);
+                
+                // Get last state from redo stack
+                const lastState = state.redoStack[state.currentPage].pop();
+                
+                // Restore state
+                const img = new Image();
+                img.onload = function() {
+                    const ctx = elements.whiteboard.getContext('2d');
+                    ctx.clearRect(0, 0, elements.whiteboard.width, elements.whiteboard.height);
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Save the restored state
+                    saveCanvasState();
+                };
+                img.src = lastState;
+            }
+        }
+        
+        // Broadcast drawing to other participants
+        function broadcastDrawing(data) {
+            if (state.socket) {
+                state.socket.send(JSON.stringify(data));
+            }
+        }
+        
+        // Process incoming drawing data
+        function processIncomingDrawing(data) {
+            if (data.userId === state.userId) return;
+            
+            const canvas = elements.whiteboard;
+            const ctx = canvas.getContext('2d');
+            
+            // Set drawing style based on tool
+            switch (data.tool) {
+                case 'pen':
+                    ctx.strokeStyle = data.color;
+                    ctx.lineWidth = data.width;
+                    ctx.lineJoin = 'round';
+                    ctx.lineCap = 'round';
+                    break;
+                case 'highlighter':
+                    ctx.strokeStyle = data.color;
+                    ctx.lineWidth = data.width;
+                    ctx.lineJoin = 'round';
+                    ctx.lineCap = 'round';
+                    ctx.globalAlpha = 0.5;
+                    break;
+                case 'eraser':
+                    ctx.strokeStyle = data.color;
+                    ctx.lineWidth = data.width;
+                    ctx.lineJoin = 'round';
+                    ctx.lineCap = 'round';
+                    break;
+            }
+            
+            // Draw line
+            ctx.beginPath();
+            ctx.moveTo(data.fromX, data.fromY);
+            ctx.lineTo(data.toX, data.toY);
+            ctx.stroke();
+            
+            // Reset global alpha if it was changed
+            if (data.tool === 'highlighter') {
+                ctx.globalAlpha = 1.0;
+            }
+            
+            // Update remote cursor position
+            updateRemoteCursor(data.userId, data.toX, data.toY);
+        }
+        
+        // Update remote cursor position
+        function updateRemoteCursor(userId, x, y) {
+            if (!state.showCursors) return;
+            
+            let cursor = document.querySelector(`.remote-cursor[data-user="${userId}"]`);
+            
+            if (!cursor) {
+                cursor = document.createElement('div');
+                cursor.className = 'remote-cursor';
+                cursor.setAttribute('data-user', userId);
+                cursor.style.backgroundColor = getRandomColor(userId);
+                cursor.setAttribute('data-name', state.participants[userId]?.name || 'Anonymous');
+                elements.cursors.appendChild(cursor);
+            }
+            
+            cursor.style.left = `${x}px`;
+            cursor.style.top = `${y}px`;
+        }
+        
+        // Generate a random color based on user ID
+        function getRandomColor(userId) {
+            const colors = [
+                '#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE',
+                '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE',
+                '#B2FF59', '#EEFF41', '#FFFF00', '#FFD740', '#FFAB40'
+            ];
+            
+            // Use userId to get a consistent color for each user
+            const hash = Array.from(userId).reduce((hash, char) => {
+                return char.charCodeAt(0) + ((hash << 5) - hash);
+            }, 0);
+            
+            const index = Math.abs(hash) % colors.length;
+            return colors[index];
+        }
+        
+        // Toggle fullscreen mode
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    document.documentElement.classList.add('fullscreen');
+                });
+            } else {
+                document.exitFullscreen().then(() => {
+                    document.documentElement.classList.remove('fullscreen');
+                });
+            }
+        }
+        
+        // Show invite modal
+        function showInviteModal() {
+            elements.meetingLink.value = `${window.location.origin}${window.location.pathname}?room=${state.roomId}`;
+            elements.inviteModal.style.display = 'flex';
+        }
+        
+        // Hide invite modal
+        function hideInviteModal() {
+            elements.inviteModal.style.display = 'none';
+        }
+        
+        // Copy meeting link to clipboard
+        function copyMeetingLink() {
+            elements.meetingLink.select();
+            document.execCommand('copy');
+            showToast('Meeting link copied to clipboard', 'success');
+        }
+        
+        // Show image modal
+        function showImageModal() {
+            elements.imageModal.style.display = 'flex';
+        }
+        
+        // Hide image modal
+        function hideImageModal() {
+            elements.imageModal.style.display = 'none';
+            elements.imageUpload.value = '';
+            elements.imageUrl.value = '';
+        }
+        
+        // Handle image upload
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                insertImageAtPosition(event.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Insert image from URL or upload
+        function insertImage() {
+            const url = elements.imageUrl.value.trim();
+            if (url) {
+                // Validate URL
+                if (!isValidUrl(url)) {
+                    showToast('Please enter a valid image URL', 'error');
+                    return;
+                }
+                
+                // Create a proxy image to check if it loads
+                const img = new Image();
+                img.onload = function() {
+                    insertImageAtPosition(url);
+                    hideImageModal();
+                };
+                img.onerror = function() {
+                    showToast('Could not load image from URL', 'error');
+                };
+                img.src = url;
+            } else if (elements.imageUpload.files.length > 0) {
+                // Already handled by handleImageUpload
+                hideImageModal();
+            } else {
+                showToast('Please select an image file or enter a URL', 'error');
+            }
+        }
+        
+        // Insert image at current position or center
+        function insertImageAtPosition(imageSrc, x, y) {
+            const canvas = elements.whiteboard;
+            const ctx = canvas.getContext('2d');
+            
+            // If no position specified, place in center
+            if (x === undefined || y === undefined) {
+                x = canvas.width / 2;
+                y = canvas.height / 2;
+            }
+            
+            const img = new Image();
+            img.onload = function() {
+                // Draw image at specified position
+                ctx.drawImage(img, x - img.width / 2, y - img.height / 2);
+                
+                // Save canvas state
+                saveCanvasState();
+                
+                // Create a draggable element for the image
+                createDraggableElement('image', {
+                    src: imageSrc,
+                    x: x - img.width / 2,
+                    y: y - img.height / 2,
+                    width: img.width,
+                    height: img.height
+                });
+            };
+            img.src = imageSrc;
+        }
+        
+        // Show text modal
+        function showTextModal() {
+            elements.textModal.style.display = 'flex';
+            elements.textInput.focus();
+        }
+        
+        // Hide text modal
+        function hideTextModal() {
+            elements.textModal.style.display = 'none';
+            elements.textInput.value = '';
+        }
+        
+        // Insert text
+        function insertText() {
+            const text = elements.textInput.value.trim();
+            if (!text) {
+                showToast('Please enter some text', 'error');
+                return;
+            }
+            
+            insertTextAtPosition(text);
+            hideTextModal();
+        }
+        
+        // Insert text at current position or center
+        function insertTextAtPosition(text, x, y) {
+            const canvas = elements.whiteboard;
+            const ctx = canvas.getContext('2d');
+            
+            // If no position specified, place in center
+            if (x === undefined || y === undefined) {
+                x = canvas.width / 2;
+                y = canvas.height / 2;
+            }
+            
+            // Set text style
+            ctx.font = `${state.fontSize}px ${state.fontFamily}`;
+            ctx.fillStyle = state.selectedColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Draw text
+            ctx.fillText(text, x, y);
+            
+            // Save canvas state
+            saveCanvasState();
+            
+            // Create a draggable element for the text
+            createDraggableElement('text', {
+                text: text,
+                x: x,
+                y: y,
+                font: ctx.font,
+                color: state.selectedColor
+            });
+        }
+        
+        // Show shape modal
+        function showShapeModal() {
+            elements.shapeModal.style.display = 'flex';
+        }
+        
+        // Hide shape modal
+        function hideShapeModal() {
+            elements.shapeModal.style.display = 'none';
+        }
+        
+        // Insert shape
+        function insertShape(shape) {
+            const canvas = elements.whiteboard;
+            const ctx = canvas.getContext('2d');
+            
+            // Center position
+            const x = canvas.width / 2;
+            const y = canvas.height / 2;
+            
+            // Draw shape
+            ctx.fillStyle = state.selectedColor;
+            ctx.strokeStyle = state.selectedColor;
+            ctx.lineWidth = state.selectedWidth;
+            
+            switch (shape) {
+                case 'rectangle':
+                    ctx.fillRect(x - 50, y - 30, 100, 60);
+                    break;
+                case 'circle':
+                    ctx.beginPath();
+                    ctx.arc(x, y, 30, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+                case 'triangle':
+                    ctx.beginPath();
+                    ctx.moveTo(x, y - 30);
+                    ctx.lineTo(x - 30, y + 30);
+                    ctx.lineTo(x + 30, y + 30);
+                    ctx.closePath();
+                    ctx.fill();
+                    break;
+                case 'line':
+                    ctx.beginPath();
+                    ctx.moveTo(x - 50, y);
+                    ctx.lineTo(x + 50, y);
+                    ctx.stroke();
+                    break;
+                case 'arrow':
+                    ctx.beginPath();
+                    ctx.moveTo(x - 50, y);
+                    ctx.lineTo(x + 30, y);
+                    ctx.lineTo(x + 20, y - 10);
+                    ctx.moveTo(x + 30, y);
+                    ctx.lineTo(x + 20, y + 10);
+                    ctx.stroke();
+                    break;
+                case 'star':
+                    drawStar(ctx, x, y, 5, 30, 15);
+                    ctx.fill();
+                    break;
+                case 'heart':
+                    drawHeart(ctx, x, y, 30);
+                    ctx.fill();
+                    break;
+                case 'cloud':
+                    drawCloud(ctx, x, y, 40);
+                    ctx.fill();
+                    break;
+            }
+            
+            // Save canvas state
+            saveCanvasState();
+            
+            // Create a draggable element for the shape
+            createDraggableElement('shape', {
+                type: shape,
+                x: x,
+                y: y,
+                color: state.selectedColor,
+                width: state.selectedWidth
+            });
+        }
+        
+        // Draw a star
+        function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+            let rot = Math.PI / 2 * 3;
+            let x = cx;
+            let y = cy;
+            let step = Math.PI / spikes;
+            
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerRadius);
+            
+            for (let i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius;
+                y = cy + Math.sin(rot) * outerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+                
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+            }
+            
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
+        }
+        
+        // Draw a heart
+        function drawHeart(ctx, x, y, size) {
+            ctx.beginPath();
+            ctx.moveTo(x, y - size / 4);
+            ctx.bezierCurveTo(
+                x, y - size / 2,
+                x - size / 2, y - size / 2,
+                x - size / 2, y
+            );
+            ctx.bezierCurveTo(
+                x - size / 2, y + size / 3,
+                x, y + size,
+                x, y + size
+            );
+            ctx.bezierCurveTo(
+                x, y + size,
+                x + size / 2, y + size / 3,
+                x + size / 2, y
+            );
+            ctx.bezierCurveTo(
+                x + size / 2, y - size / 2,
+                x, y - size / 2,
+                x, y - size / 4
+            );
+            ctx.closePath();
+        }
+        
+        // Draw a cloud
+        function drawCloud(ctx, x, y, size) {
+            ctx.beginPath();
+            ctx.arc(x, y, size * 0.6, Math.PI * 0.5, Math.PI * 1.5);
+            ctx.arc(x + size * 0.5, y - size * 0.3, size * 0.5, Math.PI * 1.35, Math.PI * 1.75);
+            ctx.arc(x + size * 0.7, y, size * 0.6, Math.PI * 1.5, Math.PI * 0.5);
+            ctx.arc(x + size * 0.5, y + size * 0.3, size * 0.5, Math.PI * 0.25, Math.PI * 0.65);
+            ctx.closePath();
+        }
+        
+        // Create a draggable element
+        function createDraggableElement(type, data) {
+            const elementId = generateId();
+            const element = {
+                id: elementId,
+                type: type,
+                data: data,
+                zIndex: state.zIndexCounter++
+            };
+            
+            // Add to state
+            switch (type) {
+                case 'text':
+                    state.textElements[elementId] = element;
+                    break;
+                case 'image':
+                    state.imageElements[elementId] = element;
+                    break;
+                case 'shape':
+                    state.shapeElements[elementId] = element;
+                    break;
+            }
+            
+            // Create DOM element
+            const div = document.createElement('div');
+            div.className = 'draggable';
+            div.id = `element-${elementId}`;
+            div.style.position = 'absolute';
+            div.style.left = `${data.x}px`;
+            div.style.top = `${data.y}px`;
+            div.style.zIndex = element.zIndex;
+            div.setAttribute('data-id', elementId);
+            div.setAttribute('data-type', type);
+            
+            // Set content based on type
+            switch (type) {
+                case 'text':
+                    div.textContent = data.text;
+                    div.style.color = data.color;
+                    div.style.font = data.font;
+                    div.style.textAlign = 'center';
+                    div.style.transform = 'translate(-50%, -50%)';
+                    break;
+                case 'image':
+                    div.innerHTML = `<img src="${data.src}" width="${data.width}" height="${data.height}">`;
+                    break;
+                case 'shape':
+                    // For shapes, we'll just show a placeholder
+                    div.style.width = '100px';
+                    div.style.height = '100px';
+                    div.style.backgroundColor = data.color;
+                    div.style.borderRadius = type === 'circle' ? '50%' : '0';
+                    break;
+            }
+            
+            // Add event listeners for dragging
+            div.addEventListener('mousedown', startElementDrag);
+            
+            // Add to DOM
+            elements.draggableElements.appendChild(div);
+            
+            return element;
+        }
+        
+        // Start dragging an element
+        function startElementDrag(e) {
+            e.preventDefault();
+            
+            const elementId = e.currentTarget.getAttribute('data-id');
+            const elementType = e.currentTarget.getAttribute('data-type');
+            
+            // Find the element in state
+            let element;
+            switch (elementType) {
+                case 'text':
+                    element = state.textElements[elementId];
+                    break;
+                case 'image':
+                    element = state.imageElements[elementId];
+                    break;
+                case 'shape':
+                    element = state.shapeElements[elementId];
+                    break;
+            }
+            
+            if (!element) return;
+            
+            state.selectedElement = element;
+            state.isDrawing = true;
+            
+            const rect = elements.whiteboard.getBoundingClientRect();
+            state.lastX = e.clientX - rect.left;
+            state.lastY = e.clientY - rect.top;
+            
+            // Bring to front
+            bringToFront(elementId);
+            
+            // Add mouse move and up listeners
+            document.addEventListener('mousemove', dragElement);
+            document.addEventListener('mouseup', stopElementDrag);
+        }
+        
+        // Drag element
+        function dragElement(e) {
+            if (!state.selectedElement) return;
+            
+            const rect = elements.whiteboard.getBoundingClientRect();
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+            
+            const dx = currentX - state.lastX;
+            const dy = currentY - state.lastY;
+            
+            moveElement(state.selectedElement, dx, dy);
+            
+            state.lastX = currentX;
+            state.lastY = currentY;
+        }
+        
+        // Stop dragging element
+        function stopElementDrag() {
+            state.isDrawing = false;
+            state.selectedElement = null;
+            
+            // Remove event listeners
+            document.removeEventListener('mousemove', dragElement);
+            document.removeEventListener('mouseup', stopElementDrag);
+            
+            // Save canvas state
+            saveCanvasState();
+        }
+        
+        // Move element
+        function moveElement(element, dx, dy) {
+            const elementId = element.id;
+            const elementType = element.data.type;
+            
+            // Update position in state
+            switch (elementType) {
+                case 'text':
+                    element.data.x += dx;
+                    element.data.y += dy;
+                    break;
+                case 'image':
+                    element.data.x += dx;
+                    element.data.y += dy;
+                    break;
+                case 'shape':
+                    element.data.x += dx;
+                    element.data.y += dy;
+                    break;
+            }
+            
+            // Update DOM element position
+            const div = document.getElementById(`element-${elementId}`);
+            if (div) {
+                if (elementType === 'text') {
+                    div.style.left = `${element.data.x}px`;
+                    div.style.top = `${element.data.y}px`;
+                } else {
+                    const left = parseInt(div.style.left || '0') + dx;
+                    const top = parseInt(div.style.top || '0') + dy;
+                    div.style.left = `${left}px`;
+                    div.style.top = `${top}px`;
+                }
+            }
+            
+            // Redraw canvas if needed (for shapes that are drawn directly on canvas)
+            if (elementType === 'shape') {
+                redrawCanvas();
+            }
+        }
+        
+        // Find element at position
+        function findElementAtPosition(x, y) {
+            // Check text elements
+            for (const id in state.textElements) {
+                const element = state.textElements[id];
+                const div = document.getElementById(`element-${id}`);
+                
+                if (div) {
+                    const rect = div.getBoundingClientRect();
+                    const canvasRect = elements.whiteboard.getBoundingClientRect();
+                    
+                    const elementX = rect.left - canvasRect.left + rect.width / 2;
+                    const elementY = rect.top - canvasRect.top + rect.height / 2;
+                    
+                    const distance = Math.sqrt(Math.pow(x - elementX, 2) + Math.pow(y - elementY, 2));
+                    
+                    if (distance < 30) { // Rough hit detection
+                        return element;
                     }
-                    e.preventDefault();
-                    e.returnValue = '';
-                    return 'You have unsaved changes. Are you sure you want to leave?';
+                }
+            }
+            
+            // Check image elements
+            for (const id in state.imageElements) {
+                const element = state.imageElements[id];
+                const div = document.getElementById(`element-${id}`);
+                
+                if (div) {
+                    const rect = div.getBoundingClientRect();
+                    const canvasRect = elements.whiteboard.getBoundingClientRect();
+                    
+                    const elementLeft = rect.left - canvasRect.left;
+                    const elementTop = rect.top - canvasRect.top;
+                    const elementRight = elementLeft + rect.width;
+                    const elementBottom = elementTop + rect.height;
+                    
+                    if (x >= elementLeft && x <= elementRight && y >= elementTop && y <= elementBottom) {
+                        return element;
+                    }
+                }
+            }
+            
+            // Check shape elements
+            for (const id in state.shapeElements) {
+                const element = state.shapeElements[id];
+                const div = document.getElementById(`element-${id}`);
+                
+                if (div) {
+                    const rect = div.getBoundingClientRect();
+                    const canvasRect = elements.whiteboard.getBoundingClientRect();
+                    
+                    const elementLeft = rect.left - canvasRect.left;
+                    const elementTop = rect.top - canvasRect.top;
+                    const elementRight = elementLeft + rect.width;
+                    const elementBottom = elementTop + rect.height;
+                    
+                    if (x >= elementLeft && x <= elementRight && y >= elementTop && y <= elementBottom) {
+                        return element;
+                    }
+                }
+            }
+            
+            return null;
+        }
+        
+        // Highlight selected element
+        function highlightSelectedElement(element) {
+            // Remove any existing highlights
+            const highlights = document.querySelectorAll('.element-highlight');
+            highlights.forEach(highlight => highlight.remove());
+            
+            const elementId = element.id;
+            const div = document.getElementById(`element-${elementId}`);
+            
+            if (div) {
+                // Create highlight element
+                const highlight = document.createElement('div');
+                highlight.className = 'element-highlight';
+                
+                // Position and size to match the element
+                const rect = div.getBoundingClientRect();
+                const canvasRect = elements.whiteboard.getBoundingClientRect();
+                
+                highlight.style.position = 'absolute';
+                highlight.style.left = `${rect.left - canvasRect.left - 4}px`;
+                highlight.style.top = `${rect.top - canvasRect.top - 4}px`;
+                highlight.style.width = `${rect.width + 8}px`;
+                highlight.style.height = `${rect.height + 8}px`;
+                highlight.style.border = '2px dashed #4a6bff';
+                highlight.style.pointerEvents = 'none';
+                highlight.style.zIndex = element.zIndex;
+                
+                // Add to DOM
+                elements.draggableElements.appendChild(highlight);
+            }
+        }
+        
+        // Bring element to front
+        function bringToFront(elementId) {
+            // Find element in state
+            let element;
+            if (state.textElements[elementId]) {
+                element = state.textElements[elementId];
+            } else if (state.imageElements[elementId]) {
+                element = state.imageElements[elementId];
+            } else if (state.shapeElements[elementId]) {
+                element = state.shapeElements[elementId];
+            }
+            
+            if (!element) return;
+            
+            // Update z-index
+            element.zIndex = state.zIndexCounter++;
+            
+            // Update DOM element
+            const div = document.getElementById(`element-${elementId}`);
+            if (div) {
+                div.style.zIndex = element.zIndex;
+            }
+        }
+        
+        // Send element to back
+        function sendToBack(elementId) {
+            // Find element in state
+            let element;
+            if (state.textElements[elementId]) {
+                element = state.textElements[elementId];
+            } else if (state.imageElements[elementId]) {
+                element = state.imageElements[elementId];
+            } else if (state.shapeElements[elementId]) {
+                element = state.shapeElements[elementId];
+            }
+            
+            if (!element) return;
+            
+            // Update z-index
+            element.zIndex = --state.zIndexCounter;
+            
+            // Update DOM element
+            const div = document.getElementById(`element-${elementId}`);
+            if (div) {
+                div.style.zIndex = element.zIndex;
+            }
+        }
+        
+        // Cut element
+        function cutElement() {
+            if (!state.selectedElement) return;
+            
+            copyElement();
+            deleteElement();
+        }
+        
+        // Copy element
+        function copyElement() {
+            if (!state.selectedElement) return;
+            
+            state.copiedElement = JSON.parse(JSON.stringify(state.selectedElement));
+            showToast('Element copied', 'success');
+        }
+        
+        // Paste element
+        function pasteElement() {
+            if (!state.copiedElement) {
+                showToast('No element to paste', 'error');
+                return;
+            }
+            
+            // Create a new element with offset position
+            const newElement = JSON.parse(JSON.stringify(state.copiedElement));
+            newElement.id = generateId();
+            
+            // Offset position so it doesn't overlap exactly
+            newElement.data.x += 20;
+            newElement.data.y += 20;
+            
+            // Add to state and create DOM element
+            switch (newElement.type) {
+                case 'text':
+                    state.textElements[newElement.id] = newElement;
+                    break;
+                case 'image':
+                    state.imageElements[newElement.id] = newElement;
+                    break;
+                case 'shape':
+                    state.shapeElements[newElement.id] = newElement;
+                    break;
+            }
+            
+            createDraggableElement(newElement.type, newElement.data);
+            
+            // Select the new element
+            state.selectedElement = newElement;
+            highlightSelectedElement(newElement);
+            
+            showToast('Element pasted', 'success');
+        }
+        
+        // Delete element
+        function deleteElement() {
+            if (!state.selectedElement) return;
+            
+            const elementId = state.selectedElement.id;
+            const elementType = state.selectedElement.type;
+            
+            // Remove from state
+            switch (elementType) {
+                case 'text':
+                    delete state.textElements[elementId];
+                    break;
+                case 'image':
+                    delete state.imageElements[elementId];
+                    break;
+                case 'shape':
+                    delete state.shapeElements[elementId];
+                    break;
+            }
+            
+            // Remove from DOM
+            const div = document.getElementById(`element-${elementId}`);
+            if (div) {
+                div.remove();
+            }
+            
+            // Remove any highlights
+            const highlights = document.querySelectorAll('.element-highlight');
+            highlights.forEach(highlight => highlight.remove());
+            
+            // Redraw canvas if needed
+            if (elementType === 'shape') {
+                redrawCanvas();
+            }
+            
+            state.selectedElement = null;
+            showToast('Element deleted', 'success');
+        }
+        
+        // Format painter
+        function formatPainter() {
+            if (!state.selectedElement) {
+                showToast('Select an element to copy its style', 'error');
+                return;
+            }
+            
+            showToast('Click on an element to apply this style', 'info');
+            state.formatPainterActive = true;
+            state.formatPainterStyle = {
+                color: state.selectedElement.data.color,
+                font: state.selectedElement.data.font,
+                width: state.selectedElement.data.width
+            };
+        }
+        
+        // Show context menu
+        function showContextMenu(e) {
+            e.preventDefault();
+            
+            // Check if we clicked on an element
+            const rect = elements.whiteboard.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const element = findElementAtPosition(x, y);
+            state.selectedElement = element;
+            
+            if (element) {
+                // Position context menu at click position
+                elements.contextMenu.style.display = 'block';
+                elements.contextMenu.style.left = `${e.clientX}px`;
+                elements.contextMenu.style.top = `${e.clientY}px`;
+                
+                // Highlight selected element
+                highlightSelectedElement(element);
+            }
+        }
+        
+        // Hide context menu
+        function hideContextMenu() {
+            elements.contextMenu.style.display = 'none';
+        }
+        
+        // Toggle microphone
+        function toggleMicrophone() {
+            state.isMuted = !state.isMuted;
+            
+            if (state.localStream) {
+                const audioTracks = state.localStream.getAudioTracks();
+                audioTracks.forEach(track => {
+                    track.enabled = !state.isMuted;
                 });
             }
             
-            // ... rest of your existing JavaScript functions ...
+            // Update UI
+            elements.micControl.classList.toggle('active', !state.isMuted);
+            elements.toggleMic.classList.toggle('muted', state.isMuted);
+            elements.muteSelfBtn.classList.toggle('muted', state.isMuted);
+            
+            // Broadcast state to other participants
+            broadcastUserState();
+        }
+        
+        // Toggle video
+        function toggleVideo() {
+            state.isVideoOff = !state.isVideoOff;
+            
+            if (state.localStream) {
+                const videoTracks = state.localStream.getVideoTracks();
+                videoTracks.forEach(track => {
+                    track.enabled = !state.isVideoOff;
+                });
+            }
+            
+            // Update UI
+            elements.videoControl.classList.toggle('active', !state.isVideoOff);
+            elements.toggleVideo.classList.toggle('disabled', state.isVideoOff);
+            elements.videoSelfBtn.classList.toggle('disabled', state.isVideoOff);
+            
+            // Broadcast state to other participants
+            broadcastUserState();
+        }
+        
+        // Toggle screen share
+        function toggleScreenShare() {
+            if (state.isScreenSharing) {
+                stopScreenShare();
+            } else {
+                startScreenShare();
+            }
+        }
+        
+        // Start screen sharing
+        function startScreenShare() {
+            navigator.mediaDevices.getDisplayMedia({ video: true })
+                .then(stream => {
+                    state.screenStream = stream;
+                    state.isScreenSharing = true;
+                    
+                    // Update UI
+                    elements.screenShareControl.classList.add('active');
+                    
+                    // Broadcast to other participants
+                    broadcastUserState();
+                    
+                    // Handle when user stops screen share
+                    stream.getVideoTracks()[0].addEventListener('ended', () => {
+                        stopScreenShare();
+                    });
+                })
+                .catch(err => {
+                    console.error('Error sharing screen:', err);
+                    showToast('Could not share screen', 'error');
+                });
+        }
+        
+        // Stop screen sharing
+        function stopScreenShare() {
+            if (state.screenStream) {
+                state.screenStream.getTracks().forEach(track => track.stop());
+                state.screenStream = null;
+            }
+            
+            state.isScreenSharing = false;
+            
+            // Update UI
+            elements.screenShareControl.classList.remove('active');
+            
+            // Broadcast to other participants
+            broadcastUserState();
+        }
+        
+        // Toggle participants sidebar
+        function toggleParticipants() {
+            state.showSidebar = !state.showSidebar;
+            state.showParticipants = state.showSidebar;
+            
+            if (state.showSidebar) {
+                elements.rightSidebar.classList.remove('collapsed');
+                elements.participantsTab.classList.add('active');
+                elements.videoTab.classList.remove('active');
+                elements.chatTab.classList.remove('active');
+                
+                // Activate participants tab
+                elements.tabBtns.forEach(btn => btn.classList.remove('active'));
+                document.querySelector('.tab-btn[data-tab="participants"]').classList.add('active');
+            } else {
+                elements.rightSidebar.classList.add('collapsed');
+            }
+        }
+        
+        // Raise hand
+        function raiseHand() {
+            state.isHandRaised = !state.isHandRaised;
+            
+            // Update UI
+            elements.raiseHandControl.classList.toggle('active', state.isHandRaised);
+            
+            // Broadcast to other participants
+            broadcastUserState();
+        }
+        
+        // Show reactions
+        function showReactions() {
+            // This would show a popup with reaction options
+            // For now, just send a random reaction
+            const reactions = ['👍', '👎', '😀', '❤️', '🎉', '🤔'];
+            const reaction = reactions[Math.floor(Math.random() * reactions.length)];
+            
+            broadcastReaction(reaction);
+        }
+        
+        // Show recording modal
+        function showRecordingModal() {
+            elements.recordingModal.style.display = 'flex';
+        }
+        
+        // Hide recording modal
+        function hideRecordingModal() {
+            elements.recordingModal.style.display = 'none';
+        }
+        
+        // Start recording
+        function startRecording() {
+            state.isRecording = true;
+            state.recordingStartTime = new Date();
+            
+            // Update UI
+            elements.recordingIndicator.style.display = 'flex';
+            hideRecordingModal();
+            
+            showToast('Recording started', 'success');
+        }
+        
+        // Stop recording
+        function stopRecording() {
+            state.isRecording = false;
+            
+            // Update UI
+            elements.recordingIndicator.style.display = 'none';
+            
+            showToast('Recording stopped', 'success');
+        }
+        
+        // Show settings modal
+        function showSettingsModal() {
+            // Populate device lists
+            populateDeviceLists();
+            
+            // Set current settings
+            elements.autoSaveCheckbox.checked = state.autoSaveInterval !== null;
+            elements.showCursorsCheckbox.checked = state.showCursors;
+            
+            elements.settingsModal.style.display = 'flex';
+        }
+        
+        // Hide settings modal
+        function hideSettingsModal() {
+            elements.settingsModal.style.display = 'none';
+        }
+        
+        // Save settings
+        function saveSettings() {
+            // Auto-save
+            if (elements.autoSaveCheckbox.checked && state.autoSaveInterval === null) {
+                state.autoSaveInterval = setInterval(() => {
+                    saveWhiteboardToLocalStorage();
+                }, 30000);
+            } else if (!elements.autoSaveCheckbox.checked && state.autoSaveInterval !== null) {
+                clearInterval(state.autoSaveInterval);
+                state.autoSaveInterval = null;
+            }
+            
+            // Show cursors
+            state.showCursors = elements.showCursorsCheckbox.checked;
+            if (!state.showCursors) {
+                const cursors = document.querySelectorAll('.remote-cursor');
+                cursors.forEach(cursor => cursor.remove());
+            }
+            
+            // Save other settings...
+            
+            hideSettingsModal();
+            showToast('Settings saved', 'success');
+        }
+        
+        // Populate device lists in settings
+        function populateDeviceLists() {
+            navigator.mediaDevices.enumerateDevices()
+                .then(devices => {
+                    // Clear existing options
+                    elements.audioInputSelect.innerHTML = '';
+                    elements.audioOutputSelect.innerHTML = '';
+                    elements.videoInputSelect.innerHTML = '';
+                    
+                    // Add devices to selects
+                    devices.forEach(device => {
+                        const option = document.createElement('option');
+                        option.value = device.deviceId;
+                        option.text = device.label || `Unknown ${device.kind}`;
+                        
+                        switch (device.kind) {
+                            case 'audioinput':
+                                elements.audioInputSelect.appendChild(option);
+                                break;
+                            case 'audiooutput':
+                                elements.audioOutputSelect.appendChild(option);
+                                break;
+                            case 'videoinput':
+                                elements.videoInputSelect.appendChild(option);
+                                break;
+                        }
+                    });
+                })
+                .catch(err => {
+                    console.error('Error enumerating devices:', err);
+                });
+        }
+        
+        // Show end meeting modal
+        function showEndMeetingModal() {
+            elements.endMeetingModal.style.display = 'flex';
+        }
+        
+        // Hide end meeting modal
+        function hideEndMeetingModal() {
+            elements.endMeetingModal.style.display = 'none';
+        }
+        
+        // End meeting for all participants
+        function endMeeting() {
+            if (state.isHost) {
+                // Broadcast end meeting to all participants
+                if (state.socket) {
+                    state.socket.send(JSON.stringify({
+                        type: 'endMeeting',
+                        userId: state.userId
+                    }));
+                }
+                
+                // Close connections
+                closeConnections();
+                
+                // Save if requested
+                if (elements.saveRecording.checked && state.isRecording) {
+                    stopRecording();
+                    // Save recording logic would go here
+                }
+                
+                if (elements.saveWhiteboard.checked) {
+                    saveWhiteboardToLocalStorage();
+                }
+                
+                // Redirect or show message
+                showToast('Meeting ended', 'success');
+                setTimeout(() => {
+                    window.location.href = window.location.origin;
+                }, 2000);
+            }
+            
+            hideEndMeetingModal();
+        }
+        
+        // Show leave modal
+        function showLeaveModal() {
+            elements.leaveModal.style.display = 'flex';
+        }
+        
+        // Hide leave modal
+        function hideLeaveModal() {
+            elements.leaveModal.style.display = 'none';
+        }
+        
+        // Leave meeting
+        function leaveMeeting() {
+            // Save if requested
+            if (elements.saveBeforeLeave.checked) {
+                saveWhiteboardToLocalStorage();
+            }
+            
+            // Notify other participants
+            if (state.socket) {
+                state.socket.send(JSON.stringify({
+                    type: 'leave',
+                    userId: state.userId
+                }));
+            }
+            
+            // Close connections
+            closeConnections();
+            
+            // Redirect or show message
+            showToast('You left the meeting', 'success');
+            setTimeout(() => {
+                window.location.href = window.location.origin;
+            }, 2000);
+            
+            hideLeaveModal();
+        }
+        
+        // Send chat message
+        function sendChatMessage() {
+            const message = elements.chatInput.value.trim();
+            if (!message) return;
+            
+            // Add to local chat
+            addChatMessage(state.userId, state.username, message, true);
+            
+            // Broadcast to other participants
+            if (state.socket) {
+                state.socket.send(JSON.stringify({
+                    type: 'chat',
+                    userId: state.userId,
+                    username: state.username,
+                    message: message
+                }));
+            }
+            
+            // Clear input
+            elements.chatInput.value = '';
+        }
+        
+        // Add chat message to UI
+        function addChatMessage(userId, username, message, isSent) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${isSent ? 'sent' : 'received'}`;
+            
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'chat-message-info';
+            infoDiv.innerHTML = `<span>${username}</span><span>${new Date().toLocaleTimeString()}</span>`;
+            
+            const textDiv = document.createElement('div');
+            textDiv.textContent = message;
+            
+            messageDiv.appendChild(infoDiv);
+            messageDiv.appendChild(textDiv);
+            
+            elements.chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+            
+            // Add to state
+            state.chatMessages.push({
+                userId: userId,
+                username: username,
+                message: message,
+                timestamp: new Date(),
+                isSent: isSent
+            });
+        }
+        
+        // Broadcast reaction
+        function broadcastReaction(reaction) {
+            if (state.socket) {
+                state.socket.send(JSON.stringify({
+                    type: 'reaction',
+                    userId: state.userId,
+                    reaction: reaction
+                }));
+            }
+            
+            // Show locally
+            showReaction(reaction, state.userId);
+        }
+        
+        // Show reaction on screen
+        function showReaction(reaction, userId) {
+            const reactionDiv = document.createElement('div');
+            reactionDiv.className = 'reaction';
+            reactionDiv.textContent = reaction;
+            reactionDiv.style.position = 'absolute';
+            
+            // Position randomly near the user's video or cursor
+            if (userId === state.userId) {
+                // Local user - position near local video
+                const localVideo = elements.localVideo;
+                const rect = localVideo.getBoundingClientRect();
+                
+                reactionDiv.style.left = `${rect.left + Math.random() * rect.width}px`;
+                reactionDiv.style.top = `${rect.top + Math.random() * rect.height}px`;
+            } else {
+                // Remote user - position near their cursor
+                const cursor = document.querySelector(`.remote-cursor[data-user="${userId}"]`);
+                if (cursor) {
+                    const rect = cursor.getBoundingClientRect();
+                    
+                    reactionDiv.style.left = `${rect.left + Math.random() * 50 - 25}px`;
+                    reactionDiv.style.top = `${rect.top + Math.random() * 50 - 25}px`;
+                } else {
+                    // No cursor - position randomly on screen
+                    reactionDiv.style.left = `${Math.random() * window.innerWidth}px`;
+                    reactionDiv.style.top = `${Math.random() * window.innerHeight}px`;
+                }
+            }
+            
+            document.body.appendChild(reactionDiv);
+            
+            // Animate
+            reactionDiv.style.fontSize = '0px';
+            reactionDiv.style.opacity = '0';
+            
+            setTimeout(() => {
+                reactionDiv.style.transition = 'all 0.5s ease-out';
+                reactionDiv.style.fontSize = '40px';
+                reactionDiv.style.opacity = '1';
+                
+                setTimeout(() => {
+                    reactionDiv.style.opacity = '0';
+                    reactionDiv.style.transform = 'translateY(-50px)';
+                    
+                    setTimeout(() => {
+                        reactionDiv.remove();
+                    }, 500);
+                }, 1000);
+            }, 10);
+        }
+        
+        // Broadcast user state to other participants
+        function broadcastUserState() {
+            if (state.socket) {
+                state.socket.send(JSON.stringify({
+                    type: 'userState',
+                    userId: state.userId,
+                    isMuted: state.isMuted,
+                    isVideoOff: state.isVideoOff,
+                    isScreenSharing: state.isScreenSharing,
+                    isHandRaised: state.isHandRaised
+                }));
+            }
+        }
+        
+        // Initialize WebRTC
+        function initWebRTC() {
+            // Get user media
+            navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+                .then(stream => {
+                    state.localStream = stream;
+                    
+                    // Display local video
+                    elements.localVideo.srcObject = stream;
+                    
+                    // Initialize socket connection
+                    initSocketConnection();
+                })
+                .catch(err => {
+                    console.error('Error accessing media devices:', err);
+                    showToast('Could not access camera or microphone', 'error');
+                    
+                    // Initialize socket connection anyway (audio/video might not be essential)
+                    initSocketConnection();
+                });
+        }
+        
+        // Initialize socket connection
+        function initSocketConnection() {
+            // For demo purposes, we'll simulate a WebSocket connection
+            // In a real app, you would connect to your WebSocket server
+            console.log('Simulating WebSocket connection...');
+            
+            // Simulate receiving messages after a delay
+            setTimeout(() => {
+                // Simulate another user joining
+                const otherUserId = generateId();
+                const otherUsername = 'User' + Math.floor(Math.random() * 1000);
+                
+                state.participants[otherUserId] = {
+                    id: otherUserId,
+                    name: otherUsername,
+                    isMuted: false,
+                    isVideoOff: false,
+                    isScreenSharing: false,
+                    isHandRaised: false
+                };
+                
+                // Update UI
+                updateParticipantsList();
+                updateUserCount();
+                
+                // Simulate receiving a chat message
+                setTimeout(() => {
+                    addChatMessage(otherUserId, otherUsername, 'Hello everyone!', false);
+                }, 1000);
+                
+                // Simulate receiving a drawing
+                setTimeout(() => {
+                    processIncomingDrawing({
+                        type: 'draw',
+                        tool: 'pen',
+                        color: getRandomColor(otherUserId),
+                        width: 3,
+                        fromX: 100,
+                        fromY: 100,
+                        toX: 200,
+                        toY: 200,
+                        userId: otherUserId
+                    });
+                }, 2000);
+            }, 1000);
+        }
+        
+        // Close all connections
+        function closeConnections() {
+            // Close WebSocket connection
+            if (state.socket) {
+                state.socket.close();
+                state.socket = null;
+            }
+            
+            // Stop local stream
+            if (state.localStream) {
+                state.localStream.getTracks().forEach(track => track.stop());
+                state.localStream = null;
+            }
+            
+            // Stop screen share
+            if (state.screenStream) {
+                state.screenStream.getTracks().forEach(track => track.stop());
+                state.screenStream = null;
+            }
+            
+            // Stop recording if active
+            if (state.isRecording) {
+                stopRecording();
+            }
+        }
+        
+        // Update participants list
+        function updateParticipantsList() {
+            const participantsTab = elements.participantsTab;
+            
+            // Clear existing participants (except local user)
+            const existingParticipants = participantsTab.querySelectorAll('.participant:not(:first-child)');
+            existingParticipants.forEach(participant => participant.remove());
+            
+            // Add remote participants
+            for (const userId in state.participants) {
+                if (userId === state.userId) continue;
+                
+                const participant = state.participants[userId];
+                
+                const participantDiv = document.createElement('div');
+                participantDiv.className = 'participant';
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'participant-avatar';
+                avatarDiv.textContent = participant.name.charAt(0).toUpperCase();
+                
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'participant-info';
+                
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'participant-name';
+                nameDiv.textContent = participant.name;
+                
+                const roleDiv = document.createElement('div');
+                roleDiv.className = 'participant-role';
+                roleDiv.textContent = 'Participant';
+                
+                infoDiv.appendChild(nameDiv);
+                infoDiv.appendChild(roleDiv);
+                
+                const controlsDiv = document.createElement('div');
+                controlsDiv.className = 'participant-controls';
+                
+                const muteBtn = document.createElement('button');
+                muteBtn.className = 'control-btn';
+                muteBtn.title = 'Mute';
+                muteBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                if (participant.isMuted) {
+                    muteBtn.classList.add('muted');
+                }
+                
+                const videoBtn = document.createElement('button');
+                videoBtn.className = 'control-btn';
+                videoBtn.title = 'Stop Video';
+                videoBtn.innerHTML = '<i class="fas fa-video"></i>';
+                if (participant.isVideoOff) {
+                    videoBtn.classList.add('disabled');
+                }
+                
+                controlsDiv.appendChild(muteBtn);
+                controlsDiv.appendChild(videoBtn);
+                
+                participantDiv.appendChild(avatarDiv);
+                participantDiv.appendChild(infoDiv);
+                participantDiv.appendChild(controlsDiv);
+                
+                participantsTab.appendChild(participantDiv);
+            }
+        }
+        
+        // Update user count
+        function updateUserCount() {
+            const count = Object.keys(state.participants).length;
+            elements.userCount.textContent = count;
+        }
+        
+        // Show toast notification
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-${getToastIcon(type)}"></i><span>${message}</span>`;
+            
+            elements.toastContainer.appendChild(toast);
+            
+            // Remove after delay
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+        
+        // Get appropriate icon for toast type
+        function getToastIcon(type) {
+            switch (type) {
+                case 'success': return 'check-circle';
+                case 'error': return 'exclamation-circle';
+                case 'warning': return 'exclamation-triangle';
+                default: return 'info-circle';
+            }
+        }
+        
+        // Validate URL
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+        
+        // Generate random ID
+        function generateId() {
+            return Math.random().toString(36).substr(2, 9);
+        }
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initWhiteboard();
+            
+            // Set up keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Undo: Ctrl+Z
+                if (e.ctrlKey && e.key === 'z') {
+                    e.preventDefault();
+                    undo();
+                }
+                
+                // Redo: Ctrl+Y or Ctrl+Shift+Z
+                if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'z')) {
+                    e.preventDefault();
+                    redo();
+                }
+                
+                // Tool shortcuts
+                if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+                    switch (e.key.toLowerCase()) {
+                        case 'v': selectTool('select'); break;
+                        case 'p': selectTool('pen'); break;
+                        case 'h': selectTool('highlighter'); break;
+                        case 'e': selectTool('eraser'); break;
+                        case 't': selectTool('text'); break;
+                        case 's': selectTool('shape'); break;
+                    }
+                }
+            });
         });
     </script>
 </body>
