@@ -5,63 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhiteBoard Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Splash screen styles */
-        .splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #4361ee, #3a0ca3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease-out;
-        }
-        
-        .splash-logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 20px;
-            animation: logoFloat 3s ease-in-out infinite, logoGlow 4s ease-in-out infinite;
-        }
-        
-        .splash-text {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: white;
-            letter-spacing: -0.5px;
-            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            animation: fadeInUp 0.8s ease-out;
-        }
-        
-        .splash-subtext {
-            margin-top: 10px;
-            color: rgba(255, 255, 255, 0.8);
-            animation: fadeInUp 0.8s ease-out 0.3s both;
-        }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Rest of your CSS remains the same */
         :root {
             --primary-color: #4361ee;
-            --secondary-color: #3a0ca3;
-            --accent-color: #f72585;
+            --primary-light: #6c8aff;
+            --primary-dark: #3a0ca3;
+            --secondary-color: #f72585;
+            --secondary-light: #ff579a;
+            --secondary-dark: #d0006e;
+            --accent-color: #4cc9f0;
             --light-color: #f8f9fa;
             --dark-color: #212529;
             --text-color: #2b2d42;
             --white: #ffffff;
             --black: #000000;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            --border-radius: 12px;
+            --gray-light: #e9ecef;
+            --gray-medium: #adb5bd;
+            --gray-dark: #495057;
+            --success-color: #38b000;
+            --warning-color: #ffaa00;
+            --danger-color: #d00000;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+            --transition-fast: all 0.15s ease;
+            --transition-normal: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --transition-slow: all 0.5s ease;
+            --border-radius-sm: 6px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 18px;
             --sidebar-width: 80px;
             --panel-width: 320px;
             --header-height: 60px;
@@ -82,18 +55,66 @@
             color: var(--text-color);
             height: 100vh;
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
-        /* Logo Animation */
+        /* Splash Screen */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .splash-logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            animation: logoFloat 3s ease-in-out infinite, logoGlow 4s ease-in-out infinite;
+        }
+        
+        .splash-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+        
+        .splash-subtext {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+        
+        .splash-loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Animations */
         @keyframes logoFloat {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            50% { transform: translateY(-10px); }
         }
         
         @keyframes logoGlow {
-            0% { filter: drop-shadow(0 0 5px rgba(67, 97, 238, 0.5)); }
-            50% { filter: drop-shadow(0 0 15px rgba(67, 97, 238, 0.8)); }
-            100% { filter: drop-shadow(0 0 5px rgba(67, 97, 238, 0.5)); }
+            0% { filter: drop-shadow(0 0 10px rgba(67, 97, 238, 0.5)); }
+            50% { filter: drop-shadow(0 0 25px rgba(67, 97, 238, 0.8)); }
+            100% { filter: drop-shadow(0 0 10px rgba(67, 97, 238, 0.5)); }
         }
         
         @keyframes gradientFlow {
@@ -102,21 +123,1679 @@
             100% { background-position: 0% 50%; }
         }
         
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes toolPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
         /* Layout */
         .container {
             display: flex;
             flex-direction: column;
             height: 100vh;
             opacity: 0;
-            transition: opacity 0.5s ease-in;
+            transition: opacity 0.5s ease;
         }
         
         .container.loaded {
             opacity: 1;
         }
         
-        /* Rest of your existing CSS remains exactly the same */
-        /* ... [All your existing CSS styles] ... */
+        .header {
+            background-color: var(--white);
+            color: var(--dark-color);
+            padding: 12px 24px;
+            height: var(--header-height);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            z-index: 100;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+        
+        .logo-container:hover {
+            transform: translateY(-2px);
+        }
+        
+        .logo-img {
+            height: 32px;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+        
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .user-count {
+            background-color: var(--primary-color);
+            padding: 6px 16px;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--white);
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+            transition: var(--transition-normal);
+            font-weight: 500;
+        }
+        
+        .user-count:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
+            background-color: var(--primary-light);
+        }
+        
+        .more-menu {
+            position: relative;
+        }
+        
+        .more-btn {
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition-normal);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
+        
+        .more-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: rotate(90deg);
+        }
+        
+        .more-btn .dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            top: 4px;
+            right: 4px;
+            opacity: 0;
+            transition: var(--transition-normal);
+        }
+        
+        .more-btn.has-notification .dot {
+            opacity: 1;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: var(--white);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-lg);
+            padding: 8px 0;
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+            animation: fadeIn 0.2s ease-out;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .dropdown-menu.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 0.9rem;
+            position: relative;
+            color: var(--dark-color);
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--primary-color);
+        }
+        
+        .dropdown-item .badge {
+            position: absolute;
+            right: 12px;
+            background-color: var(--secondary-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background-color: rgba(0, 0, 0, 0.1);
+            margin: 8px 0;
+        }
+        
+        .main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            height: calc(100vh - var(--header-height) - var(--footer-height));
+        }
+        
+        .toolbar {
+            width: var(--sidebar-width);
+            background-color: var(--white);
+            padding: 16px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            overflow-y: auto;
+        }
+        
+        .tool {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--dark-color);
+            transition: var(--transition-normal);
+            position: relative;
+            background-color: transparent;
+            border: none;
+        }
+        
+        .tool:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .tool.active {
+            background-color: var(--primary-color);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+        
+        .tool.selected {
+            animation: toolPulse 0.5s ease;
+        }
+        
+        .tool i {
+            font-size: 1.2rem;
+        }
+        
+        .tool-tip {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--dark-color);
+            color: var(--white);
+            padding: 6px 12px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.8rem;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            margin-left: 12px;
+            z-index: 100;
+            font-weight: 500;
+        }
+        
+        .tool:hover .tool-tip {
+            opacity: 1;
+        }
+        
+        .tool-divider {
+            width: 60%;
+            height: 1px;
+            background-color: rgba(0, 0, 0, 0.1);
+            margin: 8px 0;
+        }
+        
+        .color-picker-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .color-picker-label {
+            color: var(--dark-color);
+            font-size: 0.7rem;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        
+        .color-picker {
+            width: 36px;
+            height: 36px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            padding: 0;
+            background: none;
+            transition: var(--transition-normal);
+            overflow: hidden;
+        }
+        
+        .color-picker:hover {
+            transform: scale(1.1);
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .line-width-control {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .line-width-label {
+            color: var(--dark-color);
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .line-width-slider {
+            width: 80%;
+            cursor: pointer;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--gray-light);
+            outline: none;
+            transition: var(--transition-normal);
+        }
+        
+        .line-width-slider:hover {
+            background: var(--gray-medium);
+        }
+        
+        .line-width-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .line-width-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: var(--primary-dark);
+        }
+        
+        .whiteboard-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--white);
+            background-image: 
+                linear-gradient(var(--gray-light) 1px, transparent 1px),
+                linear-gradient(90deg, var(--gray-light) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        #whiteboard {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: crosshair;
+        }
+        
+        .cursor {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            border: 2px solid var(--white);
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+            transition: transform 0.1s ease;
+        }
+        
+        .cursor-name {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 12px;
+            text-shadow: 0 0 2px black;
+            padding: 2px 6px;
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .right-panel {
+            width: var(--panel-width);
+            display: flex;
+            flex-direction: column;
+            background-color: var(--white);
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.05);
+            transition: width 0.3s ease;
+            z-index: 10;
+            border-left: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .panel-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--dark-color);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .panel-tab.active {
+            color: var(--primary-color);
+        }
+        
+        .panel-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .panel-tab .badge {
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            background-color: var(--secondary-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            display: none;
+            position: relative;
+        }
+        
+        .panel-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-list-container {
+            padding: 16px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .user-list-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+        
+        .user-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 10px;
+            border-radius: var(--border-radius-md);
+            transition: background-color 0.2s;
+            position: relative;
+        }
+        
+        .user-item.host::after {
+            content: 'Host';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        .user-item:hover {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            position: relative;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .user-avatar::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            border: 2px solid white;
+        }
+        
+        .user-name {
+            flex: 1;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .user-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .user-control {
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition-fast);
+        }
+        
+        .user-control:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        
+        .media-container {
+            padding: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .media-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .media-btn {
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition-normal);
+            flex: 1;
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+            gap: 8px;
+        }
+        
+        .media-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
+        }
+        
+        .media-btn.off {
+            background-color: var(--secondary-color);
+            box-shadow: 0 2px 8px rgba(247, 37, 133, 0.3);
+        }
+        
+        .media-btn.off:hover {
+            box-shadow: 0 4px 12px rgba(247, 37, 133, 0.4);
+        }
+        
+        .video-container {
+            background-color: #000;
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            margin-bottom: 16px;
+            position: relative;
+            min-height: 180px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        #localVideo, #remoteVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            background-color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .video-placeholder i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .video-placeholder-text {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .video-label {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .video-controls {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .video-control {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        
+        .video-control:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+        
+        .chat-container {
+            padding: 16px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .chat-message {
+            margin-bottom: 0;
+            padding: 8px 12px;
+            border-radius: var(--border-radius-md);
+            background-color: rgba(0, 0, 0, 0.03);
+            max-width: 80%;
+            transition: var(--transition-fast);
+        }
+        
+        .chat-message.self {
+            margin-left: auto;
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .chat-message.other {
+            margin-right: auto;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-message.assistant {
+            background-color: #f0f7ff;
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        .chat-message-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+        
+        .chat-message-sender {
+            font-weight: 600;
+        }
+        
+        .chat-message-time {
+            opacity: 0.7;
+        }
+        
+        .chat-message-content {
+            word-wrap: break-word;
+            font-size: 0.9rem;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius-md);
+            font-size: 0.9rem;
+            resize: none;
+            height: 40px;
+            max-height: 120px;
+            transition: var(--transition-normal);
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+        
+        .chat-send {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius-md);
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chat-send:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            background-color: var(--white);
+            color: var(--dark-color);
+            padding: 12px 24px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            height: var(--footer-height);
+            gap: 20px;
+            position: relative;
+        }
+        
+        .footer-info {
+            position: absolute;
+            left: 24px;
+            color: var(--gray-dark);
+        }
+        
+        .board-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .board-btn {
+            padding: 6px 12px;
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--dark-color);
+            border: none;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .board-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .board-btn.primary {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+        }
+        
+        .board-btn.primary:hover {
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
+        }
+        
+        #boardId {
+            font-family: monospace;
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .whiteboard-pages {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+        }
+        
+        .page-control {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition-fast);
+        }
+        
+        .page-control:hover {
+            transform: scale(1.2);
+        }
+        
+        .page-count {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: var(--border-radius-md);
+            z-index: 1000;
+            display: none;
+            max-width: 80%;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            animation: fadeIn 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .toggle-panel {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--primary-color);
+            color: var(--white);
+            width: 24px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px 0 0 8px;
+            cursor: pointer;
+            z-index: 20;
+            transition: var(--transition-normal);
+            box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toggle-panel:hover {
+            width: 28px;
+            background-color: var(--primary-dark);
+        }
+        
+        .panel-collapsed .right-panel {
+            width: 0;
+            overflow: hidden;
+        }
+        
+        .panel-collapsed .toggle-panel {
+            right: -24px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .toolbar {
+                width: 60px;
+            }
+            
+            .right-panel {
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                background-color: var(--white);
+                z-index: 50;
+                width: 280px;
+            }
+            
+            .panel-collapsed .right-panel {
+                width: 0;
+            }
+            
+            .header {
+                padding: 10px 16px;
+            }
+            
+            .logo-text {
+                font-size: 1.2rem;
+            }
+            
+            .user-count {
+                padding: 4px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .footer {
+                padding: 8px 16px;
+                gap: 8px;
+            }
+            
+            .footer-info {
+                display: none;
+            }
+        }
+        
+        /* Drawing tools specific styles */
+        .line-width-control {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .line-width-label {
+            color: var(--dark-color);
+            font-size: 0.7rem;
+        }
+        
+        /* Loading animation */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        .loading-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        /* Shape preview styles */
+        .shape-preview {
+            position: absolute;
+            pointer-events: none;
+            z-index: 90;
+        }
+        
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-content {
+            background-color: var(--white);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition-normal);
+        }
+        
+        .modal-close:hover {
+            color: var(--secondary-color);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 16px;
+        }
+        
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius-md);
+            font-size: 0.9rem;
+            transition: var(--transition-normal);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border-radius: var(--border-radius-md);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--dark-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .invite-link {
+            display: flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: var(--border-radius-md);
+            padding: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .invite-link input {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 0 8px;
+            font-size: 0.9rem;
+        }
+        
+        .invite-link button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition-fast);
+        }
+        
+        .invite-link button:hover {
+            color: var(--primary-dark);
+            transform: scale(1.1);
+        }
+        
+        /* Lobby styles */
+        .lobby-container {
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .lobby-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+        }
+        
+        .lobby-text {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            color: var(--dark-color);
+        }
+        
+        /* Export options */
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .export-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            border-radius: var(--border-radius-md);
+            background-color: rgba(0, 0, 0, 0.03);
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+        
+        .export-option:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .export-option i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+        
+        .export-option span {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* Background options */
+        .background-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .background-option {
+            height: 80px;
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition-normal);
+        }
+        
+        .background-option:hover {
+            transform: scale(1.05);
+        }
+        
+        .background-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .background-option.active::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        
+        /* Pinned content */
+        .pinned-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 500;
+            max-width: 80%;
+            max-height: 80vh;
+            background-color: white;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-lg);
+            display: none;
+        }
+        
+        .pinned-content.show {
+            display: block;
+        }
+        
+        .pinned-header {
+            padding: 12px 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .pinned-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .pinned-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .pinned-body {
+            padding: 16px;
+        }
+        
+        /* Confirmation dialog */
+        .confirmation-dialog {
+            text-align: center;
+            padding: 16px;
+        }
+        
+        .confirmation-icon {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-bottom: 16px;
+        }
+        
+        .confirmation-text {
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Whiteboard background options */
+        .whiteboard-bg-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .whiteboard-bg {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition-normal);
+        }
+        
+        .whiteboard-bg:hover {
+            transform: scale(1.05);
+        }
+        
+        .whiteboard-bg.active {
+            border-color: var(--primary-color);
+        }
+        
+        .whiteboard-bg.white {
+            background-color: var(--white);
+        }
+        
+        .whiteboard-bg.black {
+            background-color: var(--black);
+        }
+        
+        .whiteboard-bg.green {
+            background-color: #e6f7e6;
+        }
+        
+        .whiteboard-bg.blue {
+            background-color: #e6f0f7;
+        }
+        
+        /* Floating image controls */
+        .floating-image {
+            position: absolute;
+            cursor: move;
+            z-index: 50;
+            border: 2px dashed rgba(0, 0, 0, 0.2);
+            transition: border 0.2s;
+            resize: both;
+            overflow: hidden;
+        }
+        
+        .floating-image:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .image-controls {
+            position: absolute;
+            top: -30px;
+            right: 0;
+            background-color: var(--white);
+            border-radius: 4px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            z-index: 60;
+        }
+        
+        .image-control {
+            padding: 4px;
+            cursor: pointer;
+            color: var(--dark-color);
+        }
+        
+        .image-control:hover {
+            color: var(--primary-color);
+        }
+
+        /* Text element */
+        .text-element {
+            position: absolute;
+            cursor: move;
+            z-index: 50;
+            padding: 8px;
+            resize: both;
+            overflow: hidden;
+            min-width: 50px;
+            min-height: 20px;
+            outline: none;
+            border: 1px dashed rgba(0, 0, 0, 0.2);
+            font-family: inherit;
+            font-size: 14px;
+        }
+        
+        .text-element:hover {
+            border-color: var(--primary-color);
+        }
+        
+        /* Sticky note */
+        .sticky-note {
+            position: absolute;
+            cursor: move;
+            z-index: 50;
+            padding: 10px;
+            resize: both;
+            overflow: hidden;
+            min-width: 100px;
+            min-height: 100px;
+            box-shadow: var(--shadow-md);
+            background-color: #ffeb3b;
+        }
+        
+        .sticky-note-content {
+            width: 100%;
+            height: 100%;
+            outline: none;
+            resize: none;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+        }
+        
+        /* Leave session image */
+        .leave-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 10000;
+            display: none;
+        }
+        
+        /* Footer buttons */
+        .footer-btn {
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition-normal);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .footer-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .footer-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Reaction menu */
+        .reaction-menu {
+            position: absolute;
+            bottom: 60px;
+            right: 20px;
+            background-color: white;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-lg);
+            padding: 8px;
+            display: none;
+            z-index: 100;
+        }
+        
+        .reaction-menu.show {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .reaction-btn {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        
+        .reaction-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        /* Assistant prompt styles */
+        .assistant-prompt {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background-color: var(--white);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-lg);
+            padding: 12px;
+            width: 300px;
+            z-index: 100;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .assistant-prompt.show {
+            display: block;
+        }
+        
+        .assistant-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .assistant-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .assistant-close {
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .assistant-message {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .assistant-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .assistant-option {
+            padding: 8px 12px;
+            background-color: rgba(0, 0, 0, 0.03);
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 0.9rem;
+        }
+        
+        .assistant-option:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+        
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--gray-medium);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
     </style>
 </head>
 <body>
@@ -124,199 +1803,1845 @@
     <div class="splash-screen" id="splashScreen">
         <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Pro Logo" class="splash-logo">
         <div class="splash-text">WhiteBoard Pro</div>
-        <div class="splash-subtext">Collaborative Whiteboard Solution</div>
+        <div class="splash-subtext">Collaborative whiteboarding made simple</div>
+        <div class="splash-loader"></div>
     </div>
     
-    <!-- Main App Content (hidden initially) -->
+    <img src="https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg" class="leave-image" id="leaveImage">
+    
     <div class="container" id="appContainer">
-        <!-- Your existing HTML structure -->
-        <!-- ... [All your existing HTML] ... -->
+        <div class="header">
+            <div class="logo-container">
+                <img src="https://sigmawire.net/i/04/qh5l0U.png" alt="WhiteBoard Pro Logo" class="logo-img">
+                <div class="logo-text">WhiteBoard Pro</div>
+            </div>
+            <div class="header-controls">
+                <div class="user-count">
+                    <i class="fas fa-users"></i>
+                    <span id="userCount">0</span>
+                </div>
+                <div class="more-menu">
+                    <button class="more-btn" id="moreBtn">
+                        <i class="fas fa-ellipsis-v"></i>
+                        <span class="dot"></span>
+                    </button>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-item" id="inviteOption">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Invite People</span>
+                        </div>
+                        <div class="dropdown-item" id="participantsOption">
+                            <i class="fas fa-users"></i>
+                            <span>Participants</span>
+                            <span class="badge" id="participantsBadge">0</span>
+                        </div>
+                        <div class="dropdown-item" id="chatOption">
+                            <i class="fas fa-comment"></i>
+                            <span>Chat</span>
+                            <span class="badge" id="chatBadge">0</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" id="settingsOption">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </div>
+                        <div class="dropdown-item" id="exportOption">
+                            <i class="fas fa-download"></i>
+                            <span>Export</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" id="leaveOption">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Leave Session</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main">
+            <div class="toolbar">
+                <div class="tool active" data-tool="pencil">
+                    <i class="fas fa-pencil-alt"></i>
+                    <span class="tool-tip">Pencil</span>
+                </div>
+                <div class="tool" data-tool="line">
+                    <i class="fas fa-slash"></i>
+                    <span class="tool-tip">Line</span>
+                </div>
+                <div class="tool" data-tool="rectangle">
+                    <i class="far fa-square"></i>
+                    <span class="tool-tip">Rectangle</span>
+                </div>
+                <div class="tool" data-tool="circle">
+                    <i class="far fa-circle"></i>
+                    <span class="tool-tip">Circle</span>
+                </div>
+                <div class="tool" data-tool="arrow">
+                    <i class="fas fa-arrow-right"></i>
+                    <span class="tool-tip">Arrow</span>
+                </div>
+                <div class="tool" data-tool="text">
+                    <i class="fas fa-font"></i>
+                    <span class="tool-tip">Text</span>
+                </div>
+                <div class="tool" data-tool="eraser">
+                    <i class="fas fa-eraser"></i>
+                    <span class="tool-tip">Eraser</span>
+                </div>
+                <div class="tool-divider"></div>
+                <div class="tool" data-tool="undo">
+                    <i class="fas fa-undo"></i>
+                    <span class="tool-tip">Undo (Ctrl+Z)</span>
+                </div>
+                <div class="tool" data-tool="redo">
+                    <i class="fas fa-redo"></i>
+                    <span class="tool-tip">Redo (Ctrl+Y)</span>
+                </div>
+                <div class="tool" data-tool="clear">
+                    <i class="fas fa-trash-alt"></i>
+                    <span class="tool-tip">Clear Board</span>
+                </div>
+                <div class="tool-divider"></div>
+                <div class="tool" data-tool="image">
+                    <i class="fas fa-image"></i>
+                    <span class="tool-tip">Insert Image</span>
+                </div>
+                <div class="tool" data-tool="sticky">
+                    <i class="fas fa-sticky-note"></i>
+                    <span class="tool-tip">Sticky Note</span>
+                </div>
+                <div class="tool-divider"></div>
+                <div class="color-picker-container">
+                    <div class="color-picker-label">Color</div>
+                    <input type="color" class="color-picker" id="colorPicker" value="#000000">
+                </div>
+                <div class="line-width-control">
+                    <div class="line-width-label">Size</div>
+                    <input type="range" class="line-width-slider" id="lineWidth" min="1" max="20" value="3">
+                </div>
+                <div class="color-picker-container">
+                    <div class="color-picker-label">Fill</div>
+                    <input type="color" class="color-picker" id="fillPicker" value="#00000000">
+                </div>
+                <div class="tool-divider"></div>
+                <div class="whiteboard-bg-options">
+                    <div class="whiteboard-bg white active" data-bg="white"></div>
+                    <div class="whiteboard-bg black" data-bg="black"></div>
+                    <div class="whiteboard-bg green" data-bg="green"></div>
+                    <div class="whiteboard-bg blue" data-bg="blue"></div>
+                </div>
+            </div>
+            
+            <div class="whiteboard-container">
+                <canvas id="whiteboard"></canvas>
+                <div id="shapePreview" class="shape-preview"></div>
+                <div class="whiteboard-pages">
+                    <button class="page-control" id="prevPage">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="page-count" id="pageCount">1/1</span>
+                    <button class="page-control" id="nextPage">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button class="page-control" id="addPage">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="toggle-panel" id="togglePanel">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            
+            <div class="right-panel">
+                <div class="panel-tabs">
+                    <div class="panel-tab active" data-tab="participants">
+                        <i class="fas fa-users"></i> Participants
+                        <span class="badge" id="participantsTabBadge">0</span>
+                    </div>
+                    <div class="panel-tab" data-tab="chat">
+                        <i class="fas fa-comment"></i> Chat
+                        <span class="badge" id="chatTabBadge">0</span>
+                    </div>
+                </div>
+                
+                <div class="panel-content active" data-content="participants">
+                    <div class="user-list-container">
+                        <div id="userList">
+                            <!-- Users will be added here dynamically -->
+                        </div>
+                    </div>
+                    <div class="media-container">
+                        <div class="media-controls">
+                            <button id="micBtn" class="media-btn">
+                                <i class="fas fa-microphone"></i>
+                                <span>Mic</span>
+                            </button>
+                            <button id="videoBtn" class="media-btn">
+                                <i class="fas fa-video"></i>
+                                <span>Video</span>
+                            </button>
+                        </div>
+                        
+                        <div class="video-container">
+                            <video id="localVideo" autoplay muted playsinline></video>
+                            <div class="video-label" id="localVideoLabel">You</div>
+                            <div class="video-controls">
+                                <button class="video-control" id="pinLocal">
+                                    <i class="fas fa-thumbtack"></i>
+                                </button>
+                                <button class="video-control" id="backgroundLocal">
+                                    <i class="fas fa-image"></i>
+                                </button>
+                            </div>
+                            <div class="video-placeholder">
+                                <i class="fas fa-user"></i>
+                                <div class="video-placeholder-text" id="localVideoPlaceholderText">Your video will appear here</div>
+                            </div>
+                        </div>
+                        
+                        <div class="video-container">
+                            <video id="remoteVideo" autoplay playsinline></video>
+                            <div class="video-label" id="remoteVideoLabel">Participant</div>
+                            <div class="video-controls">
+                                <button class="video-control" id="pinRemote">
+                                    <i class="fas fa-thumbtack"></i>
+                                </button>
+                            </div>
+                            <div class="video-placeholder">
+                                <i class="fas fa-users"></i>
+                                <div class="video-placeholder-text" id="remoteVideoPlaceholderText">Other participant's video will appear here</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-content" data-content="chat">
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <!-- Chat messages will appear here -->
+                        </div>
+                        <div class="chat-input-container">
+                            <textarea class="chat-input" id="chatInput" placeholder="Type a message..."></textarea>
+                            <button class="chat-send" id="chatSend">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-info">
+                <span>Made by Ritesh Rathod</span>
+            </div>
+            <div class="board-actions">
+                <button class="footer-btn" id="micFooterBtn" title="Microphone">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button class="footer-btn" id="videoFooterBtn" title="Video">
+                    <i class="fas fa-video"></i>
+                </button>
+                <button class="footer-btn" id="participantsFooterBtn" title="Participants">
+                    <i class="fas fa-users"></i>
+                </button>
+                <button class="footer-btn" id="screenShareFooterBtn" title="Share Screen">
+                    <i class="fas fa-desktop"></i>
+                </button>
+                <button class="footer-btn" id="recordFooterBtn" title="Record">
+                    <i class="fas fa-circle"></i>
+                </button>
+                <button class="footer-btn" id="raiseHandFooterBtn" title="Raise Hand">
+                    <i class="fas fa-hand-paper"></i>
+                </button>
+                <button class="footer-btn" id="reactionFooterBtn" title="Reactions">
+                    <i class="fas fa-smile"></i>
+                </button>
+                <button class="footer-btn" id="moreFooterBtn" title="More">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Assistant Prompt -->
+    <div class="assistant-prompt" id="assistantPrompt">
+        <div class="assistant-header">
+            <div class="assistant-title">
+                <i class="fas fa-robot"></i>
+                <span>WhiteBoard Assistant</span>
+            </div>
+            <button class="assistant-close" id="assistantClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="assistant-message" id="assistantMessage">
+            Hi there! How can I help you with your whiteboard session today?
+        </div>
+        <div class="assistant-options" id="assistantOptions">
+            <div class="assistant-option" data-prompt="help">Need help getting started?</div>
+            <div class="assistant-option" data-prompt="tools">Explain the drawing tools</div>
+            <div class="assistant-option" data-prompt="collaborate">How to collaborate</div>
+            <div class="assistant-option" data-prompt="export">How to export my work</div>
+        </div>
+        <div class="typing-indicator" id="typingIndicator" style="display: none;">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+    </div>
+    
+    <!-- Reaction menu -->
+    <div class="reaction-menu" id="reactionMenu">
+        <div class="reaction-btn">👍</div>
+        <div class="reaction-btn">👎</div>
+        <div class="reaction-btn">👏</div>
+        <div class="reaction-btn">😂</div>
+        <div class="reaction-btn">😍</div>
+        <div class="reaction-btn">😮</div>
+    </div>
+    
+    <!-- More menu for footer -->
+    <div class="dropdown-menu" id="footerDropdownMenu" style="bottom: 70px; right: 20px; top: auto; left: auto;">
+        <div class="dropdown-item" id="footerChatOption">
+            <i class="fas fa-comment"></i>
+            <span>Chat</span>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-item" id="footerSettingsOption">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </div>
+        <div class="dropdown-item" id="footerExportOption">
+            <i class="fas fa-download"></i>
+            <span>Export</span>
+        </div>
+        <div class="dropdown-divider"></div>
+        <div class="dropdown-item" id="footerLeaveOption">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Leave Session</span>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <div class="modal" id="inviteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Invite Participants</div>
+                <button class="modal-close" id="inviteModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Invite Link</label>
+                    <div class="invite-link">
+                        <input type="text" id="inviteLinkInput" readonly>
+                        <button id="copyInviteLink">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Or share this code</label>
+                    <input type="text" class="form-control" id="inviteCodeInput" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Session Settings</label>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="requireApproval" checked>
+                            <span>Require approval to join</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="allowDrawing" checked>
+                            <span>Allow participants to draw</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="inviteModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="inviteModalSend">Send Invites</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Export Whiteboard</div>
+                <button class="modal-close" id="exportModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Select Pages</label>
+                    <select class="form-control" id="exportPages">
+                        <option value="current">Current Page Only</option>
+                        <option value="all">All Pages</option>
+                    </select>
+                </div>
+                <div class="export-options">
+                    <div class="export-option" id="exportPNG">
+                        <i class="fas fa-file-image"></i>
+                        <span>PNG Image</span>
+                    </div>
+                    <div class="export-option" id="exportJPG">
+                        <i class="fas fa-file-image"></i>
+                        <span>JPG Image</span>
+                    </div>
+                    <div class="export-option" id="exportPDF">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>PDF Document</span>
+                    </div>
+                    <div class="export-option" id="exportSVG">
+                        <i class="fas fa-file-code"></i>
+                        <span>SVG Vector</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="exportModalCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Settings</div>
+                <button class="modal-close" id="settingsModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Your Name</label>
+                    <input type="text" class="form-control" id="userNameInput">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Video Background</label>
+                    <div class="background-options">
+                        <div class="background-option active" data-bg="none">
+                            <div style="width:100%;height:100%;background:#333;display:flex;align-items:center;justify-content:center;color:white;">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        <div class="background-option" data-bg="blur">
+                            <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Blur">
+                        </div>
+                        <div class="background-option" data-bg="office">
+                            <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Office">
+                        </div>
+                        <div class="background-option" data-bg="nature">
+                            <img src="https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Nature">
+                        </div>
+                        <div class="background-option" data-bg="abstract">
+                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Abstract">
+                        </div>
+                        <div class="background-option" data-bg="custom">
+                            <div style="width:100%;height:100%;background:#eee;display:flex;align-items:center;justify-content:center;">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Whiteboard Grid</label>
+                    <select class="form-control" id="gridStyle">
+                        <option value="dots">Dots</option>
+                        <option value="lines" selected>Lines</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="settingsModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="settingsModalSave">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="lobbyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Waiting for Approval</div>
+            </div>
+            <div class="modal-body">
+                <div class="lobby-container">
+                    <div class="lobby-icon">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="lobby-text">
+                        You're in the waiting room. The host will let you in shortly.
+                    </div>
+                    <button class="btn btn-secondary" id="cancelJoin">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="confirmation-dialog">
+                    <div class="confirmation-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="confirmation-text" id="confirmationText">
+                        Are you sure you want to leave this session?
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button class="btn btn-secondary" id="confirmCancel">Cancel</button>
+                        <button class="btn btn-primary" id="confirmAction">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Insert Image</div>
+                <button class="modal-close" id="imageModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="text" class="form-control" id="imageUrl" placeholder="https://example.com/image.jpg">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Or upload from device</label>
+                    <input type="file" class="form-control" id="imageUpload" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Preview</label>
+                    <div style="border: 1px dashed #ccc; padding: 10px; text-align: center; min-height: 100px;">
+                        <img id="imagePreview" style="max-width: 100%; max-height: 200px; display: none;">
+                        <div id="imagePlaceholder" style="color: #666;">
+                            <i class="fas fa-image" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                            <div>Image preview will appear here</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="imageModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="imageModalInsert">Insert Image</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="stickyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Add Sticky Note</div>
+                <button class="modal-close" id="stickyModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Note Content</label>
+                    <textarea class="form-control" id="stickyContent" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Color</label>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="color-option" data-color="#ffeb3b" style="background-color: #ffeb3b; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        <div class="color-option" data-color="#ff9800" style="background-color: #ff9800; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        <div class="color-option" data-color="#f44336" style="background-color: #f44336; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        <div class="color-option" data-color="#4caf50" style="background-color: #4caf50; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        <div class="color-option" data-color="#2196f3" style="background-color: #2196f3; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                        <div class="color-option" data-color="#9c27b0" style="background-color: #9c27b0; width: 30px; height: 30px; border-radius: 4px; cursor: pointer;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="stickyModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="stickyModalAdd">Add Note</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="pinned-content" id="pinnedContent">
+        <div class="pinned-header">
+            <div class="pinned-title" id="pinnedTitle">Pinned Content</div>
+            <button class="pinned-close" id="pinnedClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="pinned-body" id="pinnedBody">
+            <!-- Pinned content will be inserted here -->
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+    
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Connecting to board...</div>
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <script>
-        // Preload critical assets
-        function preloadAssets() {
-            const assets = [
-                'https://sigmawire.net/i/04/qh5l0U.png',
-                'https://cdn.corenexis.com/view/?img=d/ap16/vrIG9Z.jpg',
-                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2',
-                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-regular-400.woff2',
-                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2'
-            ];
-            
-            assets.forEach(asset => {
-                const link = document.createElement('link');
-                link.rel = 'preload';
-                link.as = asset.includes('.png') ? 'image' : 'font';
-                link.href = asset;
-                link.crossOrigin = 'anonymous';
-                document.head.appendChild(link);
-            });
-        }
-        
-        // Show splash screen for 1.5 seconds then load main app
+        // Show splash screen first
         document.addEventListener('DOMContentLoaded', () => {
-            preloadAssets();
-            
             setTimeout(() => {
-                const splashScreen = document.getElementById('splashScreen');
-                const appContainer = document.getElementById('appContainer');
-                
-                splashScreen.style.opacity = '0';
-                
+                document.getElementById('splashScreen').style.opacity = '0';
                 setTimeout(() => {
-                    splashScreen.style.display = 'none';
-                    appContainer.classList.add('loaded');
+                    document.getElementById('splashScreen').style.display = 'none';
+                    document.getElementById('appContainer').classList.add('loaded');
                     
-                    // Initialize your app here
-                    initializeApp();
+                    // Show assistant welcome message after a delay
+                    setTimeout(() => {
+                        showAssistantPrompt("Welcome to WhiteBoard Pro! I'm your assistant. How can I help you today?");
+                    }, 1500);
                 }, 500);
-            }, 1500);
+            }, 1500); // Show splash for 1.5 seconds
+        });
+
+        // Initialize Socket.io connection
+        const socket = io('https://whiteboard-server.example.com', {
+            transports: ['websocket'],
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000
         });
         
-        // Optimized app initialization
-        function initializeApp() {
-            // Initialize Socket.io connection with faster timeout
-            const socket = io('https://whiteboard-server.example.com', {
-                transports: ['websocket'],
-                reconnection: true,
-                reconnectionAttempts: 5,
-                reconnectionDelay: 1000,
-                reconnectionDelayMax: 5000,
-                timeout: 3000, // Faster timeout
-                pingTimeout: 2000,
-                pingInterval: 5000
-            });
+        // Generate user ID and color
+        const userId = generateUserId();
+        const userColor = generateRandomColor();
+        let userName = `User${Math.floor(Math.random() * 1000)}`;
+        let boardId = '';
+        
+        // DOM Elements
+        const whiteboard = document.getElementById('whiteboard');
+        const ctx = whiteboard.getContext('2d');
+        const tools = document.querySelectorAll('.tool');
+        const colorPicker = document.getElementById('colorPicker');
+        const fillPicker = document.getElementById('fillPicker');
+        const lineWidthSlider = document.getElementById('lineWidth');
+        const userList = document.getElementById('userList');
+        const userCount = document.getElementById('userCount');
+        const boardIdElement = document.getElementById('boardId');
+        const notification = document.getElementById('notification');
+        const micBtn = document.getElementById('micBtn');
+        const videoBtn = document.getElementById('videoBtn');
+        const screenShareBtn = document.getElementById('screenShareBtn');
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const remoteVideoLabel = document.getElementById('remoteVideoLabel');
+        const localVideoLabel = document.getElementById('localVideoLabel');
+        const localVideoPlaceholder = localVideo.nextElementSibling;
+        
+        // Assistant elements
+        const assistantPrompt = document.getElementById('assistantPrompt');
+        const assistantMessage = document.getElementById('assistantMessage');
+        const assistantOptions = document.getElementById('assistantOptions');
+        const typingIndicator = document.getElementById('typingIndicator');
+        
+        // Whiteboard state
+        let currentTool = 'pencil';
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let currentColor = '#000000';
+        let currentFill = 'transparent';
+        let currentLineWidth = 3;
+        let currentPage = 1;
+        let totalPages = 1;
+        let pages = {};
+        let undoStack = [];
+        let redoStack = [];
+        
+        // Initialize whiteboard
+        function initWhiteboard() {
+            // Set canvas size
+            resizeCanvas();
             
-            // Generate user ID and color
-            const userId = generateUserId();
-            const userColor = generateRandomColor();
-            let userName = `User${Math.floor(Math.random() * 1000)}`;
-            let boardId = '';
+            // Set initial background
+            setWhiteboardBackground('white');
             
-            // DOM Elements
-            const whiteboard = document.getElementById('whiteboard');
-            const ctx = whiteboard.getContext('2d', { willReadFrequently: true });
+            // Load first page
+            pages[currentPage] = { elements: [] };
             
-            // Enhanced drawing performance
-            let lastX = 0;
-            let lastY = 0;
-            let isDrawing = false;
-            let currentTool = 'pencil';
-            let currentColor = '#000000';
-            let currentFill = 'transparent';
-            let currentLineWidth = 3;
-            
-            // Optimized event listeners
-            function setupEventListeners() {
-                // Use passive listeners where possible
-                whiteboard.addEventListener('mousedown', startDrawing, { passive: true });
-                whiteboard.addEventListener('mousemove', draw, { passive: true });
-                whiteboard.addEventListener('mouseup', stopDrawing);
-                whiteboard.addEventListener('mouseout', stopDrawing);
-                
-                // Touch support with passive listeners
-                whiteboard.addEventListener('touchstart', handleTouchStart, { passive: true });
-                whiteboard.addEventListener('touchmove', handleTouchMove, { passive: true });
-                whiteboard.addEventListener('touchend', stopDrawing);
-                
-                // Tool selection
-                document.querySelectorAll('.tool').forEach(tool => {
-                    tool.addEventListener('click', selectTool);
-                });
-                
-                // Color pickers
-                document.getElementById('colorPicker').addEventListener('change', updateColor);
-                document.getElementById('fillPicker').addEventListener('change', updateFill);
-                document.getElementById('lineWidth').addEventListener('input', updateLineWidth);
-            }
-            
-            // Optimized drawing functions
-            function startDrawing(e) {
-                isDrawing = true;
-                [lastX, lastY] = getCoordinates(e);
-                
-                if (currentTool === 'text') {
-                    createTextElement(lastX, lastY);
-                    isDrawing = false;
-                    return;
-                }
-                
-                // Begin path for smoother drawing
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-            }
-            
-            function draw(e) {
-                if (!isDrawing) return;
-                
-                const [x, y] = getCoordinates(e);
-                
-                switch(currentTool) {
-                    case 'pencil':
-                        ctx.lineTo(x, y);
-                        ctx.stroke();
-                        break;
-                    case 'eraser':
-                        ctx.save();
-                        ctx.globalCompositeOperation = 'destination-out';
-                        ctx.lineTo(x, y);
-                        ctx.stroke();
-                        ctx.restore();
-                        break;
-                    // Other tools...
-                }
-                
-                lastX = x;
-                lastY = y;
-            }
-            
-            // Helper functions
-            function getCoordinates(e) {
-                const rect = whiteboard.getBoundingClientRect();
-                let x, y;
-                
-                if (e.type.includes('touch')) {
-                    x = e.touches[0].clientX - rect.left;
-                    y = e.touches[0].clientY - rect.top;
-                } else {
-                    x = e.clientX - rect.left;
-                    y = e.clientY - rect.top;
-                }
-                
-                return [x, y];
-            }
-            
-            function generateUserId() {
-                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                    const r = Math.random() * 16 | 0;
-                    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-                    return v.toString(16);
-                });
-            }
-            
-            function generateRandomColor() {
-                return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
-            }
-            
-            // Initialize the app
+            // Set up event listeners
             setupEventListeners();
-            resizeWhiteboard();
             
-            // Handle window resize with debounce
-            let resizeTimeout;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(resizeWhiteboard, 100);
-            });
+            // Connect to socket
+            connectToSocket();
+        }
+        
+        // Resize canvas to fit container
+        function resizeCanvas() {
+            const container = whiteboard.parentElement;
+            whiteboard.width = container.offsetWidth;
+            whiteboard.height = container.offsetHeight;
+            redrawCanvas();
+        }
+        
+        // Set whiteboard background
+        function setWhiteboardBackground(type) {
+            const container = whiteboard.parentElement;
             
-            function resizeWhiteboard() {
-                whiteboard.width = whiteboard.offsetWidth;
-                whiteboard.height = whiteboard.offsetHeight;
-                // Redraw content if needed
+            switch(type) {
+                case 'white':
+                    container.style.backgroundColor = '#ffffff';
+                    container.style.backgroundImage = `
+                        linear-gradient(#e9ecef 1px, transparent 1px),
+                        linear-gradient(90deg, #e9ecef 1px, transparent 1px)
+                    `;
+                    break;
+                case 'black':
+                    container.style.backgroundColor = '#000000';
+                    container.style.backgroundImage = `
+                        linear-gradient(#333 1px, transparent 1px),
+                        linear-gradient(90deg, #333 1px, transparent 1px)
+                    `;
+                    break;
+                case 'green':
+                    container.style.backgroundColor = '#e6f7e6';
+                    container.style.backgroundImage = `
+                        linear-gradient(#d4edda 1px, transparent 1px),
+                        linear-gradient(90deg, #d4edda 1px, transparent 1px)
+                    `;
+                    break;
+                case 'blue':
+                    container.style.backgroundColor = '#e6f0f7';
+                    container.style.backgroundImage = `
+                        linear-gradient(#cfe2ff 1px, transparent 1px),
+                        linear-gradient(90deg, #cfe2ff 1px, transparent 1px)
+                    `;
+                    break;
             }
         }
+        
+        // Redraw canvas
+        function redrawCanvas() {
+            ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+            
+            if (pages[currentPage]) {
+                pages[currentPage].elements.forEach(element => {
+                    drawElement(element, false);
+                });
+            }
+        }
+        
+        // Draw element on canvas
+        function drawElement(element, isPreview = false) {
+            const { type, startX, startY, endX, endY, color, fill, lineWidth, text, font } = element;
+            
+            ctx.strokeStyle = color;
+            ctx.fillStyle = fill || 'transparent';
+            ctx.lineWidth = lineWidth;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            if (font) {
+                ctx.font = font;
+            }
+            
+            switch(type) {
+                case 'pencil':
+                    if (element.points && element.points.length > 1) {
+                        ctx.beginPath();
+                        ctx.moveTo(element.points[0].x, element.points[0].y);
+                        
+                        for (let i = 1; i < element.points.length; i++) {
+                            ctx.lineTo(element.points[i].x, element.points[i].y);
+                        }
+                        
+                        ctx.stroke();
+                    }
+                    break;
+                    
+                case 'line':
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+                    break;
+                    
+                case 'rectangle':
+                    ctx.beginPath();
+                    ctx.rect(startX, startY, endX - startX, endY - startY);
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                    
+                case 'circle':
+                    const radius = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+                    ctx.beginPath();
+                    ctx.arc(startX, startY, radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                    
+                case 'arrow':
+                    drawArrow(startX, startY, endX, endY, lineWidth, color);
+                    break;
+                    
+                case 'text':
+                    if (text) {
+                        ctx.fillStyle = color;
+                        ctx.fillText(text, startX, startY);
+                    }
+                    break;
+            }
+        }
+        
+        // Draw arrow
+        function drawArrow(fromX, fromY, toX, toY, lineWidth, color) {
+            const headLength = lineWidth * 3;
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineWidth;
+            
+            // Draw the shaft of the arrow
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.stroke();
+            
+            // Draw the arrow head
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(
+                toX - headLength * Math.cos(angle - Math.PI / 6),
+                toY - headLength * Math.sin(angle - Math.PI / 6)
+            );
+            ctx.lineTo(
+                toX - headLength * Math.cos(angle + Math.PI / 6),
+                toY - headLength * Math.sin(angle + Math.PI / 6)
+            );
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Window resize
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+            });
+            
+            // Tool selection
+            tools.forEach(tool => {
+                tool.addEventListener('click', () => {
+                    const toolName = tool.getAttribute('data-tool');
+                    selectTool(toolName);
+                    
+                    // Add selected animation
+                    tool.classList.add('selected');
+                    setTimeout(() => {
+                        tool.classList.remove('selected');
+                    }, 500);
+                });
+            });
+            
+            // Color picker
+            colorPicker.addEventListener('input', (e) => {
+                currentColor = e.target.value;
+            });
+            
+            // Fill picker
+            fillPicker.addEventListener('input', (e) => {
+                currentFill = e.target.value;
+            });
+            
+            // Line width slider
+            lineWidthSlider.addEventListener('input', (e) => {
+                currentLineWidth = parseInt(e.target.value);
+            });
+            
+            // Whiteboard background
+            document.querySelectorAll('.whiteboard-bg').forEach(bg => {
+                bg.addEventListener('click', () => {
+                    document.querySelector('.whiteboard-bg.active').classList.remove('active');
+                    bg.classList.add('active');
+                    setWhiteboardBackground(bg.getAttribute('data-bg'));
+                });
+            });
+            
+            // Canvas mouse events
+            whiteboard.addEventListener('mousedown', startDrawing);
+            whiteboard.addEventListener('mousemove', draw);
+            whiteboard.addEventListener('mouseup', stopDrawing);
+            whiteboard.addEventListener('mouseout', stopDrawing);
+            
+            // Touch events for mobile
+            whiteboard.addEventListener('touchstart', handleTouchStart);
+            whiteboard.addEventListener('touchmove', handleTouchMove);
+            whiteboard.addEventListener('touchend', handleTouchEnd);
+            
+            // More button dropdown
+            document.getElementById('moreBtn').addEventListener('click', toggleDropdown);
+            
+            // Dropdown menu items
+            document.getElementById('inviteOption').addEventListener('click', showInviteModal);
+            document.getElementById('participantsOption').addEventListener('click', showParticipantsTab);
+            document.getElementById('chatOption').addEventListener('click', showChatTab);
+            document.getElementById('settingsOption').addEventListener('click', showSettingsModal);
+            document.getElementById('exportOption').addEventListener('click', showExportModal);
+            document.getElementById('leaveOption').addEventListener('click', showLeaveConfirmation);
+            
+            // Panel tabs
+            document.querySelectorAll('.panel-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.getAttribute('data-tab');
+                    switchPanelTab(tabName);
+                });
+            });
+            
+            // Toggle panel
+            document.getElementById('togglePanel').addEventListener('click', togglePanel);
+            
+            // Page controls
+            document.getElementById('prevPage').addEventListener('click', prevPage);
+            document.getElementById('nextPage').addEventListener('click', nextPage);
+            document.getElementById('addPage').addEventListener('click', addPage);
+            
+            // Chat input
+            document.getElementById('chatInput').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendChatMessage();
+                }
+            });
+            
+            document.getElementById('chatSend').addEventListener('click', sendChatMessage);
+            
+            // Media controls
+            document.getElementById('micBtn').addEventListener('click', toggleMic);
+            document.getElementById('videoBtn').addEventListener('click', toggleVideo);
+            
+            // Footer buttons
+            document.getElementById('micFooterBtn').addEventListener('click', toggleMic);
+            document.getElementById('videoFooterBtn').addEventListener('click', toggleVideo);
+            document.getElementById('participantsFooterBtn').addEventListener('click', showParticipantsTab);
+            document.getElementById('screenShareFooterBtn').addEventListener('click', toggleScreenShare);
+            document.getElementById('recordFooterBtn').addEventListener('click', toggleRecording);
+            document.getElementById('raiseHandFooterBtn').addEventListener('click', toggleRaiseHand);
+            document.getElementById('reactionFooterBtn').addEventListener('click', toggleReactionMenu);
+            document.getElementById('moreFooterBtn').addEventListener('click', toggleFooterDropdown);
+            
+            // Reaction buttons
+            document.querySelectorAll('.reaction-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    sendReaction(btn.textContent);
+                    hideReactionMenu();
+                });
+            });
+            
+            // Assistant prompt
+            document.getElementById('assistantClose').addEventListener('click', hideAssistantPrompt);
+            
+            document.querySelectorAll('.assistant-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const prompt = option.getAttribute('data-prompt');
+                    handleAssistantPrompt(prompt);
+                });
+            });
+            
+            // Show assistant prompt after 30 seconds of inactivity
+            let inactivityTimer;
+            const resetInactivityTimer = () => {
+                clearTimeout(inactivityTimer);
+                inactivityTimer = setTimeout(() => {
+                    if (!assistantPrompt.classList.contains('show')) {
+                        showAssistantPrompt("Need any help with the whiteboard? I'm here to assist you!");
+                    }
+                }, 30000); // 30 seconds
+            };
+            
+            // Reset timer on any user activity
+            document.addEventListener('mousemove', resetInactivityTimer);
+            document.addEventListener('keydown', resetInactivityTimer);
+            document.addEventListener('click', resetInactivityTimer);
+            
+            resetInactivityTimer();
+        }
+        
+        // Select tool
+        function selectTool(toolName) {
+            currentTool = toolName;
+            
+            // Update active tool in UI
+            tools.forEach(tool => {
+                tool.classList.remove('active');
+                if (tool.getAttribute('data-tool') === toolName) {
+                    tool.classList.add('active');
+                }
+            });
+            
+            // Change cursor based on tool
+            switch(toolName) {
+                case 'pencil':
+                case 'line':
+                case 'arrow':
+                    whiteboard.style.cursor = 'crosshair';
+                    break;
+                case 'rectangle':
+                case 'circle':
+                    whiteboard.style.cursor = 'crosshair';
+                    break;
+                case 'text':
+                    whiteboard.style.cursor = 'text';
+                    break;
+                case 'eraser':
+                    whiteboard.style.cursor = 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23000\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><path d=\'M3 6h18\'/><path d=\'M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\'/></svg>") 12 12, auto';
+                    break;
+                default:
+                    whiteboard.style.cursor = 'default';
+            }
+        }
+        
+        // Start drawing
+        function startDrawing(e) {
+            isDrawing = true;
+            
+            const rect = whiteboard.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+            
+            if (currentTool === 'text') {
+                addTextElement(lastX, lastY);
+                isDrawing = false;
+                return;
+            }
+            
+            if (currentTool === 'eraser') {
+                // For eraser, we'll just draw with white color
+                const tempColor = currentColor;
+                currentColor = '#ffffff';
+                draw(e);
+                currentColor = tempColor;
+                return;
+            }
+            
+            // For other tools, start a new element
+            const newElement = {
+                type: currentTool,
+                startX: lastX,
+                startY: lastY,
+                endX: lastX,
+                endY: lastY,
+                color: currentColor,
+                fill: currentFill,
+                lineWidth: currentLineWidth,
+                points: currentTool === 'pencil' ? [{ x: lastX, y: lastY }] : null
+            };
+            
+            if (!pages[currentPage]) {
+                pages[currentPage] = { elements: [] };
+            }
+            
+            pages[currentPage].elements.push(newElement);
+            
+            // For undo functionality
+            saveToUndoStack();
+        }
+        
+        // Drawing in progress
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const rect = whiteboard.getBoundingClientRect();
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+            
+            if (currentTool === 'pencil') {
+                // For pencil, add points to the current path
+                const currentElement = pages[currentPage].elements[pages[currentPage].elements.length - 1];
+                currentElement.points.push({ x: currentX, y: currentY });
+                
+                // Draw the updated path
+                redrawCanvas();
+            } else if (currentTool === 'eraser') {
+                // For eraser, draw a white line
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = currentLineWidth * 2;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(currentX, currentY);
+                ctx.stroke();
+                
+                lastX = currentX;
+                lastY = currentY;
+            } else {
+                // For other tools, update the end coordinates
+                const currentElement = pages[currentPage].elements[pages[currentPage].elements.length - 1];
+                currentElement.endX = currentX;
+                currentElement.endY = currentY;
+                
+                // Redraw the canvas to show the updated shape
+                redrawCanvas();
+            }
+        }
+        
+        // Stop drawing
+        function stopDrawing() {
+            if (!isDrawing) return;
+            
+            isDrawing = false;
+            
+            // Send drawing to other participants
+            if (currentTool !== 'eraser' && pages[currentPage] && pages[currentPage].elements.length > 0) {
+                const lastElement = pages[currentPage].elements[pages[currentPage].elements.length - 1];
+                socket.emit('draw', {
+                    boardId,
+                    element: lastElement,
+                    page: currentPage
+                });
+            }
+        }
+        
+        // Add text element
+        function addTextElement(x, y) {
+            const textElement = document.createElement('div');
+            textElement.className = 'text-element';
+            textElement.style.left = `${x}px`;
+            textElement.style.top = `${y}px`;
+            textElement.style.color = currentColor;
+            textElement.style.fontSize = `${currentLineWidth * 3}px`;
+            textElement.contentEditable = true;
+            
+            textElement.addEventListener('blur', () => {
+                const text = textElement.textContent.trim();
+                if (text) {
+                    const newElement = {
+                        type: 'text',
+                        startX: x,
+                        startY: y,
+                        text: text,
+                        color: currentColor,
+                        font: `${currentLineWidth * 3}px Inter, sans-serif`
+                    };
+                    
+                    if (!pages[currentPage]) {
+                        pages[currentPage] = { elements: [] };
+                    }
+                    
+                    pages[currentPage].elements.push(newElement);
+                    saveToUndoStack();
+                    
+                    // Send to other participants
+                    socket.emit('draw', {
+                        boardId,
+                        element: newElement,
+                        page: currentPage
+                    });
+                }
+                
+                textElement.remove();
+                redrawCanvas();
+            });
+            
+            textElement.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    textElement.blur();
+                }
+            });
+            
+            whiteboard.parentElement.appendChild(textElement);
+            textElement.focus();
+        }
+        
+        // Touch event handlers
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            whiteboard.dispatchEvent(mouseEvent);
+        }
+        
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            whiteboard.dispatchEvent(mouseEvent);
+        }
+        
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            const mouseEvent = new MouseEvent('mouseup');
+            whiteboard.dispatchEvent(mouseEvent);
+        }
+        
+        // Undo functionality
+        function saveToUndoStack() {
+            if (pages[currentPage]) {
+                undoStack.push(JSON.stringify(pages[currentPage].elements));
+                redoStack = []; // Clear redo stack when new action is performed
+            }
+        }
+        
+        function undo() {
+            if (undoStack.length === 0 || !pages[currentPage]) return;
+            
+            redoStack.push(JSON.stringify(pages[currentPage].elements));
+            pages[currentPage].elements = JSON.parse(undoStack.pop());
+            redrawCanvas();
+            
+            // Notify other participants
+            socket.emit('undo', { boardId, page: currentPage });
+        }
+        
+        function redo() {
+            if (redoStack.length === 0 || !pages[currentPage]) return;
+            
+            undoStack.push(JSON.stringify(pages[currentPage].elements));
+            pages[currentPage].elements = JSON.parse(redoStack.pop());
+            redrawCanvas();
+            
+            // Notify other participants
+            socket.emit('redo', { boardId, page: currentPage });
+        }
+        
+        // Clear canvas
+        function clearCanvas() {
+            if (pages[currentPage]) {
+                saveToUndoStack();
+                pages[currentPage].elements = [];
+                redrawCanvas();
+                
+                // Notify other participants
+                socket.emit('clear', { boardId, page: currentPage });
+            }
+        }
+        
+        // Page navigation
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                updatePageDisplay();
+                redrawCanvas();
+            }
+        }
+        
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                updatePageDisplay();
+                redrawCanvas();
+            }
+        }
+        
+        function addPage() {
+            totalPages++;
+            currentPage = totalPages;
+            pages[currentPage] = { elements: [] };
+            updatePageDisplay();
+            redrawCanvas();
+            
+            // Notify other participants
+            socket.emit('addPage', { boardId, totalPages });
+        }
+        
+        function updatePageDisplay() {
+            document.getElementById('pageCount').textContent = `${currentPage}/${totalPages}`;
+        }
+        
+        // UI Controls
+        function toggleDropdown() {
+            document.getElementById('dropdownMenu').classList.toggle('show');
+        }
+        
+        function togglePanel() {
+            document.querySelector('.main').classList.toggle('panel-collapsed');
+        }
+        
+        function switchPanelTab(tabName) {
+            document.querySelectorAll('.panel-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-tab') === tabName) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            document.querySelectorAll('.panel-content').forEach(content => {
+                content.classList.remove('active');
+                if (content.getAttribute('data-content') === tabName) {
+                    content.classList.add('active');
+                }
+            });
+        }
+        
+        function showParticipantsTab() {
+            switchPanelTab('participants');
+            document.getElementById('dropdownMenu').classList.remove('show');
+            document.getElementById('footerDropdownMenu').classList.remove('show');
+        }
+        
+        function showChatTab() {
+            switchPanelTab('chat');
+            document.getElementById('dropdownMenu').classList.remove('show');
+            document.getElementById('footerDropdownMenu').classList.remove('show');
+            
+            // Clear chat badge
+            document.getElementById('chatBadge').textContent = '0';
+            document.getElementById('chatTabBadge').textContent = '0';
+        }
+        
+        function toggleFooterDropdown() {
+            document.getElementById('footerDropdownMenu').classList.toggle('show');
+        }
+        
+        // Modals
+        function showInviteModal() {
+            document.getElementById('dropdownMenu').classList.remove('show');
+            document.getElementById('inviteModal').classList.add('show');
+            
+            // Generate invite link and code
+            document.getElementById('inviteLinkInput').value = `${window.location.origin}?join=${boardId}`;
+            document.getElementById('inviteCodeInput').value = boardId;
+        }
+        
+        function showSettingsModal() {
+            document.getElementById('dropdownMenu').classList.remove('show');
+            document.getElementById('footerDropdownMenu').classList.remove('show');
+            
+            document.getElementById('userNameInput').value = userName;
+            document.getElementById('settingsModal').classList.add('show');
+        }
+        
+        function showExportModal() {
+            document.getElementById('dropdownMenu').classList.remove('show');
+            document.getElementById('footerDropdownMenu').classList.remove('show');
+            document.getElementById('exportModal').classList.add('show');
+        }
+        
+        function showLeaveConfirmation() {
+            document.getElementById('dropdownMenu').classList.remove('show');
+            document.getElementById('footerDropdownMenu').classList.remove('show');
+            
+            document.getElementById('confirmationText').textContent = 'Are you sure you want to leave this session?';
+            document.getElementById('confirmAction').textContent = 'Leave';
+            document.getElementById('confirmAction').onclick = leaveSession;
+            document.getElementById('confirmationModal').classList.add('show');
+        }
+        
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('show');
+            });
+        }
+        
+        // Media controls
+        function toggleMic() {
+            // Toggle microphone
+            const micBtn = document.getElementById('micBtn');
+            const micFooterBtn = document.getElementById('micFooterBtn');
+            
+            micBtn.classList.toggle('off');
+            micFooterBtn.classList.toggle('active');
+            
+            // Update UI
+            if (micBtn.classList.contains('off')) {
+                micBtn.innerHTML = '<i class="fas fa-microphone-slash"></i><span>Mic</span>';
+                micFooterBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+            } else {
+                micBtn.innerHTML = '<i class="fas fa-microphone"></i><span>Mic</span>';
+                micFooterBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+            }
+            
+            // Notify other participants
+            socket.emit('toggleMic', {
+                boardId,
+                userId,
+                isMuted: micBtn.classList.contains('off')
+            });
+        }
+        
+        function toggleVideo() {
+            // Toggle video
+            const videoBtn = document.getElementById('videoBtn');
+            const videoFooterBtn = document.getElementById('videoFooterBtn');
+            
+            videoBtn.classList.toggle('off');
+            videoFooterBtn.classList.toggle('active');
+            
+            // Update UI
+            if (videoBtn.classList.contains('off')) {
+                videoBtn.innerHTML = '<i class="fas fa-video-slash"></i><span>Video</span>';
+                videoFooterBtn.innerHTML = '<i class="fas fa-video-slash"></i>';
+                localVideo.style.display = 'none';
+                localVideo.nextElementSibling.style.display = 'flex';
+            } else {
+                videoBtn.innerHTML = '<i class="fas fa-video"></i><span>Video</span>';
+                videoFooterBtn.innerHTML = '<i class="fas fa-video"></i>';
+                localVideo.style.display = 'block';
+                localVideo.nextElementSibling.style.display = 'none';
+            }
+            
+            // Notify other participants
+            socket.emit('toggleVideo', {
+                boardId,
+                userId,
+                isOff: videoBtn.classList.contains('off')
+            });
+        }
+        
+        function toggleScreenShare() {
+            // Toggle screen sharing
+            const screenShareBtn = document.getElementById('screenShareFooterBtn');
+            screenShareBtn.classList.toggle('active');
+            
+            // Notify other participants
+            socket.emit('toggleScreenShare', {
+                boardId,
+                userId,
+                isSharing: screenShareBtn.classList.contains('active')
+            });
+        }
+        
+        function toggleRecording() {
+            // Toggle recording
+            const recordBtn = document.getElementById('recordFooterBtn');
+            recordBtn.classList.toggle('active');
+            
+            if (recordBtn.classList.contains('active')) {
+                recordBtn.innerHTML = '<i class="fas fa-square"></i>';
+                showNotification('Recording started');
+            } else {
+                recordBtn.innerHTML = '<i class="fas fa-circle"></i>';
+                showNotification('Recording stopped');
+            }
+        }
+        
+        function toggleRaiseHand() {
+            // Toggle raise hand
+            const raiseHandBtn = document.getElementById('raiseHandFooterBtn');
+            raiseHandBtn.classList.toggle('active');
+            
+            // Notify other participants
+            socket.emit('raiseHand', {
+                boardId,
+                userId,
+                isRaised: raiseHandBtn.classList.contains('active')
+            });
+        }
+        
+        function toggleReactionMenu() {
+            document.getElementById('reactionMenu').classList.toggle('show');
+        }
+        
+        function hideReactionMenu() {
+            document.getElementById('reactionMenu').classList.remove('show');
+        }
+        
+        function sendReaction(reaction) {
+            socket.emit('reaction', {
+                boardId,
+                userId,
+                userName,
+                reaction
+            });
+            
+            showNotification(`Sent reaction: ${reaction}`);
+        }
+        
+        // Chat functionality
+        function sendChatMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            
+            if (message) {
+                // Add message to chat
+                addChatMessage(userId, userName, message, true);
+                
+                // Send to other participants
+                socket.emit('chat', {
+                    boardId,
+                    userId,
+                    userName,
+                    message
+                });
+                
+                // Clear input
+                chatInput.value = '';
+            }
+        }
+        
+        function addChatMessage(userId, sender, message, isSelf = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageElement = document.createElement('div');
+            
+            messageElement.className = `chat-message ${isSelf ? 'self' : (sender === 'Assistant' ? 'assistant' : 'other')}`;
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageElement.innerHTML = `
+                <div class="chat-message-header">
+                    <span class="chat-message-sender">${sender}</span>
+                    <span class="chat-message-time">${timeString}</span>
+                </div>
+                <div class="chat-message-content">${message}</div>
+            `;
+            
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Update badge if not self and chat tab not active
+            if (!isSelf && !document.querySelector('.panel-tab[data-tab="chat"]').classList.contains('active')) {
+                const badge = document.getElementById('chatBadge');
+                const tabBadge = document.getElementById('chatTabBadge');
+                const currentCount = parseInt(badge.textContent) || 0;
+                badge.textContent = currentCount + 1;
+                tabBadge.textContent = currentCount + 1;
+            }
+        }
+        
+        // Assistant functionality
+        function showAssistantPrompt(message) {
+            assistantMessage.textContent = message;
+            assistantPrompt.classList.add('show');
+        }
+        
+        function hideAssistantPrompt() {
+            assistantPrompt.classList.remove('show');
+        }
+        
+        function handleAssistantPrompt(prompt) {
+            hideAssistantPrompt();
+            showTypingIndicator();
+            
+            // Simulate assistant thinking
+            setTimeout(() => {
+                hideTypingIndicator();
+                
+                let response = '';
+                switch(prompt) {
+                    case 'help':
+                        response = "WhiteBoard Pro lets you collaborate in real-time. You can draw, add text, images, and sticky notes. Use the toolbar on the left to select tools. Invite others to join your session!";
+                        break;
+                    case 'tools':
+                        response = "Here's what each tool does:\n- Pencil: Freehand drawing\n- Line: Draw straight lines\n- Shapes: Rectangle and Circle\n- Arrow: Draw arrows\n- Text: Add text elements\n- Eraser: Remove parts of your drawing";
+                        break;
+                    case 'collaborate':
+                        response = "To collaborate:\n1. Click 'Invite People' to share a link\n2. Participants can join your session\n3. Everyone can draw simultaneously\n4. Use chat and video for communication";
+                        break;
+                    case 'export':
+                        response = "To save your work:\n1. Click the 'Export' option\n2. Choose format (PNG, JPG, PDF, SVG)\n3. Select pages to export\n4. Download your file";
+                        break;
+                    default:
+                        response = "I'm here to help with WhiteBoard Pro. What would you like to know?";
+                }
+                
+                addChatMessage('assistant', 'Assistant', response);
+            }, 1500);
+        }
+        
+        function showTypingIndicator() {
+            typingIndicator.style.display = 'flex';
+        }
+        
+        function hideTypingIndicator() {
+            typingIndicator.style.display = 'none';
+        }
+        
+        // Notification
+        function showNotification(message, duration = 3000) {
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, duration);
+        }
+        
+        // Socket.io connection
+        function connectToSocket() {
+            // Generate board ID if not in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            boardId = urlParams.get('join') || generateBoardId();
+            
+            // Connect to socket
+            socket.on('connect', () => {
+                document.getElementById('loading').style.display = 'none';
+                
+                // Join board
+                socket.emit('join', {
+                    boardId,
+                    userId,
+                    userName,
+                    color: userColor
+                });
+                
+                // If joining existing board, request current state
+                if (urlParams.get('join')) {
+                    socket.emit('requestBoardState', { boardId });
+                }
+            });
+            
+            // Handle connection errors
+            socket.on('connect_error', (err) => {
+                document.getElementById('loading-text').textContent = 'Connection error. Retrying...';
+                console.error('Connection error:', err);
+            });
+            
+            // Handle board state
+            socket.on('boardState', (data) => {
+                pages = data.pages || {};
+                currentPage = data.currentPage || 1;
+                totalPages = data.totalPages || 1;
+                updatePageDisplay();
+                redrawCanvas();
+            });
+            
+            // Handle user list updates
+            socket.on('userList', (users) => {
+                updateUserList(users);
+            });
+            
+            // Handle drawing events from other users
+            socket.on('draw', (data) => {
+                if (data.page === currentPage) {
+                    if (!pages[data.page]) {
+                        pages[data.page] = { elements: [] };
+                    }
+                    
+                    pages[data.page].elements.push(data.element);
+                    redrawCanvas();
+                }
+            });
+            
+            // Handle undo events from other users
+            socket.on('undo', (data) => {
+                if (data.page === currentPage && pages[data.page]) {
+                    pages[data.page].elements.pop();
+                    redrawCanvas();
+                }
+            });
+            
+            // Handle redo events from other users
+            socket.on('redo', (data) => {
+                // In a real app, you'd need to implement redo properly
+                // This is a simplified version
+                if (data.page === currentPage && pages[data.page]) {
+                    // Would need to track redo stack properly
+                    redrawCanvas();
+                }
+            });
+            
+            // Handle clear events from other users
+            socket.on('clear', (data) => {
+                if (data.page === currentPage && pages[data.page]) {
+                    pages[data.page].elements = [];
+                    redrawCanvas();
+                }
+            });
+            
+            // Handle page events
+            socket.on('addPage', (data) => {
+                totalPages = data.totalPages;
+                updatePageDisplay();
+            });
+            
+            // Handle chat messages
+            socket.on('chat', (data) => {
+                addChatMessage(data.userId, data.userName, data.message);
+            });
+            
+            // Handle reactions
+            socket.on('reaction', (data) => {
+                showNotification(`${data.userName} reacted: ${data.reaction}`);
+            });
+            
+            // Handle user media status changes
+            socket.on('userMediaStatus', (data) => {
+                updateUserMediaStatus(data.userId, data.isMuted, data.isVideoOff);
+            });
+            
+            // Handle screen sharing
+            socket.on('screenShare', (data) => {
+                if (data.isSharing) {
+                    remoteVideoLabel.textContent = `${data.userName}'s Screen`;
+                    remoteVideoPlaceholderText.textContent = `${data.userName} is sharing their screen`;
+                } else {
+                    remoteVideoLabel.textContent = data.userName;
+                    remoteVideoPlaceholderText.textContent = `${data.userName}'s video will appear here`;
+                }
+            });
+            
+            // Handle raise hand
+            socket.on('raiseHand', (data) => {
+                const userItem = document.querySelector(`.user-item[data-user-id="${data.userId}"]`);
+                if (userItem) {
+                    if (data.isRaised) {
+                        userItem.classList.add('raised-hand');
+                    } else {
+                        userItem.classList.remove('raised-hand');
+                    }
+                }
+            });
+            
+            // Handle disconnect
+            socket.on('disconnect', () => {
+                showNotification('Disconnected from server. Reconnecting...');
+            });
+        }
+        
+        // Update user list
+        function updateUserList(users) {
+            userList.innerHTML = '';
+            userCount.textContent = users.length;
+            document.getElementById('participantsBadge').textContent = users.length;
+            document.getElementById('participantsTabBadge').textContent = users.length;
+            
+            users.forEach(user => {
+                const userItem = document.createElement('div');
+                userItem.className = `user-item ${user.isHost ? 'host' : ''}`;
+                userItem.setAttribute('data-user-id', user.id);
+                
+                // Set random avatar color based on user ID
+                const colors = ['#4361ee', '#3a0ca3', '#f72585', '#4cc9f0', '#4895ef', '#560bad'];
+                const colorIndex = parseInt(user.id.substr(0, 2), 16) % colors.length;
+                const avatarColor = colors[colorIndex];
+                
+                userItem.innerHTML = `
+                    <div class="user-avatar" style="background-color: ${avatarColor}">
+                        ${user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="user-name">${user.name}</div>
+                    <div class="user-controls">
+                        <button class="user-control" title="Mute">
+                            <i class="fas fa-microphone${user.isMuted ? '-slash' : ''}"></i>
+                        </button>
+                        <button class="user-control" title="Video">
+                            <i class="fas fa-video${user.isVideoOff ? '-slash' : ''}"></i>
+                        </button>
+                    </div>
+                `;
+                
+                userList.appendChild(userItem);
+            });
+        }
+        
+        // Update user media status
+        function updateUserMediaStatus(userId, isMuted, isVideoOff) {
+            const userItem = document.querySelector(`.user-item[data-user-id="${userId}"]`);
+            if (userItem) {
+                const micIcon = userItem.querySelector('.fa-microphone, .fa-microphone-slash');
+                const videoIcon = userItem.querySelector('.fa-video, .fa-video-slash');
+                
+                if (micIcon) {
+                    micIcon.className = isMuted ? 'fas fa-microphone-slash' : 'fas fa-microphone';
+                }
+                
+                if (videoIcon) {
+                    videoIcon.className = isVideoOff ? 'fas fa-video-slash' : 'fas fa-video';
+                }
+            }
+        }
+        
+        // Leave session
+        function leaveSession() {
+            // Show leave animation
+            document.getElementById('leaveImage').style.display = 'block';
+            document.getElementById('appContainer').style.opacity = '0';
+            
+            // Notify server
+            socket.emit('leave', { boardId, userId });
+            
+            // Redirect after animation
+            setTimeout(() => {
+                window.location.href = window.location.origin;
+            }, 1000);
+        }
+        
+        // Helper functions
+        function generateUserId() {
+            return Math.random().toString(36).substr(2, 9);
+        }
+        
+        function generateBoardId() {
+            return Math.random().toString(36).substr(2, 6).toUpperCase();
+        }
+        
+        function generateRandomColor() {
+            return `hsl(${Math.random() * 360}, 70%, 60%)`;
+        }
+        
+        // Initialize the app
+        initWhiteboard();
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Undo/Redo with Ctrl+Z/Ctrl+Y
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z') {
+                    e.preventDefault();
+                    undo();
+                } else if (e.key === 'y') {
+                    e.preventDefault();
+                    redo();
+                }
+            }
+            
+            // Tool shortcuts (1-9)
+            if (e.key >= '1' && e.key <= '9') {
+                const index = parseInt(e.key) - 1;
+                if (index < tools.length) {
+                    tools[index].click();
+                }
+            }
+            
+            // Clear with Escape
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.modal.show');
+                if (activeModal) {
+                    activeModal.classList.remove('show');
+                } else {
+                    const confirmation = confirm('Clear the current page?');
+                    if (confirmation) {
+                        clearCanvas();
+                    }
+                }
+            }
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.more-menu') && !e.target.closest('.dropdown-menu')) {
+                document.getElementById('dropdownMenu').classList.remove('show');
+            }
+            
+            if (!e.target.closest('#moreFooterBtn') && !e.target.closest('#footerDropdownMenu')) {
+                document.getElementById('footerDropdownMenu').classList.remove('show');
+            }
+            
+            if (!e.target.closest('#reactionFooterBtn') && !e.target.closest('#reactionMenu')) {
+                document.getElementById('reactionMenu').classList.remove('show');
+            }
+            
+            if (!e.target.closest('#assistantPrompt') && !e.target.closest('#assistantTrigger')) {
+                document.getElementById('assistantPrompt').classList.remove('show');
+            }
+        });
     </script>
 </body>
 </html>
+
