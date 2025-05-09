@@ -2430,13 +2430,14 @@
             }, 1500); // Show splash for 1.5 seconds
         });
 
-        // Initialize Socket.io connection
+        // Initialize Socket.io connection with fallback
         const socket = io('https://whiteboard-server.example.com', {
             transports: ['websocket'],
             reconnection: true,
             reconnectionAttempts: 5,
             reconnectionDelay: 1000,
-            reconnectionDelayMax: 5000
+            reconnectionDelayMax: 5000,
+            autoConnect: false // We'll connect manually after checking
         });
         
         // Generate user ID and color
@@ -2444,6 +2445,7 @@
         const userColor = generateRandomColor();
         let userName = `User${Math.floor(Math.random() * 1000)}`;
         let boardId = '';
+        let isConnected = false;
         
         // DOM Elements
         const whiteboard = document.getElementById('whiteboard');
@@ -2499,8 +2501,39 @@
             // Set up event listeners
             setupEventListeners();
             
-            // Connect to socket
-            connectToSocket();
+            // Connect to socket after checking if server is available
+            checkServerAvailability().then(available => {
+                if (available) {
+                    connectToSocket();
+                } else {
+                    startOfflineMode();
+                }
+            });
+        }
+        
+        // Check if server is available
+        async function checkServerAvailability() {
+            try {
+                const response = await fetch('https://whiteboard-server.example.com/socket.io/?EIO=4&transport=polling');
+                return response.ok;
+            } catch (error) {
+                console.error('Server check failed:', error);
+                return false;
+            }
+        }
+        
+        // Start in offline mode
+        function startOfflineMode() {
+            document.getElementById('loadingText').textContent = 'Could not connect to server. Working in offline mode.';
+            document.getElementById('loading').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                showNotification('Working in offline mode. Some features may be limited.');
+                
+                // Initialize with empty board
+                pages[currentPage] = { elements: [] };
+                redrawCanvas();
+            }, 500);
         }
         
         // Resize canvas to fit container
@@ -2760,9 +2793,9 @@
             
             // Reconnect button
             document.getElementById('reconnectBtn').addEventListener('click', () => {
-                socket.connect();
                 document.getElementById('loadingText').textContent = 'Reconnecting...';
                 document.getElementById('reconnectBtn').style.display = 'none';
+                connectToSocket();
             });
             
             // Reaction buttons
@@ -2929,7 +2962,7 @@
             isDrawing = false;
             
             // Send drawing to other participants
-            if (currentTool !== 'eraser' && pages[currentPage] && pages[currentPage].elements.length > 0) {
+            if (currentTool !== 'eraser' && pages[currentPage] && pages[currentPage].elements.length > 0 && isConnected) {
                 const lastElement = pages[currentPage].elements[pages[currentPage].elements.length - 1];
                 socket.emit('draw', {
                     boardId,
@@ -2969,11 +3002,13 @@
                     saveToUndoStack();
                     
                     // Send to other participants
-                    socket.emit('draw', {
-                        boardId,
-                        element: newElement,
-                        page: currentPage
-                    });
+                    if (isConnected) {
+                        socket.emit('draw', {
+                            boardId,
+                            element: newElement,
+                            page: currentPage
+                        });
+                    }
                 }
                 
                 textElement.remove();
@@ -3034,7 +3069,9 @@
             redrawCanvas();
             
             // Notify other participants
-            socket.emit('undo', { boardId, page: currentPage });
+            if (isConnected) {
+                socket.emit('undo', { boardId, page: currentPage });
+            }
         }
         
         function redo() {
@@ -3045,7 +3082,9 @@
             redrawCanvas();
             
             // Notify other participants
-            socket.emit('redo', { boardId, page: currentPage });
+            if (isConnected) {
+                socket.emit('redo', { boardId, page: currentPage });
+            }
         }
         
         // Clear canvas
@@ -3056,7 +3095,9 @@
                 redrawCanvas();
                 
                 // Notify other participants
-                socket.emit('clear', { boardId, page: currentPage });
+                if (isConnected) {
+                    socket.emit('clear', { boardId, page: currentPage });
+                }
             }
         }
         
@@ -3085,7 +3126,9 @@
             redrawCanvas();
             
             // Notify other participants
-            socket.emit('addPage', { boardId, totalPages });
+            if (isConnected) {
+                socket.emit('addPage', { boardId, totalPages });
+            }
         }
         
         function updatePageDisplay() {
@@ -3196,11 +3239,13 @@
             }
             
             // Notify other participants
-            socket.emit('toggleMic', {
-                boardId,
-                userId,
-                isMuted: micBtn.classList.contains('off')
-            });
+            if (isConnected) {
+                socket.emit('toggleMic', {
+                    boardId,
+                    userId,
+                    isMuted: micBtn.classList.contains('off')
+                });
+            }
         }
         
         function toggleVideo() {
@@ -3225,11 +3270,13 @@
             }
             
             // Notify other participants
-            socket.emit('toggleVideo', {
-                boardId,
-                userId,
-                isOff: videoBtn.classList.contains('off')
-            });
+            if (isConnected) {
+                socket.emit('toggleVideo', {
+                    boardId,
+                    userId,
+                    isOff: videoBtn.classList.contains('off')
+                });
+            }
         }
         
         function toggleScreenShare() {
@@ -3238,11 +3285,13 @@
             screenShareBtn.classList.toggle('active');
             
             // Notify other participants
-            socket.emit('toggleScreenShare', {
-                boardId,
-                userId,
-                isSharing: screenShareBtn.classList.contains('active')
-            });
+            if (isConnected) {
+                socket.emit('toggleScreenShare', {
+                    boardId,
+                    userId,
+                    isSharing: screenShareBtn.classList.contains('active')
+                });
+            }
         }
         
         function toggleRecording() {
@@ -3265,11 +3314,13 @@
             raiseHandBtn.classList.toggle('active');
             
             // Notify other participants
-            socket.emit('raiseHand', {
-                boardId,
-                userId,
-                isRaised: raiseHandBtn.classList.contains('active')
-            });
+            if (isConnected) {
+                socket.emit('raiseHand', {
+                    boardId,
+                    userId,
+                    isRaised: raiseHandBtn.classList.contains('active')
+                });
+            }
         }
         
         function toggleReactionMenu() {
@@ -3281,14 +3332,18 @@
         }
         
         function sendReaction(reaction) {
-            socket.emit('reaction', {
-                boardId,
-                userId,
-                userName,
-                reaction
-            });
-            
-            showNotification(`Sent reaction: ${reaction}`);
+            if (isConnected) {
+                socket.emit('reaction', {
+                    boardId,
+                    userId,
+                    userName,
+                    reaction
+                });
+                
+                showNotification(`Sent reaction: ${reaction}`);
+            } else {
+                showNotification('Cannot send reaction in offline mode');
+            }
         }
         
         // Chat functionality
@@ -3301,12 +3356,14 @@
                 addChatMessage(userId, userName, message, true);
                 
                 // Send to other participants
-                socket.emit('chat', {
-                    boardId,
-                    userId,
-                    userName,
-                    message
-                });
+                if (isConnected) {
+                    socket.emit('chat', {
+                        boardId,
+                        userId,
+                        userName,
+                        message
+                    });
+                }
                 
                 // Clear input
                 chatInput.value = '';
@@ -3414,15 +3471,19 @@
             
             // Connection timeout
             const connectionTimeout = setTimeout(() => {
-                if (socket.disconnected) {
+                if (!isConnected) {
                     document.getElementById('loadingText').textContent = 'Connection failed. Please refresh the page.';
                     document.getElementById('reconnectBtn').style.display = 'block';
                 }
             }, 10000); // 10 seconds timeout
             
             // Connect to socket
+            socket.connect();
+            
+            // Handle connection
             socket.on('connect', () => {
                 clearTimeout(connectionTimeout);
+                isConnected = true;
                 document.getElementById('loading').style.display = 'none';
                 
                 // Join board
@@ -3441,13 +3502,14 @@
             
             // Handle connection errors
             socket.on('connect_error', (err) => {
+                console.error('Connection error:', err);
                 document.getElementById('loadingText').textContent = 'Connection error. Retrying...';
                 document.getElementById('reconnectBtn').style.display = 'block';
-                console.error('Connection error:', err);
             });
             
             // Handle disconnection
             socket.on('disconnect', (reason) => {
+                isConnected = false;
                 if (reason === 'io server disconnect') {
                     // The server forcibly disconnected the socket
                     document.getElementById('loading').style.display = 'flex';
@@ -3462,6 +3524,7 @@
             
             // Handle successful reconnection
             socket.on('reconnect', () => {
+                isConnected = true;
                 document.getElementById('loading').style.display = 'none';
                 showNotification('Reconnected to server');
                 
@@ -3473,24 +3536,6 @@
                     color: userColor
                 });
             });
-            
-            // Fallback if server is not available
-            setTimeout(() => {
-                if (socket.disconnected) {
-                    document.getElementById('loadingText').textContent = 'Could not connect to server. Working in offline mode.';
-                    document.getElementById('loading').style.opacity = '0';
-                    setTimeout(() => {
-                        document.getElementById('loading').style.display = 'none';
-                        document.getElementById('appContainer').classList.add('loaded');
-                        
-                        // Initialize with empty board
-                        pages[currentPage] = { elements: [] };
-                        redrawCanvas();
-                        
-                        showNotification('Working in offline mode. Some features may be limited.');
-                    }, 500);
-                }
-            }, 15000); // 15 seconds total timeout
             
             // Handle board state
             socket.on('boardState', (data) => {
@@ -3648,8 +3693,10 @@
             document.getElementById('leaveImage').style.display = 'block';
             document.getElementById('appContainer').style.opacity = '0';
             
-            // Notify server
-            socket.emit('leave', { boardId, userId });
+            // Notify server if connected
+            if (isConnected) {
+                socket.emit('leave', { boardId, userId });
+            }
             
             // Redirect after animation
             setTimeout(() => {
