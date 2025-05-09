@@ -1162,6 +1162,24 @@
             max-width: 80%;
         }
         
+        .loading-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition-normal);
+            display: none;
+        }
+        
+        .loading-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
         /* Shape preview styles */
         .shape-preview {
             position: absolute;
@@ -2387,7 +2405,8 @@
     
     <div class="loading" id="loading">
         <div class="spinner"></div>
-        <div class="loading-text">Connecting to board...</div>
+        <div class="loading-text" id="loadingText">Connecting to board...</div>
+        <button class="btn btn-primary" id="reconnectBtn" style="margin-top: 20px; display: none;">Reconnect</button>
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
@@ -2399,6 +2418,9 @@
                 setTimeout(() => {
                     document.getElementById('splashScreen').style.display = 'none';
                     document.getElementById('appContainer').classList.add('loaded');
+                    
+                    // Initialize the app after splash screen
+                    initWhiteboard();
                     
                     // Show assistant welcome message after a delay
                     setTimeout(() => {
@@ -2735,6 +2757,13 @@
             document.getElementById('raiseHandFooterBtn').addEventListener('click', toggleRaiseHand);
             document.getElementById('reactionFooterBtn').addEventListener('click', toggleReactionMenu);
             document.getElementById('moreFooterBtn').addEventListener('click', toggleFooterDropdown);
+            
+            // Reconnect button
+            document.getElementById('reconnectBtn').addEventListener('click', () => {
+                socket.connect();
+                document.getElementById('loadingText').textContent = 'Reconnecting...';
+                document.getElementById('reconnectBtn').style.display = 'none';
+            });
             
             // Reaction buttons
             document.querySelectorAll('.reaction-btn').forEach(btn => {
@@ -3378,8 +3407,22 @@
             const urlParams = new URLSearchParams(window.location.search);
             boardId = urlParams.get('join') || generateBoardId();
             
+            // Show connecting status
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('loadingText').textContent = 'Connecting to board...';
+            document.getElementById('reconnectBtn').style.display = 'none';
+            
+            // Connection timeout
+            const connectionTimeout = setTimeout(() => {
+                if (socket.disconnected) {
+                    document.getElementById('loadingText').textContent = 'Connection failed. Please refresh the page.';
+                    document.getElementById('reconnectBtn').style.display = 'block';
+                }
+            }, 10000); // 10 seconds timeout
+            
             // Connect to socket
             socket.on('connect', () => {
+                clearTimeout(connectionTimeout);
                 document.getElementById('loading').style.display = 'none';
                 
                 // Join board
@@ -3398,9 +3441,56 @@
             
             // Handle connection errors
             socket.on('connect_error', (err) => {
-                document.getElementById('loading-text').textContent = 'Connection error. Retrying...';
+                document.getElementById('loadingText').textContent = 'Connection error. Retrying...';
+                document.getElementById('reconnectBtn').style.display = 'block';
                 console.error('Connection error:', err);
             });
+            
+            // Handle disconnection
+            socket.on('disconnect', (reason) => {
+                if (reason === 'io server disconnect') {
+                    // The server forcibly disconnected the socket
+                    document.getElementById('loading').style.display = 'flex';
+                    document.getElementById('loadingText').textContent = 'Disconnected from server. Please refresh.';
+                    document.getElementById('reconnectBtn').style.display = 'block';
+                } else {
+                    // Temporary disconnection - show reconnecting status
+                    document.getElementById('loading').style.display = 'flex';
+                    document.getElementById('loadingText').textContent = 'Reconnecting...';
+                }
+            });
+            
+            // Handle successful reconnection
+            socket.on('reconnect', () => {
+                document.getElementById('loading').style.display = 'none';
+                showNotification('Reconnected to server');
+                
+                // Rejoin the board
+                socket.emit('join', {
+                    boardId,
+                    userId,
+                    userName,
+                    color: userColor
+                });
+            });
+            
+            // Fallback if server is not available
+            setTimeout(() => {
+                if (socket.disconnected) {
+                    document.getElementById('loadingText').textContent = 'Could not connect to server. Working in offline mode.';
+                    document.getElementById('loading').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('appContainer').classList.add('loaded');
+                        
+                        // Initialize with empty board
+                        pages[currentPage] = { elements: [] };
+                        redrawCanvas();
+                        
+                        showNotification('Working in offline mode. Some features may be limited.');
+                    }, 500);
+                }
+            }, 15000); // 15 seconds total timeout
             
             // Handle board state
             socket.on('boardState', (data) => {
@@ -3497,11 +3587,6 @@
                     }
                 }
             });
-            
-            // Handle disconnect
-            socket.on('disconnect', () => {
-                showNotification('Disconnected from server. Reconnecting...');
-            });
         }
         
         // Update user list
@@ -3585,9 +3670,6 @@
             return `hsl(${Math.random() * 360}, 70%, 60%)`;
         }
         
-        // Initialize the app
-        initWhiteboard();
-        
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             // Undo/Redo with Ctrl+Z/Ctrl+Y
@@ -3644,4 +3726,3 @@
     </script>
 </body>
 </html>
-
